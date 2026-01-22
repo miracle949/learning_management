@@ -1,0 +1,51 @@
+.container-fluid .rightbar {
+    width: calc(100% - 250px);
+    height: calc(100% - 83px);
+    margin-top: 83px;
+    margin-left: 250px;
+    padding: 3rem;
+}
+
+.container-fluid .rightbar h2 {
+    font-size: 20px;
+}
+
+.container-fluid .rightbar .card-box-parent .card-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #8839FC;
+    padding: 2rem 2.5rem 2rem 2rem;
+    color: white;
+    border-radius: 10px;
+}
+
+.container-fluid .rightbar .card-box-parent .card-box .card-box-name {
+    display: flex;
+    justify-content: left;
+    align-items: left;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.container-fluid .rightbar .card-box-parent .card-box .card-box-name p {
+    font-weight: bold;
+}
+
+.container-fluid .rightbar .card-box-parent .card-box .card-box-name span {
+    font-size: 14px;
+}
+
+.container-fluid .rightbar .card-box-parent .card-box {
+    margin-top: 1.5rem;
+}
+
+.container-fluid .rightbar .card-box-parent .card-box .card-box-link a {
+    color: white;
+    font-size: 18px;
+}
+
+.container-fluid .rightbar .card-box-parent .card-box .card-box-link a:hover .fa {
+    transform: translateX(20%);
+    transition: all 0.5s ease-in-out;
+}

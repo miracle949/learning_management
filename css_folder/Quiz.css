@@ -1,0 +1,289 @@
+.container-fluid .rightbar {
+    width: 100%;
+    height: calc(100% - 83px);
+    margin-top: 83px;
+}
+
+.container-fluid .rightbar .navbar-quiz {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 2.2rem 2rem 2.2rem 2rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.container-fluid .rightbar .navbar-quiz a {
+    text-decoration: none;
+    color: black;
+}
+
+.container-fluid .rightbar .navbar-quiz p {
+    margin: 0;
+}
+
+.container-fluid .navbar-title {
+    width: 80%;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.container-fluid .navbar-title a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.container-fluid .navbar-quiz .navbar-complete-time {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    color: #808080;
+}
+
+.container-fluid .navbar-quiz .navbar-complete-time .time {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.container-fluid .rightbar .body-quiz {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.container-fluid .rightbar .body-quiz .quiz-section .quiz-title p {
+    margin: 0;
+}
+
+.container-fluid .rightbar .body-quiz .quiz-progress-bar {
+    width: 100%;
+}
+
+.container-fluid .rightbar .body-quiz .quiz-progress-bar .quiz-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.container-fluid .rightbar .body-quiz .quiz-progress-bar .quiz-parent-progress {
+    width: 100%;
+    padding: 0.4rem;
+    border-radius: 28px;
+    background-color: #D9D9D9;
+    position: relative;
+    margin-top: 0.8rem;
+}
+
+.container-fluid .rightbar .body-quiz .quiz-progress-bar .quiz-parent-progress .quiz-progress {
+    position: absolute;
+    left: 0;
+    width: 10%;
+    padding: 0.4rem;
+    background-color: #4F39F6;
+    border-radius: 28px;
+    top: 0;
+}
+
+.container-fluid .rightbar .body-quiz .quiz-section {
+    width: 100%;
+}
+
+.container-fluid .rightbar .body-quiz .quiz-section .multiple span {
+    font-size: 14px;
+    color: #5C2DD7;
+    background-color: #E0E7FF;
+    padding: 0.4rem 0.8rem;
+    border-radius: 28px;
+}
+
+.container-fluid .rightbar .body-quiz .quiz-section .answer-quiz {
+    background-color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    border-radius: 10px;
+}
+
+.container-fluid .rightbar .body-quiz .quiz-section .answer-quiz h3 {
+    font-size: 20px;
+    margin-top: 1.5rem;
+}
+
+.quiz-parent-progress {
+    width: 100%;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.quiz-progress {
+    height: 100%;
+    width: 0%;
+    background: #4f46e5;
+    transition: width 0.3s ease;
+}
+
+/* quiz options */
+
+.container-fluid .rightbar .body-quiz .quiz-section .answer-quiz .choose-answer {
+    margin-top: 1.5rem;
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    /* max-width: 600px; */
+    width: 100%;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px;
+    border-radius: 14px;
+    border: 2px solid #e0e3ea;
+    cursor: pointer;
+    transition: 0.25s ease;
+    background: #fff;
+}
+
+/* hide default radio */
+.option input {
+    display: none;
+}
+
+/* custom radio */
+.radio {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #cfd3dc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* checked dot */
+.radio::after {
+    content: "✓";
+    font-size: 14px;
+    color: #fff;
+    display: none;
+}
+
+/* text */
+.text {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+/* checked state */
+.option input:checked+.radio {
+    background: #4f46e5;
+    border-color: #4f46e5;
+}
+
+.option input:checked+.radio::after {
+    display: block;
+}
+
+.option input:checked~.text {
+    font-weight: 600;
+}
+
+/* card highlight */
+.option:has(input:checked) {
+    background: #eef2ff;
+    border-color: #4f46e5;
+}
+
+.container-fluid .rightbar .body-quiz .quiz-footer nav {
+    all: unset;
+}
+
+.container-fluid .rightbar .body-quiz .quiz-footer nav .pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+}
+
+.container-fluid .rightbar .body-quiz .quiz-footer nav .pagination li a#prevBtn span {
+    color: black;
+    font-size: 15px;
+}
+
+.container-fluid .rightbar .body-quiz .quiz-footer nav .pagination li a#prevBtn {
+    color: black;
+}
+
+.container-fluid .rightbar .body-quiz .quiz-footer nav .pagination li a.page-link {
+    padding: 10px 30px;
+    font-size: 15px;
+    border-radius: 7px;
+    border: none;
+}
+
+.container-fluid .rightbar .body-quiz .quiz-footer nav .pagination li a#nextBtn {
+    background-color: #4F39F6;
+    color: white;
+    font-weight: 600;
+}
+
+/* .container-fluid .rightbar .body-quiz .quiz-footer nav #page-indicator span{
+    margin: 0;
+} */
+
+@media only screen and (max-width: 580px) {
+    .container-fluid div.rightbar {
+        padding: 0;
+    }
+
+    .container-fluid .rightbar .body-quiz {
+        padding: 1.5rem;
+    }
+
+    .container-fluid .navbar-title {
+        width: 0;
+    }
+
+    .container-fluid .navbar-title a span {
+        display: none;
+    }
+
+    .container-fluid .rightbar .navbar-quiz {
+        padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+    }
+
+    .container-fluid .rightbar .body-quiz .quiz-footer nav .pagination {
+        margin-top: 2.5rem;
+    }
+}
+
+@media only screen and (max-width: 470px) {
+    .container-fluid .rightbar .body-quiz .quiz-footer nav .pagination li a span {
+        display: none;
+    }
+
+    .container-fluid .rightbar .body-quiz .quiz-footer nav .pagination li a.page-link {
+        padding: 10px 15px;
+        font-size: 16px;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    .container-fluid .rightbar .body-quiz .quiz-section .answer-quiz {
+        padding: 2rem 1.5rem 2rem 1.5rem;
+    }
+}
