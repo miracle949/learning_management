@@ -1,0 +1,213 @@
+.container-fluid .rightbar {
+    width: calc(100% - 250px);
+    height: calc(100% - 83px);
+    margin-top: 83px;
+    margin-left: 250px;
+    padding: 3rem;
+}
+
+.container-fluid .rightbar h2 {
+    font-size: 20px;
+}
+
+.container-fluid .rightbar .card-box-parent .card-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2.5rem 2rem 2.5rem 2rem;
+    color: white;
+    border-radius: 10px;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(2) .card-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #00C950;
+    color: white;
+    border-radius: 10px;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(3) .card-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #8839FC;
+    color: white;
+    border-radius: 10px;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(4) .card-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #DE316B;
+    color: white;
+    border-radius: 10px;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(5) .card-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #5D7C81;
+    color: white;
+    border-radius: 10px;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(6) .card-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #DE316B;
+    color: white;
+    border-radius: 10px;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(7) .card-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #8839FC;
+    color: white;
+    border-radius: 10px;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(8) .card-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #00C950;
+    color: white;
+    border-radius: 10px;
+}
+
+/* .container-fluid .rightbar .card-box-parent:nth-child(10) .card-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #00C950;
+    padding: 2rem 2.5rem 2rem 2rem;
+    color: white;
+    border-radius: 10px;
+} */
+
+.container-fluid .rightbar .card-box-parent .card-box .card-box-name {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 1rem;
+}
+
+.container-fluid .rightbar .card-box-parent .card-box .card-box-name .card-box-icon {
+    padding: 1rem;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(2) .card-box .card-box-name .card-box-icon {
+    background-color: #58ef94;
+    border-radius: 7px;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(3) .card-box .card-box-name .card-box-icon {
+    background-color: #b594e8;
+    border-radius: 7px;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(4) .card-box .card-box-name .card-box-icon {
+    background-color: #e76e96;
+    border-radius: 7px;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(5) .card-box .card-box-name .card-box-icon {
+    background-color: #6fb0ba;
+    border-radius: 7px;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(6) .card-box .card-box-name .card-box-icon {
+    background-color: #e76e96;
+    border-radius: 7px;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(7) .card-box .card-box-name .card-box-icon {
+    background-color: #b594e8;
+    border-radius: 7px;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(8) .card-box .card-box-name .card-box-icon {
+    background-color: #58ef94;
+    border-radius: 7px;
+}
+
+.container-fluid .rightbar .card-box-parent .card-box .card-box-name .card-box-icon .fa {
+    font-size: 25px;
+    color: white;
+}
+
+.container-fluid .rightbar .card-box-parent .card-box .card-box-name p {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.container-fluid .rightbar .card-box-parent .card-box .card-box-name span {
+    font-size: 16px;
+}
+
+.container-fluid .rightbar .card-box-parent .card-box {
+    margin-top: 1.5rem;
+}
+
+.container-fluid .rightbar .card-box-parent .card-box .card-box-link a {
+    color: white;
+    font-size: 18px;
+}
+
+.container-fluid .rightbar .card-box-parent .card-box .card-box-link a:hover .fa {
+    transform: translateX(20%);
+    transition: all 0.5s ease-in-out;
+}
+
+@media only screen and (max-width: 560px) {
+    .container-fluid .rightbar .card-box-parent .card-box {
+        padding: 2.5rem 2rem 2.5rem 1.3rem;
+    }
+
+    .container-fluid .rightbar .card-box-parent .card-box .card-box-name p {
+        font-size: 19px;
+    }
+
+    .container-fluid .rightbar .card-box-parent .card-box .card-box-name {
+        width: 350px;
+    }
+
+    .container-fluid .rightbar .card-box-parent .card-box .card-box-name .card-box-icon {
+        padding: 0.9rem;
+    }
+
+    /* .container-fluid .rightbar .card-box-parent .card-box .card-box-name .card-box-icon {
+        display: none;
+    } */
+
+    /* .container-fluid .rightbar .card-box-parent .card-box .card-box-name .card-box-icon .fa {
+        font-size: 25px;
+    } */
+}
+
+@media only screen and (max-width: 475px) {
+    .container-fluid .rightbar .card-box-parent .card-box .card-box-name .card-box-icon {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    .container-fluid .rightbar .card-box-parent .card-box {
+        padding: 2.5rem 1.5rem 2.5rem 1.5rem;
+    }
+
+    .container-fluid .rightbar .card-box-parent .card-box .card-box-name p {
+        font-size: 19px;
+    }
+
+    .container-fluid .rightbar .card-box-parent .card-box .card-box-name {
+        width: 250px;
+    }
+}

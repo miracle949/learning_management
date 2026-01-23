@@ -13,23 +13,23 @@ class HomeController{
         require_once "../app/view/dashboard.php";
     }
 
-    public function subjects(){
-        require_once "../app/view/subjects.php";
+    public function all_subjects(){
+        require_once "../app/view/all_subjects.php";
     }
 
     public function homepage(){
         require_once "../app/view/homepage.php";
     }
 
-    public function subject_module(){
-        require_once "../app/view/subject_module.php";
+    public function subjects(){
+        require_once "../app/view/subjects.php";
     }
 
-    public function lessons(){
-        require_once "../app/view/lessons.php";
+    public function subject_lessons(){
+        require_once "../app/view/subject_lessons.php";
     }
 
-    public function quiz(){
-        require_once "../app/view/Quiz.php";
+    public function subject_quiz(){
+        require_once "../app/view/subject_quiz.php";
     }
 }

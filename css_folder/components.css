@@ -123,7 +123,7 @@
 }
 
 .container-fluid nav .nav-acc .dropdown .dropdown-menu{
-    padding: 1rem 2rem 2rem 2rem;
+    padding: 1rem 2rem 1rem 2rem;
 }
 
 .container-fluid nav .nav-acc .dropdown .dropdown-menu a.dropdown-item{
@@ -132,6 +132,10 @@
 
 .container-fluid nav .nav-acc .dropdown .dropdown-menu li a{
     color: black;
+}
+
+.container-fluid nav .nav-acc .dropdown a{
+    text-decoration: none;
 }
 
 .container-fluid nav .nav-acc .dropdown .dropdown-parent button {

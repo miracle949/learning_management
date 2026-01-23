@@ -11,20 +11,20 @@ switch ($url) {
         $controller->index();
         break;
 
+    case 'all_subjects':
+        $controller->all_subjects();
+        break;
+
     case 'subjects':
         $controller->subjects();
         break;
 
-    case 'subject_module':
-        $controller->subject_module();
+    case 'subject_lessons':
+        $controller->subject_lessons();
         break;
 
-    case 'lessons':
-        $controller->lessons();
-        break;
-
-    case 'Quiz':
-        $controller->quiz();
+    case 'subject_quiz':
+        $controller->subject_quiz();
         break;
 
     default:

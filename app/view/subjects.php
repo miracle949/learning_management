@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subjects</title>
+    <title>Introduction to Philosophy of Human Person</title>
     <link rel="stylesheet" href="../css_folder/subjects.css">
     <link rel="stylesheet" href="../css_folder/components.css">
 
@@ -29,67 +29,115 @@
         <?php include("../components/sidebar.php"); ?>
 
         <div class="rightbar">
-            <h2>Your Subjects</h2>
-
-            <div class="card-box-parent">
-                <div class="card-box">
-                    <div class="card-box-name">
-                        <p class="m-0">Philosophy</p>
-                        <span>CSS 12-1</span>
-                    </div>
-
-                    <div class="card-box-link">
-                        <a href="/learning_management/public/?url=subject_module"><i class="fa fa-arrow-right"></i></a>
-                    </div>
-                </div>
+            
+            <div class="module-title">
+                <h1>Introduction to Philosophy of Human Person</h1>
+                <p>CSS-1</p>
             </div>
 
-            <div class="card-box-parent">
-                <div class="card-box">
-                    <div class="card-box-name">
-                        <p class="m-0">Philosophy</p>
-                        <span>CSS 12-1</span>
-                    </div>
-
-                    <div class="card-box-link">
-                        <a href="/learning_management/public/?url=subject_module"><i class="fa fa-arrow-right"></i></a>
-                    </div>
-                </div>
+            <div class="your-module">
+                <h2>Your Modules</h2>
             </div>
 
-            <div class="card-box-parent">
-                <div class="card-box">
-                    <div class="card-box-name">
-                        <p class="m-0">Philosophy</p>
-                        <span>CSS 12-1</span>
+            <div class="module-parent-progress">
+
+                <div class="module-progress">
+                    <h3>Introduction to Philosophy of Human Person</h3>
+
+                    <p>Learn the fundamentals of philosophy, including major branches, key thinkers, and basic
+                        philosophical concepts.</p>
+
+                    <div class="title-progress-bar">
+                        <span id="lessonText">0 of 10 lessons</span>
+                        <span id="lessonPercent">0%</span>
                     </div>
 
-                    <div class="card-box-link">
-                        <a href="/learning_management/public/?url=subject_module"><i class="fa fa-arrow-right"></i></a>
+                    <div class="parent-progress-bar">
+                        <div class="progress-bar">
+                            <div class="progress" id="moduleProgress"></div>
+                        </div>
+                    </div>
+
+                    <div class="footer-bar">
+                        <a href="/learning_management/public/?url=subject_lessons">Continue learning <i
+                                class="fa fa-arrow-right"></i></a>
                     </div>
                 </div>
-            </div>
 
-            <div class="card-box-parent">
-                <div class="card-box">
-                    <div class="card-box-name">
-                        <p class="m-0">Philosophy</p>
-                        <span>CSS 12-1</span>
+                <div class="module-progress">
+                    <h3>Introduction to Philosophy of Human Person</h3>
+
+                    <p>Learn the fundamentals of philosophy, including major branches, key thinkers, and basic
+                        philosophical concepts.</p>
+
+                    <div class="title-progress-bar">
+                        <span>6 of 10 lessons</span>
+
+                        <span>60%</span>
                     </div>
 
-                    <div class="card-box-link">
-                        <a href="/learning_management/public/?url=subject_module"><i class="fa fa-arrow-right"></i></a>
+                    <div class="parent-progress-bar">
+                        <div class="progress-bar">
+                            <div class="progress"></div>
+                        </div>
+                    </div>
+
+                    <div class="footer-bar">
+                        <a href="/learning_management/public/?url=lessons">Continue learning <i
+                                class="fa fa-arrow-right"></i></a>
                     </div>
                 </div>
+
+                <div class="module-progress">
+                    <h3>Introduction to Philosophy of Human Person</h3>
+
+                    <p>Learn the fundamentals of philosophy, including major branches, key thinkers, and basic
+                        philosophical concepts.</p>
+
+                    <div class="title-progress-bar">
+                        <span>6 of 10 lessons</span>
+
+                        <span>60%</span>
+                    </div>
+
+                    <div class="parent-progress-bar">
+                        <div class="progress-bar">
+                            <div class="progress"></div>
+                        </div>
+                    </div>
+
+                    <div class="footer-bar">
+                        <a href="/learning_management/public/?url=lessons">Continue learning <i
+                                class="fa fa-arrow-right"></i></a>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
-
 
     <!-- bootstrap link javascript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
+
+    <script>
+        const completedLessons = localStorage.getItem("completedLessons") || 0;
+        const totalLessons = localStorage.getItem("totalLessons") || 0;
+        const percent = localStorage.getItem("lessonPercent") || 0;
+
+        document.getElementById("lessonText").innerText =
+            `${completedLessons} of ${totalLessons} lessons`;
+
+        document.getElementById("lessonPercent").innerText =
+            `${percent}%`;
+
+        document.getElementById("moduleProgress").style.width =
+            percent + "%";
+
+    </script>
+
+
 </body>
 
 </html>

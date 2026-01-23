@@ -28,7 +28,7 @@
         <div class="rightbar">
             <div class="navbar-lessons">
                 <div class="navbar-title">
-                    <a href="/learning_management/public/?url=subject_module">
+                    <a href="/learning_management/public/?url=subjects">
                         <i class="fa fa-arrow-left"></i>
                         <span>Back</span>
                     </a>
@@ -41,11 +41,11 @@
                 <div class="navbar-progress">
                     <div class="progress-title">
                         <p>Module Progress</p>
-
-                        <span>60%</span>
+                        <span id="progressPercent">0%</span>
                     </div>
+
                     <div class="parent-progress">
-                        <div class="progress-lesson"></div>
+                        <div class="progress-lesson" id="progressBar"></div>
                     </div>
                 </div>
             </div>
@@ -112,7 +112,7 @@
                     <hr>
 
                     <div class="take-quiz">
-                        <a href="/learning_management/public/?url=Quiz" class="btn">Take Quiz</a>
+                        <a href="/learning_management/public/?url=subject_quiz" class="btn">Take Quiz</a>
                     </div>
                 </div>
 
@@ -163,7 +163,7 @@
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
 
-    <script src="../javascript_folder/lessons.js"></script>
+    <script src="../javascript_folder/philosophy.js"></script>
 </body>
 
 </html>

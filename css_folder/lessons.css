@@ -149,7 +149,9 @@
 
 .container-fluid .body-lessons .view-lessons {
     width: 100%;
+    /* flex: 1; */
     height: 100%;
+    overflow-y: auto;
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
     border-radius: 10px;
@@ -187,6 +189,8 @@
     margin-top: 2rem;
     margin-left: 1.9rem;
     margin-right: 1.9rem;
+    /* height: 480px;
+    overflow-y: auto; */
 }
 
 .container-fluid .body-lessons .view-lessons .view-lessons-body h4 {
@@ -204,8 +208,31 @@
     align-items: center;
 }
 
+/* .container-fluid .body-lessons .view-lessons .view-lessons-footer nav .pagination li a#prevBtn.disabled{
+    border: none;
+    color: #53575B;
+    pointer-events: none;
+} */
+
+/* .page-link {
+  border: 1px solid #4F39F6;
+  color: #4F39F6;
+}
+
+.page-item.disabled .page-link {
+  border-color: #dee2e6 !important;
+  color: #6c757d !important;
+  background-color: transparent;
+  pointer-events: none;
+} */
+
+/* #prevBtn.disabled{
+    border: none;
+    color: #53575B;
+    pointer-events: none;
+} */
+
 .container-fluid .body-lessons .view-lessons .view-lessons-footer nav .pagination li a#prevBtn span {
-    color: black;
     font-size: 15px;
 }
 
@@ -216,9 +243,9 @@
     border: none;
 }
 
-.container-fluid .body-lessons .view-lessons .view-lessons-footer nav .pagination li a#prevBtn {
+/* .container-fluid .body-lessons .view-lessons .view-lessons-footer nav .pagination li a#prevBtn {
     color: black;
-}
+} */
 
 .container-fluid .body-lessons .view-lessons .view-lessons-footer nav .pagination li a#nextBtn {
     background-color: #4F39F6;

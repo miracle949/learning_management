@@ -219,13 +219,17 @@
     margin-top: 1.5rem;
 }
 
-.container-fluid .rightbar .body-quiz .quiz-footer nav .pagination li a#prevBtn span {
+/* .container-fluid .rightbar .body-quiz .quiz-footer nav .pagination li a#prevBtn span {
     color: black;
     font-size: 15px;
 }
 
 .container-fluid .rightbar .body-quiz .quiz-footer nav .pagination li a#prevBtn {
     color: black;
+} */
+
+li.page-item{
+    font-size: 15px;
 }
 
 .container-fluid .rightbar .body-quiz .quiz-footer nav .pagination li a.page-link {

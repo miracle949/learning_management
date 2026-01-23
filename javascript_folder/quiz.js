@@ -84,7 +84,24 @@ function loadQuestion(index) {
     `;
   });
 
-  document.getElementById("prevBtn").classList.toggle("disabled", index === 0);
+  // document.getElementById("prevBtn").classList.toggle("disabled", index === 0);
+
+  const prevBtn = document.getElementById("prevBtn");
+
+  prevBtn.classList.toggle("disabled", index === 0);
+
+  if (index === 0) {
+    // remove custom styles when disabled
+    prevBtn.style.border = "";
+    prevBtn.style.color = "";
+    prevBtn.style.pointerEvents = "none";
+  } else {
+    // restore styles when enabled
+    prevBtn.style.border = "1px solid #4F39F6";
+    prevBtn.style.color = "#4F39F6";
+    prevBtn.style.pointerEvents = "auto";
+  }
+
   document.getElementById("nextBtn").querySelector("span").innerText =
     index === quiz.length - 1 ? "Finish Quiz" : "Next Question";
 }

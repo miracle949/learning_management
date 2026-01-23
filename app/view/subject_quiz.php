@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiz</title>
-    <link rel="stylesheet" href="../css_folder/Quiz.css">
+    <link rel="stylesheet" href="../css_folder/subject_quiz.css">
     <link rel="stylesheet" href="../css_folder/components.css">
 
     <!-- bootstrap link -->
@@ -28,7 +28,7 @@
         <div class="rightbar">
             <div class="navbar-quiz">
                 <div class="navbar-title">
-                    <a href="/learning_management/public/?url=lessons">
+                    <a href="/learning_management/public/?url=subject_lessons">
                         <i class="fa fa-arrow-left"></i>
                         <span>Back to Module</span>
                     </a>
