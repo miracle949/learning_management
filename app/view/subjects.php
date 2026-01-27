@@ -34,8 +34,8 @@
             $subject = $_GET['subject'] ?? null;
 
             $subjectMap = [
-                "philosophy" => "../philosophy_folder/philosophy.php",
-                "ucsp" => "../ucsp_folder/ucsp.php",
+                "philosophy" => "../Grade_12/philosophy/philosophy.php",
+                "ucsp" => "../Grade_12/ucsp/ucsp.php",
                 "css" => "../css_folder/css.php",
             ];
 

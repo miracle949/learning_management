@@ -31,12 +31,12 @@
 
             $lessonMap = [
                 "philosophy" => [
-                    "view" => "../philosophy_folder/philosophy_lessons.php",
-                    "js" => "../javascript_folder/philosophy.js"
+                    "view" => "../Grade_12/philosophy/philosophy_lessons.php",
+                    "js" => "../Grade_12/philosophy/philosophy.js"
                 ],
                 "ucsp" => [
-                    "view" => "../ucsp_folder/ucsp_lessons.php",
-                    "js" => "../javascript_folder/ucsp.js"
+                    "view" => "../Grade_12/ucsp/ucsp_lessons.php",
+                    "js" => "../Grade_12/ucsp/ucsp.js"
                 ],
                 "css" => [
                     "view" => "../css_folder/css_lessons.php",

@@ -26,7 +26,7 @@
         <?php include("../components/navbar.php"); ?>
 
         <div class="rightbar">
-            <?php include("../philosophy_folder/philosophy_quiz.php"); ?>
+            <?php include("../Grade_12/philosophy/philosophy_quiz.php"); ?>
         </div>
     </div>
 
@@ -35,7 +35,7 @@
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
 
-    <script src="../javascript_folder/quiz.js"></script>
+    <script src="../Grade_12/philosophy/quiz.js"></script>
 </body>
 
 </html>
