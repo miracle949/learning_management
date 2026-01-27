@@ -1,0 +1,105 @@
+<style>
+    .container-fluid .rightbar .module-title {
+        width: 100%;
+        height: 270px;
+        background-color: #8839FC;
+        padding: 3rem;
+        color: white;
+        border-radius: 10px;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .container-fluid .rightbar .module-parent-progress .module-progress .progress-bar .progress {
+        position: absolute;
+        padding: 0.7rem;
+        left: 0;
+        width: 60%;
+        background-color: #8839FC;
+        border-radius: 28px;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<div class="module-title">
+    <h1>Understanding Culture Society and Politics</h1>
+    <p>CSS 12-1</p>
+</div>
+
+<div class="your-module">
+    <h2>Your Modules</h2>
+</div>
+
+<div class="module-parent-progress">
+
+    <div class="module-progress" data-module-id="module1">
+        <h3>Introduction to Philosophy of Human Person</h3>
+
+        <p>Learn the fundamentals of philosophy, including major branches, key thinkers, and basic
+            philosophical concepts.</p>
+
+        <div class="title-progress-bar">
+            <span class="lessonText">0 of 10 lessons</span>
+            <span class="lessonPercent">0%</span>
+        </div>
+
+        <div class="parent-progress-bar">
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+        </div>
+
+        <div class="footer-bar">
+            <a href="/learning_management/public/?url=subject_lessons&subject=ucsp">Continue learning <i
+                    class="fa fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <div class="module-progress" data-module-id="module2">
+        <h3>Introduction to Philosophy of Human Person</h3>
+
+        <p>Learn the fundamentals of philosophy, including major branches, key thinkers, and basic
+            philosophical concepts.</p>
+
+        <div class="title-progress-bar">
+            <span class="lessonText">0 of 10 lessons</span>
+            <span class="lessonPercent">0%</span>
+        </div>
+
+        <div class="parent-progress-bar">
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+        </div>
+
+        <div class="footer-bar">
+            <a href="/learning_management/public/?url=subject_lessons&subject=ucsp&module=module2">Continue learning <i
+                    class="fa fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+    <div class="module-progress" data-module-id="module3">
+        <h3>Introduction to Philosophy of Human Person</h3>
+
+        <p>Learn the fundamentals of philosophy, including major branches, key thinkers, and basic
+            philosophical concepts.</p>
+
+        <div class="title-progress-bar">
+            <span class="lessonText">0 of 10 lessons</span>
+            <span class="lessonPercent">0%</span>
+        </div>
+
+        <div class="parent-progress-bar">
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+        </div>
+
+        <div class="footer-bar">
+            <a href="/learning_management/public/?url=subject_lessons&subject=ucsp&module=module3">Continue learning <i
+                    class="fa fa-arrow-right"></i></a>
+        </div>
+    </div>
+
+</div>

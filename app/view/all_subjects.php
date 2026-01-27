@@ -44,7 +44,7 @@
                     </div>
 
                     <div class="card-box-link">
-                        <a href="/learning_management/public/?url=subjects"><i class="fa fa-arrow-right"></i></a>
+                        <a href="/learning_management/public/?url=subjects&subject=philosophy"><i class="fa fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -62,7 +62,7 @@
                     </div>
 
                     <div class="card-box-link">
-                        <a href="#"><i class="fa fa-arrow-right"></i></a>
+                        <a href="/learning_management/public/?url=subjects&subject=ucsp"><i class="fa fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>

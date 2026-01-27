@@ -24,6 +24,12 @@ const modules = [
                 <p><b>Links:</b> Physical or wireless connections between nodes</p> 
                 <p><b>Protocols:</b> Rules governing communication between devices</p> 
                 <p><b>Bandwidth:</b> The capacity of the network connection</p> 
+
+                <h4>Benefits of Networking:</h4>
+                <p>Resource sharing (files, printers, internet connection)</p> 
+                <p>Enhanced communication (email, messaging, video calls)</p> 
+                <p>Data centralization and backup</p> 
+                <p>Improved productivity and collaboration</p>
                 `
             },
             {
@@ -141,6 +147,13 @@ const modules = [
                 body: `
                 <h4>Security Concepts</h4>
                 <p>Firewalls, Encryption, Authentication</p>
+                `
+            },
+            {
+                title: "Advanced Security",
+                body: `
+                <h4>Advanced Topics</h4>
+                <p>VPNs, IDS, IPS</p>
                 `
             },
             {

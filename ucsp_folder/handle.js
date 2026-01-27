@@ -3,7 +3,6 @@
 ========================== */
 const params = new URLSearchParams(window.location.search);
 const subject = params.get("subject") || "default";
-const moduleParam = params.get("module"); // module1, module2, etc.
 
 /* ==========================
    MODULE + LESSON DATA
@@ -24,6 +23,12 @@ const modules = [
                 <p><b>Links:</b> Physical or wireless connections between nodes</p> 
                 <p><b>Protocols:</b> Rules governing communication between devices</p> 
                 <p><b>Bandwidth:</b> The capacity of the network connection</p> 
+
+                <h4>Benefits of Networking:</h4>
+                <p>Resource sharing (files, printers, internet connection)</p> 
+                <p>Enhanced communication (email, messaging, video calls)</p> 
+                <p>Data centralization and backup</p> 
+                <p>Improved productivity and collaboration</p>
                 `
             },
             {
@@ -108,94 +113,25 @@ const modules = [
                 <h4>Advanced Topics</h4>
                 <p>VPNs, IDS, IPS</p>
                 `
-            },
-            {
-                title: "Advanced Security",
-                body: `
-                <h4>Advanced Topics</h4>
-                <p>VPNs, IDS, IPS</p>
-                `
-            },
-            {
-                title: "Advanced Security",
-                body: `
-                <h4>Advanced Topics</h4>
-                <p>VPNs, IDS, IPS</p>
-                `
-            },
-            {
-                title: "Advanced Security",
-                body: `
-                <h4>Advanced Topics</h4>
-                <p>VPNs, IDS, IPS</p>
-                `
-            }
-        ]
-    },
-    {
-        moduleId: "module3",
-        moduleTitle: "Network Security",
-        lessons: [
-            {
-                title: "Security Basics",
-                body: `
-                <h4>Security Concepts</h4>
-                <p>Firewalls, Encryption, Authentication</p>
-                `
-            },
-            {
-                title: "Advanced Security",
-                body: `
-                <h4>Advanced Topics</h4>
-                <p>VPNs, IDS, IPS</p>
-                `
-            },
-            {
-                title: "Advanced Security",
-                body: `
-                <h4>Advanced Topics</h4>
-                <p>VPNs, IDS, IPS</p>
-                `
-            },
-            {
-                title: "Advanced Security",
-                body: `
-                <h4>Advanced Topics</h4>
-                <p>VPNs, IDS, IPS</p>
-                `
-            },
-            {
-                title: "Advanced Security",
-                body: `
-                <h4>Advanced Topics</h4>
-                <p>VPNs, IDS, IPS</p>
-                `
             }
         ]
     }
 ];
 
 /* ==========================
-   ACTIVE MODULE (FIXED)
+   ACTIVE MODULE
 ========================== */
-let currentModuleIndex = modules.findIndex(
-    m => m.moduleId === moduleParam
-);
-
-if (currentModuleIndex === -1) currentModuleIndex = 0;
-
+let currentModuleIndex = 0;
 let currentLessonIndex = 0;
 
 /* ==========================
-   RESTORE SAVED LESSON (PER MODULE)
+   RESTORE SAVED PROGRESS
 ========================== */
-const savedLesson = localStorage.getItem(
-    `${subject}_${modules[currentModuleIndex].moduleId}_currentLesson`
-);
+const savedModule = localStorage.getItem(subject + "_currentModule");
+const savedLesson = localStorage.getItem(subject + "_currentLesson");
 
-if (savedLesson !== null) {
-    currentLessonIndex = parseInt(savedLesson);
-}
+if (savedModule !== null) currentModuleIndex = parseInt(savedModule);
+if (savedLesson !== null) currentLessonIndex = parseInt(savedLesson);
 
 let currentModule = modules[currentModuleIndex];
 let lessons = currentModule.lessons;
@@ -230,16 +166,18 @@ function loadLesson() {
 }
 
 /* ==========================
-   UPDATE PROGRESS
+   UPDATE MODULE PROGRESS
 ========================== */
 function updateProgress() {
     const completedLessons = currentLessonIndex + 1;
     const totalLessons = lessons.length;
     const percent = Math.round((completedLessons / totalLessons) * 100);
 
+    // Lesson UI
     progressBar.style.width = percent + "%";
     progressPercent.innerText = percent + "%";
 
+    // Save module progress
     localStorage.setItem(
         `${subject}_${currentModule.moduleId}_completedLessons`,
         completedLessons
@@ -255,16 +193,16 @@ function updateProgress() {
         percent
     );
 
-    localStorage.setItem(
-        `${subject}_${currentModule.moduleId}_currentLesson`,
-        currentLessonIndex
-    );
+    // Save position
+    localStorage.setItem(subject + "_currentModule", currentModuleIndex);
+    localStorage.setItem(subject + "_currentLesson", currentLessonIndex);
 
+    // Update module cards (dashboard)
     updateModuleCards();
 }
 
 /* ==========================
-   UPDATE MODULE DASHBOARD
+   UPDATE MODULE CARDS
 ========================== */
 function updateModuleCards() {
     document.querySelectorAll(".module-progress").forEach(moduleCard => {
@@ -289,6 +227,7 @@ function updateModuleCards() {
             percent + "%";
     });
 }
+
 
 /* ==========================
    PAGINATION

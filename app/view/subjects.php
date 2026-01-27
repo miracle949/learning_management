@@ -29,90 +29,23 @@
         <?php include("../components/sidebar.php"); ?>
 
         <div class="rightbar">
-            
-            <div class="module-title">
-                <h1>Introduction to Philosophy of Human Person</h1>
-                <p>CSS-1</p>
-            </div>
 
-            <div class="your-module">
-                <h2>Your Modules</h2>
-            </div>
+            <?php
+            $subject = $_GET['subject'] ?? null;
 
-            <div class="module-parent-progress">
+            $subjectMap = [
+                "philosophy" => "../philosophy_folder/philosophy.php",
+                "ucsp" => "../ucsp_folder/ucsp.php",
+                "css" => "../css_folder/css.php",
+            ];
 
-                <div class="module-progress">
-                    <h3>Introduction to Philosophy of Human Person</h3>
+            if ($subject && isset($subjectMap[$subject])) {
+                include $subjectMap[$subject];
+            } else {
+                echo "<h3>Select a subject</h3>";
+            }
+            ?>
 
-                    <p>Learn the fundamentals of philosophy, including major branches, key thinkers, and basic
-                        philosophical concepts.</p>
-
-                    <div class="title-progress-bar">
-                        <span id="lessonText">0 of 10 lessons</span>
-                        <span id="lessonPercent">0%</span>
-                    </div>
-
-                    <div class="parent-progress-bar">
-                        <div class="progress-bar">
-                            <div class="progress" id="moduleProgress"></div>
-                        </div>
-                    </div>
-
-                    <div class="footer-bar">
-                        <a href="/learning_management/public/?url=subject_lessons">Continue learning <i
-                                class="fa fa-arrow-right"></i></a>
-                    </div>
-                </div>
-
-                <div class="module-progress">
-                    <h3>Introduction to Philosophy of Human Person</h3>
-
-                    <p>Learn the fundamentals of philosophy, including major branches, key thinkers, and basic
-                        philosophical concepts.</p>
-
-                    <div class="title-progress-bar">
-                        <span>6 of 10 lessons</span>
-
-                        <span>60%</span>
-                    </div>
-
-                    <div class="parent-progress-bar">
-                        <div class="progress-bar">
-                            <div class="progress"></div>
-                        </div>
-                    </div>
-
-                    <div class="footer-bar">
-                        <a href="/learning_management/public/?url=lessons">Continue learning <i
-                                class="fa fa-arrow-right"></i></a>
-                    </div>
-                </div>
-
-                <div class="module-progress">
-                    <h3>Introduction to Philosophy of Human Person</h3>
-
-                    <p>Learn the fundamentals of philosophy, including major branches, key thinkers, and basic
-                        philosophical concepts.</p>
-
-                    <div class="title-progress-bar">
-                        <span>6 of 10 lessons</span>
-
-                        <span>60%</span>
-                    </div>
-
-                    <div class="parent-progress-bar">
-                        <div class="progress-bar">
-                            <div class="progress"></div>
-                        </div>
-                    </div>
-
-                    <div class="footer-bar">
-                        <a href="/learning_management/public/?url=lessons">Continue learning <i
-                                class="fa fa-arrow-right"></i></a>
-                    </div>
-                </div>
-
-            </div>
         </div>
     </div>
 
@@ -122,21 +55,37 @@
         crossorigin="anonymous"></script>
 
     <script>
-        const completedLessons = localStorage.getItem("completedLessons") || 0;
-        const totalLessons = localStorage.getItem("totalLessons") || 0;
-        const percent = localStorage.getItem("lessonPercent") || 0;
+        /* ==========================
+           SUBJECT DETECTION
+        ========================== */
+        const params = new URLSearchParams(window.location.search);
+        const subject = params.get("subject") || "default";
 
-        document.getElementById("lessonText").innerText =
-            `${completedLessons} of ${totalLessons} lessons`;
+        /* ==========================
+           UPDATE ALL MODULE CARDS
+        ========================== */
+        document.querySelectorAll(".module-progress").forEach(moduleCard => {
+            const moduleId = moduleCard.dataset.moduleId;
 
-        document.getElementById("lessonPercent").innerText =
-            `${percent}%`;
+            const completed =
+                localStorage.getItem(`${subject}_${moduleId}_completedLessons`) || 0;
 
-        document.getElementById("moduleProgress").style.width =
-            percent + "%";
+            const total =
+                localStorage.getItem(`${subject}_${moduleId}_totalLessons`) || 0;
 
+            const percent =
+                localStorage.getItem(`${subject}_${moduleId}_lessonPercent`) || 0;
+
+            moduleCard.querySelector(".lessonText").innerText =
+                `${completed} of ${total} lessons`;
+
+            moduleCard.querySelector(".lessonPercent").innerText =
+                `${percent}%`;
+
+            moduleCard.querySelector(".progress").style.width =
+                percent + "%";
+        });
     </script>
-
 
 </body>
 
