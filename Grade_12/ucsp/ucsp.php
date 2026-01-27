@@ -51,7 +51,7 @@
         </div>
 
         <div class="footer-bar">
-            <a href="/learning_management/public/?url=subject_lessons&subject=ucsp">Continue learning <i
+            <a href="/learning_management/public/?url=subject_lessons&subject=ucsp&module=module1">Continue learning <i
                     class="fa fa-arrow-right"></i></a>
         </div>
     </div>

@@ -26,7 +26,29 @@
         <?php include("../components/navbar.php"); ?>
 
         <div class="rightbar">
-            <?php include("../Grade_12/philosophy/philosophy_quiz.php"); ?>
+            <?php
+            $subject = $_GET['subject'] ?? null;
+
+            $quizMap = [
+                "philosophy" => [
+                    "view" => "../Grade_12/philosophy/philosophy_quiz.php",
+                    "js" => "../Grade_12/philosophy/philosophy_quiz.js"
+                ],
+                "ucsp" => [
+                    "view" => "../Grade_12/ucsp/ucsp_quiz.php",
+                    "js" => "../Grade_12/ucsp/ucsp_quiz.js"
+                ]
+                // add more subjects here later
+            ];
+
+            if ($subject && isset($quizMap[$subject])) {
+                include $quizMap[$subject]["view"];
+                echo '<script src="' . $quizMap[$subject]["js"] . '"></script>';
+            } else {
+                echo "<h3>No quiz available for this subject.</h3>";
+            }
+            ?>
+            
         </div>
     </div>
 
@@ -34,8 +56,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
-
-    <script src="../Grade_12/philosophy/quiz.js"></script>
+<!-- 
+    <script src="../Grade_12/philosophy/philosophy_quiz.js"></script> -->
 </body>
 
 </html>

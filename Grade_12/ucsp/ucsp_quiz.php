@@ -1,6 +1,6 @@
 <div class="navbar-quiz">
     <div class="navbar-title">
-        <a href="/learning_management/public/?url=subject_lessons&subject=philosophy">
+        <a href="/learning_management/public/?url=subject_lessons&subject=ucsp&module=module1">
             <i class="fa fa-arrow-left"></i>
             <span>Back to Module</span>
         </a>

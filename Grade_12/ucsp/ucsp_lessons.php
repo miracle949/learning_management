@@ -84,7 +84,7 @@
         <hr>
 
         <div class="take-quiz">
-            <a href="/learning_management/public/?url=subject_quiz&subject=ucsp" class="btn">Take Quiz</a>
+            <a href="/learning_management/public/?url=subject_lessons&subject=ucsp&module=module1" class="btn">Take Quiz</a>
         </div>
     </div>
 

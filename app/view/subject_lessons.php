@@ -61,6 +61,20 @@
         crossorigin="anonymous"></script>
 
     <!-- <script src="../javascript_folder/philosophy.js"></script> -->
+
+    <script>
+        const lessonParams = new URLSearchParams(window.location.search);
+        const lessonSubject = lessonParams.get("subject") || "philosophy";
+        const lessonModule = lessonParams.get("module");
+
+        const quizBtn = document.querySelector(".take-quiz a");
+
+        if (lessonModule) {
+            quizBtn.href =
+                `/learning_management/public/?url=subject_quiz&subject=${lessonSubject}&module=${lessonModule}`;
+        }
+    </script>
+
 </body>
 
 </html>

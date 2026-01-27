@@ -1,16 +1,12 @@
 <div class="navbar-quiz">
     <div class="navbar-title">
-        <a href="/learning_management/public/?url=subject_lessons&subject=philosophy">
+        <a href="/learning_management/public/?url=subject_lessons&subject=philosophy&module=module1">
             <i class="fa fa-arrow-left"></i>
             <span>Back to Module</span>
         </a>
     </div>
 
     <div class="navbar-complete-time">
-        <!-- <div class="time">
-                        <i class="fa fa-clock"></i>
-                        <p>0:00</p>
-                    </div> -->
         <div class="answered">
             <p id="answered-count">0 / 10 answered</p>
         </div>
