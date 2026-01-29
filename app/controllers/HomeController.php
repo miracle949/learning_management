@@ -32,4 +32,12 @@ class HomeController{
     public function subject_quiz(){
         require_once "../app/view/subject_quiz.php";
     }
+
+    public function login(){
+        require_once "../app/view/login.php";
+    }
+
+    public function signup(){
+        require_once "../app/view/signup.php";
+    }
 }

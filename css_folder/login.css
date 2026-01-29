@@ -1,0 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400..900&family=Lobster&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Saira+Condensed:wght@100;200;300;400;500;600;700;800;900&family=Sekuya&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+
+* {
+    font-family: "Poppins", sans-serif;
+}
+
+.container-fluid .login-parent{
+    height: 100vh;
+    display: flex;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+.container-fluid .login-parent .image-container{
+    background-image: url(../images/login-bg.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-right: 1px solid rgba(0,0,0,0.1);
+}
+
+.container-fluid .login-parent .form-extension{
+    width: calc(100% / 2);
+    height: 100%;
+}
+
+.container-fluid .login-parent .form{
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: left;
+    flex-direction: column;
+}
+/* 
+.container-fluid .login-parent .form .form-logo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+} */
+
+.container-fluid .login-parent .form .form-logo .parent-logo{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+}
+
+.container-fluid .login-parent .form .form-logo .parent-logo p{
+    all: unset;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.container-fluid .login-parent .form .form-logo .parent-logo .logo{
+    width: 60px;
+    height: 60px;
+    background-image: url(../images/login-logo2.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-radius: 7px;
+    /* border-radius: 50%; */
+    /* margin-top: 2.5rem; */
+}
+
+.container-fluid .login-parent .form .form-logo p{
+    font-size: 14.5px;
+    color: #808080;
+}
+
+.container-fluid .login-parent .form{
+    padding-top: 7rem;
+    padding-left: 5rem;
+    padding-right: 5rem;
+    padding-bottom: 3rem;
+}
+
+/* .container-fluid .login-parent .form .text-box{
+    margin-top: 1.5rem;
+} */
+
+.container-fluid .login-parent .form .text-box:nth-child(3){
+    margin-top: 1.5rem;
+}
+
+.container-fluid .login-parent .form .text-box .input-group input, label{
+    font-size: 14.5px;
+}
+
+.container-fluid .login-parent .form .text-box .input-group {
+    margin-top: 0.3rem;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 7px;
+}
+
+/* .container-fluid .login-parent .form .text-box .input-group .input-group-text{
+    background-color: #dfdfdf;
+    color: white;
+} */
+
+.container-fluid .login-parent .form h2{
+    font-size: 23px;
+    margin-top: 1.5rem;
+}
+
+.container-fluid .login-parent .form .forgot{
+    margin-top: 1.5rem;
+}
+
+.container-fluid .login-parent .form .forgot a{
+    font-size: 14.5px;
+    color: #212529;
+}
+
+.container-fluid .login-parent .form .button{
+    margin-top: 1.5rem;
+}
+
+.container-fluid .login-parent .form .button button{
+    padding: 7px;
+    border: 1px solid rgba(0,0,0,0.1);
+    outline: none;
+    width: 100%;
+    border-radius: 7px;
+    font-size: 14.5px;
+    text-transform: uppercase;
+    background-color: #0d589f;
+    color: white;
+    font-weight: bold;
+}
+
+.container-fluid .login-parent .form h4{
+    margin-top: 3rem;
+    text-align: center;
+    font-size: 14.5px;
+    font-weight: normal;
+}
+
+.container-fluid .login-parent .form .accounts{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 2rem;
+    gap: 1rem;
+}
+
+.container-fluid .login-parent .form .accounts a{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: #212529;
+    border: 1px solid #212529;
+    padding: 0.5rem 0.8rem;
+    border-radius: 7px;
+}
+
+.container-fluid .login-parent .form .accounts a p{
+    font-size: 14.5px;
+}
+
+.container-fluid .login-parent .form .change{
+    width: 100%;
+    text-align: center;
+    margin-top: 2.5rem;
+}
+
+.container-fluid .login-parent .form .change label, .container-fluid .login-parent .form .change a{
+    color: #212529;
+    font-size: 15px;
+}

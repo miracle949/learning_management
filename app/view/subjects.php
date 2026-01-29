@@ -36,7 +36,11 @@
             $subjectMap = [
                 "philosophy" => "../Grade_12/philosophy/philosophy.php",
                 "ucsp" => "../Grade_12/ucsp/ucsp.php",
-                "css" => "../css_folder/css.php",
+                "css" => "../Grade_12/css/css.php",
+                "pe" => "../Grade_12/pe/pe.php",
+                "3i" => "../Grade_12/3i/3i.php",
+                "entrep" => "../Grade_12/entrep/entrep.php",
+                "work_immersion" => "../Grade_12/work_immersion/work_immersion.php",
             ];
 
             if ($subject && isset($subjectMap[$subject])) {

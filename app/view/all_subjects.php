@@ -80,7 +80,7 @@
                     </div>
 
                     <div class="card-box-link">
-                        <a href="#"><i class="fa fa-arrow-right"></i></a>
+                        <a href="/learning_management/public/?url=subjects&subject=css"><i class="fa fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -98,7 +98,7 @@
                     </div>
 
                     <div class="card-box-link">
-                        <a href="#"><i class="fa fa-arrow-right"></i></a>
+                        <a href="/learning_management/public/?url=subjects&subject=pe"><i class="fa fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -116,7 +116,7 @@
                     </div>
 
                     <div class="card-box-link">
-                        <a href="#"><i class="fa fa-arrow-right"></i></a>
+                        <a href="/learning_management/public/?url=subjects&subject=3i"><i class="fa fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -134,7 +134,7 @@
                     </div>
 
                     <div class="card-box-link">
-                        <a href="#"><i class="fa fa-arrow-right"></i></a>
+                        <a href="/learning_management/public/?url=subjects&subject=entrep"><i class="fa fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
@@ -152,7 +152,7 @@
                     </div>
 
                     <div class="card-box-link">
-                        <a href="#"><i class="fa fa-arrow-right"></i></a>
+                        <a href="/learning_management/public/?url=subjects&subject=work_immersion"><i class="fa fa-arrow-right"></i></a>
                     </div>
                 </div>
             </div>

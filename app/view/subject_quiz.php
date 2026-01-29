@@ -37,7 +37,27 @@
                 "ucsp" => [
                     "view" => "../Grade_12/ucsp/ucsp_quiz.php",
                     "js" => "../Grade_12/ucsp/ucsp_quiz.js"
-                ]
+                ],
+                "css" => [
+                    "view" => "../Grade_12/css/css_quiz.php",
+                    "js" => "../Grade_12/css/css_quiz.js"
+                ],
+                "pe" => [
+                    "view" => "../Grade_12/pe/pe_quiz.php",
+                    "js" => "../Grade_12/pe/pe_quiz.js"
+                ],
+                "3i" => [
+                    "view" => "../Grade_12/3i/3i_quiz.php",
+                    "js" => "../Grade_12/3i/3i_quiz.js"
+                ],
+                "entrep" => [
+                    "view" => "../Grade_12/entrep/entrep_quiz.php",
+                    "js" => "../Grade_12/entrep/entrep_quiz.js"
+                ],
+                "work_immersion" => [
+                    "view" => "../Grade_12/work_immersion/work_immersion_quiz.php",
+                    "js" => "../Grade_12/work_immersion/work_immersion_quiz.js"
+                ],
                 // add more subjects here later
             ];
 
@@ -48,7 +68,7 @@
                 echo "<h3>No quiz available for this subject.</h3>";
             }
             ?>
-            
+
         </div>
     </div>
 
@@ -56,7 +76,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
-<!-- 
+    <!-- 
     <script src="../Grade_12/philosophy/philosophy_quiz.js"></script> -->
 </body>
 

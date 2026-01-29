@@ -31,8 +31,16 @@ switch ($url) {
         $controller->subject_quiz();
         break;
 
+    case 'login':
+        $controller->login();
+        break;
+
+    case 'signup':
+        $controller->signup();
+        break;
+
     default:
-        $controller->index();
+        $controller->login();
         break;
 }
 

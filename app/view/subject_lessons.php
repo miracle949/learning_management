@@ -39,9 +39,25 @@
                     "js" => "../Grade_12/ucsp/ucsp.js"
                 ],
                 "css" => [
-                    "view" => "../css_folder/css_lessons.php",
-                    "js" => "../javascript_folder/css.js"
-                ]
+                    "view" => "../Grade_12/css/css_lessons.php",
+                    "js" => "../Grade_12/css/css.js"
+                ],
+                "pe" => [
+                    "view" => "../Grade_12/pe/pe_lessons.php",
+                    "js" => "../Grade_12/pe/pe.js"
+                ],
+                "3i" => [
+                    "view" => "../Grade_12/3i/3i_lessons.php",
+                    "js" => "../Grade_12/3i/3i.js"
+                ],
+                "entrep" => [
+                    "view" => "../Grade_12/entrep/entrep_lessons.php",
+                    "js" => "../Grade_12/entrep/entrep.js"
+                ],
+                "work_immersion" => [
+                    "view" => "../Grade_12/work_immersion/work_immersion_lessons.php",
+                    "js" => "../Grade_12/work_immersion/work_immersion.js"
+                ],
             ];
 
             if ($subject && isset($lessonMap[$subject])) {
