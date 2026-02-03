@@ -9,7 +9,7 @@
             </li>
 
             <li>
-                <a href="/learning_management/public/?url=all_subjects" class="text-decoration-none">
+                <a href="/learning_management/public/?url=subjects_all" class="text-decoration-none">
                     <i class="fa fa-book-open"></i>
                     <span>Subjects</span>
                 </a>

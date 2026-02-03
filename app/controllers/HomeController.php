@@ -7,18 +7,25 @@ class HomeController{
     public $user;
 
     public function index(){
-        $this->user = new User();
-        $name = $this->user->getName();
+        if(!isset($_SESSION['user_id'])){
 
+            header("Location: /learning_management/public/?url=login");
+            exit;
+
+        }else{
+            
+            require_once "../app/view/dashboard.php";
+
+        }
+        
+    }
+
+    public function subjects_all(){
+        require_once "../app/view/subjects_all.php";
+    }
+
+    public function dashboard(){
         require_once "../app/view/dashboard.php";
-    }
-
-    public function all_subjects(){
-        require_once "../app/view/all_subjects.php";
-    }
-
-    public function homepage(){
-        require_once "../app/view/homepage.php";
     }
 
     public function subjects(){

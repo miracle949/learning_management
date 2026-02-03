@@ -58,6 +58,14 @@
                     "view" => "../Grade_12/work_immersion/work_immersion_quiz.php",
                     "js" => "../Grade_12/work_immersion/work_immersion_quiz.js"
                 ],
+                "media_info_literature" => [
+                    "view" => "../Grade_11/media_info_literature/media_info_literature_quiz.php",
+                    "js" => "../Grade_11/media_info_literature/media_info_literature_quiz.js"
+                ],
+                "p_e" => [
+                    "view" => "../Grade_11/pe/pe_quiz.php",
+                    "js" => "../Grade_11/pe/pe_quiz.js"
+                ],
                 // add more subjects here later
             ];
 

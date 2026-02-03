@@ -21,11 +21,11 @@
 
     <div class="container-fluid p-0">
 
-        <form action="" method="post">
+        <form action="?url=login" method="post">
 
             <div class="login-parent">
                 <div class="form-extension image-container">
-                    <!-- <img src="../images/Computer.jpg" alt=""> -->
+                    <img src="../images/login-bg.jpg" alt="">
                 </div>
                 <div class="form-extension form">
 
@@ -39,22 +39,16 @@
                     </div>
 
                     <div class="text-box">
-                        <label>Username</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fa fa-user"></i></span>
-                            <input type="text" class="form-control" placeholder="Enter username" name="" id="">
-                        </div>
+                        <label>Username or Email</label>
+                        <input type="text" class="form-control" placeholder="Enter username or email" name="email" id="" required>
                     </div>
 
                     <div class="text-box">
                         <label>Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                            <input type="password" class="form-control" placeholder="Enter password" name="" id="">
-                        </div>
+                        <input type="password" class="form-control" placeholder="Enter password" name="password" id="" required>
                     </div>
 
-                    <div class="forgot">
+                    <div class="forgot text-end">
                         <a href="#">Forgot Password</a>
                     </div>
 

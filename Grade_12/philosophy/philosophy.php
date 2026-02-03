@@ -20,7 +20,7 @@
 
 <div class="module-title">
     <h1>Introduction to Philosophy of Human Person</h1>
-    <p>CSS-1</p>
+    <p><?= $_SESSION['section'] ?></p>
 </div>
 
 <div class="your-module">

@@ -24,7 +24,7 @@
 
 <div class="module-title">
     <h1>Understanding Culture Society and Politics</h1>
-    <p>CSS 12-1</p>
+    <p><?= $_SESSION['section'] ?></p>
 </div>
 
 <div class="your-module">

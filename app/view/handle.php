@@ -1,56 +1,298 @@
-<?php
-$subject = $_GET['subject'] ?? null;
+<!DOCTYPE html>
+<html lang="en">
 
-$subjectMap = [
-    "philosophy" => "../philosophy_folder/philosophy.php",
-    "ucsp" => "../ucsp_folder/ucsp.php",
-    "css" => "../css_folder/css.php",
-];
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="../css_folder/style.css">
+    <link rel="stylesheet" href="../css_folder/components.css">
 
-if ($subject && isset($subjectMap[$subject])) {
-    include $subjectMap[$subject];
-} else {
-    echo "<h3>Select a subject</h3>";
-}
-?>
+    <!-- bootstrap link -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 
-<script>
-    /* ==========================
-        SUBJECT DETECTION
-    ========================== */
-    const params = new URLSearchParams(window.location.search);
-    const subject = params.get("subject") || "default";
+    <!-- font awesome cdn link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
 
-    /* ==========================
-       MODULE ID (IMPORTANT)
-       MUST match moduleId in lesson JS
-    ========================== */
-    const moduleId = "module1"; // change if needed
+<body>
+    <div class="container-fluid p-0">
 
-    /* ==========================
-       GET SAVED MODULE PROGRESS
-    ========================== */
-    const completedLessons = parseInt(
-        localStorage.getItem(`${subject}_${moduleId}_completedLessons`)
-    ) || 0;
+        <?php include("../components/offcanvas.php"); ?>
 
-    const totalLessons = parseInt(
-        localStorage.getItem(`${subject}_${moduleId}_totalLessons`)
-    ) || 0;
+        <nav class="main-nav">
+            <div class="nav-title">
+                <button class="menu-bar" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop"
+                    aria-controls="staticBackdrop">
+                    <div class="fa fa-bars"></div>
+                </button>
 
-    const percent = parseInt(
-        localStorage.getItem(`${subject}_${moduleId}_lessonPercent`)
-    ) || 0;
+                <h3 class="m-0">Learning Management</h3>
+            </div>
 
-    /* ==========================
-       UPDATE MODULE UI
-    ========================== */
-    document.getElementById("lessonText").innerText =
-        `${completedLessons} of ${totalLessons} lessons`;
+            <div class="nav-acc">
+                <button><i class="fas fa-grip"></i></button>
+                <div class="dropdown">
 
-    document.getElementById("lessonPercent").innerText =
-        `${percent}%`;
+                    <a href="#" class="dropdown-parent" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 
-    document.getElementById("moduleProgress").style.width =
-        Math.min(percent, 100) + "%";
-</script>
+                        <button>J</button>
+                    </a>
+
+                    <ul class="dropdown-menu">
+                        <div class="d-flex justify-content-left align-items-center dropdown-profile gap-2">
+                            <button>J</button>
+                            <li>jairabono@gmail.com</li>
+                        </div>
+
+                        <hr>
+
+                        <li>
+
+                            <a href="#">
+                                <div class="icon-parent">
+                                    <i class="fa fa-user"></i>
+                                </div>
+                                <span>Edit Profile</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <div class="icon-parent">
+                                    <i class="fa fa-lock"></i>
+                                </div>
+                                <span>Reset Password</span>
+                            </a>
+                        </li>
+                        <form action="" method="post">
+                            <li>
+                                <a href="#">
+                                    <div class="icon-parent">
+                                        <i class="fa fa-sign-out"></i>
+                                    </div>
+                                    <button>Logout</button>
+                                </a>
+
+                            </li>
+                        </form>
+                    </ul>
+
+                </div>
+            </div>
+        </nav>
+
+        <?php include("../components/sidebar.php"); ?>
+
+        <div class="rightbar">
+            <div class="card-parent-box">
+                <div class="card-box">
+                    <div class="data_text">
+                        <span>Total Subjects</span>
+
+                        <p>4</p>
+                    </div>
+
+                    <div class="data_icon">
+                        <i class="fa fa-book-open"></i>
+                    </div>
+                </div>
+
+                <div class="card-box">
+                    <div class="data_text">
+                        <span>Completed Lessons</span>
+
+                        <p>8</p>
+                    </div>
+
+                    <div class="data_icon">
+                        <i class="fa fa-award"></i>
+                    </div>
+                </div>
+
+                <div class="card-box">
+                    <div class="data_text">
+                        <span>Study Time</span>
+
+                        <p>15h</p>
+                    </div>
+
+                    <div class="data_icon">
+                        <i class="fa fa-clock"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-progress">
+                <h2>Subjects Progress</h2>
+            </div>
+
+            <div class="progress-parent-box">
+
+                <div class="progress-box">
+                    <div class="progress-parent">
+                        <div class="progress-title">
+                            <div class="parent-icon">
+                                <i class="fa fa-book-open"></i>
+                            </div>
+                            <span>Introduction to Philosophy of Human Person</span>
+                        </div>
+
+                        <div class="progress-percent-parent">
+                            <div class="progress-percent-title">
+                                <p>Subject Progress</p>
+
+                                <span>50%</span>
+                            </div>
+                            <div class="progress-percent">
+                                <div class="percent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-box">
+                    <div class="progress-parent">
+                        <div class="progress-title">
+                            <div class="parent-icon">
+                                <i class="fa fa-book-open"></i>
+                            </div>
+                            <span>Understanding Culture Society and Politics</span>
+                        </div>
+
+                        <div class="progress-percent-parent">
+                            <div class="progress-percent-title">
+                                <p>Subject Progress</p>
+
+                                <span>50%</span>
+                            </div>
+                            <div class="progress-percent">
+                                <div class="percent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-box">
+                    <div class="progress-parent">
+                        <div class="progress-title">
+                            <div class="parent-icon">
+                                <i class="fa fa-book-open"></i>
+                            </div>
+                            <span>Computer System Servicing</span>
+                        </div>
+
+                        <div class="progress-percent-parent">
+                            <div class="progress-percent-title">
+                                <p>Subject Progress</p>
+
+                                <span>50%</span>
+                            </div>
+                            <div class="progress-percent">
+                                <div class="percent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-box">
+                    <div class="progress-parent">
+                        <div class="progress-title">
+                            <div class="parent-icon">
+                                <i class="fa fa-book-open"></i>
+                            </div>
+                            <span>Physical Education</span>
+                        </div>
+
+                        <div class="progress-percent-parent">
+                            <div class="progress-percent-title">
+                                <p>Subject Progress</p>
+
+                                <span>50%</span>
+                            </div>
+                            <div class="progress-percent">
+                                <div class="percent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-box">
+                    <div class="progress-parent">
+                        <div class="progress-title">
+                            <div class="parent-icon">
+                                <i class="fa fa-book-open"></i>
+                            </div>
+                            <span>Inquiries, Investigation and Immersion</span>
+                        </div>
+
+                        <div class="progress-percent-parent">
+                            <div class="progress-percent-title">
+                                <p>Subject Progress</p>
+
+                                <span>50%</span>
+                            </div>
+                            <div class="progress-percent">
+                                <div class="percent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-box">
+                    <div class="progress-parent">
+                        <div class="progress-title">
+                            <div class="parent-icon">
+                                <i class="fa fa-book-open"></i>
+                            </div>
+                            <span>Entrepreneurship</span>
+                        </div>
+
+                        <div class="progress-percent-parent">
+                            <div class="progress-percent-title">
+                                <p>Subject Progress</p>
+
+                                <span>50%</span>
+                            </div>
+                            <div class="progress-percent">
+                                <div class="percent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="progress-box">
+                    <div class="progress-parent">
+                        <div class="progress-title">
+                            <div class="parent-icon">
+                                <i class="fa fa-book-open"></i>
+                            </div>
+                            <span>Work Immersion</span>
+                        </div>
+
+                        <div class="progress-percent-parent">
+                            <div class="progress-percent-title">
+                                <p>Subject Progress</p>
+
+                                <span>50%</span>
+                            </div>
+                            <div class="progress-percent">
+                                <div class="percent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- bootstrap link javascript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

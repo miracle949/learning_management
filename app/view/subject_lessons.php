@@ -58,6 +58,38 @@
                     "view" => "../Grade_12/work_immersion/work_immersion_lessons.php",
                     "js" => "../Grade_12/work_immersion/work_immersion.js"
                 ],
+                "media_info_literature" => [
+                    "view" => "../Grade_11/media_info_literature/media_info_literature_lessons.php",
+                    "js" => "../Grade_11/media_info_literature/media_info_literature.js"
+                ],
+                "p_e" => [
+                    "view" => "../Grade_11/p_e/pe_lessons.php",
+                    "js" => "../Grade_11/p_e/pe.js"
+                ],
+                "css_11" => [
+                    "view" => "../Grade_11/css_11/css_lessons.php",
+                    "js" => "../Grade_11/css_11/css.js"
+                ],
+                "reading_writing" => [
+                    "view" => "../Grade_11/reading_writing/reading_writing_lessons.php",
+                    "js" => "../Grade_11/reading_writing/reading_writing.js"
+                ],
+                "pagbasa_pagsusuri" => [
+                    "view" => "../Grade_11/pagbasa_pagsusuri/pagbasa_pagsusuri_lessons.php",
+                    "js" => "../Grade_11/pagbasa_pagsusuri/pagbasa_pagsusuri.js"
+                ],
+                "practical_research" => [
+                    "view" => "../Grade_11/practical_research/practical_research_lessons.php",
+                    "js" => "../Grade_11/practical_research/practical_research.js"
+                ],
+                "physical_science" => [
+                    "view" => "../Grade_11/physical_science/physical_science_lessons.php",
+                    "js" => "../Grade_11/physical_science/physical_science.js"
+                ],
+                "statistics_probability" => [
+                    "view" => "../Grade_11/statistics_probability/statistics_probability_lessons.php",
+                    "js" => "../Grade_11/statistics_probability/statistics_probability.js"
+                ],
             ];
 
             if ($subject && isset($lessonMap[$subject])) {

@@ -34,6 +34,7 @@
             $subject = $_GET['subject'] ?? null;
 
             $subjectMap = [
+                // Grade 12
                 "philosophy" => "../Grade_12/philosophy/philosophy.php",
                 "ucsp" => "../Grade_12/ucsp/ucsp.php",
                 "css" => "../Grade_12/css/css.php",
@@ -41,6 +42,16 @@
                 "3i" => "../Grade_12/3i/3i.php",
                 "entrep" => "../Grade_12/entrep/entrep.php",
                 "work_immersion" => "../Grade_12/work_immersion/work_immersion.php",
+
+                // Grade 11
+                "media_info_literature" => "../Grade_11/media_info_literature/media_info_literature.php",
+                "p_e" => "../Grade_11/p_e/pe.php",
+                "css_11" => "../Grade_11/css_11/css.php",
+                "reading_writing" => "../Grade_11/reading_writing/reading_writing.php",
+                "pagbasa_pagsusuri" => "../Grade_11/pagbasa_pagsusuri/pagbasa_pagsusuri.php",
+                "practical_research" => "../Grade_11/practical_research/practical_research.php",
+                "physical_science" => "../Grade_11/physical_science/physical_science.php",
+                "statistics_probability" => "../Grade_11/statistics_probability/statistics_probability.php",
             ];
 
             if ($subject && isset($subjectMap[$subject])) {

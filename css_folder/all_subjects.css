@@ -85,6 +85,15 @@
     border-radius: 10px;
 }
 
+.container-fluid .rightbar .card-box-parent:nth-child(9) .card-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #5D7C81;
+    color: white;
+    border-radius: 10px;
+}
+
 /* .container-fluid .rightbar .card-box-parent:nth-child(10) .card-box {
     display: flex;
     justify-content: space-between;
@@ -138,6 +147,11 @@
 
 .container-fluid .rightbar .card-box-parent:nth-child(8) .card-box .card-box-name .card-box-icon {
     background-color: #58ef94;
+    border-radius: 7px;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(9) .card-box .card-box-name .card-box-icon {
+    background-color: #6fb0ba;
     border-radius: 7px;
 }
 
