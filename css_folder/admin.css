@@ -1,0 +1,292 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../Poppins/Poppins-Regular.ttf') format('truetype');
+    font-weight: 400;
+}
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+.container-fluid nav {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 1.5rem 2rem 1.5rem;
+    background-color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.container-fluid nav .nav-logo{
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.container-fluid nav h2 {
+    font-size: 19px;
+    margin: 0;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.container-fluid nav form button {
+    padding: 10px 30px;
+    border-radius: 10px;
+    border: none;
+    background-color: #4F39F6;
+    color: white;
+    font-weight: 600;
+    font-size: 14.5px;
+}
+
+.container-fluid main {
+    background-color: #F2F3FF;
+    padding: 3rem;
+}
+
+.container-fluid main .parent-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.container-fluid main .parent-card .card-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: calc(100% / 4);
+    padding: 2rem 1.5rem 2rem 1.5rem;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.container-fluid main .parent-card .card-box .card-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.container-fluid main .parent-card .card-box .card-text span {
+    font-size: 15.5px;
+    color: #808080;
+}
+
+.container-fluid main .parent-card .card-box .card-text p {
+    margin: 0;
+    font-size: 23px;
+}
+
+.container-fluid main .parent-card .card-box .card-icon .fa {
+    font-size: 33px;
+}
+
+.container-fluid main .parent-recent-actions {
+    display: flex;
+    justify-content: space-between;
+    /* align-items: center; */
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.container-fluid main .parent-recent-actions .recent-students {
+    /* padding: 2rem 1.5rem 2rem 1.5rem; */
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    width: 100%;
+    /* height: 550px;
+    overflow-y: auto; */
+}
+
+.container-fluid main .parent-recent-actions .recent-students .recent-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 1.5rem 0.5rem 1.5rem;
+}
+
+.container-fluid main .parent-recent-actions .recent-students .recent-nav a {
+    text-decoration: none;
+    color: #4F39F6;
+    font-size: 15.5px;
+}
+
+.container-fluid main .parent-recent-actions .recent-students .parent-data{
+    /* margin-top: 2rem; */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 450px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.container-fluid main .parent-recent-actions .recent-students .parent-data .data-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #C7C8C9;
+    width: 100%;
+    /* padding: 0.3rem 1.5rem 1.5rem 1.5rem; */
+}
+
+.container-fluid main .parent-recent-actions .recent-students .parent-data .data-card .data-text,
+.container-fluid main .parent-recent-actions .recent-students .parent-data .data-card .data-progress{
+    padding: 0.3rem 1.5rem 1.5rem 1.5rem;
+    /* position: relative; */
+    /* max-width: 600px; */
+    width: 45%;
+}
+
+.container-fluid main .parent-recent-actions .recent-students .parent-data .data-card .data-progress .progress-text{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14.5px;
+}
+
+/* .container-fluid main .parent-recent-actions .recent-students .parent-data .data-card .data-text{
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+} */
+
+.container-fluid main .parent-recent-actions .recent-students .parent-data .data-card .data-text p:nth-child(1){
+    font-size: 16px;
+}
+
+.container-fluid main .parent-recent-actions .recent-students .parent-data .data-card .data-text p:nth-child(2){
+    font-size: 14.5px;
+    color: #808080;
+    margin-top: 0.3rem;
+}
+
+.container-fluid main .parent-recent-actions .recent-students .parent-data .data-card p{
+    margin: 0;
+}
+
+.container-fluid main .parent-recent-actions .recent-students .parent-data .data-card .data-text .data-button{
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.container-fluid main .parent-recent-actions .recent-students .parent-data .data-card .data-text .data-button span{
+    padding: 7px 15px;
+    border-radius: 7px;
+    font-size: 12.5px;
+}
+
+.container-fluid main .parent-recent-actions .recent-students .parent-data .data-card .data-text .data-button span:nth-child(1){
+    background-color: #DBEAFE;
+    color: #1447E6;
+}
+
+.container-fluid main .parent-recent-actions .recent-students .parent-data .data-card .data-text .data-button span:nth-child(2){
+    background-color: #F3E8FF;
+    color: #8200DB;
+}
+
+/* .container-fluid main .parent-recent-actions .recent-students .parent-data .data-card .data-progress{
+    pos
+} */
+
+.container-fluid main .parent-recent-actions .recent-students .parent-data .data-card .data-progress .parent-progress{
+    /* max-width: 500px; */
+    /* width: 100%; */
+    /* padding: 0.7rem; */
+    /* padding: 0.7rem; */
+    /* position: relative; */
+    position: relative;
+    padding: 0.5rem;
+    background-color: #d9d9d9;
+    border-radius: 28px;
+    margin-top: 0.3rem;
+    overflow-y: auto;
+}
+
+.container-fluid main .parent-recent-actions .recent-students .parent-data .data-card .data-progress .parent-progress .progress{
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: #6366F1;
+    padding: 0.5rem;
+    width: 50%;
+    border-radius: 28px;
+}
+
+.container-fluid main .parent-recent-actions .actions-card {
+    width: calc(100% - 550px);
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.container-fluid main .parent-recent-actions .actions-card .parent-manage{
+    /* margin-top: 1.5rem; */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+}
+
+.container-fluid main .parent-recent-actions .actions-card .parent-manage a{
+    border: none;
+    outline: none;
+    background-color: none;
+    text-decoration: none;
+    padding: 0;
+    border-radius: 10px;
+    color: #212529;
+}
+
+.container-fluid main .parent-recent-actions .actions-card .parent-manage .manage-card{
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem 1rem 1.5rem;
+    gap: 1rem;
+    background-color: #EFF6FF;
+    border-radius: 10px;
+}
+
+.container-fluid main .parent-recent-actions .actions-card .parent-manage .manage-card .fa{
+    font-size: 19px;
+    color: #4F39F6;
+}
+
+.container-fluid main .parent-recent-actions .actions-card .parent-manage a:nth-child(3) .manage-card .fa{
+    color: #9810FA;
+}
+
+.container-fluid main .parent-recent-actions .actions-card .parent-manage a:nth-child(3) .manage-card{
+    background-color: #FAF5FF;
+}
+
+.container-fluid main .parent-recent-actions .actions-card .parent-manage .manage-card .manage-text p{
+    margin: 0;
+    font-weight: 600;
+    text-align: left;
+}
+
+.container-fluid main .parent-recent-actions .actions-card .parent-manage .manage-card .manage-text span{
+    font-size: 15px;
+    color: #808080;
+}
+
+.container-fluid main .parent-recent-actions .actions-card .actions-nav {
+    padding: 2rem 1.5rem 0.5rem 1.5rem;
+}
+
+.container-fluid main .parent-recent-actions h3 {
+    font-size: 17.5px;
+    font-weight: 600;
+}
+

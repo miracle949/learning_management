@@ -1,0 +1,198 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../Poppins/Poppins-Regular.ttf') format('truetype');
+    font-weight: 400;
+}
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+.container-fluid nav {
+    width: 100%;
+    padding: 2rem 1.5rem 2rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.container-fluid nav a {
+    color: #212529;
+    font-size: 19px;
+}
+
+.container-fluid nav button {
+    border: none;
+    outline: none;
+    background-color: #212529;
+    color: white;
+    padding: 10px 30px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.container-fluid main {
+    background-color: #F2F3FF;
+    padding: 2rem 3rem 2rem 3rem;
+}
+
+.container-fluid main .search-parent {
+    background-color: #ffffff;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    border-radius: 10px;
+}
+
+.container-fluid main .search-parent .search-full-parent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.container-fluid main .search-parent .filter {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.container-fluid main .search-parent .filter span {
+    font-size: 14.5px;
+    margin: 0;
+}
+
+.container-fluid main .search-parent .search-form,
+.container-fluid main .search-parent .search-level,
+.container-fluid main .search-parent .search-section {
+    width: 100%;
+}
+
+input.form-control,
+select.form-select {
+    font-size: 15px;
+}
+
+.container-fluid .table-parent {
+    background-color: #ffffff;
+    padding: 2rem 0 2rem 0;
+    margin-top: 2rem;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.container-fluid main .parent table thead tr th {
+    font-size: 15px;
+    text-align: center;
+}
+
+.container-fluid main .parent table tbody tr td {
+    font-size: 15px;
+    text-align: center;
+    /* padding: 1rem; */
+    /* padding: 0.8rem; */
+    /* padding: 1rem; */
+}
+
+.container-fluid main .parent table tbody tr td:nth-child(3) {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    /* height: 100%; */
+    gap: 0.5rem;
+    /* padding: 10px; */
+}
+
+.container-fluid main .parent table tbody tr td:nth-child(3) span {
+    /* background-color: #F3E8FF;
+    color: #8200DB; */
+
+    /* background-color: #DBEAFE;
+    color: #1447E6; */
+    padding: 2px 4px;
+    border-radius: 7px;
+    font-size: 13.5px;
+}
+
+.container-fluid main .parent table tbody tr td:nth-child(3) span:nth-child(1) {
+    background-color: #DBEAFE;
+    color: #1447E6;
+}
+
+.container-fluid main .parent table tbody tr td:nth-child(3) span:nth-child(2) {
+    background-color: #F3E8FF;
+    color: #8200DB;
+}
+
+.container-fluid main .parent table tbody tr td:nth-child(5) {
+    width: 20%;
+}
+
+.container-fluid main .parent table tbody tr td:nth-child(5) .parent-progress {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    /* width: 45%; */
+}
+
+.container-fluid main .parent table tbody tr td:nth-child(5) .parent-progress .progress-bar {
+    width: 100%;
+    background-color: #efefef;
+    /* color: #1447E6; */
+    position: relative;
+    padding: 0.5rem;
+    border-radius: 28px;
+}
+
+.container-fluid main .parent table tbody tr td:nth-child(5) .parent-progress .progress-bar .progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 40%;
+    background-color: #1447E6;
+    padding: 0.5rem;
+    border-radius: 28px;
+}
+
+.container-fluid main .parent table tbody tr td:nth-child(7) .actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+}
+
+/* .container-fluid .table-parent .parent table .body-table table{
+    height: 350px;
+    background-color: black;
+    overflow-y: auto;
+} */
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table thead {
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 2;
+}
+
+.table tbody {
+    display: block;
+    height: 450px;
+    overflow-y: auto;
+}
+
+.table thead,
+.table tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}

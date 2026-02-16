@@ -15,15 +15,30 @@ class AuthController
 
             $user = $userModel->login($email);
 
-            if($user && password_verify($password, $user['password'])){
+
+            if ($user && password_verify($password, $user['password'])) {
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['role'] = $user['role'];
                 $_SESSION['firstname'] = $user['firstname'];
+                $_SESSION['lastname'] = $user['lastname'];
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['grade_level'] = $user['grade_level'];
                 $_SESSION['section'] = $user['section'];
 
-                header("Location: /learning_management/public/?url=dashboard");
+                // $role = strtolower($user['role']);
+
+
+
+                if ($_SESSION['role'] === 'admin') {
+                    header("Location: /learning_management/public/?url=admin");
+                } else if ($_SESSION['role'] === 'teacher') {
+                    header("Location: /learning_management/public/?url=teacher");
+                } else if ($_SESSION['role'] === 'student') {
+                    header("Location: /learning_management/public/?url=dashboard");
+                } else {
+                    "<h1>Unknown</h1>";
+                }
+
                 exit;
             }
 
@@ -67,9 +82,10 @@ class AuthController
         require "../app/view/signup.php";
     }
 
-    public function logout(){
+    public function logout()
+    {
         session_destroy();
-        
-        header("Location: /learning_management/public/?url=login");
+
+        header("Location: /learning_management/public/?url=landingpage");
     }
 }

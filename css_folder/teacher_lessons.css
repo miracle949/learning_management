@@ -1,0 +1,218 @@
+@font-face {
+    font-family: 'Titan';
+    src: url('../Titan_One/TitanOne-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../Poppins/Poppins-Regular.ttf') format('truetype');
+    font-weight: 400;
+}
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+.container-fluid nav {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 1.5rem 2rem 1.5rem;
+    background-color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.container-fluid nav .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.container-fluid nav .nav-logo a {
+    color: #212529;
+    font-size: 19px;
+}
+
+.container-fluid nav h2 {
+    font-size: 19px;
+    margin: 0;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.container-fluid nav .nav-menu button {
+    border: none;
+    outline: none;
+    background: none;
+    font-size: 21px;
+}
+
+.container-fluid main {
+    background-color: #F2F3FF;
+    padding: 2rem 3rem 2rem 3rem;
+}
+
+.container-fluid main .card-parent-box {
+    background-color: #ffffff;
+    padding: 3rem;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.container-fluid main .card-parent-box h3 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.container-fluid main .card-parent-box .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container-fluid main .card-parent-box .card-header .buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.container-fluid main .card-parent-box .card-header .buttons button {
+    padding: 10px 25px;
+    border-radius: 7px;
+    border: none;
+    outline: none;
+    background: none;
+    color: white;
+    font-size: 15.5px;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.container-fluid main .card-parent-box .card-header .buttons button:nth-child(1) {
+    background-color: #1447E6;
+}
+
+.container-fluid main .card-parent-box .card-header .buttons button:nth-child(2) {
+    background-color: #E7000B;
+}
+
+.container-fluid main .card-parent-box .card-header .buttons button:nth-child(3) {
+    background-color: #00A63E;
+}
+
+.container-fluid main .card-parent-box .card-header .buttons button:nth-child(4) {
+    background-color: #9810FA;
+}
+
+.container-fluid main .card-parent-box .card-body {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    margin-top: 2rem;
+    border-radius: 10px;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header p {
+    margin: 0;
+    font-size: 20px;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header .card-icon {
+    background-color: #efefef;
+    padding: 0.4rem;
+    border-radius: 28px;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header .card-icon .fa {
+    color: #1447E6;
+    font-size: 20px;
+}
+
+hr {
+    margin-top: 2rem;
+}
+
+.container-fluid main .card-parent-box .card-footer{
+    /* border: 1px solid rgba(0, 0, 0, 0.2); */
+    /* padding: 2rem; */
+    margin-top: 2.5rem;
+    /* border-radius: 10px; */
+}
+
+.container-fluid main .card-parent-box .card-footer h3{
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.container-fluid main .card-parent-box .card-footer .card-materials{
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 3rem;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+
+.container-fluid main .card-parent-box .card-footer .card-materials .fa{
+    font-size: 45px;
+    color: #808080;
+}
+
+.container-fluid main .card-parent-box .card-footer .card-materials p{
+    margin: 0;
+    font-size: 15.5px;
+}
+
+.container-fluid main .card-parent-box .card-footer .card-materials span{
+    color: #808080;
+    font-size: 15.5px;
+}
+
+.container-fluid main .card-parent-box .card-footer .card-materials input{
+    width: 250px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    border-radius: 10px;
+    font-size: 14.4px;
+    cursor: pointer;
+}
+
+.container-fluid main .card-parent-box .card-submit{
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.container-fluid main .card-parent-box .card-submit button{
+    width: 100%;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 10px 30px;
+    font-weight: 600;
+    border-radius: 10px;
+}
+
+.container-fluid main .card-parent-box .card-submit button:nth-child(1){
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.container-fluid main .card-parent-box .card-submit button:nth-child(2){
+    background-color: #1447E6;
+    color: white;
+}

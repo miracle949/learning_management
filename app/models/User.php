@@ -9,7 +9,7 @@ class User extends Model {
 
     public function login($email){
         $stmt = $this->db->prepare(
-            "SELECT * FROM users WHERE email = ? AND status = 'Active'"
+            "SELECT * FROM users WHERE email = ? AND status = 'active'"
         );
 
         $stmt->bind_param("s", $email);
@@ -19,8 +19,8 @@ class User extends Model {
     }
 
     public function signup($student_id, $firstname, $middle, $lastname, $email, $username, $password, $grade_level, $section){
-        $role = "Student";
-        $status = "Active";
+        $role = "student";
+        $status = "active";
 
         $stmt = $this->db->prepare(
             "INSERT INTO users (student_id, firstname, middle, lastname, email, username, password, grade_level, section, role, status) VALUES (?,?,?,?,?,?,?,?,?,?,?)"

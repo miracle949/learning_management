@@ -1,28 +1,190 @@
+.container-fluid .sidebar-subjects {
+    width: 280px;
+    height: 100%;
+    /* background-color: #FAFAFC; */
+    background-color: #F2F3FF;
+    position: fixed;
+    left: 0;
+    top: 0;
+    color: black;
+    margin-top: 87px;
+    padding: 3rem 2.5rem 3rem 2.5rem;
+}
+
+.container-fluid .sidebar-subjects h2 {
+    font-size: 20px;
+    text-align: left;
+    text-transform: uppercase;
+    font-family: "Titan", sans-serif;
+}
+
+.container-fluid .sidebar-subjects .subjects-catalog {
+    margin-top: 0.5rem;
+}
+
+.container-fluid .sidebar-subjects .subjects-catalog ul{
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    /* padding: 0; */
+    margin-top: 1rem;
+}
+
+.container-fluid .sidebar-subjects .subjects-catalog ul li span{
+    font-size: 15px;
+}
+
 .container-fluid .rightbar {
-    width: calc(100% - 250px);
-    height: calc(100% - 83px);
-    margin-top: 83px;
-    margin-left: 250px;
+    /* width: 100%; */
+    width: calc(100% - 280px);
+    margin-left: 280px;
+    /* width: calc(100% - 250px); */
+    height: calc(100% - 87px);
+    margin-top: 87px;
+    /* margin-left: 250px; */
     padding: 3rem;
-    background-color: #EFF3F6;
+    /* background-color: #EFF3F6; */
+    /* background-color: #FAFAFC; */
+    background-color: #F2F3FF;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
 }
 
 .container-fluid .rightbar h2 {
     font-size: 20px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.container-fluid .rightbar .card-box-parent {
+    /* margin-top: 2rem; */
 }
 
 .container-fluid .rightbar .card-box-parent .card-box {
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(1) .card-box .card-box-picture {
+    width: 100%;
+    height: 180px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-image: url('../images/philosophy_picture.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin-top: 0rem;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(2) .card-box .card-box-picture {
+    width: 100%;
+    height: 180px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-image: url('../images/ucsp_picture.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(3) .card-box .card-box-picture {
+    width: 100%;
+    height: 180px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-image: url('../images/computer_picture.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(4) .card-box .card-box-picture {
+    width: 100%;
+    height: 180px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-image: url('../images/pe_picture.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(5) .card-box .card-box-picture {
+    width: 100%;
+    height: 180px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-image: url('../images/3i_picture.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(6) .card-box .card-box-picture {
+    width: 100%;
+    height: 180px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-image: url('../images/entrep_picture.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.container-fluid .rightbar .card-box-parent:nth-child(7) .card-box .card-box-picture {
+    width: 100%;
+    height: 180px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-image: url('../images/work_picture.jpg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+
+.container-fluid .rightbar .card-box-parent .card-box .card-box-body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 2.5rem 2rem 2.5rem 2rem;
-    color: white;
-    border-radius: 10px;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 2.3rem 2rem 2.3rem 2rem;
+    background-color: #D9D9D9;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
-.container-fluid .rightbar .card-box-parent:nth-child(2) .card-box {
+.container-fluid .rightbar .card-box-parent .card-box .card-box-body .card-body-text {
+    max-width: 550px;
+}
+
+.container-fluid .rightbar .card-box-parent .card-box .card-box-body .card-body-text p {
+    font-size: 20px;
+    text-transform: uppercase;
+    /* font-weight: 600; */
+    font-family: "Titan", sans-serif;
+}
+
+.container-fluid .rightbar .card-box-parent .card-box .card-box-body .card-body-enrolled a {
+    text-decoration: none;
+    background-color: #6B69BA;
+    padding: 10px 35px;
+    color: #ffffff;
+    text-transform: uppercase;
+    border-radius: 28px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+/* .container-fluid .rightbar .card-box-parent .card-box .card-box-body .card-body-text span{
+    max-width: 500px;
+} */
+
+
+/* .container-fluid .rightbar .card-box-parent:nth-child(2) .card-box {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -92,7 +254,7 @@
     background-color: #5D7C81;
     color: white;
     border-radius: 10px;
-}
+} */
 
 /* .container-fluid .rightbar .card-box-parent:nth-child(10) .card-box {
     display: flex;
@@ -104,7 +266,7 @@
     border-radius: 10px;
 } */
 
-.container-fluid .rightbar .card-box-parent .card-box .card-box-name {
+/* .container-fluid .rightbar .card-box-parent .card-box .card-box-name {
     display: flex;
     justify-content: left;
     align-items: center;
@@ -181,7 +343,7 @@
 .container-fluid .rightbar .card-box-parent .card-box .card-box-link a:hover .fa {
     transform: translateX(20%);
     transition: all 0.5s ease-in-out;
-}
+} */
 
 @media only screen and (max-width: 560px) {
     .container-fluid .rightbar .card-box-parent .card-box {

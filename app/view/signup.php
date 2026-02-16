@@ -8,13 +8,10 @@
     <link rel="stylesheet" href="../css_folder/signup.css">
 
     <!-- bootstrap link -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
 
     <!-- font awesome cdn link -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
 </head>
 
 <body>
@@ -25,7 +22,8 @@
 
             <div class="login-parent">
                 <div class="form-extension image-container">
-                    <img src="../images/login-bg.jpg" alt="">
+                    <!-- <img src="../images/login-bg.jpg" alt=""> -->
+                    <h2>Signup</h2>
                 </div>
                 <div class="form-extension form">
 
@@ -42,7 +40,8 @@
                         <div class="col-lg-12">
                             <div class="text-box">
                                 <label>Student ID / LRN</label>
-                                <input type="text" class="form-control" placeholder="e.g. 123456789012" name="student_id" id="" required>
+                                <input type="text" class="form-control" placeholder="e.g. 123456789012"
+                                    name="student_id" id="" required>
                                 <!-- <div class="input-group">
                                     <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                                     <input type="text" class="form-control" placeholder="Enter student id or LRN" name="" id="">
@@ -57,14 +56,16 @@
                                     <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                                     <input type="text" class="form-control" placeholder="Enter firstname" name="" id="">
                                 </div> -->
-                                <input type="text" class="form-control" placeholder="e.g. Juan" name="firstname" id="" required>
+                                <input type="text" class="form-control" placeholder="e.g. Juan" name="firstname" id=""
+                                    required>
                             </div>
                         </div>
 
                         <div class="col-lg-4 mt-3">
                             <div class="text-box">
                                 <label>M.I</label>
-                                <input type="text" class="form-control" placeholder="e.g. D" name="middle" id="" required>
+                                <input type="text" class="form-control" placeholder="e.g. D" name="middle" id=""
+                                    required>
                                 <!-- <div class="input-group">
                                     <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                                     <input type="text" class="form-control" placeholder="Enter firstname" name="" id="">
@@ -75,7 +76,8 @@
                         <div class="col-lg-4 mt-3">
                             <div class="text-box">
                                 <label>Lastname</label>
-                                <input type="text" class="form-control" placeholder="e.g. Dela Cruz" name="lastname" id="" required>
+                                <input type="text" class="form-control" placeholder="e.g. Dela Cruz" name="lastname"
+                                    id="" required>
                                 <!-- <div class="input-group">
                                     <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                                     <input type="text" class="form-control" placeholder="Enter lastname" name="" id="">
@@ -86,7 +88,8 @@
                         <div class="col-lg-12 mt-3">
                             <div class="text-box">
                                 <label>Email</label>
-                                <input type="email" class="form-control" placeholder="e.g. juandelacruz@gmail.com" name="email" id="" required>
+                                <input type="email" class="form-control" placeholder="e.g. juandelacruz@gmail.com"
+                                    name="email" id="" required>
                                 <!-- <div class="input-group">
                                     <span class="input-group-text"><i class="fa fa-envelope"></i></span>
                                     <input type="email" class="form-control" placeholder="Enter email" name="" id="">
@@ -97,7 +100,8 @@
                         <div class="col-lg-12 mt-3">
                             <div class="text-box">
                                 <label>Username</label>
-                                <input type="text" class="form-control" placeholder="e.g. juan_dc12" name="username" id="" required>
+                                <input type="text" class="form-control" placeholder="e.g. juan_dc12" name="username"
+                                    id="" required>
                                 <!-- <div class="input-group">
                                     <span class="input-group-text"><i class="fa fa-user"></i></span>
                                     <input type="text" class="form-control" placeholder="Enter username" name="" id="">
@@ -108,8 +112,8 @@
                         <div class="col-lg-12 mt-3">
                             <div class="text-box">
                                 <label>Password</label>
-                                <input type="password" class="form-control" placeholder="At least 8 characters" name="password"
-                                        id="" required>
+                                <input type="password" class="form-control" placeholder="At least 8 characters"
+                                    name="password" id="" required>
                                 <!-- <div class="input-group">
                                     <span class="input-group-text"><i class="fa fa-lock"></i></span>
                                     <input type="password" class="form-control" placeholder="Enter password" name=""
@@ -121,8 +125,8 @@
                         <div class="col-lg-12 mt-3">
                             <div class="text-box">
                                 <label>Confirm Password</label>
-                                <input type="password" class="form-control" placeholder="Re-enter your password" name="confirm_password"
-                                        id="" required>
+                                <input type="password" class="form-control" placeholder="Re-enter your password"
+                                    name="confirm_password" id="" required>
                                 <!-- <div class="input-group">
                                     <span class="input-group-text"><i class="fa fa-lock"></i></span>
                                     <input type="password" class="form-control" placeholder="Confirm password" name=""
@@ -188,9 +192,7 @@
     </div>
 
     <!-- bootstrap link javascript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous"></script>
+    <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

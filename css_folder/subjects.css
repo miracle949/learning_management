@@ -1,16 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cinzel:wght@400..900&family=Lobster&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Saira+Condensed:wght@100;200;300;400;500;600;700;800;900&family=Sekuya&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
+@font-face {
+    font-family: 'Poppins';
+    src: url('../Poppins/Poppins-Regular.ttf') format('truetype');
+    font-weight: 400;
+}
 
 * {
-    font-family: "Poppins", sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 
 .container-fluid .rightbar {
-    width: calc(100% - 250px);
-    height: calc(100% - 83px);
-    margin-top: 83px;
-    margin-left: 250px;
+    /* width: calc(100% - 250px); */
+    width: 100%;
+    height: calc(100% - 87px);
+    margin-top: 87px;
+    /* margin-left: 250px; */
     padding: 3rem;
     background-color: #EFF3F6;
+}
+
+.container-fluid .rightbar .parent{
+    display: flex;
+    padding: 4rem 0 0 0;
 }
 
 /* .container-fluid .rightbar .module-title{
@@ -41,38 +51,61 @@
     font-size: 18px;
 }
 
+.container-fluid .rightbar .your-module{
+    max-width: 250px;
+}
+
+.container-fluid .rightbar .your-module .your-module-category ul{
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    margin-top: 1rem;
+}
+
 .container-fluid .rightbar .your-module h2 {
     font-size: 20px;
-    margin: 2.5rem 0 2.5rem 0;
+    text-transform: uppercase;
+    font-family: "Titan", sans-serif;
 }
 
 .container-fluid .rightbar .module-parent-progress {
     display: flex;
-    justify-content: left;
+    justify-content: end;
+    align-items: center;
+    flex-wrap: wrap;
+    /* justify-content: left;
     align-items: left;
-    flex-direction: column;
+    flex-direction: column; */
     gap: 2rem;
+    margin-left: 50px; 
+    flex: 1;
 }
 
 .container-fluid .rightbar .module-parent-progress .module-progress,
 .title-progress-bar {
-    padding: 0 2.5rem;
+    padding: 0 1.5rem;
 }
 
 .container-fluid .rightbar .module-parent-progress .module-progress h3 {
-    padding: 0 2.5rem;
+    padding: 0 1.5rem;
+    font-size: 20px;
+    /* font-family: "Titan", sans-serif; */
+    max-width: 390px;
+    line-height: 30px;
+    font-weight: bold;
 }
 
 .container-fluid .rightbar .module-parent-progress .module-progress p {
-    padding: 0 2.5rem;
+    padding: 0 1.5rem;
 }
 
 .container-fluid .rightbar .module-parent-progress .module-progress .parent-progress-bar {
-    padding: 0 2.5rem;
+    padding: 0 1.5rem;
 }
 
 .container-fluid .rightbar .module-parent-progress .module-progress {
-    width: 100%;
+    width: calc(100% / 2.3);
+    /* width: 100%; */
     padding: 2rem 0 0 0;
     border-radius: 10px;
     /* position: relative; */
@@ -86,8 +119,10 @@
 }
 
 .container-fluid .rightbar .module-parent-progress .module-progress p {
-    margin: 1.7rem 0 1.7rem 0;
-    color: #808080;
+    margin: 1rem 0 1.7rem 0;
+    /* color: #808080; */
+    font-size: 15.5px;
+    line-height: 30px;
 }
 
 .container-fluid .rightbar .module-parent-progress .module-progress .title-progress-bar {
@@ -102,7 +137,7 @@
     padding: 0.7rem;
     border-radius: 28px;
     background-color: #D9D9D9;
-    margin: 0.5rem 0 2.8rem 0;
+    margin: 0.5rem 0 2rem 0;
     position: relative;
 }
 
@@ -112,17 +147,25 @@
     /* position: absolute;
     bottom: 0; */
     width: 100%;
-    padding: 2rem;
-    background-color: #EEF2FF;
+    padding: 1.5rem 2rem 2rem 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background-color: #EEF2FF;
     border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-
+    border-bottom-right-radius: 10px; */
 }
 
 .container-fluid .rightbar .module-parent-progress .module-progress .footer-bar a {
     text-decoration: none;
-    color: #4F39F6;
+    /* color: #4F39F6; */
+    color: #ffffff;
     font-size: 17px;
+    background-color: #5F66AC;
+    padding: 10px 40px;
+    border-radius: 28px;
+    text-transform: uppercase;
+    font-weight: 600;
 }
 
 @media only screen and (max-width: 470px) {

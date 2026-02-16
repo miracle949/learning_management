@@ -4,21 +4,19 @@ require_once "../app/models/User.php";
 
 class HomeController{
 
-    public $user;
+    // public function index(){
+    //     if(!isset($_SESSION['user_id'])){
 
-    public function index(){
-        if(!isset($_SESSION['user_id'])){
+    //         header("Location: /learning_management/public/?url=login");
+    //         exit;
 
-            header("Location: /learning_management/public/?url=login");
-            exit;
-
-        }else{
+    //     }else{
             
-            require_once "../app/view/dashboard.php";
+    //         require_once "../app/view/dashboard.php";
 
-        }
+    //     }
         
-    }
+    // }
 
     public function subjects_all(){
         require_once "../app/view/subjects_all.php";
@@ -46,5 +44,33 @@ class HomeController{
 
     public function signup(){
         require_once "../app/view/signup.php";
+    }
+
+    public function landingpage(){
+        require_once "../app/view/landingpage.php";
+    }
+
+    public function admin(){
+        require_once "../app/view/admin.php";
+    }
+
+    public function teacher(){
+        require_once "../app/view/teacher.php";
+    }
+
+    public function student_records(){
+        require_once "../admin_folder/student_records.php";
+    }
+
+    public function teacher_records(){
+        require_once "../admin_folder/teacher_records.php";
+    }
+
+    public function records(){
+        require_once "../teacher_folder/records.php";
+    }
+
+    public function lessons(){
+        require_once "../teacher_folder/lessons.php";
     }
 }

@@ -1,0 +1,206 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../Poppins/Poppins-Regular.ttf') format('truetype');
+    font-weight: 400;
+}
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+.container-fluid nav{
+    width: 100%;
+    padding: 2rem 1.5rem 2rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.container-fluid nav a{
+    color: #212529;
+    font-size: 19px;
+}
+
+.container-fluid nav button{
+    border: none;
+    outline: none;
+    background-color: #4F39F6;
+    color: white;
+    padding: 10px 30px;
+    border-radius: 10px;
+    font-size: 14.5px;
+    font-weight: 600;
+}
+
+.container-fluid main{
+    background-color: #F2F3FF;
+    padding: 2rem 3rem 2rem 3rem;
+}
+
+.container-fluid main .search-parent{
+    background-color: #ffffff;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    border-radius: 10px;
+}
+
+.container-fluid main .search-parent .search-full-parent{
+    /* display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem; */
+}
+
+.container-fluid main .search-parent .filter{
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.container-fluid main .search-parent .filter span{
+    font-size: 14.5px;
+    margin: 0;
+}
+
+/* .container-fluid main .search-parent .search-form,
+.container-fluid main .search-parent .search-level,
+.container-fluid main .search-parent .search-section{
+    width: 100%;
+} */
+
+.container-fluid main .search-parent .search-form{
+    width: 40%;
+}
+
+input.form-control, select.form-select{
+    font-size: 15px;
+} 
+
+.container-fluid .table-parent{
+    background-color: #ffffff;
+    margin-top: 2rem;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.container-fluid .table-parent hr{
+    margin: 16px 0 0 0;
+}
+
+.container-fluid .table-parent h3{
+    font-size: 17.5px;
+    font-weight: 600;
+    padding: 2rem 1.5rem 1rem 1.5rem;
+}
+
+.container-fluid .table-parent .teachers-parents-data .teachers-data{
+    border-bottom: 1px solid #C7C8C9;
+    padding: 2rem 1.5rem 2rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+}
+/* 
+.container-fluid .table-parent .teachers-parents-data .teachers-data p, span{
+    padding: 0.5rem 2rem 0.5 2rem;
+} */
+
+.container-fluid .table-parent .teachers-parents-data .teachers-data p:nth-child(1){
+    margin: 0 0 8px 0;
+    font-size: 16.5px;
+    font-weight: 600;
+}
+
+.container-fluid .table-parent .teachers-parents-data .teachers-data p:nth-child(2){
+    font-size: 14.5px;
+    color: #808080;
+}
+
+.container-fluid .table-parent .teachers-parents-data .teachers-data .subject span{
+    font-size: 14.5px;
+}
+
+.container-fluid .table-parent .teachers-parents-data .teachers-data .subject{
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+}
+
+.container-fluid .table-parent .teachers-parents-data .teachers-data .subject span:nth-child(1){
+    margin: 0 0 8px 0;
+    padding: 7px 15px;
+    background-color: #DBEAFE;
+    color: #1447E6;
+    border-radius: 7px;
+}
+
+.container-fluid .table-parent .teachers-parents-data .teachers-data .assign-section{
+    margin-top: 0.5rem;
+}
+
+.container-fluid .table-parent .teachers-parents-data .teachers-data .assign-section span{
+    font-size: 14.5px;
+}
+
+.container-fluid .table-parent .teachers-parents-data .teachers-data .assign-section .sections{
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-top: 0.5rem;
+}
+
+.container-fluid .table-parent .teachers-parents-data .teachers-data .assign-section .sections span{
+    padding: 7px 15px;
+    background-color: #F3E8FF;
+    color: #8200DB;
+    border-radius: 7px;
+}
+
+
+.container-fluid .table-parent .teachers-parents-data .teachers-data .teachers-button button{
+    border: none;
+    padding: 10px 30px;
+    border-radius: 10px;
+    background-color: #4F39F6;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 14.5px;
+}
+
+div.accordion-body{
+    padding: 0 16px 16px 16px;
+    /* display: flex;
+    justify-content: left;
+    flex-wrap: wrap;
+    gap: 2rem; */
+}
+
+/* div.form-check{
+    max-width: calc(100% / 5);
+} */
+
+button.accordion-button{
+    padding: 8px 20px;
+    font-size: 15.5px;
+}
+
+form label{
+    font-size: 15.5px;
+}
+
+/* button.accordion-button.collapsed{
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    font-size: 14.5px;
+} */
+
+
+/* .container-fluid .table-parent .teachers-parents-data .teachers-data p{
+    margin: 0 0 8px 0;
+} */

@@ -1,0 +1,246 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../Poppins/Poppins-Regular.ttf') format('truetype');
+    font-weight: 400;
+}
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+.container-fluid nav {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 1.5rem 2rem 1.5rem;
+    background-color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.container-fluid nav .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.container-fluid nav h2 {
+    font-size: 19px;
+    margin: 0;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.container-fluid nav form button {
+    padding: 10px 30px;
+    border-radius: 10px;
+    border: none;
+    background-color: #4F39F6;
+    color: white;
+    font-weight: 600;
+    font-size: 14.5px;
+}
+
+.container-fluid main {
+    background-color: #F2F3FF;
+    padding: 3rem;
+}
+
+.container-fluid main .parent-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.container-fluid main .parent-card .card-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: calc(100% / 3);
+    padding: 2rem 1.5rem 2rem 1.5rem;
+    background-color: #ffffff;
+    border-radius: 10px;
+    /* box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; */
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.container-fluid main .parent-card .card-box:hover{
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+}
+
+.container-fluid main .parent-card .card-box .card-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.container-fluid main .parent-card .card-box .card-text span {
+    font-size: 15.5px;
+    color: #808080;
+}
+
+.container-fluid main .parent-card .card-box .card-text p {
+    margin: 0;
+    font-size: 23px;
+}
+
+.container-fluid main .parent-card .card-box .card-icon .fa {
+    font-size: 33px;
+}
+
+.container-fluid main h2 {
+    font-size: 18.5px;
+    margin-top: 2rem;
+    font-weight: 600;
+}
+
+.container-fluid main .parent-classes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 1.5rem;
+}
+
+.container-fluid main .parent-classes a{
+    text-decoration: none;
+}
+
+.container-fluid main .parent-classes .classes {
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    border-radius: 10px;
+}
+
+.container-fluid main .parent-classes .classes:hover{
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    cursor: pointer;
+}
+
+.container-fluid main .parent-classes .classes-header {
+    padding: 2rem;
+    background-color: #8A37FC;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    color: white;
+}
+
+.container-fluid main .parent-classes .classes-header h3 {
+    font-size: 19px;
+    font-weight: 600;
+    /* max-width: 300px; */
+}
+
+.container-fluid main .parent-classes .classes-header p {
+    font-size: 15.5px;
+    margin: 0;
+}
+
+.container-fluid main .parent-classes .classes-body {
+    background-color: #ffffff;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.container-fluid main .parent-classes .classes-body .grade-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+}
+
+.container-fluid main .parent-classes .classes-body .grade-section .grade{
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: start;
+    /* flex-wrap: wrap;
+    justify-content: start; */
+    gap: 1rem;
+    width: 50%;
+}
+
+.container-fluid main .parent-classes .classes-body .grade-section .section{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: end;
+    gap: 1rem;
+    width: 50%;
+}
+
+.container-fluid main .parent-classes .classes-body .grade-section .grade span {
+    background-color: #DBEAFE;
+    color: #1447E6;
+    padding: 7px 20px;
+    font-size: 14.5px;
+    border-radius: 28px;
+}
+
+.container-fluid main .parent-classes .classes-body .grade-section .section span {
+    background-color: #F3E8FF;
+    color: #8200DB;
+    padding: 7px 20px;
+    font-size: 14.5px;
+    border-radius: 28px;
+}
+
+.container-fluid main .parent-classes .classes-body .parent-enrolled {
+    margin-top: 1.5rem;
+    padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+.container-fluid main .parent-classes .classes-body .parent-enrolled .parent-number {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 1.5rem;
+}
+
+.container-fluid main .parent-classes .classes-body .parent-enrolled .parent-number .number-students {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.1rem;
+}
+
+.container-fluid main .parent-classes .classes-body .parent-enrolled .parent-number .number-students p {
+    margin: 0;
+    font-size: 21px;
+    color: #1447E6;
+}
+
+.container-fluid main .parent-classes .classes-body .parent-enrolled .parent-number .number-students span {
+    font-size: 14.5px;
+    color: #808080;
+}
+
+.container-fluid main .parent-classes .classes-body .parent-enrolled .parent-number .number-module {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.1rem;
+}
+
+.container-fluid main .parent-classes .classes-body .parent-enrolled .parent-number .number-module p{
+    margin: 0;
+    font-size: 21px;
+    color: #1447E6;
+}
+
+.container-fluid main .parent-classes .classes-body .parent-enrolled .parent-number .number-module span {
+    font-size: 14.5px;
+    color: #808080;
+}
+
+.container-fluid main .parent-classes .classes-body .footer{
+    padding: 1rem 1.5rem 1rem 1.5rem;
+    background-color: #F9FAFB;
+    margin-top: 1.5rem;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    font-size: 14.5px;
+}

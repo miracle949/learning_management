@@ -9,13 +9,10 @@
     <link rel="stylesheet" href="../css_folder/components.css">
 
     <!-- bootstrap link -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
 
     <!-- font awesome cdn link -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
 </head>
 
 <body>
@@ -26,10 +23,40 @@
 
         <?php include("../components/navbar.php"); ?>
 
-        <?php include("../components/sidebar.php"); ?>
+        <!-- <?php include("../components/sidebar.php"); ?> -->
+
+        <div class="sidebar-subjects">
+            <h2>Learning Catalog</h2>
+
+            <div class="subjects-catalog">
+                <ul>
+                    <li>
+                        <span>Introduction to Philosophy of Human Person</span>
+                    </li>
+                    <li>
+                        <span>Understanding Culture and Politics</span>
+                    </li>
+                    <li>
+                        <span>Computer System Servicing</span>
+                    </li>
+                    <li>
+                        <span>Physical Education</span>
+                    </li>
+                    <li>
+                        <span>Inquiries, Investigation and Immersion</span>
+                    </li>
+                    <li>
+                        <span>Entrepreneurship</span>
+                    </li>
+                    <li>
+                        <span>Work Immersion</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
 
         <div class="rightbar">
-            <h2>Your Subjects</h2>
+            <!-- <h2>Enrolled Subjects</h2> -->
 
             <?php
 
@@ -38,7 +65,7 @@
 
                 <div class="card-box-parent">
                     <div class="card-box">
-                        <div class="card-box-name">
+                        <!-- <div class="card-box-name">
                             <div class="card-box-icon">
                                 <i class="fa fa-book-open"></i>
                             </div>
@@ -51,13 +78,30 @@
                         <div class="card-box-link">
                             <a href="/learning_management/public/?url=subjects&subject=philosophy"><i
                                     class="fa fa-arrow-right"></i></a>
+                        </div> -->
+                        <div class="card-box-picture">
+
+                        </div>
+                        <div class="card-box-body">
+                            <div class="card-body-text">
+                                <p>Introduction to Philosophy of Human Person</p>
+                                <span>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ducimus cum, iusto similique
+                                    quos mollitia laboriosam!</span>
+                            </div>
+
+                            <div class="card-body-enrolled">
+                                <a href="/learning_management/public/?url=subjects&subject=philosophy">
+                                    <span>Enroll Now</span>
+                                    <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="card-box-parent">
                     <div class="card-box">
-                        <div class="card-box-name">
+                        <!-- <div class="card-box-name">
                             <div class="card-box-icon">
                                 <i class="fa fa-book-open"></i>
                             </div>
@@ -70,13 +114,31 @@
                         <div class="card-box-link">
                             <a href="/learning_management/public/?url=subjects&subject=ucsp"><i
                                     class="fa fa-arrow-right"></i></a>
+                        </div> -->
+
+                        <div class="card-box-picture">
+
+                        </div>
+                        <div class="card-box-body">
+                            <div class="card-body-text">
+                                <p>Understanding Culture Society and Politics</p>
+                                <span>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ducimus cum, iusto similique
+                                    quos mollitia laboriosam!</span>
+                            </div>
+
+                            <div class="card-body-enrolled">
+                                <a href="/learning_management/public/?url=subjects&subject=ucsp">
+                                    <span>Enroll Now</span>
+                                    <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="card-box-parent">
                     <div class="card-box">
-                        <div class="card-box-name">
+                        <!-- <div class="card-box-name">
                             <div class="card-box-icon">
                                 <i class="fa fa-book-open"></i>
                             </div>
@@ -89,13 +151,31 @@
                         <div class="card-box-link">
                             <a href="/learning_management/public/?url=subjects&subject=css"><i
                                     class="fa fa-arrow-right"></i></a>
+                        </div> -->
+
+                        <div class="card-box-picture">
+
+                        </div>
+                        <div class="card-box-body">
+                            <div class="card-body-text">
+                                <p>Computer System Servicing</p>
+                                <span>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ducimus cum, iusto similique
+                                    quos mollitia laboriosam!</span>
+                            </div>
+
+                            <div class="card-body-enrolled">
+                                <a href="/learning_management/public/?url=subjects&subject=css">
+                                    <span>Enroll Now</span>
+                                    <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="card-box-parent">
                     <div class="card-box">
-                        <div class="card-box-name">
+                        <!-- <div class="card-box-name">
                             <div class="card-box-icon">
                                 <i class="fa fa-book-open"></i>
                             </div>
@@ -108,13 +188,31 @@
                         <div class="card-box-link">
                             <a href="/learning_management/public/?url=subjects&subject=pe"><i
                                     class="fa fa-arrow-right"></i></a>
+                        </div> -->
+
+                        <div class="card-box-picture">
+
+                        </div>
+                        <div class="card-box-body">
+                            <div class="card-body-text">
+                                <p>Physical Education</p>
+                                <span>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ducimus cum, iusto similique
+                                    quos mollitia laboriosam!</span>
+                            </div>
+
+                            <div class="card-body-enrolled">
+                                <a href="/learning_management/public/?url=subjects&subject=pe">
+                                    <span>Enroll Now</span>
+                                    <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="card-box-parent">
                     <div class="card-box">
-                        <div class="card-box-name">
+                        <!-- <div class="card-box-name">
                             <div class="card-box-icon">
                                 <i class="fa fa-book-open"></i>
                             </div>
@@ -127,13 +225,30 @@
                         <div class="card-box-link">
                             <a href="/learning_management/public/?url=subjects&subject=3i"><i
                                     class="fa fa-arrow-right"></i></a>
+                        </div> -->
+                        <div class="card-box-picture">
+
+                        </div>
+                        <div class="card-box-body">
+                            <div class="card-body-text">
+                                <p>Inquiries, Investigation and Immersion</p>
+                                <span>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ducimus cum, iusto similique
+                                    quos mollitia laboriosam!</span>
+                            </div>
+
+                            <div class="card-body-enrolled">
+                                <a href="/learning_management/public/?url=subjects&subject=3i">
+                                    <span>Enroll Now</span>
+                                    <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="card-box-parent">
                     <div class="card-box">
-                        <div class="card-box-name">
+                        <!-- <div class="card-box-name">
                             <div class="card-box-icon">
                                 <i class="fa fa-book-open"></i>
                             </div>
@@ -146,13 +261,30 @@
                         <div class="card-box-link">
                             <a href="/learning_management/public/?url=subjects&subject=entrep"><i
                                     class="fa fa-arrow-right"></i></a>
+                        </div> -->
+                        <div class="card-box-picture">
+
+                        </div>
+                        <div class="card-box-body">
+                            <div class="card-body-text">
+                                <p>Entrepreneurship</p>
+                                <span>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ducimus cum, iusto similique
+                                    quos mollitia laboriosam!</span>
+                            </div>
+
+                            <div class="card-body-enrolled">
+                                <a href="/learning_management/public/?url=subjects&subject=entrep">
+                                    <span>Enroll Now</span>
+                                    <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="card-box-parent">
                     <div class="card-box">
-                        <div class="card-box-name">
+                        <!-- <div class="card-box-name">
                             <div class="card-box-icon">
                                 <i class="fa fa-book-open"></i>
                             </div>
@@ -165,6 +297,23 @@
                         <div class="card-box-link">
                             <a href="/learning_management/public/?url=subjects&subject=work_immersion"><i
                                     class="fa fa-arrow-right"></i></a>
+                        </div> -->
+                        <div class="card-box-picture">
+
+                        </div>
+                        <div class="card-box-body">
+                            <div class="card-body-text">
+                                <p>Work Immersion</p>
+                                <span>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ducimus cum, iusto similique
+                                    quos mollitia laboriosam!</span>
+                            </div>
+
+                            <div class="card-body-enrolled">
+                                <a href="/learning_management/public/?url=subjects&subject=work_immersion">
+                                    <span>Enroll Now</span>
+                                    <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -173,7 +322,7 @@
             } else if ($_SESSION['grade_level'] == "Grade 11") {
                 ?>
 
-                        <div class="card-box-parent">
+                    <!-- <div class="card-box-parent">
                         <div class="card-box">
                             <div class="card-box-name">
                                 <div class="card-box-icon">
@@ -315,9 +464,9 @@
                                 <a href="/learning_management/public/?url=subjects&subject=statistics_probability"><i class="fa fa-arrow-right"></i></a>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
-                    <?php
+                <?php
             }
 
             ?>
@@ -326,9 +475,7 @@
 
 
     <!-- bootstrap link javascript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-        crossorigin="anonymous"></script>
+    <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

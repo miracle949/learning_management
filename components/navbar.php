@@ -5,7 +5,30 @@
             <div class="fa fa-bars"></div>
         </button>
 
-        <h3 class="m-0">Learning Management</h3>
+        <!-- <h3 class="m-0">Learning Management</h3> -->
+        <!-- <img src="../images/ilearn-logo3.jpg" alt=""> -->
+        <div class="image-logo">
+            <img src="../images/ilearn-logo4.png" alt="">
+            <div class="logo-text">
+                <p><b>i</b>Learn</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-list">
+        <ul>
+            <li>
+                <a href="/learning_management/public/?url=dashboard">Home</a>
+            </li>
+
+            <li>
+                <a href="/learning_management/public/?url=subjects_all">Courses</a>
+            </li>
+
+            <li>
+                <a href="#">Progress</a>
+            </li>
+        </ul>
     </div>
 
     <div class="nav-acc">

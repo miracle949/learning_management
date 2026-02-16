@@ -11,8 +11,12 @@ $controller = new HomeController();
 $auth = new AuthController();
 
 switch ($url) {
+    case 'landingpage':
+        $controller->landingpage();
+        break;
+
     case 'dashboard':
-        $controller->index();
+        $controller->dashboard();
         break;
 
     case 'subjects_all':
@@ -31,6 +35,30 @@ switch ($url) {
         $controller->subject_quiz();
         break;
 
+    case 'admin':
+        $controller->admin();
+        break;
+
+    case 'teacher':
+        $controller->teacher();
+        break;
+
+    case 'student_records':
+        $controller->student_records();
+        break;
+
+    case 'teacher_records':
+        $controller->teacher_records();
+        break;
+
+    case 'records':
+        $controller->records();
+        break;
+
+    case 'lessons':
+        $controller->lessons();
+        break;
+
     case 'login':
         $auth->login();
         break;
@@ -45,7 +73,7 @@ switch ($url) {
         
 
     default:
-        $controller->login();
+        $controller->landingpage();
         break;
 }
 
