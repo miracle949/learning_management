@@ -21,18 +21,20 @@
         <form action="?url=signup" method="post">
 
             <div class="login-parent">
-                <div class="form-extension image-container">
-                    <!-- <img src="../images/login-bg.jpg" alt=""> -->
+                <!-- <div class="form-extension image-container">
+                    <img src="../images/login-bg.jpg" alt="">
                     <h2>Signup</h2>
-                </div>
+                </div> -->
                 <div class="form-extension form">
 
                     <div class="form-logo">
                         <div class="parent-logo">
-                            <div class="logo"></div>
-                            <p>Computer System Servicing</p>
+                            <img src="../images/ilearn-logo4.png" alt="">
+                            <div class="logo-text">
+                                <p><b>I</b>Learn</p>
+                            </div>
                         </div>
-                        <h2>Start your learning journey today.</h2>
+                        <h2 class="fw-semibold">Start your learning journey today.</h2>
                         <p>Create an account and start learning today.</p>
                     </div>
 
@@ -40,24 +42,16 @@
                         <div class="col-lg-12">
                             <div class="text-box">
                                 <label>Student ID / LRN</label>
-                                <input type="text" class="form-control" placeholder="e.g. 123456789012"
-                                    name="student_id" id="" required>
-                                <!-- <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                                    <input type="text" class="form-control" placeholder="Enter student id or LRN" name="" id="">
-                                </div> -->
+                                <input type="number" name="student_no" class="form-control" placeholder="e.g. 123456789012"
+                                    onkeydown="if(event.key === 'e' || event.key === 'E' || event.key === '+') event.preventDefault();" required>
                             </div>
                         </div>
 
                         <div class="col-lg-4 mt-3">
                             <div class="text-box">
                                 <label>Firstname</label>
-                                <!-- <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                                    <input type="text" class="form-control" placeholder="Enter firstname" name="" id="">
-                                </div> -->
                                 <input type="text" class="form-control" placeholder="e.g. Juan" name="firstname" id=""
-                                    required>
+                                    oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '')" required>
                             </div>
                         </div>
 
@@ -65,11 +59,7 @@
                             <div class="text-box">
                                 <label>M.I</label>
                                 <input type="text" class="form-control" placeholder="e.g. D" name="middle" id=""
-                                    required>
-                                <!-- <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                                    <input type="text" class="form-control" placeholder="Enter firstname" name="" id="">
-                                </div> -->
+                                    oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '')" required>
                             </div>
                         </div>
 
@@ -77,11 +67,7 @@
                             <div class="text-box">
                                 <label>Lastname</label>
                                 <input type="text" class="form-control" placeholder="e.g. Dela Cruz" name="lastname"
-                                    id="" required>
-                                <!-- <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                                    <input type="text" class="form-control" placeholder="Enter lastname" name="" id="">
-                                </div> -->
+                                    id="" oninput="this.value = this.value.replace(/[^A-Za-z ]/g, '')" required>
                             </div>
                         </div>
 
@@ -90,10 +76,6 @@
                                 <label>Email</label>
                                 <input type="email" class="form-control" placeholder="e.g. juandelacruz@gmail.com"
                                     name="email" id="" required>
-                                <!-- <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-envelope"></i></span>
-                                    <input type="email" class="form-control" placeholder="Enter email" name="" id="">
-                                </div> -->
                             </div>
                         </div>
 
@@ -102,36 +84,22 @@
                                 <label>Username</label>
                                 <input type="text" class="form-control" placeholder="e.g. juan_dc12" name="username"
                                     id="" required>
-                                <!-- <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-user"></i></span>
-                                    <input type="text" class="form-control" placeholder="Enter username" name="" id="">
-                                </div> -->
                             </div>
                         </div>
 
                         <div class="col-lg-12 mt-3">
                             <div class="text-box">
                                 <label>Password</label>
-                                <input type="password" class="form-control" placeholder="At least 8 characters"
+                                <input type="password" class="form-control" placeholder="At least 8 characters" maxlength="8"
                                     name="password" id="" required>
-                                <!-- <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                                    <input type="password" class="form-control" placeholder="Enter password" name=""
-                                        id="">
-                                </div> -->
                             </div>
                         </div>
 
                         <div class="col-lg-12 mt-3">
                             <div class="text-box">
                                 <label>Confirm Password</label>
-                                <input type="password" class="form-control" placeholder="Re-enter your password"
+                                <input type="password" class="form-control" placeholder="Re-enter your password" maxlength="8"
                                     name="confirm_password" id="" required>
-                                <!-- <div class="input-group">
-                                    <span class="input-group-text"><i class="fa fa-lock"></i></span>
-                                    <input type="password" class="form-control" placeholder="Confirm password" name=""
-                                        id="">
-                                </div> -->
                             </div>
                         </div>
 
@@ -166,7 +134,7 @@
                         <button type="submit">Signup</button>
                     </div>
 
-                    <h4>Or Login with</h4>
+                    <!-- <h4>Or Login with</h4>
 
                     <div class="accounts">
                         <a href="#">
@@ -178,7 +146,7 @@
                             <i class="fa-brands fa-facebook"></i>
                             <p class="m-0">Facebook</p>
                         </a>
-                    </div>
+                    </div> -->
 
                     <div class="change">
                         <label>Already have an account? <a href="/learning_management/public/?url=login">Login</a>

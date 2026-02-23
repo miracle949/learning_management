@@ -1,4 +1,11 @@
 @font-face {
+    font-family: 'Titan';
+    src: url('../Titan_One/TitanOne-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
     font-family: 'Poppins';
     src: url('../Poppins/Poppins-Regular.ttf') format('truetype');
     font-weight: 400;
@@ -9,10 +16,12 @@
 }
 
 .container-fluid .login-parent{
-    height: 100vh;
+    /* height: 100vh; */
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
+    padding: 3rem;
+    width: 100%;
     /* overflow: hidden; */
 }
 
@@ -34,16 +43,16 @@
 
 .container-fluid .login-parent .form-extension{
     width: calc(100% / 2);
-    height: 100%;
+    /* height: 100%; */
 }
 
-.container-fluid .login-parent .form{
+/* .container-fluid .login-parent .form{
     overflow-y: auto;
     display: flex;
     justify-content: center;
     align-items: left;
     flex-direction: column;
-}
+} */
 /* 
 .container-fluid .login-parent .form .form-logo{
     display: flex;
@@ -61,14 +70,26 @@
     display: flex;
     justify-content: left;
     align-items: center;
-    gap: 0.8rem;
-    margin-top: 1.5rem;
+    /* gap: 0.8rem; */
+    /* margin-top: 1.5rem; */
 }
 
-.container-fluid .login-parent .form .form-logo .parent-logo p{
+.container-fluid .login-parent .form .form-logo .parent-logo img {
+    width: 50px;
+    height: 50px;
+}
+
+.container-fluid .login-parent .form .form-logo .parent-logo p b {
+    font-weight: normal;
+    color: #4f89a5;
+    font-family: "Titan", sans-serif;
+}
+
+.container-fluid .login-parent .form .form-logo .parent-logo .logo-text p{
     all: unset;
-    text-transform: uppercase;
     font-weight: 500;
+    font-family: "Titan", sans-serif;
+    font-size: 19.5px;
 }
 
 .container-fluid .login-parent .form .form-logo .parent-logo .logo{
@@ -93,7 +114,13 @@
     /* padding-top: 4.5rem;
     padding-left: 4.5rem;
     padding-right: 4.5rem; */
-    padding: 30rem 4.5rem 4rem 4.5rem;
+    /* padding: 20rem 4.5rem 4rem 4.5rem; */
+    padding-top: 2rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    padding-bottom: 2rem;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    border-radius: 20px;
 }
 
 /* .container-fluid .login-parent .form .text-box{
@@ -121,13 +148,14 @@
 .container-fluid .login-parent .form .text-box input {
     margin-top: 0.3rem;
     border: 1px solid rgba(0,0,0,0.3);
-    border-radius: 7px;
+    border-radius: 28px;
+    padding: 8px 15px;
 }
 
 .container-fluid .login-parent .form .text-box select {
     margin-top: 0.3rem;
     border: 1px solid rgba(0,0,0,0.3);
-    border-radius: 7px;
+    border-radius: 28px;
     color: #6F7174;
 }
 
@@ -159,14 +187,15 @@
 }
 
 .container-fluid .login-parent .form .button button{
-    padding: 7px;
+    padding: 8px;
     border: 1px solid rgba(0,0,0,0.1);
     outline: none;
     width: 100%;
-    border-radius: 7px;
+    border-radius: 28px;
     font-size: 14.5px;
-    text-transform: uppercase;
-    background-color: #0d589f;
+    /* text-transform: uppercase; */
+    /* background-color: #0d589f; */
+    background-color: #212529;
     color: white;
     font-weight: bold;
 }

@@ -9,7 +9,7 @@
 
     <!-- bootstrap link -->
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
-    
+
     <!-- font awesome cdn link -->
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
 </head>
@@ -20,17 +20,20 @@
 
         <form action="?url=login" method="post">
             <div class="login-parent">
-                <div class="form-extension image-container">
-                    <!-- <img src="../images/login-bg.jpg" alt=""> -->
+                <!-- <div class="form-extension image-container">
+                    <img src="../images/login-bg.jpg" alt="">
 
                     <h2>Login Page</h2>
-                </div>
+                </div> -->
                 <div class="form-extension form">
 
                     <div class="form-logo">
                         <div class="parent-logo">
                             <!-- <div class="logo"></div> -->
-                            <p><b>I</b>LEARN</p>
+                            <img src="../images/ilearn-logo4.png" alt="">
+                            <div class="logo-text">
+                                <p><b>I</b>Learn</p>
+                            </div>
                         </div>
                         <h2 class="fw-semibold">Let's the learning journey begin.</h2>
                         <p>Unlock a world of learning with just one click. Log in to get started.</p>
@@ -56,7 +59,7 @@
                         <button class="submit">Login</button>
                     </div>
 
-                    <h4>Or Login with</h4>
+                    <!-- <h4>Or Login with</h4>
 
                     <div class="accounts">
                         <a href="#">
@@ -68,7 +71,7 @@
                             <i class="fa-brands fa-facebook"></i>
                             <p class="m-0">Facebook</p>
                         </a>
-                    </div>
+                    </div> -->
 
                     <div class="change">
                         <label>Don't have an account? <a href="/learning_management/public/?url=signup">Signup</a>

@@ -117,7 +117,13 @@
     border-radius: 10px;
 }
 
-.container-fluid main .card-parent-box .card-body .card-body-header {
+.container-fluid main .card-parent-box .card-body .card-body-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header .card-nav {
     display: flex;
     align-items: center;
     gap: 0.6rem;
@@ -132,10 +138,28 @@
     background-color: #efefef;
     padding: 0.4rem;
     border-radius: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.container-fluid main .card-parent-box .card-body .card-body-header .card-icon .fa {
+.container-fluid main .card-parent-box .card-body .card-body-header .card-icon .fa-file {
     color: #1447E6;
+    font-size: 20px;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header .card-icon .fa-video {
+    color: #E7000B;
+    font-size: 20px;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header .card-icon .fa-image {
+    color: #00A63E;
+    font-size: 20px;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header .card-icon .fa-circle-question {
+    color: #9810FA;
     font-size: 20px;
 }
 
@@ -215,4 +239,27 @@ hr {
 .container-fluid main .card-parent-box .card-submit button:nth-child(2){
     background-color: #1447E6;
     color: white;
+}
+
+.text-content{
+    width: 100%;
+    padding: 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.9rem;
+    flex-direction: column;
+}
+
+.text-content .fa{
+    font-size: 45px;
+    color: #808080;
+}
+
+.text-content p{
+    margin: 0;
+    font-size: 15.5px;
 }

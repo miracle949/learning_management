@@ -40,47 +40,57 @@
                     <h3>Content</h3>
 
                     <div class="buttons">
-                        <button>
+                        <button type="button" id="addLessonBtn">
                             <i class="fa fa-file"></i>
                             Lessons
                         </button>
 
-                        <button>
+                        <button type="button" id="addVideoBtn">
                             <i class="fa fa-video"></i>
                             <span>Video</span>
                         </button>
 
-                        <button>
+                        <button type="button" id="addImageBtn">
                             <div class="fa fa-image"></div>
                             <span>Image</span>
                         </button>
 
-                        <button>
+                        <button type="button" id="addActivityBtn">
                             <i class="fa fa-circle-question"></i>
                             <span>Activity</span>
                         </button>
                     </div>
                 </div>
 
-                <div class="card-body">
-                    <div class="card-body-header">
-                        <div class="card-icon">
-                            <i class="fa fa-file"></i>
-                        </div>
-                        <p>Lesson 1</p>
+                <div id="contentContainer">
+                    <div class="text-content">
+                        <i class="fa fa-circle-question"></i>
+                        <p>No Content</p>
                     </div>
-
-                    <div class="row">
-                        <div class="col-lg-12 mt-4">
-                            <label>Title *</label>
-                            <input type="text" name="" class="form-control mt-1" placeholder="Enter lessons title">
+                    <!-- <div class="card-body lesson-item">
+                        <div class="card-body-header">
+                            <div class="card-nav">
+                                <div class="card-icon">
+                                    <i class="fa fa-file"></i>
+                                </div>
+                                <p>Lesson 1</p>
+                            </div>
                         </div>
 
-                        <div class="col-lg-12 mt-4">
-                            <label>Content *</label>
-                            <textarea name="" placeholder="Enter lessons content" class="form-control mt-1" rows="6"></textarea>
+                        <div class="row">
+                            <div class="col-lg-12 mt-4">
+                                <label>Title *</label>
+                                <input type="text" name="lesson_title[]" class="form-control mt-1"
+                                    placeholder="Enter lessons title">
+                            </div>
+
+                            <div class="col-lg-12 mt-4">
+                                <label>Content *</label>
+                                <textarea name="lesson_content[]" placeholder="Enter lessons content"
+                                    class="form-control mt-1" rows="6"></textarea>
+                            </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="card-footer">
@@ -104,6 +114,8 @@
 
     <!-- bootstrap link javascript -->
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
+
+    <script src="../teacher_folder/lesson_folder/lesson.js"></script>
 </body>
 
 </html>
