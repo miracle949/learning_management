@@ -1,8 +1,10 @@
 <div class="sidebar">
     <div class="sidebar-logo">
-        
+        <i class="fa fa-user-circle"></i>
+        <p>Student Portal</p>
     </div>
     <div class="sidebar-menu">
+        <p>Menu</p>
         <ul>
             <li>
                 <a href="/learning_management/public/?url=dashboard" class="text-decoration-none ">
@@ -14,23 +16,51 @@
             <li>
                 <a href="/learning_management/public/?url=subjects_all" class="text-decoration-none">
                     <i class="fa fa-book-open"></i>
-                    <span>Subjects</span>
+                    <span>My Subjects</span>
                 </a>
             </li>
 
             <li>
                 <a href="#" class="text-decoration-none">
                     <i class="fa fa-gear"></i>
-                    <span>Settings</span>
+                    <span>Modules</span>
                 </a>
             </li>
 
             <li>
                 <a href="#" class="text-decoration-none">
+                    <i class="fa fa-gear"></i>
+                    <span>Assignments</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#" class="text-decoration-none">
+                    <i class="fa fa-gear"></i>
+                    <span>Classes</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#" class="text-decoration-none">
+                    <i class="fa fa-gear"></i>
+                    <span>Grades</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="#" class="text-decoration-none">
+                    <i class="fa fa-gear"></i>
+                    <span>Calendar</span>
+                </a>
+            </li>
+
+            <!-- <li>
+                <a href="#" class="text-decoration-none">
                     <i class="fa fa-sign-out"></i>
                     <span>Logout</span>
                 </a>
-            </li>
+            </li> -->
         </ul>
     </div>
 </div>
