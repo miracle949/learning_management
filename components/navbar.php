@@ -39,7 +39,7 @@
 
                 <button>
                     <?php
-                    $initial = isset($_SESSION['firstname']) ? strtoupper(substr($_SESSION['firstname'], 0, 1)) : '';
+                    $initial = isset($_SESSION['name']) ? strtoupper(substr($_SESSION['name'], 0, 1)) : '';
                     echo $initial;
                     ?>
                 </button>
@@ -49,7 +49,7 @@
                 <div class="d-flex justify-content-left align-items-center dropdown-profile gap-2">
                     <button>
                         <?php
-                        $initial = isset($_SESSION['firstname']) ? strtoupper(substr($_SESSION['firstname'], 0, 1)) : '';
+                        $initial = isset($_SESSION['name']) ? strtoupper(substr($_SESSION['name'], 0, 1)) : '';
                         echo $initial;
                         ?>
                     </button>

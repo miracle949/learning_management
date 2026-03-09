@@ -6,11 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher</title>
     <link rel="stylesheet" href="../css_folder/teacher.css">
-
-    <!-- bootstrap link -->
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
-
-    <!-- font awesome cdn link -->
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
 </head>
 
@@ -20,23 +16,25 @@
         <nav>
             <div class="nav-logo">
                 <img src="" alt="">
-                <h2>Teacher Dashboard</h2>
+                <h2>Teacher <b>Dashboard</b></h2>
             </div>
-
             <form action="?url=logout" method="post">
                 <button><i class="fa fa-sign-out"></i> Logout</button>
             </form>
         </nav>
 
         <main>
+
+            <div class="welcome-banner">
+                <h2>Welcome, <b><?= htmlspecialchars($teacherInfo['name']) ?>!</b></h2>
+            </div>
+
             <div class="parent-card">
                 <div class="card-box">
                     <div class="card-text">
                         <span>Total Classes</span>
-
-                        <p>4</p>
+                        <p><?= (int) ($stats['total_classes'] ?? 0) ?></p>
                     </div>
-
                     <div class="card-icon">
                         <i class="fa fa-graduation-cap"></i>
                     </div>
@@ -45,10 +43,8 @@
                 <div class="card-box">
                     <div class="card-text">
                         <span>Total Students</span>
-
-                        <p>60</p>
+                        <p><?= (int) ($stats['total_students'] ?? 0) ?></p>
                     </div>
-
                     <div class="card-icon">
                         <i class="fa fa-users"></i>
                     </div>
@@ -57,152 +53,66 @@
                 <div class="card-box">
                     <div class="card-text">
                         <span>Total Modules</span>
-
-                        <p>4</p>
+                        <p><?= (int) ($stats['total_modules'] ?? 0) ?></p>
                     </div>
-
                     <div class="card-icon">
                         <i class="fa fa-book-open"></i>
                     </div>
                 </div>
             </div>
 
-            <h2>Your Classes</h2>
+            <h2 class="mt-5">Your Classes</h2>
 
             <div class="parent-classes">
-                <a href="/learning_management/public/?url=records">
-                    <div class="classes">
-                        <div class="classes-header">
-                            <h3>Introduction to Philosophy of Human Person</h3>
-                            <p>Computer System Servicing</p>
-                        </div>
+                <?php if (empty($classes)): ?>
+                    <p>No classes assigned yet. Please contact your administrator.</p>
+                <?php else: ?>
+                    <?php foreach ($classes as $index => $class):
+                        $sections = array_unique(explode(', ', $class['sections']));
+                        $delay = $index * 0.1;
+                        ?>
+                        <div class="classes" style="animation-delay: <?= $delay ?>s">
+                            <div class="class-accent"></div>
 
-                        <div class="classes-body">
-                            <div class="grade-section">
-                                <div class="grade">
-                                    <span>Grade 12</span>
-                                    <span>Grade 11</span>
-                                </div>
-                                <div class="section">
-                                    <span>CSS 12-1</span>
-                                    <span>CSS 11-1</span>
-                                    <span>CSS 12-2</span>
-                                </div>
+                            <div class="classes-name">
+                                <h3><?= htmlspecialchars($class['subject_name']) ?></h3>
+                                <p><?= htmlspecialchars($class['grade_name']) ?></p>
                             </div>
 
-                            <div class="parent-enrolled">
-                                <span>Enrolled Students:</span>
-
-                                <div class="parent-number">
-                                    <div class="number-students">
-                                        <p>30</p>
-                                        <span>Students</span>
+                            <div class="classes-section-grade">
+                                <?php foreach ($sections as $section): ?>
+                                    <div class="count section">
+                                        <span><?= htmlspecialchars(trim($section)) ?></span>
                                     </div>
-                                    <div class="number-module">
-                                        <p>5</p>
-                                        <span>Modules</span>
-                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <div class="classes-student-module">
+                                <div class="students">
+                                    <h4><?= (int) ($class['student_count'] ?? 30) ?></h4>
+                                    <p>Students</p>
+                                </div>
+                                <div class="modules">
+                                    <h4><?= (int) ($class['module_count'] ?? 5) ?></h4>
+                                    <p>Modules</p>
                                 </div>
                             </div>
 
-                            <div class="footer">
-                                <span>Created 1/5/2026</span>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-
-                <a href="/learning_management/public/?url=records">
-                    <div class="classes">
-                        <div class="classes-header">
-                            <h3>
-                                Understanding Culture Society and Politics</h3>
-                            <p>Computer System Servicing</p>
-                        </div>
-
-                        <div class="classes-body">
-                            <div class="grade-section">
-                                <div class="grade">
-                                    <span>Grade 12</span>
-                                    <span>Grade 11</span>
-                                </div>
-                                <div class="section">
-                                    <span>CSS 12-1</span>
-                                    <span>CSS 12-2</span>
-                                    <span>CSS 11-2</span>
-                                </div>
-                            </div>
-
-                            <div class="parent-enrolled">
-                                <span>Enrolled Students:</span>
-
-                                <div class="parent-number">
-                                    <div class="number-students">
-                                        <p>30</p>
-                                        <span>Students</span>
-                                    </div>
-                                    <div class="number-module">
-                                        <p>5</p>
-                                        <span>Modules</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="footer">
-                                <span>Created 1/5/2026</span>
+                            <div class="view-classes">
+                                <p>Created 1/5/2026</p>
+                                <a
+                                    href="?url=teacher_class&id=<?= (int) $class['subject_id'] ?>&grade_id=<?= (int) $class['grade_level_id'] ?>">
+                                    View class <i class="fa fa-arrow-right"></i>
+                                </a>
                             </div>
                         </div>
-                    </div>
-                </a>
-
-                <a href="/learning_management/public/?url=records">
-                    <div class="classes">
-                        <div class="classes-header">
-                            <h3>
-                                Physical Education</h3>
-                            <p>Computer System Servicing</p>
-                        </div>
-
-                        <div class="classes-body">
-                            <div class="grade-section">
-                                <div class="grade">
-                                    <span>Grade 12</span>
-                                    <span>Grade 11</span>
-                                </div>
-                                <div class="section">
-                                    <span>CSS 12-1</span>
-                                    <span>CSS 12-2</span>
-                                    <span>CSS 11-2</span>
-                                </div>
-                            </div>
-
-                            <div class="parent-enrolled">
-                                <span>Enrolled Students:</span>
-
-                                <div class="parent-number">
-                                    <div class="number-students">
-                                        <p>30</p>
-                                        <span>Students</span>
-                                    </div>
-                                    <div class="number-module">
-                                        <p>5</p>
-                                        <span>Modules</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="footer">
-                                <span>Created 1/5/2026</span>
-                            </div>
-                        </div>
-                    </div>
-                </a>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </div>
+
         </main>
     </div>
 
-
-    <!-- bootstrap link javascript -->
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
 </body>
 

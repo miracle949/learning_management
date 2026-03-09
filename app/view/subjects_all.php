@@ -60,7 +60,7 @@
 
             <?php
 
-            if ($_SESSION['grade_level'] == "Grade 12") {
+            if ($_SESSION['grade_level'] === "Grade 12") {
                 ?>
 
                 <div class="card-box-parent">
@@ -319,10 +319,10 @@
                 </div>
 
                 <?php
-            } else if ($_SESSION['grade_level'] == "Grade 11") {
+            } else if ($_SESSION['grade_level'] === "Grade 11") {
                 ?>
 
-                    <!-- <div class="card-box-parent">
+                    <div class="card-box-parent">
                         <div class="card-box">
                             <div class="card-box-name">
                                 <div class="card-box-icon">
@@ -464,7 +464,7 @@
                                 <a href="/learning_management/public/?url=subjects&subject=statistics_probability"><i class="fa fa-arrow-right"></i></a>
                             </div>
                         </div>
-                    </div> -->
+                    </div>
 
                 <?php
             }

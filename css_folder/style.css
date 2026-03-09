@@ -3,7 +3,7 @@
     src: url('../Titan_One/TitanOne-Regular.ttf') format('truetype');
     font-weight: 600;
 } */
- 
+
 /* @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Titan+One&display=swap'); */
 
 @font-face {
@@ -47,52 +47,151 @@
 }
 
 .container-fluid .rightbar {
-    width: 100%;
+    width: calc(100% - 250px);
     height: calc(100% - 87px);
     margin-top: 87px;
-    padding: 3rem;
+    margin-left: 250px;
+    padding: 2.5rem;
     /* background-color: #FAFAFC; */
-    background-color: #F2F3FF;
+    /* background-color: #f0f2f8; */
+    background-color: #f0f2f8;
 }
+
 /* 
 div.rightbar{
     width: 100%;
     margin-top: 92px;
 } */
 
-.container-fluid .welcome-user{
-    padding: 45px 30px 45px 30px;
-    /* background-color: #F5F5F5; */
-    background-color: white;
-    width: 100%;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 10px;
+.container-fluid .welcome-user .welcome-header {
     display: flex;
-    justify-content: start;
-    align-items: center;
-    gap: 0.7rem;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
-.container-fluid .welcome-user .welcome-icon .fa{
+.container-fluid .welcome-user {
+    padding: 45px 35px 45px 35px;
+    /* background-color: #F5F5F5; */
+    background-color: #0d1117;
+    width: 100%;
+    /* border: 1px solid rgba(0, 0, 0, 0.2); */
+    box-shadow: 0 4px 16px rgba(108, 63, 232, 0.10), 0 1px 4px rgba(0, 0, 0, 0.06);
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.7rem;
+    position: relative;
+    overflow: hidden;
+    animation: slideIn 0.4s ease both;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container-fluid .welcome-user::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(59, 91, 219, 0.35) 0%, transparent 60%),
+        radial-gradient(ellipse at 20% 80%, rgba(112, 72, 232, 0.2) 0%, transparent 50%);
+}
+
+/* .container-fluid .welcome-user::after {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: 160px;
+    width: 200px;
+    height: 200px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 50%;
+} */
+
+/* .container-fluid .welcome-user:hover {
+    box-shadow: 0 8px 32px rgba(108, 63, 232, 0.13), 0 2px 8px rgba(0, 0, 0, 0.07);
+    transform: translateY(-2px);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+} */
+
+.container-fluid .welcome-user .welcome-icon .fa {
     font-size: 90px;
 }
 
-.container-fluid .welcome-user .welcome-text h2{
-    margin: 0;
-    font-size: 27px;
-    text-transform: uppercase;
-    font-family: "Titan", sans-serif;
+/* .container-fluid .welcome-user .welcome-text{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+} */
+
+.container-fluid .welcome-user .welcome-body .buttons-group {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
 }
 
-.container-fluid .welcome-user .welcome-text h4{
+.container-fluid .welcome-user .welcome-body .buttons-group a {
+    font-size: 14.5px;
+    color: white;
+    z-index: 1;
+}
+
+.container-fluid .welcome-user .welcome-body .buttons-group a:hover {
+    box-shadow: 0 8px 32px rgba(108, 63, 232, 0.13), 0 2px 8px rgba(0, 0, 0, 0.07);
+    transform: translateY(-2px);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.container-fluid .welcome-user .welcome-body .buttons-group a:nth-child(1) {
+    /* background-color: #3B5BDB; */
+    background-color: #9333ea;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 15px;
+}
+
+.container-fluid .welcome-user .welcome-body .buttons-group a:nth-child(2) {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 10px 20px;
+    border-radius: 15px;
+    text-decoration: none;
+}
+
+.container-fluid .welcome-user .welcome-text h2 {
+    margin: 0;
+    font-size: 25px;
+    text-transform: uppercase;
+    font-family: "Titan", sans-serif;
+    color: #ffffff;
+}
+
+.container-fluid .welcome-user .welcome-text h4 {
     font-size: 29px;
     margin: 0;
 }
 
-.container-fluid .welcome-user .welcome-text{
+.container-fluid .welcome-user .welcome-text {
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
+}
+
+.container-fluid .welcome-user .welcome-text span {
+    color: #ffffff;
 }
 
 .container-fluid .rightbar .text-grades {
@@ -100,13 +199,14 @@ div.rightbar{
 }
 
 .container-fluid .rightbar .text-grades h2 {
-    font-size: 20px;
+    font-size: 17.5px;
     margin: 1rem 0.8rem 2rem 1rem;
 }
 
 .container-fluid .rightbar .text-progress h2 {
-    font-size: 20px;
-    margin: 3.5rem 1.5rem 2rem 1rem;
+    font-size: 19px;
+    font-weight: 600;
+    margin: 2rem 1.5rem 2rem 0rem;
 }
 
 .container-fluid .rightbar .card-parent-box {
@@ -117,7 +217,9 @@ div.rightbar{
     /* gap: 1rem; */
     flex-wrap: wrap;
     width: 100%;
-    margin-top: 2rem;
+    margin-top: 2.5rem;
+    gap: 1rem;
+    animation: slideIn 0.4s ease both;
     /* gap: 2rem; */
     /* padding: 0 16px; */
 }
@@ -125,13 +227,22 @@ div.rightbar{
 .container-fluid .rightbar .card-parent-box .card-box {
     width: calc(100% / 3.2);
     background-color: white;
-    padding: 2rem;
+    padding: 1.5rem 1.3rem 1.5rem 1.3rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-radius: 7px;
     /* box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; */
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    /* border: 1px solid rgba(0, 0, 0, 0.2); */
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.container-fluid .rightbar .card-parent-box .card-box:hover {
+    box-shadow: 0 8px 32px rgba(108, 63, 232, 0.13), 0 2px 8px rgba(0, 0, 0, 0.07);
+    transform: translateY(-2px);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
 }
 
 .container-fluid .rightbar .card-parent-box .card-box p {
@@ -139,13 +250,14 @@ div.rightbar{
 }
 
 .container-fluid .rightbar .card-parent-box .card-box .data_text span {
-    font-size: 14px;
+    font-size: 15.5px;
     color: #808080;
+    text-transform: uppercase;
 }
 
 .container-fluid .rightbar .card-parent-box .card-box .data_text p {
     font-size: 25px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .container-fluid .rightbar .card-parent-box .card-box .data_text {
@@ -155,10 +267,10 @@ div.rightbar{
 }
 
 .container-fluid .rightbar .card-parent-box .card-box .data_icon .fa {
-    font-size: 45px;
+    font-size: 35px;
 }
 
-.container-fluid .rightbar .card-parent-box .card-box .data_icon .fa-book-open {
+/* .container-fluid .rightbar .card-parent-box .card-box .data_icon .fa-book-open {
     color: #2B7FFF;
 }
 
@@ -168,7 +280,7 @@ div.rightbar{
 
 .container-fluid .rightbar .card-parent-box .card-box .data_icon .fa-clock {
     color: #AD46FF;
-}
+} */
 
 .container-fluid .rightbar .progress-parent-box {
     /* padding-left: 1rem;
@@ -182,9 +294,18 @@ div.rightbar{
 .container-fluid .rightbar .progress-parent-box .progress-box {
     background-color: white;
     /* box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; */
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    padding: 1.9rem;
+    /* border: 1px solid rgba(0, 0, 0, 0.2); */
+    padding: 1.9rem 1.5rem 1.9rem 1.5rem;
     border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.container-fluid .rightbar .progress-parent-box .progress-box .progress-parent .continue-parent{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
 }
 
 .container-fluid .rightbar .progress-parent-box .progress-box .progress-parent {
@@ -198,46 +319,43 @@ div.rightbar{
     justify-content: left;
     align-items: center;
     gap: 1rem;
-    width: 50%;
+    width: 100%;
 }
 
 .container-fluid .rightbar .progress-parent-box .progress-box .progress-parent .progress-title span {
-    font-size: 18px;
+    font-size: 16px;
+    /* font-weight: 600; */
+    width: 300px;
 }
 
 .container-fluid .rightbar .progress-parent-box .progress-box .progress-parent .progress-title .parent-icon {
     background-color: #00C950;
-    padding: 1rem;
+    padding: 0.8rem;
     border-radius: 7px;
 }
 
 .container-fluid .rightbar .progress-parent-box .progress-box:nth-child(2) .progress-parent .progress-title .parent-icon {
     background-color: #6440AE;
-    padding: 1rem;
     border-radius: 7px;
 }
 
 .container-fluid .rightbar .progress-parent-box .progress-box:nth-child(3) .progress-parent .progress-title .parent-icon {
     background-color: #DE316B;
-    padding: 1rem;
     border-radius: 7px;
 }
 
 .container-fluid .rightbar .progress-parent-box .progress-box:nth-child(4) .progress-parent .progress-title .parent-icon {
     background-color: #5D7C81;
-    padding: 1rem;
     border-radius: 7px;
 }
 
 .container-fluid .rightbar .progress-parent-box .progress-box:nth-child(5) .progress-parent .progress-title .parent-icon {
     background-color: #DE316B;
-    padding: 1rem;
     border-radius: 7px;
 }
 
 .container-fluid .rightbar .progress-parent-box .progress-box:nth-child(6) .progress-parent .progress-title .parent-icon {
     background-color: #6440AE;
-    padding: 1rem;
     border-radius: 7px;
 }
 
@@ -247,7 +365,8 @@ div.rightbar{
 }
 
 .container-fluid .rightbar .progress-parent-box .progress-box .progress-parent .progress-percent-parent {
-    width: 45%;
+    /* width: 28%; */
+    width: 100%;
     display: flex;
     flex-direction: column;
     /* gap: 0.5rem; */
@@ -261,12 +380,17 @@ div.rightbar{
 
 .container-fluid .rightbar .progress-parent-box .progress-box .progress-parent .progress-percent-parent p {
     margin: 0;
+    font-size: 15px;
+}
+
+.container-fluid .rightbar .progress-parent-box .progress-box .progress-parent .progress-percent-parent span{
+    font-size: 15px;
 }
 
 .container-fluid .rightbar .progress-parent-box .progress-box .progress-parent .progress-percent-parent .progress-percent {
     position: relative;
     width: 100%;
-    padding: 0.6rem;
+    padding: 0.3rem;
     background-color: #d9d9d9;
     border-radius: 28px;
     margin-top: 8px;
@@ -278,7 +402,7 @@ div.rightbar{
     top: 0;
     background-color: #00C950;
     width: 50%;
-    padding: 0.6rem;
+    padding: 0.3rem;
     border-radius: 28px;
 }
 
@@ -288,7 +412,7 @@ div.rightbar{
     top: 0;
     background-color: #6440AE;
     width: 50%;
-    padding: 0.6rem;
+    padding: 0.3rem;
     border-radius: 28px;
 }
 
@@ -298,7 +422,7 @@ div.rightbar{
     top: 0;
     background-color: #DE316B;
     width: 50%;
-    padding: 0.6rem;
+    padding: 0.3rem;
     border-radius: 28px;
 }
 
@@ -308,7 +432,7 @@ div.rightbar{
     top: 0;
     background-color: #5D7C81;
     width: 50%;
-    padding: 0.6rem;
+    padding: 0.3rem;
     border-radius: 28px;
 }
 
@@ -318,7 +442,7 @@ div.rightbar{
     top: 0;
     background-color: #DE316B;
     width: 50%;
-    padding: 0.6rem;
+    padding: 0.3rem;
     border-radius: 28px;
 }
 
@@ -328,8 +452,22 @@ div.rightbar{
     top: 0;
     background-color: #6440AE;
     width: 50%;
-    padding: 0.6rem;
+    padding: 0.3rem;
     border-radius: 28px;
+}
+
+.container-fluid .rightbar .progress-parent-box .progress-box .progress-parent .continue{
+    width: 50%;
+}
+
+.container-fluid .rightbar .progress-parent-box .progress-box .progress-parent .continue a{
+    font-size: 13.5px;
+    text-decoration: none;
+    color: #212529;
+    background-color: #F4F5F7;
+    padding: 10px 20px;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 10px;
 }
 
 /* 

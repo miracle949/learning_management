@@ -4,11 +4,15 @@ session_start();
 
 require_once "../app/controllers/HomeController.php";
 require_once "../app/controllers/AuthController.php";
+require_once "../app/controllers/teacher_records.php";
+require_once "../app/controllers/TeacherController.php";
 
 $url = $_GET['url'] ?? '';
 
 $controller = new HomeController();
 $auth = new AuthController();
+$teacher = new teacher_records();
+$teacherDashboard = new TeacherController(); 
 
 switch ($url) {
     case 'landingpage':
@@ -36,11 +40,16 @@ switch ($url) {
         break;
 
     case 'admin':
-        $controller->admin();
+        $teacher->recentStudents();
+        break;
+        
+    case 'teacher':
+        $teacherDashboard->index();
         break;
 
-    case 'teacher':
-        $controller->teacher();
+    // ✅ This was the missing route — "View class" now loads records.php
+    case 'teacher_class':
+        $teacherDashboard->viewClass();
         break;
 
     case 'student_records':
@@ -48,7 +57,11 @@ switch ($url) {
         break;
 
     case 'teacher_records':
-        $controller->teacher_records();
+        $teacher->teacherRecords();
+        break;
+    
+    case 'createTeacher':
+        $teacher->createTeacher();
         break;
 
     case 'records':
@@ -56,7 +69,15 @@ switch ($url) {
         break;
 
     case 'lessons':
-        $controller->lessons();
+        $teacherDashboard->lessons();
+        break;
+
+    case 'announce':
+        $teacherDashboard->announce();
+        break;
+
+    case 'upload':
+        $teacherDashboard->upload();
         break;
 
     case 'login':
@@ -70,11 +91,8 @@ switch ($url) {
     case 'logout':
         $auth->logout();
         break;
-        
 
     default:
         $controller->landingpage();
         break;
 }
-
-

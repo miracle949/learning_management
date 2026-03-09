@@ -3,11 +3,21 @@
         width: 100%;
         /* height: 270px; */
         /* background-color: #00C950; */
-        border: 1px solid rgba(0, 0, 0, 0.2);
+        /* border: 1px solid rgba(0, 0, 0, 0.2); */
         /* padding: 3rem; */
         color: white;
-        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+        /* box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; */
         border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+        animation: slideIn 0.4s ease both;
+    }
+
+    .container-fluid .rightbar .module-title:hover {
+        box-shadow: 0 8px 32px rgba(108, 63, 232, 0.13), 0 2px 8px rgba(0, 0, 0, 0.07);
+        transform: translateY(-2px);
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
     }
 
     .container-fluid .rightbar .module-title .module-picture {
@@ -27,9 +37,10 @@
         justify-content: space-between;
         align-items: center;
         color: #212529;
-        background-color: #C8E0C3;
+        /* background-color: #C8E0C3; */
         border-bottom-left-radius: 10px;
         border-bottom-right-radius: 10px;
+        background-color: #ffffff;
     }
 
     .container-fluid .rightbar .module-title .module-body .module-links {
@@ -45,12 +56,15 @@
 
     .container-fluid .rightbar .module-title .module-body .module-links .module-buttons a:nth-child(1) {
         color: white;
-        background-color: #5F66AC;
+        /* background-color: #5F66AC; */
+        background-color: #9333ea;
     }
 
     .container-fluid .rightbar .module-title .module-body .module-links .module-buttons a:nth-child(2) {
-        border: 2px solid #5F66AC;
-        color: #5F66AC;
+        /* border: 2px solid #5F66AC; */
+        border: 2px solid #9333ea;
+        /* color: #5F66AC; */
+        color: #9333ea;
         padding: 10px 40px;
     }
 
@@ -60,6 +74,7 @@
         border-radius: 28px;
         text-transform: uppercase;
         font-weight: 600;
+        /* font-size: 15.5px; */
         /* color: #5F66AC; */
     }
 

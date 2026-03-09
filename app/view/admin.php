@@ -91,130 +91,31 @@
                     <hr>
 
                     <div class="parent-data">
-                        <div class="data-card">
-                            <div class="data-text">
-                                <p>Sarah Williams</p>
-                                <p>sarah.williams@gmail.com</p>
+                        <?php if (!empty($recentStudents)): ?>
+                            <?php foreach ($recentStudents as $student): ?>
+                                <div class="data-card">
+                                    <div class="data-text">
+                                        <p>
+                                            <?= htmlspecialchars($student['name']) ?>
+                                        </p>
+                                        <p>
+                                            <?= htmlspecialchars($student['email']) ?>
+                                        </p>
 
-                                <div class="data-button">
-                                    <span>Grade 11</span>
-
-                                    <span>Section B</span>
-                                </div>
-                            </div>
-                            <!-- <div class="data-progress">
-                                <div class="progress-text">
-                                    <p>Progress</p>
-
-                                    <p>50%</p>
-                                </div>
-                                <div class="parent-progress">
-                                    <div class="progress">
-
+                                        <div class="data-button">
+                                            <span>
+                                                <?= htmlspecialchars($student['grade_level_name']) ?>
+                                            </span>
+                                            <span>
+                                                <?= htmlspecialchars($student['section_name']) ?>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div> -->
-                        </div>
-
-                        <div class="data-card">
-                            <div class="data-text">
-                                <p>Sarah Williams</p>
-                                <p>sarah.williams@gmail.com</p>
-
-                                <div class="data-button">
-                                    <span>Grade 11</span>
-
-                                    <span>Section B</span>
-                                </div>
-                            </div>
-                            <!-- <div class="data-progress">
-                                <div class="progress-text">
-                                    <p>Progress</p>
-
-                                    <p>50%</p>
-                                </div>
-                                <div class="parent-progress">
-                                    <div class="progress">
-
-                                    </div>
-                                </div>
-                            </div> -->
-                        </div>
-
-                        <div class="data-card">
-                            <div class="data-text">
-                                <p>Sarah Williams</p>
-                                <p>sarah.williams@gmail.com</p>
-
-                                <div class="data-button">
-                                    <span>Grade 11</span>
-
-                                    <span>Section B</span>
-                                </div>
-                            </div>
-                            <!-- <div class="data-progress">
-                                <div class="progress-text">
-                                    <p>Progress</p>
-
-                                    <p>50%</p>
-                                </div>
-                                <div class="parent-progress">
-                                    <div class="progress">
-
-                                    </div>
-                                </div>
-                            </div> -->
-                        </div>
-
-                        <div class="data-card">
-                            <div class="data-text">
-                                <p>Sarah Williams</p>
-                                <p>sarah.williams@gmail.com</p>
-
-                                <div class="data-button">
-                                    <span>Grade 11</span>
-
-                                    <span>Section B</span>
-                                </div>
-                            </div>
-                            <!-- <div class="data-progress">
-                                <div class="progress-text">
-                                    <p>Progress</p>
-
-                                    <p>50%</p>
-                                </div>
-                                <div class="parent-progress">
-                                    <div class="progress">
-
-                                    </div>
-                                </div>
-                            </div> -->
-                        </div>
-
-                        <div class="data-card">
-                            <div class="data-text">
-                                <p>Sarah Williams</p>
-                                <p>sarah.williams@gmail.com</p>
-
-                                <div class="data-button">
-                                    <span>Grade 11</span>
-
-                                    <span>Section B</span>
-                                </div>
-                            </div>
-                            <!-- <div class="data-progress">
-                                <div class="progress-text">
-                                    <p>Progress</p>
-
-                                    <p>50%</p>
-                                </div>
-                                <div class="parent-progress">
-                                    <div class="progress">
-
-                                    </div>
-                                </div>
-                            </div> -->
-                        </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p style="padding: 1rem; color: gray;">No students found.</p>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <div class="actions-card">

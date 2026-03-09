@@ -6,42 +6,40 @@ class AuthController
 {
     public function login()
     {
-
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $email = $_POST["email"];
-            $password = $_POST["password"];
+            $email = $_POST["email"] ?? null;
+            $password = $_POST["password"] ?? null;
 
             $userModel = new User();
-
             $user = $userModel->login($email);
-
 
             if ($user && password_verify($password, $user['password'])) {
                 $_SESSION['user_id'] = $user['id'];
-                $_SESSION['role'] = $user['role'];
-                $_SESSION['firstname'] = $user['firstname'];
-                $_SESSION['lastname'] = $user['lastname'];
-                $_SESSION['email'] = $user['email'];
-                $_SESSION['grade_level'] = $user['grade_level'];
-                $_SESSION['section'] = $user['section'];
+                $_SESSION['role']    = $user['role'];
+                $_SESSION['email']   = $user['email'];
+                $_SESSION['name']    = $userModel->getName($user['id']);
 
-                // $role = strtolower($user['role']);
-
-
+                // Fetch grade and section for students
+                if ($user['role'] === 'student') {
+                    $studentInfo = $userModel->getStudentInfo($user['id']);
+                    $_SESSION['grade_level'] = $studentInfo['grade_level'] ?? null;
+                    $_SESSION['section']     = $studentInfo['section_name'] ?? null;
+                }
 
                 if ($_SESSION['role'] === 'admin') {
                     header("Location: /learning_management/public/?url=admin");
-                } else if ($_SESSION['role'] === 'teacher') {
+                } elseif ($_SESSION['role'] === 'teacher') {
                     header("Location: /learning_management/public/?url=teacher");
-                } else if ($_SESSION['role'] === 'student') {
+                } elseif ($_SESSION['role'] === 'student') {
                     header("Location: /learning_management/public/?url=dashboard");
                 } else {
-                    "<h1>Unknown</h1>";
+                    echo "<h1>Unknown role</h1>";
                 }
 
                 exit;
+            } else {
+                $error = "Invalid email or password.";
             }
-
         }
 
         require "../app/view/login.php";
@@ -50,34 +48,50 @@ class AuthController
     public function signup()
     {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $student_id = $_POST["student_id"];
-            $firstname = $_POST["firstname"];
-            $middle = $_POST["middle"];
-            $lastname = $_POST["lastname"];
-            $email = $_POST["email"];
-            $username = $_POST["username"];
-            $password = $_POST["password"];
-            $confirm_password = $_POST["confirm_password"];
-            $grade_level = $_POST["grade_level"];
-            $section = $_POST["section"];
 
-            $userModel = new User();
+            $student_id = $_POST["student_id"] ?? null;
+            $firstname = $_POST["firstname"] ?? null;
+            $middle = $_POST["middle"] ?? null;
+            $lastname = $_POST["lastname"] ?? null;
+            $email = $_POST["email"] ?? null;
+            $username = $_POST["username"] ?? null;
+            $password = $_POST["password"] ?? null;
+            $confirm_password = $_POST["confirm_password"] ?? null;
+            $grade_level_id = $_POST["grade_level_id"] ?? null;
+            $section_id = $_POST["section_id"] ?? null;
 
-            if ($password !== $confirm_password) {
-
-                die("Don't match the password");
-
-            } else {
-
-                $password_HASH = password_hash($password, PASSWORD_DEFAULT);
-
-                $userModel->signup($student_id, $firstname, $middle, $lastname, $email, $username, $password_HASH, $grade_level, $section);
-
-                header("Location: /learning_management/public/?url=login");
-                exit;
+            // Basic validation
+            if (!$student_id || !$firstname || !$lastname || !$email || !$username || !$password || !$grade_level_id || !$section_id) {
+                die("Please fill in all required fields.");
             }
 
+            if ($password !== $confirm_password) {
+                die("Passwords do not match.");
+            }
+
+            // Combine name into one
+            $name = trim($firstname . ' ' . ($middle ? $middle . ' ' : '') . $lastname);
+
+            $password_HASH = password_hash($password, PASSWORD_DEFAULT);
+
+            $userModel = new User();
+            $userModel->signup(
+                $student_id,
+                $name,
+                $email,
+                $username,
+                $password_HASH,
+                $grade_level_id,
+                $section_id
+            );
+
+            header("Location: /learning_management/public/?url=login");
+            exit;
         }
+
+        $studentModel = new User();
+        $grades = $studentModel->getGrades();
+        $sections = $studentModel->getSections();
 
         require "../app/view/signup.php";
     }
@@ -85,7 +99,7 @@ class AuthController
     public function logout()
     {
         session_destroy();
-
         header("Location: /learning_management/public/?url=landingpage");
+        exit;
     }
 }

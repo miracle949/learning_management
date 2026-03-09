@@ -19,10 +19,10 @@
     <div class="container-fluid p-0">
         <nav>
             <div class="nav-logo">
-                <a href="/learning_management/public/?url=records"><i class="fa fa-arrow-left"></i></a>
+                <a href="/learning_management/public/?url=teacher_class&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>">
+                    <i class="fa fa-arrow-left"></i>
+                </a>
             </div>
-
-
 
             <!-- <form action="?url=logout" method="post">
                 <button><i class="fa fa-sign-out"></i> Logout</button>
@@ -62,36 +62,16 @@
                     </div>
                 </div>
 
-                <div id="contentContainer">
-                    <div class="text-content">
-                        <i class="fa fa-circle-question"></i>
-                        <p>No Content</p>
+                <form action="?url=upload" method="post">
+
+                    <div id="contentContainer">
+                        <div class="text-content">
+                            <i class="fa fa-circle-question"></i>
+                            <p>No Content</p>
+                        </div>
                     </div>
-                    <!-- <div class="card-body lesson-item">
-                        <div class="card-body-header">
-                            <div class="card-nav">
-                                <div class="card-icon">
-                                    <i class="fa fa-file"></i>
-                                </div>
-                                <p>Lesson 1</p>
-                            </div>
-                        </div>
 
-                        <div class="row">
-                            <div class="col-lg-12 mt-4">
-                                <label>Title *</label>
-                                <input type="text" name="lesson_title[]" class="form-control mt-1"
-                                    placeholder="Enter lessons title">
-                            </div>
-
-                            <div class="col-lg-12 mt-4">
-                                <label>Content *</label>
-                                <textarea name="lesson_content[]" placeholder="Enter lessons content"
-                                    class="form-control mt-1" rows="6"></textarea>
-                            </div>
-                        </div>
-                    </div> -->
-                </div>
+                </form>
 
                 <div class="card-footer">
                     <h3>Additional Materials (Optional)</h3>

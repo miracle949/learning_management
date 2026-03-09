@@ -36,13 +36,21 @@
 
         <main>
 
-            <h3>Introduction to Philosophy of Human Person</h3>
+            <h3>
+                <?= htmlspecialchars($classInfo['subject_name'] ?? 'Unknown Subject') ?>
+            </h3>
             <div class="main-text">
-                <p>Computer System Servicing</p>
+                <p>
+                    Computer System Servicing
+                </p>
                 <span>•</span>
-                <span>Grade 12</span>
+                <span>
+                    <?= htmlspecialchars($classInfo['grade'] ?? '') ?>
+                </span>
                 <span>-</span>
-                <span>CSS 12-1</span>
+                <span>
+                    <?= htmlspecialchars($classInfo['section'] ?? '') ?>
+                </span>
             </div>
 
             <div class="card-box-parent">
@@ -78,7 +86,7 @@
             </div>
 
             <div class="progress-announce">
-                <a href="/learning_management/public/?url=lessons">
+                <a href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>">
                     <div class="student-progress">
                         <div class="student-icon">
                             <i class="fa fa-arrow-up-from-bracket"></i>
@@ -124,7 +132,8 @@
 
                                     <div class="col-lg-12 mt-2">
                                         <label>Content</label>
-                                        <textarea name="" placeholder="Enter lessons content..." class="form-control mt-1" rows="6"></textarea>
+                                        <textarea name="" placeholder="Enter lessons content..."
+                                            class="form-control mt-1" rows="6"></textarea>
                                     </div>
                                 </div>
 

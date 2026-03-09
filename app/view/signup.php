@@ -42,8 +42,9 @@
                         <div class="col-lg-12">
                             <div class="text-box">
                                 <label>Student ID / LRN</label>
-                                <input type="number" name="student_no" class="form-control" placeholder="e.g. 123456789012"
-                                    onkeydown="if(event.key === 'e' || event.key === 'E' || event.key === '+') event.preventDefault();" required>
+                                <input type="text" name="student_id" class="form-control"
+                                    placeholder="e.g. 123456789012"
+                                    oninput="this.value = this.value.replace(/[^0-9-]/g, '')" required>
                             </div>
                         </div>
 
@@ -90,26 +91,29 @@
                         <div class="col-lg-12 mt-3">
                             <div class="text-box">
                                 <label>Password</label>
-                                <input type="password" class="form-control" placeholder="At least 8 characters" maxlength="8"
-                                    name="password" id="" required>
+                                <input type="password" class="form-control" placeholder="At least 8 characters"
+                                    maxlength="8" name="password" id="" required>
                             </div>
                         </div>
 
                         <div class="col-lg-12 mt-3">
                             <div class="text-box">
                                 <label>Confirm Password</label>
-                                <input type="password" class="form-control" placeholder="Re-enter your password" maxlength="8"
-                                    name="confirm_password" id="" required>
+                                <input type="password" class="form-control" placeholder="Re-enter your password"
+                                    maxlength="8" name="confirm_password" id="" required>
                             </div>
                         </div>
 
                         <div class="col-lg-6 mt-3">
                             <div class="text-box">
                                 <label>Grade Level</label>
-                                <select name="grade_level" id="" class="form-select" required>
-                                    <option value="" disabled selected>Select Grade Level</option>
-                                    <option value="Grade 12">Grade 12</option>
-                                    <option value="Grade 11">Grade 11</option>
+                                <select name="grade_level_id" id="" class="form-select" required>
+                                    <option value="">Select grade level</option>
+                                    <?php foreach ($grades as $grade): ?>
+                                        <option value="<?= $grade['id']; ?>">
+                                            <?= $grade['name']; ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </div>
@@ -117,12 +121,13 @@
                         <div class="col-lg-6 mt-3">
                             <div class="text-box">
                                 <label>Section</label>
-                                <select name="section" class="form-select" id="" required>
-                                    <option value="" disabled selected>Select Section</option>
-                                    <option value="CSS 12-1">CSS 12-1</option>
-                                    <option value="CSS 12-2">CSS 12-2</option>
-                                    <option value="CSS 11-1">CSS 11-1</option>
-                                    <option value="CSS 11-2">CSS 11-2</option>
+                                <select name="section_id" class="form-select" id="" required>
+                                    <option value="">Select section</option>
+                                    <?php foreach ($sections as $section): ?>
+                                        <option value="<?= $section['id']; ?>">
+                                            <?= $section['section_name']; ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
                                 <!-- <input type="text" class="form-control" placeholder="e.g. CSS 11-A" name="section" id="" required> -->
                             </div>
