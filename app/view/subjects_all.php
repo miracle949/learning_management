@@ -23,9 +23,9 @@
 
         <?php include("../components/navbar.php"); ?>
 
-        <!-- <?php include("../components/sidebar.php"); ?> -->
+        <?php include("../components/sidebar.php"); ?>
 
-        <div class="sidebar-subjects">
+        <!-- <div class="sidebar-subjects">
             <h2>Learning Catalog</h2>
 
             <div class="subjects-catalog">
@@ -53,7 +53,7 @@
                     </li>
                 </ul>
             </div>
-        </div>
+        </div> -->
 
         <div class="rightbar">
             <!-- <h2>Enrolled Subjects</h2> -->

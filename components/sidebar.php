@@ -4,7 +4,7 @@
         <p>Student Portal</p>
     </div>
     <div class="sidebar-menu">
-        <p>Menu</p>
+        <!-- <p>Menu</p> -->
         <ul>
             <li>
                 <a href="/learning_management/public/?url=dashboard" class="text-decoration-none ">

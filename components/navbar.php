@@ -45,7 +45,7 @@
         </div>
         <!-- <button><i class="fas fa-grip"></i></button> -->
         <div class="drop-name">
-            <p>Jaira V. Bono</p>
+            <p><?= htmlspecialchars($_SESSION["name"]) ?></p>
             <span>Student</span>
         </div>
         <div class="dropdown">

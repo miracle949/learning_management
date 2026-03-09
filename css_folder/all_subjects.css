@@ -38,13 +38,14 @@
 
 .container-fluid .rightbar {
     /* width: 100%; */
-    width: calc(100% - 280px);
-    margin-left: 280px;
+    width: calc(100% - 235px);
+    margin-left: 235px;
     /* width: calc(100% - 250px); */
-    height: calc(100% - 87px);
-    margin-top: 87px;
+    height: calc(100% - 69px);
+    margin-top: 69px;
     /* margin-left: 250px; */
     padding: 3rem;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
     /* background-color: #EFF3F6; */
     /* background-color: #FAFAFC; */
     /* background-color: #F2F3FF; */

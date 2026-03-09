@@ -36,20 +36,20 @@
 
                         <h2>Welcome, <?= htmlspecialchars($_SESSION["name"]) ?>! 👋</h2>
                         <div class="d-flex gap-2">
-                            <!-- <span><?= htmlspecialchars($_SESSION["grade_level"]) ?></span>
+                            <span><?= htmlspecialchars($_SESSION["grade_level"]) ?></span>
                             <span>—</span>
-                            <span><?= htmlspecialchars($_SESSION["section"]) ?></span> -->
-                            <span>Here's what's happening with your learning today</span>
+                            <span><?= htmlspecialchars($_SESSION["section"]) ?></span>
+                            <!-- <span>Here's what's happening with your learning today</span> -->
                         </div>
                     </div>
 
-                    <!-- <div class="welcome-body">
+                    <div class="welcome-body">
                         <div class="buttons-group">
                             <a href="#">Browse Courses <i class="fa fa-arrow-right"></i></a>
 
                             <a href="#">View Progress</a>
                         </div>
-                    </div> -->
+                    </div>
                 </div>
 
                 <div class="card-parent-box">
