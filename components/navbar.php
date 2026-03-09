@@ -7,15 +7,22 @@
 
         <!-- <h3 class="m-0">Learning Management</h3> -->
         <!-- <img src="../images/ilearn-logo3.jpg" alt=""> -->
-        <div class="image-logo">
+        <!-- <div class="image-logo">
             <img src="../images/ilearn-logo4.png" alt="">
             <div class="logo-text">
                 <p><b>i</b>Learn</p>
             </div>
+        </div> -->
+
+        <div class="search-parent">
+            <i class="fa fa-search"></i>
+            <div class="search">
+                <input type="search" name="" id="" placeholder="Search...">
+            </div>
         </div>
     </div>
 
-    <div class="nav-list">
+    <!-- <div class="nav-list">
         <ul>
             <li>
                 <a href="/learning_management/public/?url=dashboard">Home</a>
@@ -29,10 +36,18 @@
                 <a href="#">Progress</a>
             </li>
         </ul>
-    </div>
+    </div> -->
 
     <div class="nav-acc">
-        <button><i class="fas fa-grip"></i></button>
+        <div class="nav-list">
+            <button><i class="fa fa-message"></i></button>
+            <button><i class="fa fa-bell"></i></button>
+        </div>
+        <!-- <button><i class="fas fa-grip"></i></button> -->
+        <div class="drop-name">
+            <p>Jaira V. Bono</p>
+            <span>Student</span>
+        </div>
         <div class="dropdown">
 
             <a href="#" class="dropdown-parent" role="button" data-bs-toggle="dropdown" aria-expanded="false">

@@ -20,12 +20,13 @@
 
         <?php include("../components/offcanvas.php"); ?>
 
-        <?php include("../components/navbar.php"); ?>
-
+        
         <?php include("../components/sidebar.php"); ?>
 
-        <div class="rightbar">
+        <?php include("../components/navbar.php"); ?>
 
+        <div class="rightbar">
+            
             <?php if (!empty($_SESSION['grade_level']) && $_SESSION['grade_level'] === 'Grade 12'): ?>
 
                 <!-- <h4><?= htmlspecialchars($_SESSION["name"]) ?></h4> -->
