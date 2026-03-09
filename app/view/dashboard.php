@@ -20,13 +20,13 @@
 
         <?php include("../components/offcanvas.php"); ?>
 
-        
+
         <?php include("../components/sidebar.php"); ?>
 
         <?php include("../components/navbar.php"); ?>
 
         <div class="rightbar">
-            
+
             <?php if (!empty($_SESSION['grade_level']) && $_SESSION['grade_level'] === 'Grade 12'): ?>
 
                 <!-- <h4><?= htmlspecialchars($_SESSION["name"]) ?></h4> -->
@@ -95,6 +95,71 @@
                         <div class="data_icon">
                             <i class="fa fa-clock"></i>
                         </div>
+                    </div>
+                </div>
+
+                <div class="parent-performance">
+                    <div class="perform performance-trend">
+                        <h2>Hello</h2>
+                    </div>
+                    <div class="update subject-performance">
+                        <div class="header">
+                            <h3>Upcoming Tasks</h3>
+                            <a href="#">View all</a>
+                        </div>
+                        <div class="body">
+                            <div class="update-box">
+                                <p>Build a Personal Portfolio</p>
+                                <span>Due: 3/15/2026</span>
+                                <span>7 days left</span>
+                            </div>
+
+                            <div class="update-box">
+                                <p>Build a Personal Portfolio</p>
+                                <span>Due: 3/15/2026</span>
+                                <span>7 days left</span>
+                            </div>
+
+                            <div class="update-box">
+                                <p>Build a Personal Portfolio</p>
+                                <span>Due: 3/15/2026</span>
+                                <span>7 days left</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="perform enrolled-subjects">
+                        <h2>Hello</h2>
+                    </div>
+                    <div class="update upcoming-task">
+                        <div class="header">
+                            <h3>Upcoming Tasks</h3>
+                            <a href="#">View all</a>
+                        </div>
+                        <div class="body">
+                            <div class="update-box">
+                                <p>Build a Personal Portfolio</p>
+                                <span>Due: 3/15/2026</span>
+                                <span>7 days left</span>
+                            </div>
+
+                            <div class="update-box">
+                                <p>Build a Personal Portfolio</p>
+                                <span>Due: 3/15/2026</span>
+                                <span>7 days left</span>
+                            </div>
+
+                            <div class="update-box">
+                                <p>Build a Personal Portfolio</p>
+                                <span>Due: 3/15/2026</span>
+                                <span>7 days left</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="subject-parents">
+                    <div class="subject-header">
+                        <h3>My Subjects</h3>
                     </div>
                 </div>
 

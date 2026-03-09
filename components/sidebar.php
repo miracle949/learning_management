@@ -1,4 +1,7 @@
 <div class="sidebar">
+    <div class="sidebar-logo">
+        
+    </div>
     <div class="sidebar-menu">
         <ul>
             <li>
