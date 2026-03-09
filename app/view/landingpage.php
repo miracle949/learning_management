@@ -79,7 +79,12 @@
 
         <main>
             <div class="main-text">
-                <h2>Transform Education with Moderm LMS</h2>
+                <!-- <h2>Transform Education with Moderm LMS</h2> -->
+                <h2>Hello</h2>
+                <h2>Hello</h2>
+                <h2>Hello</h2>
+                <h2>Hello</h2>
+                <h2>Hello</h2>
                 <p>A comprehensive Learning Management System designed for both students and teachers. Create, learn,
                     and grow together in one unified platform.</p>
                 <div class="learning-today">
