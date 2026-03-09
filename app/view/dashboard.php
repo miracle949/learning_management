@@ -57,6 +57,7 @@
                         <div class="data_text">
                             <span>Enrolled Subjects</span>
                             <p>4</p>
+                            <span>Active this semester</span>
                         </div>
                         <div class="data_icon">
                             <i class="fa fa-book-open"></i>
@@ -67,6 +68,7 @@
                         <div class="data_text">
                             <span>Pending Task</span>
                             <p>8</p>
+                            <span>Active this semester</span>
                         </div>
                         <div class="data_icon">
                             <i class="fa fa-award"></i>
@@ -77,6 +79,7 @@
                         <div class="data_text">
                             <span>Study Time</span>
                             <p>15h</p>
+                            <span>Active this semester</span>
                         </div>
                         <div class="data_icon">
                             <i class="fa fa-clock"></i>
@@ -87,6 +90,7 @@
                         <div class="data_text">
                             <span>Progress</span>
                             <p>15h</p>
+                            <span>Active this semester</span>
                         </div>
                         <div class="data_icon">
                             <i class="fa fa-clock"></i>
