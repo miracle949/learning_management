@@ -199,6 +199,7 @@ div.rightbar{
     display: flex;
     flex-direction: column;
     gap: 0.7rem;
+    margin-top: 2rem;
 }
 
 .container-fluid .welcome-user .welcome-text span {
@@ -231,7 +232,7 @@ div.rightbar{
     /* gap: 1rem; */
     flex-wrap: wrap;
     /* width: 100%; */
-    margin-top: 1.5rem;
+    margin-top: 2rem;
     /* gap: 1rem; */
     /* gap: 1rem; */
     animation: slideIn 0.4s ease both;
@@ -609,6 +610,12 @@ div.rightbar{
 .container-fluid .rightbar .welcoming h2 {
     font-size: 25px;
     margin: 0rem 0rem 2.5rem 0rem;
+}
+
+@media only screen and (min-width: 1260px){
+    .container-fluid .rightbar .card-parent-box .card-box{
+        width: 240px;
+    }
 }
 
 @media only screen and (max-width: 1013px) {
