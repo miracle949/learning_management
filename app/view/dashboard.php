@@ -32,33 +32,30 @@
                 <!-- <h4><?= htmlspecialchars($_SESSION["name"]) ?></h4> -->
 
                 <div class="welcome-user">
-                    <!-- <div class="welcome-icon">
-                        <i class="fa fa-user-circle"></i>
-                    </div> -->
                     <div class="welcome-text">
 
-                        <h2>Welcome, <?= htmlspecialchars($_SESSION["name"]) ?> 👋</h2>
+                        <h2>Welcome, <?= htmlspecialchars($_SESSION["name"]) ?>! 👋</h2>
                         <div class="d-flex gap-2">
-                            <span><?= htmlspecialchars($_SESSION["grade_level"]) ?></span>
+                            <!-- <span><?= htmlspecialchars($_SESSION["grade_level"]) ?></span>
                             <span>—</span>
-                            <span><?= htmlspecialchars($_SESSION["section"]) ?></span>
+                            <span><?= htmlspecialchars($_SESSION["section"]) ?></span> -->
+                            <span>Here's what's happening with your learning today</span>
                         </div>
                     </div>
 
-                    <div class="welcome-body">
+                    <!-- <div class="welcome-body">
                         <div class="buttons-group">
                             <a href="#">Browse Courses <i class="fa fa-arrow-right"></i></a>
 
                             <a href="#">View Progress</a>
                         </div>
-                    </div>
-
+                    </div> -->
                 </div>
 
                 <div class="card-parent-box">
                     <div class="card-box">
                         <div class="data_text">
-                            <span>Total Subjects</span>
+                            <span>Enrolled Subjects</span>
                             <p>4</p>
                         </div>
                         <div class="data_icon">
@@ -68,7 +65,7 @@
 
                     <div class="card-box">
                         <div class="data_text">
-                            <span>Completed Lessons</span>
+                            <span>Pending Task</span>
                             <p>8</p>
                         </div>
                         <div class="data_icon">
@@ -85,9 +82,19 @@
                             <i class="fa fa-clock"></i>
                         </div>
                     </div>
+
+                    <div class="card-box">
+                        <div class="data_text">
+                            <span>Progress</span>
+                            <p>15h</p>
+                        </div>
+                        <div class="data_icon">
+                            <i class="fa fa-clock"></i>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="text-progress">
+                <!-- <div class="text-progress">
                     <h2>Subjects Progress</h2>
                 </div>
 
@@ -254,7 +261,7 @@
                         </div>
                     </div>
 
-                </div>
+                </div> -->
 
             <?php elseif (!empty($_SESSION['grade_level']) && $_SESSION['grade_level'] === 'Grade 11'): ?>
 

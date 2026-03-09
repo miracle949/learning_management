@@ -47,7 +47,7 @@
 }
 
 .container-fluid .rightbar {
-    width: calc(100% - 250px);
+    width: calc(100% - 230px);
     /* height: calc(100% - 87px); */
     /* height: calc(100% - 67px); */
     /* height: calc(100% - 75px); */
@@ -56,11 +56,13 @@
     /* margin-top: 67px; */
     /* margin-top: 75px; */
     margin-top: 83px;
-    margin-left: 250px;
-    padding: 2.5rem;
+    margin-left: 230px;
+    /* padding: 2.5rem; */
+    padding: 1.8rem;
     /* background-color: #FAFAFC; */
     /* background-color: #f0f2f8; */
-    background-color: #f0f2f8;
+    /* background-color: #f0f2f8; */
+    background-color: #F5F8FF;
 }
 
 /* 
@@ -76,12 +78,12 @@ div.rightbar{
 }
 
 .container-fluid .welcome-user {
-    padding: 45px 35px 45px 35px;
+    /* padding: 45px 35px 45px 35px; */
     /* background-color: #F5F5F5; */
-    background-color: #0d1117;
+    /* background-color: #0d1117; */
     width: 100%;
     /* border: 1px solid rgba(0, 0, 0, 0.2); */
-    box-shadow: 0 4px 16px rgba(108, 63, 232, 0.10), 0 1px 4px rgba(0, 0, 0, 0.06);
+    /* box-shadow: 0 4px 16px rgba(108, 63, 232, 0.10), 0 1px 4px rgba(0, 0, 0, 0.06); */
     border-radius: 10px;
     display: flex;
     justify-content: space-between;
@@ -104,13 +106,13 @@ div.rightbar{
     }
 }
 
-.container-fluid .welcome-user::before {
+/* .container-fluid .welcome-user::before {
     content: '';
     position: absolute;
     inset: 0;
     background: radial-gradient(ellipse at 80% 50%, rgba(59, 91, 219, 0.35) 0%, transparent 60%),
         radial-gradient(ellipse at 20% 80%, rgba(112, 72, 232, 0.2) 0%, transparent 50%);
-}
+} */
 
 /* .container-fluid .welcome-user::after {
     content: '';
@@ -179,10 +181,12 @@ div.rightbar{
 
 .container-fluid .welcome-user .welcome-text h2 {
     margin: 0;
-    font-size: 25px;
-    text-transform: uppercase;
-    font-family: "Titan", sans-serif;
-    color: #ffffff;
+    /* font-size: 25px; */
+    font-size: 23px;
+    /* text-transform: uppercase; */
+    /* font-family: "Titan", sans-serif; */
+    /* color: #ffffff; */
+    font-weight: 600;
 }
 
 .container-fluid .welcome-user .welcome-text h4 {
@@ -193,11 +197,12 @@ div.rightbar{
 .container-fluid .welcome-user .welcome-text {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.7rem;
 }
 
 .container-fluid .welcome-user .welcome-text span {
-    color: #ffffff;
+    /* color: #ffffff; */
+    font-size: 14.5px;
 }
 
 .container-fluid .rightbar .text-grades {
@@ -219,21 +224,25 @@ div.rightbar{
     display: flex;
     justify-content: space-between;
     /* justify-content: center; */
+    /* justify-content: center; */
     align-items: center;
     /* gap: 1rem; */
     flex-wrap: wrap;
-    width: 100%;
-    margin-top: 2.5rem;
-    gap: 1rem;
+    /* width: 100%; */
+    margin-top: 1.5rem;
+    /* gap: 1rem; */
+    /* gap: 1rem; */
     animation: slideIn 0.4s ease both;
     /* gap: 2rem; */
+    gap: 0.8rem;
     /* padding: 0 16px; */
 }
 
 .container-fluid .rightbar .card-parent-box .card-box {
-    width: calc(100% / 3.2);
+    /* width: calc(100% / 4.5); */
+    width: 230px;
     background-color: white;
-    padding: 1.5rem 1.3rem 1.5rem 1.3rem;
+    padding: 1.5rem 1.2rem 1.5rem 1.2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -242,6 +251,7 @@ div.rightbar{
     /* border: 1px solid rgba(0, 0, 0, 0.2); */
     border: 1px solid #e2e8f0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    border: 2px solid #6CCA55;
 }
 
 .container-fluid .rightbar .card-parent-box .card-box:hover {
@@ -256,9 +266,9 @@ div.rightbar{
 }
 
 .container-fluid .rightbar .card-parent-box .card-box .data_text span {
-    font-size: 15.5px;
+    font-size: 15px;
     color: #808080;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
 }
 
 .container-fluid .rightbar .card-parent-box .card-box .data_text p {
@@ -273,7 +283,7 @@ div.rightbar{
 }
 
 .container-fluid .rightbar .card-parent-box .card-box .data_icon .fa {
-    font-size: 35px;
+    font-size: 30px;
 }
 
 /* .container-fluid .rightbar .card-parent-box .card-box .data_icon .fa-book-open {
