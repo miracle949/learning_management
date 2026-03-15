@@ -120,54 +120,24 @@
 }
 
 .container-fluid main .card-parent-box .card-header .buttons button:nth-child(1) {
-    /* Modules — Blue (keep as accent, matches landing page CTA) */
     background-color: var(--green);
 }
 
 .container-fluid main .card-parent-box .card-header .buttons button:nth-child(2) {
-    /* Lessons — Primary green */
     background-color: #4CAF7D;
-    /* var(--green) */
 }
 
 .container-fluid main .card-parent-box .card-header .buttons button:nth-child(3) {
-    /* Video — Dark green */
     background-color: #2D6A4F;
-    /* var(--green-dark) */
 }
 
 .container-fluid main .card-parent-box .card-header .buttons button:nth-child(4) {
-    /* Image — Orange */
     background-color: #FF8A65;
-    /* var(--orange) */
 }
 
 .container-fluid main .card-parent-box .card-header .buttons button:nth-child(5) {
-    /* Activity — Muted green */
     background-color: #4a6a58;
-    /* var(--green-text) */
 }
-
-/* Shared hover effect for all buttons */
-/* .container-fluid main .card-parent-box .card-header .buttons button:nth-child(1):hover {
-    background-color: #2f4ac7;
-}
-
-.container-fluid main .card-parent-box .card-header .buttons button:nth-child(2):hover {
-    background-color: #2D6A4F;
-}
-
-.container-fluid main .card-parent-box .card-header .buttons button:nth-child(3):hover {
-    background-color: #1f4d38;
-}
-
-.container-fluid main .card-parent-box .card-header .buttons button:nth-child(4):hover {
-    background-color: #bf5b3a;
-}
-
-.container-fluid main .card-parent-box .card-header .buttons button:nth-child(5):hover {
-    background-color: #3a5647;
-} */
 
 .container-fluid main .card-parent-box .card-body.module-item {
     border: 1px solid rgba(0, 0, 0, 0.2);
@@ -266,10 +236,7 @@ hr {
 }
 
 .container-fluid main .card-parent-box .card-footer {
-    /* border: 1px solid rgba(0, 0, 0, 0.2); */
-    /* padding: 2rem; */
     margin-top: 3.5rem;
-    /* border-radius: 10px; */
 }
 
 .container-fluid main .card-parent-box .card-footer h3 {
@@ -288,7 +255,6 @@ hr {
     align-items: center;
     gap: 1.5rem;
 }
-
 
 .container-fluid main .card-parent-box .card-footer .card-materials .fa {
     font-size: 45px;
@@ -362,80 +328,142 @@ hr {
     font-size: 15.5px;
 }
 
-/* Indent the nested container so it's clearly "inside" the module */
-.nested-content-container {
+/* ══════════════════════════════════════════════════════════════
+   NESTING  —  Module  ›  Lesson  ›  Video / Image / Activity / Quiz
+   No design changes — same borders, colors, padding as existing cards
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Level 1: Lessons nested inside a Module ── */
+.nested-lessons-container {
     padding-left: 1.5rem;
     border-left: 3px solid var(--green-mid);
     margin-left: 0.5rem;
+    margin-top: 1rem;
 }
 
-/* Each nested card-body gets a slightly tighter top margin */
-.nested-content-container .card-body {
+.nested-lessons-container>.lesson-item {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 2rem;
     margin-top: 1.5rem;
+    border-radius: 10px;
+    background-color: #ffffff;
 }
 
-/* The nested empty-state should not have the outer margin-top */
-.nested-empty.text-content {
+.nested-lessons-empty.text-content {
     margin-top: 0.5rem !important;
 }
 
-/* The nested .buttons row inside a module — 
-   matches nth-child colors from your existing .buttons button rules.
-   Buttons are: 1=Lesson(green), 2=Video(green-dark), 3=Image(orange), 4=Activity(green-text) */
-.module-item .buttons {
+/* ── Level 2: Videos / Images / Activities / Quizzes nested inside a Lesson ── */
+.lesson-nested-container {
+    padding-left: 1.5rem;
+    border-left: 3px solid var(--green-mid);
+    margin-left: 0.5rem;
+    margin-top: 1rem;
+}
+
+.lesson-nested-container>.card-body {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    margin-top: 1.2rem;
+    border-radius: 10px;
+    background-color: #ffffff;
+}
+
+.lesson-nested-empty.text-content {
+    margin-top: 0.5rem !important;
+}
+
+/* ── Module: "Add Lesson" button — same style as existing .buttons buttons ── */
+.module-item>.buttons {
     gap: 0.8rem;
 }
 
-.module-item .buttons .btn-add-lesson {
-    background-color: #4CAF7D;
+.module-item>.buttons .btn-add-lesson-in-module {
+    background-color: var(--green);
+    color: #ffffff;
     box-shadow: 0 3px 10px rgba(76, 175, 125, 0.30);
 }
 
-.module-item .buttons .btn-add-video {
-    background-color: #2D6A4F;
+.module-item>.buttons .btn-add-lesson-in-module:hover {
+    background-color: var(--green-dark);
+    color: #ffffff;
+}
+
+/* ── Lesson: content buttons (Video / Image / Activity / Quiz) ── */
+.lesson-content-buttons {
+    gap: 0.8rem;
+}
+
+.lesson-content-buttons .btn-add-video-in-lesson {
+    background-color: var(--green-dark);
+    color: #ffffff;
     box-shadow: 0 3px 10px rgba(45, 106, 79, 0.30);
 }
 
-.module-item .buttons .btn-add-image {
-    background-color: #FF8A65;
+.lesson-content-buttons .btn-add-image-in-lesson {
+    background-color: var(--orange);
+    color: #ffffff;
     box-shadow: 0 3px 10px rgba(255, 138, 101, 0.30);
 }
 
-.module-item .buttons .btn-add-activity {
-    background-color: #4a6a58;
+.lesson-content-buttons .btn-add-activity-in-lesson {
+    background-color: var(--green-text);
+    color: #ffffff;
     box-shadow: 0 3px 10px rgba(74, 106, 88, 0.25);
 }
 
-.module-item .buttons .btn-add-lesson:hover {
-    background-color: var(--green);
+.lesson-content-buttons .btn-add-quiz-in-lesson {
+    background-color: #3B5BDB;
     color: #ffffff;
+    box-shadow: 0 3px 10px rgba(59, 91, 219, 0.25);
 }
 
-.module-item .buttons .btn-add-video:hover {
+.lesson-content-buttons .btn-add-video-in-lesson:hover {
     background-color: var(--green);
-    color: #ffffff;
+    color: #fff;
 }
 
-.module-item .buttons .btn-add-image:hover {
-    background-color: var(--green);
-    color: #ffffff;
+.lesson-content-buttons .btn-add-image-in-lesson:hover {
+    background-color: var(--orange-dark);
+    color: #fff;
 }
 
-.module-item .buttons .btn-add-activity:hover {
+.lesson-content-buttons .btn-add-activity-in-lesson:hover {
     background-color: var(--green);
-    color: #ffffff;
+    color: #fff;
 }
 
-/* Quiz questions items */
+.lesson-content-buttons .btn-add-quiz-in-lesson:hover {
+    background-color: #2f4ac7;
+    color: #fff;
+}
+
+/* ── Module icon ── */
+.module-item .card-icon .fa-layer-group {
+    color: #3B5BDB;
+    font-size: 20px;
+}
+
+/* ── Lesson icon (fa-file already styled above; this keeps it green) ── */
+.lesson-item>.card-body-header .card-icon .fa-file {
+    color: var(--green);
+    font-size: 20px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   QUIZ QUESTION ITEMS  — unchanged from your original
+   ══════════════════════════════════════════════════════════════ */
+
+div.card-body.quiz-item button {
+    border-radius: 10px;
+}
 
 div.question-item.card-body {
     margin: 0.5rem 0 0;
 }
 
 div.question-item {
-    /* border: 1px solid rgba(59, 91, 219, 0.2); */
     border: 1px solid rgba(0, 0, 0, 0.1);
-    /* background-color: #f8f9ff; */
     background-color: #ffffff;
     padding: 2rem;
 }
@@ -453,18 +481,11 @@ div.question-item {
     border: none;
 }
 
-/* Add Question button inside quiz — matches your existing button style */
-
-div.card-body.quiz-item button {
-    border-radius: 10px;
-}
-
 .btn-add-question {
     padding: 8px 18px;
     border-radius: 7px;
     border: none;
     outline: none;
-    /* background-color: #3B5BDB; */
     color: white;
     font-size: 13.5px;
     display: inline-flex;
@@ -472,19 +493,22 @@ div.card-body.quiz-item button {
     gap: 0.5rem;
     cursor: pointer;
     font-family: 'Poppins', sans-serif;
+    background-color: #3B5BDB;
+    box-shadow: 0 3px 10px rgba(59, 91, 219, 0.25);
 }
 
 .btn-add-question:hover {
     background-color: #2f4ac7;
 }
 
-/* Quiz card icon color */
 .quiz-item .card-icon .fa-pen-to-square {
     color: #3B5BDB;
     font-size: 20px;
 }
 
-/* ── Activity question items — styled like quiz but orange accent ── */
+/* ══════════════════════════════════════════════════════════════
+   ACTIVITY QUESTION ITEMS  — unchanged from your original
+   ══════════════════════════════════════════════════════════════ */
 
 div.activity-question-item.card-body {
     margin: 0.5rem 0 0;
@@ -509,13 +533,11 @@ div.activity-question-item {
     border: none;
 }
 
-/* Add Question button inside activity */
 .btn-add-activity-question {
     padding: 8px 18px;
     border-radius: 7px;
     border: none;
     outline: none;
-    /* background-color: var(--orange); */
     color: white;
     font-size: 13.5px;
     display: inline-flex;
@@ -523,25 +545,23 @@ div.activity-question-item {
     gap: 0.5rem;
     cursor: pointer;
     font-family: 'Poppins', sans-serif;
-    /* box-shadow: 0 3px 10px rgba(255, 138, 101, 0.30); */
+    background-color: var(--orange);
+    box-shadow: 0 3px 10px rgba(255, 138, 101, 0.30);
 }
 
 .btn-add-activity-question:hover {
     background-color: var(--orange-dark);
 }
 
-/* Activity icon color */
 .activity-item .card-icon .fa-circle-question {
     color: var(--orange);
     font-size: 20px;
 }
 
-/* Question type select styling */
 .activity-question-type-select {
     cursor: pointer;
 }
 
-/* mc fields inside activity question — row padding fix */
 .activity-mc-fields {
     padding-left: 15px;
     padding-right: 15px;
