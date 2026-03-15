@@ -20,22 +20,19 @@
 
         <form action="?url=login" method="post">
             <div class="login-parent">
-                <!-- <div class="form-extension image-container">
-                    <img src="../images/login-bg.jpg" alt="">
-
-                    <h2>Login Page</h2>
-                </div> -->
                 <div class="form-extension form">
 
                     <div class="form-logo">
                         <div class="parent-logo">
                             <!-- <div class="logo"></div> -->
-                            <img src="../images/ilearn-logo4.png" alt="">
+                            <div class="logo-icon">
+                                <i class="fa-solid fa-lightbulb"></i>
+                            </div>
                             <div class="logo-text">
-                                <p><b>I</b>Learn</p>
+                                <p><b>i</b>Learn</p>
                             </div>
                         </div>
-                        <h2 class="fw-semibold">Let's the learning journey begin.</h2>
+                        <h2 class="fw-semibold">Let's the <b>learning</b> journey begin.</h2>
                         <p>Unlock a world of learning with just one click. Log in to get started.</p>
                     </div>
 

@@ -47,7 +47,10 @@
         <nav>
             <div class="nav-logo">
                 <!-- <img src="../images/login-logo2.jpg" alt=""> -->
-                <img src="../images/ilearn-logo4.png" alt="">
+                <!-- <img src="../images/ilearn-logo4.png" alt=""> -->
+                <div class="logo-icon">
+                    <i class="fa-solid fa-lightbulb"></i>
+                </div>
                 <div class="logo-text">
                     <p><b>i</b>Learn</p>
                 </div>
@@ -79,8 +82,22 @@
 
         <main>
             <div class="main-text">
-                <h2>Transform Education with Moderm LMS</h2>
-                <p>A comprehensive Learning Management System designed for both students and teachers. Create, learn,
+                <div class="main-icon">
+                    <i class="fa fa-shield"></i>
+                    <p>Trusted by 10,000+ Students</p>
+                </div>
+                <h2>Transform
+                    <span class="word-wrap">
+                        <span>Education</span>
+                        <span>Learning</span>
+                        <span>Knowledge</span>
+                        <span>Study</span>
+                        <span>Teaching</span>
+                    </span>
+                    with Moderm LMS
+                </h2>
+                <p>A comprehensive Learning Management System designed for both students and teachers. Create,
+                    learn,
                     and grow together in one unified platform.</p>
                 <div class="learning-today">
                     <a href="#">
@@ -116,6 +133,9 @@
         </main>
 
         <section class="section1" id="features">
+            <div class="section-icon">
+                <span>Everything You Need</span>
+            </div>
             <h2>Everything You Need to Succeed</h2>
             <p>Powerful features designed to make teaching and learning seamless, engaging, and effective</p>
 
@@ -163,6 +183,9 @@
                     </div>
                 </div>
                 <div class="learn-text">
+                    <div class="student-icon">
+                        <span>For Students</span>
+                    </div>
                     <h3>Learn at Your Own Pace</h3>
 
                     <p>Join classes with unique codes, access all course materials, and track your progress through
@@ -206,6 +229,9 @@
         <section class="section3" id="for-teachers">
             <div class="create-manage-parents">
                 <div class="create-text">
+                    <div class="teacher-icon">
+                        <span>For Teachers</span>
+                    </div>
                     <h3>Upload and Manage with Ease</h3>
 
                     <p>Upload and manage multiple classes all from one powerful platform.</p>
@@ -269,13 +295,55 @@
                 <p>Join thousands of students and teachers already using our platform to achieve their educational
                     goals.</p>
 
+                <div class="ready-buttons">
+                    <a href="#">Get Started Free <i class="fa fa-arrow-right"></i></a>
 
+                    <a href="#">Learn More</a>
+                </div>
             </div>
         </section>
+
+        <footer>
+            <div class="footer-logo">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-lightbulb"></i>
+                </div>
+                <div class="logo-text">
+                    <p><b>i</b>Learn</p>
+                </div>
+            </div>
+
+            <div class="footer-copy">
+                <p><i class="fa-solid fa-copyright"></i> 2026 iLearn. All rights reserved.</p>
+            </div>
+
+            <div class="footer-message">
+                <p>Built for students and teachers</p>
+            </div>
+        </footer>
     </div>
 
     <!-- bootstrap link javascript -->
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const wrap = document.querySelector('.main-text h2 .word-wrap');
+            const spans = wrap.querySelectorAll('span');
+
+            // Set initial width to first word
+            wrap.style.width = spans[0].offsetWidth + 'px';
+
+            setInterval(() => {
+                spans.forEach(span => {
+                    const opacity = parseFloat(getComputedStyle(span).opacity);
+                    if (opacity > 0.5) {
+                        wrap.style.width = span.offsetWidth + 'px';
+                    }
+                });
+            }, 100);
+        });
+    </script>
 </body>
 
 </html>

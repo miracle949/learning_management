@@ -61,7 +61,7 @@
                 </div>
             </div>
 
-            <h2 class="mt-5">Your Classes</h2>
+            <h5 class="mt-5">Your Classes</h5>
 
             <div class="parent-classes">
                 <?php if (empty($classes)): ?>

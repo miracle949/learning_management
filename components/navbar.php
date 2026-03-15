@@ -40,8 +40,16 @@
 
     <div class="nav-acc">
         <div class="nav-list">
-            <button><i class="fa fa-message"></i></button>
-            <button><i class="fa fa-bell"></i></button>
+            <button>
+                <div class="notification-icon">
+                    <i class="fa fa-message"></i>
+                </div>
+            </button>
+            <button>
+                <div class="notification-icon">
+                    <i class="fa fa-bell"></i>
+                </div>
+            </button>
         </div>
         <!-- <button><i class="fas fa-grip"></i></button> -->
         <div class="drop-name">

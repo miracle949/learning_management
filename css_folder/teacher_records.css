@@ -8,6 +8,26 @@
     font-family: 'Poppins', sans-serif;
 }
 
+:root {
+    --green: #4CAF7D;
+    --green-dark: #2D6A4F;
+    --green-light: #E8F5EE;
+    --green-mid: #c8e6d6;
+    --orange: #FF8A65;
+    --orange-light: #FFF3EF;
+    --orange-dark: #bf5b3a;
+    --bg: #F9FBF9;
+    --white: #ffffff;
+    --card-border: rgba(0, 0, 0, 0.07);
+    --text: #2D6A4F;
+    --text-dark: #1a3a2a;
+    --text-muted: #7a9a8a;
+    --sidebar-bg: #ffffff;
+    --shadow: 0 2px 12px rgba(76, 175, 125, 0.08);
+    --background-icon: #2d3748;
+    --green-text: #4a6a58;
+}
+
 .container-fluid nav {
     width: 100%;
     padding: 2rem 1.5rem 2rem 1.5rem;
@@ -68,7 +88,7 @@
 
 .container-fluid main .search-parent .search-form,
 .container-fluid main .search-parent .search-level,
-.container-fluid main .search-parent .search-section{
+.container-fluid main .search-parent .search-section {
     width: 100%;
 }
 
@@ -439,4 +459,171 @@ div.modal-body {
     display: flex;
     justify-content: space-between;
     padding: 1rem;
+}
+
+/* subject */
+
+.add-subject-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 10px 14px;
+    border: 1.5px dashed var(--green);
+    border-radius: 10px;
+    background: var(--green-light);
+    margin-top: 10px;
+}
+
+.add-subject-row .fa-plus-circle{
+    color: var(--green);
+}
+
+.add-subject-row input[type="text"] {
+    flex: 1;
+    border: 1.5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 0.875rem;
+    outline: none;
+    background: #fff;
+}
+
+.add-subject-row input[type="text"]:focus {
+    border-color: var(--green);
+}
+
+.add-subject-row select {
+    border: 1.5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 0.875rem;
+    outline: none;
+    background: #fff;
+    cursor: pointer;
+}
+
+.add-subject-row select:focus {
+    border-color: var(--green);
+}
+
+.add-subject-row button {
+    background: var(--green);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 16px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* .add-subject-row button:hover {
+    background: var(--green-light);
+} */
+
+.add-msg {
+    font-size: 0.8rem;
+    min-height: 18px;
+    padding-left: 2px;
+    margin-top: 4px;
+}
+
+.add-msg.success {
+    color: #16a34a;
+}
+
+.add-msg.error {
+    color: #dc2626;
+}
+
+.preview-wrap {
+    display: none;
+    margin-top: 12px;
+}
+
+.preview-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+}
+
+.preview-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.preview-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.preview-tag.subject-tag {
+    background: #ede9fe;
+    color: #4c1d95;
+    border: 1px solid #c4b5fd;
+}
+
+.preview-tag.section-tag {
+    background: #dbeafe;
+    color: #1e3a8a;
+    border: 1px solid #93c5fd;
+}
+
+.preview-tag i {
+    font-size: 0.65rem;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.preview-tag i:hover {
+    opacity: 1;
+}
+
+.subject-checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    background: #fff;
+    transition: background .15s, border-color .15s;
+}
+
+.subject-checkbox-label:has(input:checked) {
+    background: #ffffff;
+    border-color: var(--green-light);
+}
+
+.section-checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    background: #fff;
+    transition: background .15s, border-color .15s;
+}
+
+.section-checkbox-label:has(input:checked) {
+    background: #dbeafe;
+    border-color: #93c5fd;
 }

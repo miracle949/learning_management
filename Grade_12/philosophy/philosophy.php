@@ -131,7 +131,7 @@
 
 <div class="parent">
     <div class="your-module">
-        <h2>Category</h2>
+        <!-- <h2>Category</h2>
 
         <div class="your-module-category">
             <ul>
@@ -146,12 +146,12 @@
                 <li>
                     <span>Introduction to Philosophy of Human Person</span>
                 </li>
-
+    
                 <li>
                     <span>Introduction to Philosophy of Human Person</span>
                 </li>
             </ul>
-        </div>
+        </div> -->
     </div>
 
     <div class="module-parent-progress">

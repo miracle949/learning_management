@@ -10,14 +10,17 @@
 
 .container-fluid .rightbar {
     /* width: calc(100% - 250px); */
-    width: 100%;
-    height: calc(100% - 87px);
-    margin-top: 87px;
+    /* width: 100%; */
+    width: calc(100% - 235px);
+    margin-left: 235px;
+    height: calc(100% - 66px);
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    margin-top: 66px;
     /* margin-left: 250px; */
-    padding: 3rem;
+    padding: 1.8rem 1.4rem 1.8rem 1.4rem;
     /* background-color: #EFF3F6; */
     /* background-color: #f4f5f7; */
-    background-color: #f0f2f8;
+    background-color: #F7F9F8;
 }
 
 .container-fluid .rightbar .parent{

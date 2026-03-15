@@ -23,7 +23,7 @@
 
         <?php include("../components/navbar.php"); ?>
 
-        <!-- <?php include("../components/sidebar.php"); ?> -->
+        <?php include("../components/sidebar.php"); ?>
 
         <div class="rightbar">
 

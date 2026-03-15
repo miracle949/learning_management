@@ -51,19 +51,20 @@
     /* height: calc(100% - 87px); */
     /* height: calc(100% - 67px); */
     /* height: calc(100% - 75px); */
-    height: calc(100% - 69px);
+    height: calc(100% - 68px);
     /* margin-top: 87px; */
     /* margin-top: 67px; */
     /* margin-top: 75px; */
-    margin-top: 69px;
+    margin-top: 68px;
     margin-left: 235px;
     /* padding: 2.5rem; */
-    padding: 1.8rem;
+    padding: 1.8rem 1.4rem 1.8rem 1.4rem;
     border-left: 1px solid rgba(0, 0, 0, 0.1);
     /* background-color: #FAFAFC; */
     /* background-color: #f0f2f8; */
     /* background-color: #f0f2f8; */
-    background-color: #F5F8FF;
+    /* background-color: #F5F8FF; */
+    background-color: #F7F9F8;
 }
 
 /* 
@@ -82,10 +83,10 @@ div.rightbar{
     padding: 45px 35px 35px 45px;
     /* background-color: #F5F5F5; */
     /* background-color: #0d1117; */
-    background-color: #5BCA3F;
+    /* background-color: #5BCA3F; */
+    background-color: var(--green);
     width: 100%;
     /* border: 1px solid rgba(0, 0, 0, 0.2); */
-    box-shadow: 0 4px 16px rgba(108, 63, 232, 0.10), 0 1px 4px rgba(0, 0, 0, 0.06);
     border-radius: 10px;
     display: flex;
     justify-content: space-between;
@@ -93,6 +94,7 @@ div.rightbar{
     gap: 0.7rem;
     position: relative;
     overflow: hidden;
+    animation: slideIn 0.4s ease both;
 }
 
 @keyframes slideIn {
@@ -257,13 +259,14 @@ div.rightbar{
     /* width: calc(100% / 4.5); */
     max-width: 230px;
     background-color: white;
-    padding: 1.5rem 1.2rem 1.5rem 1.2rem;
+    padding: 1.5rem 1.1rem 1.5rem 1.1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-radius: 7px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 16px rgba(108, 63, 232, 0.10), 0 1px 4px rgba(0, 0, 0, 0.06);
+    /* border: 1px solid #e2e8f0; */
+    /* box-shadow: 0 4px 16px rgba(108, 63, 232, 0.10), 0 1px 4px rgba(0, 0, 0, 0.06); */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04); */
     /* box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
     border: 1px solid rgba(0, 0, 0, 0.2);
@@ -340,7 +343,7 @@ div.rightbar{
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
-    border: 3px solid #E5E7EB;
+    border: 1.5px solid #E5E7EB;
     padding: 1rem;
     border-radius: 7px;
 }
@@ -386,18 +389,19 @@ div.rightbar{
 } */
 
 .container-fluid .rightbar .card-parent-box .card-box .data_text span {
-    font-size: 15px;
+    font-size: 14.5px;
     color: #808080;
     /* text-transform: uppercase; */
 }
 
 .container-fluid .rightbar .card-parent-box .card-box .data_text span:nth-child(3){
-    font-size: 13.5px;
-    color: #5BD850;
+    font-size: 12.5px;
+    color: var(--green);
+    font-weight: 600;
 }
 
 .container-fluid .rightbar .card-parent-box .card-box .data_text p {
-    font-size: 25px;
+    font-size: 23px;
     font-weight: 600;
 }
 
@@ -407,8 +411,18 @@ div.rightbar{
     gap: 0.5rem;
 }
 
+.container-fluid .rightbar .card-parent-box .card-box .data_icon{
+    padding: 0.5rem;
+    background-color: var(--green-light);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .container-fluid .rightbar .card-parent-box .card-box .data_icon .fa {
-    font-size: 30px;
+    font-size: 22px;
+    color: var(--green);
 }
 
 /* .container-fluid .rightbar .card-parent-box .card-box .data_icon .fa-book-open {

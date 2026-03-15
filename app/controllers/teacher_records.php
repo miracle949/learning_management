@@ -22,7 +22,6 @@ class teacher_records
         $grade12Subjects = $this->subjectModel->getGrade12Subjects();
         $grade11Sections = $this->gradeLevel->getGrade11Sections();
         $grade12Sections = $this->gradeLevel->getGrade12Sections();
-
         $teachers = $this->teacherModel->getAllTeachers();
 
         require_once "../admin_folder/teacher_records.php";
@@ -37,17 +36,14 @@ class teacher_records
             $assigned_subjects = $_POST['assigned_subjects'] ?? [];
             $assigned_sections = $_POST['assigned_sections'] ?? [];
 
-            // Basic validation
             if (empty($name) || empty($email) || empty($password)) {
                 $_SESSION['error'] = "Name, email, and password are required.";
                 header("Location: " . $_SERVER['HTTP_REFERER']);
                 exit;
             }
 
-            // Insert teacher into users table
             $teacher_id = $this->teacherModel->createTeacher($name, $email, $password);
 
-            // Assign subjects and sections
             if (!empty($assigned_subjects) && !empty($assigned_sections)) {
                 $this->teacherModel->assignSubjectsAndSections($teacher_id, $assigned_subjects, $assigned_sections);
             }
@@ -55,8 +51,27 @@ class teacher_records
             $_SESSION['success'] = "Teacher created successfully.";
             header("Location: /learning_management/public/?url=teacher_records");
             exit;
-            // header("Location: " . $_SERVER['HTTP_REFERER']);
-            // exit;
+        }
+    }
+
+    // ── Add Subject ───────────────────────────────────────────────────────
+    public function addSubject()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $subject_name = trim($_POST['subject_name'] ?? '');
+            $grade_level_id = (int) ($_POST['grade_level_id'] ?? 0);
+
+            if (empty($subject_name) || $grade_level_id === 0) {
+                $_SESSION['error'] = "Subject name and grade level are required.";
+                header("Location: /learning_management/public/?url=teacher_records");
+                exit;
+            }
+
+            $this->subjectModel->insertSubject($subject_name, $grade_level_id);
+
+            $_SESSION['success'] = "Subject \"$subject_name\" added successfully.";
+            header("Location: /learning_management/public/?url=teacher_records");
+            exit;
         }
     }
 

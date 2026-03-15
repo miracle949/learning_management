@@ -31,6 +31,10 @@ switch ($url) {
         $controller->subjects();
         break;
 
+    case 'addSubject':
+        $teacher->addSubject();
+        break;
+
     case 'subject_lessons':
         $controller->subject_lessons();
         break;

@@ -21,7 +21,7 @@
         <nav>
             <div class="nav-logo">
                 <img src="" alt="">
-                <h2>Admin Dashboard</h2>
+                <h2>Admin <b>Dashboard</b></h2>
             </div>
 
             <form action="?url=logout" method="post">

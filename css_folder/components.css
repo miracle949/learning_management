@@ -15,6 +15,26 @@
     font-family: 'Poppins', sans-serif;
 }
 
+:root {
+    --green: #4CAF7D;
+    --green-dark: #2D6A4F;
+    --green-light: #E8F5EE;
+    --green-mid: #c8e6d6;
+    --orange: #FF8A65;
+    --orange-light: #FFF3EF;
+    --orange-dark: #bf5b3a;
+    --bg: #F9FBF9;
+    --white: #ffffff;
+    --card-border: rgba(0, 0, 0, 0.07);
+    --text: #2D6A4F;
+    --text-dark: #1a3a2a;
+    --text-muted: #7a9a8a;
+    --sidebar-bg: #ffffff;
+    --shadow: 0 2px 12px rgba(76, 175, 125, 0.08);
+    --background-icon: #2d3748;
+    --green-text: #4a6a58;
+}
+
 /* .container-fluid{
     display: flex;
     align-items: center;
@@ -53,9 +73,9 @@
     gap: 0.7rem;
 }
 
-.container-fluid nav .search-parent{
+.container-fluid nav .search-parent {
     /* background-color: #ffffff; */
-    background-color: #F5F8FF;
+    background-color: #F7F9F8;
     padding: 0.4rem 0.8rem 0.4rem 0.8rem;
     display: flex;
     align-items: center;
@@ -65,11 +85,11 @@
     border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.container-fluid nav .search-parent .fa{
+.container-fluid nav .search-parent .fa {
     color: #99A1AF;
 }
 
-.container-fluid nav .search-parent .search input{
+.container-fluid nav .search-parent .search input {
     width: 330px;
     border: none;
     outline: none;
@@ -257,8 +277,18 @@
     display: flex;
 } */
 
-.container-fluid nav .nav-acc .nav-list button{
-    font-size: 20px;
+.container-fluid nav .nav-acc .nav-list button {
+    font-size: 16px;
+}
+
+.container-fluid nav .nav-acc .nav-list button .notification-icon{
+    padding: 8px 13px;
+    background-color: var(--green-light);
+    border-radius: 10px;
+}
+
+.container-fluid nav .nav-acc .nav-list button .notification-icon .fa{
+    color: var(--green-dark);
 }
 
 .container-fluid nav .nav-acc {
@@ -273,7 +303,7 @@
     font-size: 20px;
 }
 
-.container-fluid nav .nav-acc .nav-list{
+.container-fluid nav .nav-acc .nav-list {
     display: flex;
     gap: 0.9rem;
 }
@@ -284,14 +314,15 @@
     color: #364153;
 }
 
-.container-fluid nav .nav-acc .drop-name p{
+.container-fluid nav .nav-acc .drop-name p {
     margin: 0;
     /* font-weight: 600; */
-    font-size: 15px;
+    font-size: 14px;
+    font-weight: 600;
     /* color: #F9E8E3; */
 }
 
-.container-fluid nav .nav-acc .drop-name{
+.container-fluid nav .nav-acc .drop-name {
     display: flex;
     flex-direction: column;
     justify-content: end;
@@ -301,8 +332,8 @@
     color: #364153;
 }
 
-.container-fluid nav .nav-acc .drop-name span{
-    font-size: 14px;
+.container-fluid nav .nav-acc .drop-name span {
+    font-size: 13px;
     /* color: #FFE9E9; */
 }
 
@@ -332,8 +363,8 @@
 .container-fluid nav .nav-acc .dropdown .dropdown-profile button {
     width: 55px;
     height: 45px;
-    background-color: #dfdfdf;
-    color: black;
+    background-color: var(--green);
+    color: #ffffff;
     border-radius: 50%;
     font-size: 17px;
     font-weight: bold;
@@ -388,8 +419,9 @@
 }
 
 .container-fluid nav .nav-acc .dropdown .dropdown-menu li a .icon-parent {
-    background-color: #dfdfdf;
+    background-color: var(--green-light);
     /* padding: 10px; */
+    color: var(--green);
     border-radius: 50%;
     width: 35px;
     height: 35px;
@@ -411,13 +443,14 @@
     height: 40px;
     /* background-color: #8839FC; */
     /* background-color: #212529; */
-    background: linear-gradient(to right, #4F5CFE, #7B2DFB);
-    color: white;
+    /* background: linear-gradient(to right, #4F5CFE, #7B2DFB); */
+    color: #ffffff;
+    background-color: var(--green);
     border-radius: 50%;
     font-size: 18px;
 }
 
-.container-fluid .sidebar-logo{
+.container-fluid .sidebar-logo {
     height: 130px;
     /* background-color: #5BCA3F; */
     display: flex;
@@ -426,20 +459,22 @@
     flex-direction: column;
     gap: 1rem;
     /* padding-top: 3rem; */
-    margin-top: 3rem;
-    padding-bottom: 1.8rem;
+    margin-top: 1.8rem;
+    padding-bottom: 1rem;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.container-fluid .sidebar-logo .fa{
-    font-size: 80px;
-    color: #364153;
+.container-fluid .sidebar-logo .fa {
+    font-size: 70px;
+    /* color: #5BCA3F; */
+    color: var(--background-icon);
 }
 
-.container-fluid .sidebar-logo p{
-    font-size: 18px;
+.container-fluid .sidebar-logo p {
+    font-size: 17.5px;
     font-weight: 600;
-    color: #364153;
+    /* color: #364153; */
+    color: var(--text-dark);
 }
 
 .container-fluid .sidebar {
@@ -451,7 +486,8 @@
     left: 0;
     top: 0;
     /* background-color: #ffffff; */
-    background-color: #F5F8FF;
+    /* background-color: #F5F8FF; */
+    background-color: #ffffff;
     border-right: 1px solid rgba(0, 0, 0, 0.1);
     border-top: 1px solid rgba(0, 0, 0, 0.1);
     /* box-shadow: 0 4px 16px rgba(108, 63, 232, 0.10), 0 1px 4px rgba(0, 0, 0, 0.06); */
@@ -460,11 +496,11 @@
     /* padding: 0 0.5rem; */
 }
 
-.container-fluid .sidebar .sidebar-menu{
-    margin-top: 1.5rem;
+.container-fluid .sidebar .sidebar-menu {
+    margin-top: 1rem;
 }
 
-.container-fluid .sidebar .sidebar-menu p{
+.container-fluid .sidebar .sidebar-menu p {
     margin: 0 0 0px;
     padding: 0 23px;
     /* text-transform: uppercase; */
@@ -482,12 +518,17 @@
     line-height: 50px;
     padding: 0 10px;
     border-radius: 10px;
+    margin-top: 0.5rem;
 }
 
 .container-fluid .sidebar .sidebar-menu ul li:hover {
-    background-color: #E7E8EB;
-    /* background-color: #212529;
-    color: #ffffff; */
+    /* background-color: #E7E8EB; */
+    background-color: var(--green-light);
+    /* color: #ffffff; */
+}
+
+.container-fluid .sidebar .sidebar-menu ul li a:hover {
+    color: var(--green-dark);
 }
 
 .container-fluid .sidebar .sidebar-menu ul li a {
@@ -495,8 +536,19 @@
     justify-content: left;
     align-items: center;
     gap: 1rem;
-    color: #484B4A;
-    font-size: 15.5px;
+    color: var(--green-text);
+    font-size: 15px;
+    font-weight: 600;
+
+}
+
+.container-fluid .sidebar .sidebar-menu ul li.active {
+    background-color: var(--green);
+    color: #ffffff;
+}
+
+.container-fluid .sidebar .sidebar-menu ul li.active a {
+    color: #ffffff;
 }
 
 @media only screen and (max-width: 1030px) {

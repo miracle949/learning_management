@@ -4,6 +4,7 @@ require_once "../core/Model.php";
 
 class User extends Model
 {
+    
     public function login($email)
     {
         $stmt = $this->db->prepare(

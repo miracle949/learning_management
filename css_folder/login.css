@@ -16,6 +16,26 @@
     font-family: 'Poppins', sans-serif;
 }
 
+:root {
+    --green: #4CAF7D;
+    --green-dark: #2D6A4F;
+    --green-light: #E8F5EE;
+    --green-mid: #c8e6d6;
+    --orange: #FF8A65;
+    --orange-light: #FFF3EF;
+    --orange-dark: #bf5b3a;
+    --bg: #F9FBF9;
+    --white: #ffffff;
+    --card-border: rgba(0, 0, 0, 0.07);
+    --text: #2D6A4F;
+    --text-dark: #1a3a2a;
+    --text-muted: #7a9a8a;
+    --sidebar-bg: #ffffff;
+    --shadow: 0 2px 12px rgba(76, 175, 125, 0.08);
+    --background-icon: #2d3748;
+    --green-text: #4a6a58;
+}
+
 /* body{
     overflow: hidden;
 } */
@@ -32,6 +52,7 @@
     align-items: center;
     /* overflow: hidden; */
     padding: 3rem;
+    background-color: #F7F9F8;
 }
 
 .container-fluid .login-parent .image-container {
@@ -51,7 +72,7 @@
 }
 
 .container-fluid .login-parent .form-extension {
-    width: calc(100% / 2);
+    /* width: calc(100% / 2); */
     /* height: 100%; */
     /* display: flex;
     justify-content: center;
@@ -88,29 +109,54 @@
     width: 100%;
 } */
 
-.container-fluid .login-parent .form .form-logo .parent-logo {
+/* .container-fluid .login-parent .form .form-logo .parent-logo {
     display: flex;
-    justify-content: left;
     align-items: center;
-    margin-top: 1.5rem;
-}
+    justify-content: center;
+    gap: 0.8rem;
+} */
 
 .container-fluid .login-parent .form .form-logo .parent-logo img {
     width: 50px;
     height: 50px;
 }
 
-.container-fluid .login-parent .form .form-logo .parent-logo p b {
-    font-weight: normal;
-    color: #4f89a5;
-    font-family: "Titan", sans-serif;
+.container-fluid .login-parent .form .form-logo .parent-logo p {
+    font-size: 17px;
+    font-weight: bold;
+    margin: 0;
 }
 
-.container-fluid .login-parent .form .form-logo .parent-logo .logo-text p {
-    all: unset;
-    font-weight: 500;
-    font-family: "Titan", sans-serif;
+.container-fluid .login-parent .form .form-logo .parent-logo {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    position: relative;
+    gap: 0.5rem;
+}
+
+.container-fluid .login-parent .form .form-logo .parent-logo .logo-icon {
+    padding: 8px;
+    background-color: var(--green-light);
+    border-radius: 10px;
+}
+
+.container-fluid .login-parent .form .form-logo .parent-logo .logo-icon .fa-solid {
+    color: var(--green);
+    font-size: 18px;
+}
+
+.container-fluid .login-parent .form .form-logo .parent-logo p {
     font-size: 19.5px;
+    font-family: "Titan", sans-serif;
+    font-weight: normal;
+    color: var(--green);
+}
+
+.container-fluid .login-parent .form .form-logo .parent-logo p b {
+    font-weight: normal;
+    color: #212529;
+    font-family: "Titan", sans-serif;
 }
 
 /* .container-fluid .login-parent .form .form-logo .parent-logo .logo {
@@ -135,9 +181,17 @@
     padding-left: 3rem;
     padding-right: 3rem;
     padding-bottom: 2rem;
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    /* box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px; */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     border-radius: 20px;
     background-color: #ffffff;
+}
+
+.container-fluid .login-parent .form:hover {
+    box-shadow: 0 8px 32px rgba(108, 63, 232, 0.13), 0 2px 8px rgba(0, 0, 0, 0.07);
+    transform: translateY(-2px);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
 }
 
 /* .container-fluid .login-parent .form .text-box{
@@ -175,6 +229,13 @@
 .container-fluid .login-parent .form h2 {
     font-size: 23px;
     margin-top: 1rem;
+    font-family: "Titan", sans-serif;
+    text-align: left;
+}
+
+.container-fluid .login-parent .form h2 b {
+    font-family: "Titan", sans-serif;
+    color: var(--green);
 }
 
 .container-fluid .login-parent .form .forgot {
@@ -198,7 +259,7 @@
     border-radius: 28px;
     font-size: 14.5px;
     /* background-color: #0d589f; */
-    background-color: #212529;
+    background-color: var(--green);
     color: white;
     font-weight: bold;
 }
@@ -276,10 +337,75 @@
     }
 }
 
-@media only screen and (max-width: 500px) {
+@media only screen and (max-width: 600px) {
     .container-fluid .login-parent .form {
+        padding-top: 2rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    .container-fluid .login-parent {
+        height: 100dvh;
+        padding: 1.5rem;
+    }
+}
+
+@media only screen and (max-width: 500px) {
+    /* .container-fluid .login-parent .form {
         padding-top: 10rem;
         padding-left: 1.5rem;
         padding-right: 1.5rem;
+    } */
+}
+
+@media only screen and (max-width: 415px) {
+
+    .container-fluid .login-parent .form {
+        padding-top: 0rem;
+        padding-left: 0rem;
+        padding-right: 0rem;
+        padding-bottom: 0rem;
+        box-shadow: none;
+        background: none;
+        border: none;
+    }
+
+    .container-fluid .login-parent .form:hover {
+        all: unset;
+    }
+
+    .container-fluid .login-parent {
+        height: 100dvh;
+        padding: 1.3rem;
+        background-color: white;
+    }
+
+    .container-fluid .login-parent .form .form-logo p {
+        margin-top: 1rem;
+        font-size: 15px;
+    }
+
+    .container-fluid .login-parent .form h2 {
+        margin-top: 1rem;
+    }
+
+    .container-fluid .login-parent .form .text-box {
+        margin-top: 1.5rem;
+    }
+
+    .container-fluid .login-parent .form .text-box input,
+    .container-fluid .login-parent .form .text-box label,
+    .container-fluid .login-parent .form .text-box select {
+        font-size: 15px;
+    }
+
+    .container-fluid .login-parent .form .forgot a {
+        font-size: 15px;
+        color: #212529;
+    }
+
+    .container-fluid .login-parent .form .button button {
+        font-size: 15px;
     }
 }

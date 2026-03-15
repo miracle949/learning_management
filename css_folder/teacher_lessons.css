@@ -15,14 +15,34 @@
     font-family: 'Poppins', sans-serif;
 }
 
+:root {
+    --green: #4CAF7D;
+    --green-dark: #2D6A4F;
+    --green-light: #E8F5EE;
+    --green-mid: #c8e6d6;
+    --orange: #FF8A65;
+    --orange-light: #FFF3EF;
+    --orange-dark: #bf5b3a;
+    --bg: #F9FBF9;
+    --white: #ffffff;
+    --card-border: rgba(0, 0, 0, 0.07);
+    --text: #2D6A4F;
+    --text-dark: #1a3a2a;
+    --text-muted: #7a9a8a;
+    --sidebar-bg: #ffffff;
+    --shadow: 0 2px 12px rgba(76, 175, 125, 0.08);
+    --background-icon: #2d3748;
+    --green-text: #4a6a58;
+}
+
 .container-fluid nav {
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem 1.5rem 1.5rem 1.5rem;
-    background-color: white;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    background-color: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .container-fluid nav .nav-logo {
@@ -51,27 +71,32 @@
 }
 
 .container-fluid main {
-    background-color: #F2F3FF;
+    background-color: #F7F9F8;
     padding: 2rem 3rem 2rem 3rem;
 }
 
 .container-fluid main .card-parent-box {
     background-color: #ffffff;
     padding: 3rem;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     border-radius: 10px;
 }
 
 .container-fluid main .card-parent-box h3 {
     font-size: 20px;
     font-weight: 600;
+    margin: 0;
 }
 
 .container-fluid main .card-parent-box .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.container-fluid main .card-parent-box .card-header h3 {
+    margin: 0;
+    font-size: 20px;
 }
 
 .container-fluid main .card-parent-box .card-header .buttons {
@@ -88,39 +113,102 @@
     outline: none;
     background: none;
     color: white;
-    font-size: 15.5px;
+    font-size: 14.5px;
     display: flex;
     align-items: center;
     gap: 0.7rem;
 }
 
 .container-fluid main .card-parent-box .card-header .buttons button:nth-child(1) {
-    background-color: #1447E6;
+    /* Modules — Blue (keep as accent, matches landing page CTA) */
+    background-color: var(--green);
 }
 
 .container-fluid main .card-parent-box .card-header .buttons button:nth-child(2) {
-    background-color: #E7000B;
+    /* Lessons — Primary green */
+    background-color: #4CAF7D;
+    /* var(--green) */
 }
 
 .container-fluid main .card-parent-box .card-header .buttons button:nth-child(3) {
-    background-color: #00A63E;
+    /* Video — Dark green */
+    background-color: #2D6A4F;
+    /* var(--green-dark) */
 }
 
 .container-fluid main .card-parent-box .card-header .buttons button:nth-child(4) {
-    background-color: #9810FA;
+    /* Image — Orange */
+    background-color: #FF8A65;
+    /* var(--orange) */
 }
 
-.container-fluid main .card-parent-box .card-body {
+.container-fluid main .card-parent-box .card-header .buttons button:nth-child(5) {
+    /* Activity — Muted green */
+    background-color: #4a6a58;
+    /* var(--green-text) */
+}
+
+/* Shared hover effect for all buttons */
+/* .container-fluid main .card-parent-box .card-header .buttons button:nth-child(1):hover {
+    background-color: #2f4ac7;
+}
+
+.container-fluid main .card-parent-box .card-header .buttons button:nth-child(2):hover {
+    background-color: #2D6A4F;
+}
+
+.container-fluid main .card-parent-box .card-header .buttons button:nth-child(3):hover {
+    background-color: #1f4d38;
+}
+
+.container-fluid main .card-parent-box .card-header .buttons button:nth-child(4):hover {
+    background-color: #bf5b3a;
+}
+
+.container-fluid main .card-parent-box .card-header .buttons button:nth-child(5):hover {
+    background-color: #3a5647;
+} */
+
+.container-fluid main .card-parent-box .card-body.module-item {
     border: 1px solid rgba(0, 0, 0, 0.2);
     padding: 2rem;
     margin-top: 2rem;
     border-radius: 10px;
 }
 
-.container-fluid main .card-parent-box .card-body .card-body-header{
+.container-fluid main .card-parent-box .card-body textarea {
+    height: 150px;
+}
+
+.container-fluid main .card-parent-box .card-body .buttons button {
+    padding: 10px 30px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: none;
+    font-size: 14.5px;
+}
+
+.container-fluid main .card-parent-box .card-body button {
+    padding: 0.5rem;
+    background-color: var(--green-light);
+    color: var(--green);
+}
+
+.container-fluid main .card-parent-box .card-body .remove-item button {
+    padding: 0.5rem;
+    background-color: var(--green-light);
+    color: var(--green);
+    border-radius: 50%;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header button {
+    border-radius: 50%;
 }
 
 .container-fluid main .card-parent-box .card-body .card-body-header .card-nav {
@@ -144,22 +232,32 @@
 }
 
 .container-fluid main .card-parent-box .card-body .card-body-header .card-icon .fa-file {
-    color: #1447E6;
+    color: #3B5BDB;
+    font-size: 20px;
+}
+
+.container-fluid main .card-parent-box .card-body:nth-child(2) .card-body-header .card-icon .fa-file {
+    color: var(--green);
+    font-size: 20px;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header .card-icon .fa-file {
+    color: var(--green);
     font-size: 20px;
 }
 
 .container-fluid main .card-parent-box .card-body .card-body-header .card-icon .fa-video {
-    color: #E7000B;
+    color: var(--green-dark);
     font-size: 20px;
 }
 
 .container-fluid main .card-parent-box .card-body .card-body-header .card-icon .fa-image {
-    color: #00A63E;
+    color: var(--orange);
     font-size: 20px;
 }
 
 .container-fluid main .card-parent-box .card-body .card-body-header .card-icon .fa-circle-question {
-    color: #9810FA;
+    color: var(--green-dark);
     font-size: 20px;
 }
 
@@ -167,23 +265,23 @@ hr {
     margin-top: 2rem;
 }
 
-.container-fluid main .card-parent-box .card-footer{
+.container-fluid main .card-parent-box .card-footer {
     /* border: 1px solid rgba(0, 0, 0, 0.2); */
     /* padding: 2rem; */
-    margin-top: 2.5rem;
+    margin-top: 3.5rem;
     /* border-radius: 10px; */
 }
 
-.container-fluid main .card-parent-box .card-footer h3{
+.container-fluid main .card-parent-box .card-footer h3 {
     font-size: 20px;
     font-weight: 600;
 }
 
-.container-fluid main .card-parent-box .card-footer .card-materials{
+.container-fluid main .card-parent-box .card-footer .card-materials {
     border-radius: 10px;
     border: 1px solid rgba(0, 0, 0, 0.2);
     padding: 3rem;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -192,22 +290,22 @@ hr {
 }
 
 
-.container-fluid main .card-parent-box .card-footer .card-materials .fa{
+.container-fluid main .card-parent-box .card-footer .card-materials .fa {
     font-size: 45px;
-    color: #808080;
+    color: var(--green);
 }
 
-.container-fluid main .card-parent-box .card-footer .card-materials p{
+.container-fluid main .card-parent-box .card-footer .card-materials p {
     margin: 0;
     font-size: 15.5px;
 }
 
-.container-fluid main .card-parent-box .card-footer .card-materials span{
+.container-fluid main .card-parent-box .card-footer .card-materials span {
     color: #808080;
     font-size: 15.5px;
 }
 
-.container-fluid main .card-parent-box .card-footer .card-materials input{
+.container-fluid main .card-parent-box .card-footer .card-materials input {
     width: 250px;
     border: 1px solid rgba(0, 0, 0, 0.2);
     padding: 1rem;
@@ -216,13 +314,13 @@ hr {
     cursor: pointer;
 }
 
-.container-fluid main .card-parent-box .card-submit{
+.container-fluid main .card-parent-box .card-submit {
     display: flex;
     gap: 1.5rem;
     margin-top: 2rem;
 }
 
-.container-fluid main .card-parent-box .card-submit button{
+.container-fluid main .card-parent-box .card-submit button {
     width: 100%;
     background: none;
     border: none;
@@ -232,21 +330,21 @@ hr {
     border-radius: 10px;
 }
 
-.container-fluid main .card-parent-box .card-submit button:nth-child(1){
+.container-fluid main .card-parent-box .card-submit button:nth-child(1) {
     border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
-.container-fluid main .card-parent-box .card-submit button:nth-child(2){
-    background-color: #1447E6;
+.container-fluid main .card-parent-box .card-submit button:nth-child(2) {
+    background-color: var(--green);
     color: white;
 }
 
-.text-content{
+.text-content {
     width: 100%;
     padding: 2rem;
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 10px;
-    margin-top: 2rem;
+    margin-top: 3rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -254,12 +352,197 @@ hr {
     flex-direction: column;
 }
 
-.text-content .fa{
+.text-content .fa {
     font-size: 45px;
-    color: #808080;
+    color: var(--green);
 }
 
-.text-content p{
+.text-content p {
     margin: 0;
     font-size: 15.5px;
+}
+
+/* Indent the nested container so it's clearly "inside" the module */
+.nested-content-container {
+    padding-left: 1.5rem;
+    border-left: 3px solid var(--green-mid);
+    margin-left: 0.5rem;
+}
+
+/* Each nested card-body gets a slightly tighter top margin */
+.nested-content-container .card-body {
+    margin-top: 1.5rem;
+}
+
+/* The nested empty-state should not have the outer margin-top */
+.nested-empty.text-content {
+    margin-top: 0.5rem !important;
+}
+
+/* The nested .buttons row inside a module — 
+   matches nth-child colors from your existing .buttons button rules.
+   Buttons are: 1=Lesson(green), 2=Video(green-dark), 3=Image(orange), 4=Activity(green-text) */
+.module-item .buttons {
+    gap: 0.8rem;
+}
+
+.module-item .buttons .btn-add-lesson {
+    background-color: #4CAF7D;
+    box-shadow: 0 3px 10px rgba(76, 175, 125, 0.30);
+}
+
+.module-item .buttons .btn-add-video {
+    background-color: #2D6A4F;
+    box-shadow: 0 3px 10px rgba(45, 106, 79, 0.30);
+}
+
+.module-item .buttons .btn-add-image {
+    background-color: #FF8A65;
+    box-shadow: 0 3px 10px rgba(255, 138, 101, 0.30);
+}
+
+.module-item .buttons .btn-add-activity {
+    background-color: #4a6a58;
+    box-shadow: 0 3px 10px rgba(74, 106, 88, 0.25);
+}
+
+.module-item .buttons .btn-add-lesson:hover {
+    background-color: var(--green);
+    color: #ffffff;
+}
+
+.module-item .buttons .btn-add-video:hover {
+    background-color: var(--green);
+    color: #ffffff;
+}
+
+.module-item .buttons .btn-add-image:hover {
+    background-color: var(--green);
+    color: #ffffff;
+}
+
+.module-item .buttons .btn-add-activity:hover {
+    background-color: var(--green);
+    color: #ffffff;
+}
+
+/* Quiz questions items */
+
+div.question-item.card-body {
+    margin: 0.5rem 0 0;
+}
+
+div.question-item {
+    /* border: 1px solid rgba(59, 91, 219, 0.2); */
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    /* background-color: #f8f9ff; */
+    background-color: #ffffff;
+    padding: 2rem;
+}
+
+.question-item .card-icon .fa-list-check {
+    color: #3B5BDB;
+    font-size: 20px;
+}
+
+.question-item .remove-question {
+    padding: 0.5rem;
+    background-color: var(--green-light);
+    color: var(--green);
+    border-radius: 50%;
+    border: none;
+}
+
+/* Add Question button inside quiz — matches your existing button style */
+
+div.card-body.quiz-item button {
+    border-radius: 10px;
+}
+
+.btn-add-question {
+    padding: 8px 18px;
+    border-radius: 7px;
+    border: none;
+    outline: none;
+    /* background-color: #3B5BDB; */
+    color: white;
+    font-size: 13.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-add-question:hover {
+    background-color: #2f4ac7;
+}
+
+/* Quiz card icon color */
+.quiz-item .card-icon .fa-pen-to-square {
+    color: #3B5BDB;
+    font-size: 20px;
+}
+
+/* ── Activity question items — styled like quiz but orange accent ── */
+
+div.activity-question-item.card-body {
+    margin: 0.5rem 0 0;
+}
+
+div.activity-question-item {
+    background-color: #ffffff;
+    padding: 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.activity-question-item .card-icon .fa-pencil {
+    color: var(--orange);
+    font-size: 20px;
+}
+
+.activity-question-item .remove-activity-question {
+    padding: 0.5rem;
+    background-color: var(--green-light);
+    color: var(--green);
+    border-radius: 50%;
+    border: none;
+}
+
+/* Add Question button inside activity */
+.btn-add-activity-question {
+    padding: 8px 18px;
+    border-radius: 7px;
+    border: none;
+    outline: none;
+    /* background-color: var(--orange); */
+    color: white;
+    font-size: 13.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    /* box-shadow: 0 3px 10px rgba(255, 138, 101, 0.30); */
+}
+
+.btn-add-activity-question:hover {
+    background-color: var(--orange-dark);
+}
+
+/* Activity icon color */
+.activity-item .card-icon .fa-circle-question {
+    color: var(--orange);
+    font-size: 20px;
+}
+
+/* Question type select styling */
+.activity-question-type-select {
+    cursor: pointer;
+}
+
+/* mc fields inside activity question — row padding fix */
+.activity-mc-fields {
+    padding-left: 15px;
+    padding-right: 15px;
 }

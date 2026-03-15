@@ -37,4 +37,14 @@ class subjects extends Model {
         }
         return $grouped;
     }
+
+    public function insertSubject($subject_name, $grade_level_id)
+    {
+        $stmt = $this->db->prepare("
+            INSERT INTO subjects (subject_name, grade_level_id) VALUES (?, ?)
+        ");
+        $stmt->bind_param("si", $subject_name, $grade_level_id);
+        $stmt->execute();
+        return $this->db->insert_id;
+    }
 }
