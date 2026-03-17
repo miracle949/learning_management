@@ -51,7 +51,7 @@ switch ($url) {
         break;
         
     case 'teacher':
-        $teacherDashboard->index();
+        $teacher->teacherDashboard();
         break;
 
     // ✅ This was the missing route — "View class" now loads records.php

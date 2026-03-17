@@ -4,6 +4,84 @@ require_once "../core/Model.php";
 class Teacher extends Model
 {
 
+    public function getTeacherIdByUserId($user_id)
+    {
+        $stmt = $this->db->prepare("SELECT id AS teacher_id FROM teachers WHERE user_id = ?");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function getTeacherClasses($teacher_id)
+    {
+        $sql = "
+            SELECT 
+                ta.subject_id,
+                ta.grade_level_id,
+                s.subject_name,
+                gl.name AS grade_name,
+                GROUP_CONCAT(DISTINCT sec.section_name ORDER BY sec.section_name SEPARATOR ', ') AS sections,
+                COUNT(DISTINCT se.student_id) AS student_count,
+                0 AS module_count
+            FROM teacher_assignments ta
+            JOIN subjects s ON ta.subject_id = s.id
+            JOIN grade_level gl ON ta.grade_level_id = gl.id
+            JOIN sections sec ON ta.section_id = sec.id
+            LEFT JOIN student_enrollments se 
+                ON se.subject_id = ta.subject_id 
+                AND se.section_id = ta.section_id
+            WHERE ta.teacher_id = ?
+            GROUP BY ta.subject_id, ta.grade_level_id, s.subject_name, gl.name
+            ORDER BY gl.name, s.subject_name
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $teacher_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getTeacherStats($teacher_id)
+    {
+        $sql = "
+            SELECT
+                COUNT(DISTINCT ta.subject_id) AS total_classes,
+                0 AS total_modules
+            FROM teacher_assignments ta
+            WHERE ta.teacher_id = ?
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $teacher_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function getStudentCountPerClass($teacher_id)
+    {
+        $sql = "
+            SELECT 
+                ta.subject_id,
+                ta.section_id,
+                COUNT(se.student_id) AS total_students
+            FROM teacher_assignments ta
+            LEFT JOIN student_enrollments se 
+                ON se.subject_id = ta.subject_id 
+                AND se.section_id = ta.section_id
+            WHERE ta.teacher_id = ?
+            GROUP BY ta.subject_id, ta.section_id
+        ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $teacher_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function getRecentStudents($limit = 5)
     {
         $sql = "
@@ -33,35 +111,28 @@ class Teacher extends Model
 
         return $students;
     }
-    
+
     public function createTeacher($name, $email, $password)
     {
         $hashed = password_hash($password, PASSWORD_DEFAULT);
 
-        // Step 1: Insert into users table
         $sql = "INSERT INTO users (name, email, password, role, status) VALUES (?, ?, ?, 'teacher', '1')";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("sss", $name, $email, $hashed);
         $stmt->execute();
         $user_id = $this->db->insert_id;
 
-        // Step 2: Insert into teachers table using the user_id
         $sql2 = "INSERT INTO teachers (user_id) VALUES (?)";
         $stmt2 = $this->db->prepare($sql2);
         $stmt2->bind_param("i", $user_id);
         $stmt2->execute();
 
-        // Step 3: Return the teachers.id (not users.id)
         return $this->db->insert_id;
     }
 
     public function assignSubjectsAndSections($teacher_id, $assigned_subjects, $assigned_sections)
     {
-        // For each subject + section combination, insert into teacher_assignments
-        // Based on your table: id, teacher_id, subject_id, grade_level_id, section_id
-        // We need to get grade_level_id from subject_id
         foreach ($assigned_subjects as $subject_id) {
-            // Get grade_level_id from this subject
             $stmt = $this->db->prepare("SELECT grade_level_id FROM subjects WHERE id = ?");
             $stmt->bind_param("i", $subject_id);
             $stmt->execute();
@@ -69,7 +140,6 @@ class Teacher extends Model
             $grade_level_id = $subject['grade_level_id'] ?? null;
 
             foreach ($assigned_sections as $section_id) {
-                // Only assign sections that match the subject's grade level
                 $sectionCheck = $this->db->prepare("SELECT id FROM sections WHERE id = ? AND grade_level_id = ?");
                 $sectionCheck->bind_param("ii", $section_id, $grade_level_id);
                 $sectionCheck->execute();
@@ -90,23 +160,23 @@ class Teacher extends Model
     public function getAllTeachers()
     {
         $sql = "
-        SELECT 
-            t.id AS teacher_id,
-            u.name,
-            u.email,
-            GROUP_CONCAT(DISTINCT s.subject_name ORDER BY s.subject_name SEPARATOR '||') AS subjects,
-            COUNT(DISTINCT s.subject_name) AS class_count,  -- ← changed from ta.subject_id
-            GROUP_CONCAT(DISTINCT CONCAT(gl.name, ' - ', sec.section_name) ORDER BY gl.name SEPARATOR '||') AS sections
-        FROM teachers t
-        JOIN users u ON t.user_id = u.id
-        LEFT JOIN teacher_assignments ta ON ta.teacher_id = t.id
-        LEFT JOIN subjects s ON ta.subject_id = s.id
-        LEFT JOIN sections sec ON ta.section_id = sec.id
-        LEFT JOIN grade_level gl ON ta.grade_level_id = gl.id
-        WHERE u.role = 'teacher' AND u.status = '1'
-        GROUP BY t.id, u.name, u.email
-        ORDER BY u.name ASC
-    ";
+            SELECT 
+                t.id AS teacher_id,
+                u.name,
+                u.email,
+                GROUP_CONCAT(DISTINCT s.subject_name ORDER BY s.subject_name SEPARATOR '||') AS subjects,
+                COUNT(DISTINCT s.subject_name) AS class_count,
+                GROUP_CONCAT(DISTINCT CONCAT(gl.name, ' - ', sec.section_name) ORDER BY gl.name SEPARATOR '||') AS sections
+            FROM teachers t
+            JOIN users u ON t.user_id = u.id
+            LEFT JOIN teacher_assignments ta ON ta.teacher_id = t.id
+            LEFT JOIN subjects s ON ta.subject_id = s.id
+            LEFT JOIN sections sec ON ta.section_id = sec.id
+            LEFT JOIN grade_level gl ON ta.grade_level_id = gl.id
+            WHERE u.role = 'teacher' AND u.status = '1'
+            GROUP BY t.id, u.name, u.email
+            ORDER BY u.name ASC
+        ";
 
         $result = $this->db->query($sql);
         $teachers = [];

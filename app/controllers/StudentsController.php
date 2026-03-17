@@ -33,7 +33,15 @@ class StudentsController
             $subject_slug = $_GET['subject_slug'];
 
             if (!$subjectModel->isEnrolled($student_id, $subject_id)) {
-                $subjectModel->enrollStudent($student_id, $subject_id, $section_id);
+
+                // Get the correct section_id based on the subject's grade level
+                // and which section this student belongs to
+                $correct_section_id = $subjectModel->getSectionForSubject($student_id, $subject_id);
+
+                // Fallback to student's default section if no match found
+                $enroll_section_id = $correct_section_id ?? $section_id;
+
+                $subjectModel->enrollStudent($student_id, $subject_id, $enroll_section_id);
             }
 
             header("Location: /learning_management/public/?url=subjects&subject=" . urlencode($subject_slug));

@@ -6,7 +6,6 @@ require_once "../app/models/Teacher.php";
 
 class teacher_records
 {
-
     public $subjectModel, $gradeLevel, $teacherModel;
 
     public function __construct()
@@ -16,6 +15,38 @@ class teacher_records
         $this->teacherModel = new Teacher();
     }
 
+    public function teacherDashboard()
+    {
+        // Check what session key your teacher login uses
+        // Try teacher_id first, fallback to user_id
+        $teacher_id = $_SESSION['teacher_id'] ?? null;
+
+        if (!$teacher_id) {
+            // Find teacher_id from users table using user_id session
+            $user_id = $_SESSION['user_id'] ?? null;
+            if (!$user_id) {
+                header("Location: /learning_management/public/?url=login");
+                exit;
+            }
+
+            $result = $this->teacherModel->getTeacherIdByUserId($user_id);
+            $teacher_id = $result['teacher_id'] ?? null;
+
+            if (!$teacher_id) {
+                die("Teacher record not found.");
+            }
+
+            $_SESSION['teacher_id'] = $teacher_id;
+        }
+
+        $classes = $this->teacherModel->getTeacherClasses($teacher_id);
+        $stats = $this->teacherModel->getTeacherStats($teacher_id);
+        $totalStudents = array_sum(array_column($classes, 'student_count'));
+        $teacherInfo = ['name' => $_SESSION['teacher_name'] ?? $_SESSION['name'] ?? 'Teacher'];
+
+        require_once "../app/view/teacher.php";
+    }
+
     public function teacherRecords()
     {
         $grade11Subjects = $this->subjectModel->getGrade11Subjects();
@@ -23,6 +54,14 @@ class teacher_records
         $grade11Sections = $this->gradeLevel->getGrade11Sections();
         $grade12Sections = $this->gradeLevel->getGrade12Sections();
         $teachers = $this->teacherModel->getAllTeachers();
+
+        // Legacy classCounts kept for backward compatibility
+        // $classCountsRaw = $this->teacherModel->getStudentCountPerClass($_SESSION['teacher_id']);
+        // $classCounts = [];
+        // foreach ($classCountsRaw as $row) {
+        //     $key = $row['subject_id'] . '_' . $row['section_id'];
+        //     $classCounts[$key] = $row['total_students'];
+        // }
 
         require_once "../admin_folder/teacher_records.php";
     }
@@ -54,7 +93,6 @@ class teacher_records
         }
     }
 
-    // ── Add Subject ───────────────────────────────────────────────────────
     public function addSubject()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -5,6 +5,40 @@ require_once "../core/Model.php";
 class subjects extends Model
 {
 
+
+    public function getSectionForSubject($student_id, $subject_id)
+    {
+        $sql = "
+        SELECT ta.section_id 
+        FROM teacher_assignments ta
+        JOIN students s ON s.section_id = ta.section_id
+        WHERE s.id = ? 
+        AND ta.subject_id = ?
+        AND ta.grade_level_id = (
+            SELECT grade_level_id FROM subjects WHERE id = ?
+        )
+        LIMIT 1
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("iii", $student_id, $subject_id, $subject_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+
+        return $row ? $row['section_id'] : null;
+    }
+
+    public function getGrade11Subjects()
+    {
+        return $this->getSubjectsByGradeLevel(1);
+    }
+
+    public function getGrade12Subjects()
+    {
+        return $this->getSubjectsByGradeLevel(2);
+    }
+
     public function getStudentByUserId($user_id)
     {
         $stmt = $this->db->prepare("SELECT id, section_id FROM students WHERE user_id = ?");

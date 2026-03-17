@@ -100,14 +100,14 @@
     flex-direction: column;
 } */
 
-/* 
+
 .container-fluid .login-parent .form .form-logo{
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    width: 100%;
-} */
+    /* width: 100%; */
+}
 
 /* .container-fluid .login-parent .form .form-logo .parent-logo {
     display: flex;
@@ -143,11 +143,11 @@
 
 .container-fluid .login-parent .form .form-logo .parent-logo .logo-icon .fa-solid {
     color: var(--green);
-    font-size: 18px;
+    font-size: 22px;
 }
 
 .container-fluid .login-parent .form .form-logo .parent-logo p {
-    font-size: 19.5px;
+    font-size: 22px;
     font-family: "Titan", sans-serif;
     font-weight: normal;
     color: var(--green);

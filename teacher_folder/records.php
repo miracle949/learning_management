@@ -85,7 +85,7 @@
                 </div>
             </div>
 
-            <!-- <div class="progress-announce">
+            <div class="progress-announce">
                 <a href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>">
                     <div class="student-progress">
                         <div class="student-icon">
@@ -109,7 +109,7 @@
                         </div>
                     </div>
                 </button>
-            </div> -->
+            </div>
 
             <!-- Modal announcement -->
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
