@@ -130,7 +130,7 @@
 .container-fluid .login-parent .form .form-logo .parent-logo {
     display: flex;
     align-items: center;
-    justify-content: left;
+    justify-content: center;
     position: relative;
     gap: 0.5rem;
 }
