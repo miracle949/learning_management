@@ -8,14 +8,34 @@
     font-family: 'Poppins', sans-serif;
 }
 
+:root {
+    --green: #4CAF7D;
+    --green-dark: #2D6A4F;
+    --green-light: #E8F5EE;
+    --green-mid: #c8e6d6;
+    --orange: #FF8A65;
+    --orange-light: #FFF3EF;
+    --orange-dark: #bf5b3a;
+    --bg: #F9FBF9;
+    --white: #ffffff;
+    --card-border: rgba(0, 0, 0, 0.07);
+    --text: #2D6A4F;
+    --text-dark: #1a3a2a;
+    --text-muted: #7a9a8a;
+    --sidebar-bg: #ffffff;
+    --shadow: 0 2px 12px rgba(76, 175, 125, 0.08);
+    --background-icon: #2d3748;
+    --green-text: #4a6a58;
+}
+
 .container-fluid .rightbar {
     /* width: calc(100% - 250px); */
     /* width: 100%; */
     width: calc(100% - 235px);
     margin-left: 235px;
-    height: calc(100% - 66px);
+    height: calc(100% - 68px);
     border-left: 1px solid rgba(0, 0, 0, 0.1);
-    margin-top: 66px;
+    margin-top: 68px;
     /* margin-left: 250px; */
     padding: 1.8rem 1.4rem 1.8rem 1.4rem;
     /* background-color: #EFF3F6; */
@@ -23,10 +43,10 @@
     background-color: #F7F9F8;
 }
 
-.container-fluid .rightbar .parent{
+/* .container-fluid .rightbar .parent{
     display: flex;
     padding: 4rem 0 0 0;
-}
+} */
 
 /* .container-fluid .rightbar .module-title{
     width: 100%;
@@ -56,11 +76,11 @@
     font-size: 18px;
 }
 
-.container-fluid .rightbar .your-module{
+.container-fluid .rightbar .your-module {
     max-width: 250px;
 }
 
-.container-fluid .rightbar .your-module .your-module-category ul{
+.container-fluid .rightbar .your-module .your-module-category ul {
     display: flex;
     flex-direction: column;
     gap: 0.7rem;
@@ -74,44 +94,60 @@
 }
 
 .container-fluid .rightbar .module-parent-progress {
-    display: flex;
-    justify-content: end;
+    /* display: flex;
+    justify-content: left;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: wrap; */
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
     /* justify-content: left;
     align-items: left;
     flex-direction: column; */
-    gap: 2rem;
+    /* gap: 2rem; */
+    margin-top: 2rem;
+    /* gap: 2rem;
     margin-left: 50px; 
-    flex: 1;
+    flex: 1; */
 }
 
 .container-fluid .rightbar .module-parent-progress .module-progress,
 .title-progress-bar {
-    padding: 0 1.5rem;
+    padding: 0 1rem;
+}
+
+.container-fluid .rightbar .module-parent-progress .module-progress p:nth-child(1){
+    padding: 0 1rem;
+    text-transform: uppercase;
+    margin: 0 0 0px 0;
+    font-weight: 600;
+    color: var(--green);
+    font-size: 14.5px;
 }
 
 .container-fluid .rightbar .module-parent-progress .module-progress h3 {
-    padding: 0 1.5rem;
-    font-size: 20px;
+    padding: 0 1rem;
+    font-size: 17.5px;
     /* font-family: "Titan", sans-serif; */
     max-width: 390px;
     line-height: 30px;
     font-weight: bold;
+    margin-top: 0rem;
 }
 
-.container-fluid .rightbar .module-parent-progress .module-progress p {
-    padding: 0 1.5rem;
+.container-fluid .rightbar .module-parent-progress .module-progress p:nth-child(3) {
+    padding: 0 1rem;
 }
 
 .container-fluid .rightbar .module-parent-progress .module-progress .parent-progress-bar {
-    padding: 0 1.5rem;
+    padding: 0 1rem;
 }
 
 .container-fluid .rightbar .module-parent-progress .module-progress {
-    width: calc(100% / 2.3);
+    /* width: calc(100% / 2.3); */
     /* width: 100%; */
-    padding: 2rem 0 0 0;
+    padding: 0 0 0 0;
+    width: 100%;
     border-radius: 10px;
     /* position: relative; */
     /* box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
@@ -119,9 +155,25 @@
     border: 1px solid #e2e8f0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     background-color: #ffffff;
+    animation: slideIn 0.4s ease both;
 }
 
-.container-fluid .rightbar .module-parent-progress .module-progress:hover{
+.container-fluid .rightbar .module-parent-progress .module-progress .module-progress-header{
+    width: 100%;
+    height: 120px;
+    background-image: url("../images/philosophy_picture.jpg");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.container-fluid .rightbar .module-parent-progress .module-progress .module-progress-body{
+    margin-top: 1rem;
+}
+
+.container-fluid .rightbar .module-parent-progress .module-progress:hover {
     box-shadow: 0 8px 32px rgba(108, 63, 232, 0.13), 0 2px 8px rgba(0, 0, 0, 0.07);
     transform: translateY(-2px);
     cursor: pointer;
@@ -133,10 +185,11 @@
 }
 
 .container-fluid .rightbar .module-parent-progress .module-progress p {
-    margin: 1rem 0 1.7rem 0;
+    /* margin: 1rem 0 1.7rem 0; */
     /* color: #808080; */
-    font-size: 15.5px;
+    font-size: 14.5px;
     line-height: 30px;
+    color: #6B7280;
 }
 
 .container-fluid .rightbar .module-parent-progress .module-progress .title-progress-bar {
@@ -145,13 +198,17 @@
     align-items: center;
 }
 
+.container-fluid .rightbar .module-parent-progress .module-progress .title-progress-bar span {
+    font-size: 14.5px;
+}
+
 .container-fluid .rightbar .module-parent-progress .module-progress .progress-bar {
     width: 100%;
     /* height: 10px; */
-    padding: 0.7rem;
+    padding: 0.3rem;
     border-radius: 28px;
     background-color: #D9D9D9;
-    margin: 0.5rem 0 2rem 0;
+    margin: 0.5rem 0 0rem 0;
     position: relative;
 }
 
@@ -161,7 +218,7 @@
     /* position: absolute;
     bottom: 0; */
     width: 100%;
-    padding: 1.5rem 2rem 2rem 2rem;
+    padding: 1.3rem 1rem 1.3rem 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -175,12 +232,19 @@
     /* color: #4F39F6; */
     color: #ffffff;
     font-size: 16px;
+    text-align: center;
     /* background-color: #5F66AC; */
     background-color: #9333ea;
-    padding: 10px 40px;
+    padding: 7px 40px;
+    width: 100%;
+    font-size: 14.5px;
     border-radius: 28px;
     text-transform: uppercase;
     font-weight: 600;
+}
+
+.activity-footer{
+    padding: 0 0.5rem;
 }
 
 @keyframes slideIn {

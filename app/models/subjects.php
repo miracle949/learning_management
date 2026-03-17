@@ -2,9 +2,20 @@
 
 require_once "../core/Model.php";
 
-class subjects extends Model {
+class subjects extends Model
+{
 
-    public function getSubjectsByGradeLevel($grade_level_id) {
+    public function getStudentByUserId($user_id)
+    {
+        $stmt = $this->db->prepare("SELECT id, section_id FROM students WHERE user_id = ?");
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
+
+    public function getSubjectsByGradeLevel($grade_level_id)
+    {
         $sql = "SELECT * FROM subjects WHERE grade_level_id = ? ORDER BY id ASC";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("i", $grade_level_id);
@@ -13,36 +24,38 @@ class subjects extends Model {
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function getGrade11Subjects() {
-        return $this->getSubjectsByGradeLevel(1);
-    }
-
-    public function getGrade12Subjects() {
-        return $this->getSubjectsByGradeLevel(2);
-    }
-
-    public function getAllSubjectsGroupedByGrade() {
-        $sql = "SELECT s.*, g.name as grade_name 
-                FROM subjects s 
-                JOIN grade_level g ON s.grade_level_id = g.id 
-                ORDER BY s.grade_level_id ASC, s.id ASC";
+    public function isEnrolled($student_id, $subject_id)
+    {
+        $sql = "SELECT id FROM student_enrollments WHERE student_id = ? AND subject_id = ?";
         $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("ii", $student_id, $subject_id);
         $stmt->execute();
         $result = $stmt->get_result();
-        $results = $result->fetch_all(MYSQLI_ASSOC);
+        return $result->num_rows > 0;
+    }
 
-        $grouped = [];
-        foreach ($results as $row) {
-            $grouped[$row['grade_name']][] = $row;
-        }
-        return $grouped;
+    public function enrollStudent($student_id, $subject_id, $section_id)
+    {
+        $sql = "INSERT INTO student_enrollments (student_id, subject_id, section_id, enrolled_at) VALUES (?, ?, ?, NOW())";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("iii", $student_id, $subject_id, $section_id);
+        return $stmt->execute();
+    }
+
+    public function getEnrolledSubjectIds($student_id)
+    {
+        $sql = "SELECT subject_id FROM student_enrollments WHERE student_id = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $student_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $rows = $result->fetch_all(MYSQLI_ASSOC);
+        return array_column($rows, 'subject_id');
     }
 
     public function insertSubject($subject_name, $grade_level_id)
     {
-        $stmt = $this->db->prepare("
-            INSERT INTO subjects (subject_name, grade_level_id) VALUES (?, ?)
-        ");
+        $stmt = $this->db->prepare("INSERT INTO subjects (subject_name, grade_level_id) VALUES (?, ?)");
         $stmt->bind_param("si", $subject_name, $grade_level_id);
         $stmt->execute();
         return $this->db->insert_id;

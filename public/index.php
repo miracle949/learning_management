@@ -6,13 +6,16 @@ require_once "../app/controllers/HomeController.php";
 require_once "../app/controllers/AuthController.php";
 require_once "../app/controllers/teacher_records.php";
 require_once "../app/controllers/TeacherController.php";
+require_once "../app/controllers/StudentsController.php";
 
 $url = $_GET['url'] ?? '';
 
 $controller = new HomeController();
 $auth = new AuthController();
 $teacher = new teacher_records();
-$teacherDashboard = new TeacherController(); 
+$teacherDashboard = new TeacherController();
+$student = new StudentsController(); 
+
 
 switch ($url) {
     case 'landingpage':
@@ -24,7 +27,7 @@ switch ($url) {
         break;
 
     case 'subjects_all':
-        $controller->subjects_all();
+        $student->subjects_all();
         break;
 
     case 'subjects':

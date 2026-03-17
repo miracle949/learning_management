@@ -20,8 +20,6 @@
     <div class="container-fluid p-0">
         <?php include("../components/offcanvas.php"); ?>
 
-        <?php include("../components/navbar.php"); ?>
-
         <div class="rightbar">
             <?php
             $subject = $_GET['subject'] ?? null;
@@ -112,10 +110,10 @@
 
         const quizBtn = document.querySelector(".take-quiz a");
 
-        if (lessonModule) {
-            quizBtn.href =
-                `/learning_management/public/?url=subject_quiz&subject=${lessonSubject}&module=${lessonModule}`;
-        }
+        // if (lessonModule) {
+        //     quizBtn.href =
+        //         `/learning_management/public/?url=subject_quiz&subject=${lessonSubject}&module=${lessonModule}`;
+        // }
     </script>
 
 </body>

@@ -15,7 +15,7 @@
                 </a>
             </li>
 
-            <li class="<?= $current_url === 'subjects_all' ? 'active' : '' ?>">
+            <li class="<?= ($current_url === 'subjects_all' || $current_url === 'subjects') ? 'active' : '' ?>">
                 <a href="/learning_management/public/?url=subjects_all" class="text-decoration-none">
                     <i class="fa fa-book-open"></i>
                     <span>My Subjects</span>

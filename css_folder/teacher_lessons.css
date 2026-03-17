@@ -310,7 +310,7 @@ hr {
     padding: 2rem;
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 10px;
-    margin-top: 3rem;
+    margin-top: 2rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -545,8 +545,8 @@ div.activity-question-item {
     gap: 0.5rem;
     cursor: pointer;
     font-family: 'Poppins', sans-serif;
-    background-color: var(--orange);
-    box-shadow: 0 3px 10px rgba(255, 138, 101, 0.30);
+    /* background-color: var(--orange);
+    box-shadow: 0 3px 10px rgba(255, 138, 101, 0.30); */
 }
 
 .btn-add-activity-question:hover {

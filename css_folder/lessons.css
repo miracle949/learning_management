@@ -1,11 +1,12 @@
 .container-fluid .rightbar {
     width: 100%;
     /* width: calc(100% - 250px); */
-    height: calc(100% - 83px);
-    margin-top: 83px;
+    /* height: calc(100% - 83px); */
+    height: 100%;
+    /* margin-top: 83px; */
     /* margin-left: 250px; */
     /* padding: 3rem; */
-    background-color: #EFF3F6;
+    background-color: #F7F9F8;
 }
 
 .container-fluid .rightbar .navbar-lessons {
@@ -15,7 +16,9 @@
     gap: 0.5rem;
     padding: 1.7rem 2rem 1.7rem 2rem;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    /* box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    background-color: #ffffff;
 }
 
 .container-fluid .rightbar .navbar-lessons a {

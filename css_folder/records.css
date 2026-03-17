@@ -9,14 +9,14 @@
 }
 
 .container-fluid nav {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1.5rem 1.5rem 1.5rem 1.5rem;
-    background-color: white;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    background-color: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     z-index: 999;
 }
 
@@ -56,7 +56,8 @@
 } */
 
 .container-fluid main {
-    background-color: #f0f2f8;
+    /* background-color: #f0f2f8; */
+    background-color: #F7F9F8;
     padding: 2rem 3rem 2rem 3rem;
 }
 
