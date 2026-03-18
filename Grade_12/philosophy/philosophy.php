@@ -109,12 +109,10 @@
 
     .container-fluid .rightbar .module-title .module-body .module-links .module-buttons a:nth-child(1) {
         color: white;
-        /* background-color: #5F66AC; */
         background-color: var(--green);
     }
 
     .container-fluid .rightbar .module-title .module-body .module-links .module-buttons a:nth-child(2) {
-        /* border: 2px solid #5F66AC; */
         border: 2px solid #ffffff;
         /* color: #5F66AC; */
         color: #ffffff;
@@ -173,7 +171,6 @@
 
     </div> -->
     <div class="module-body">
-        <!-- <img src="../images/philosophy_picture.jpg" alt=""> -->
         <div class="module-picture"></div>
         <div class="module-body-child">
             <div class="module-links">
