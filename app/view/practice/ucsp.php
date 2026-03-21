@@ -177,64 +177,84 @@
 <div class="parent">
     <div class="module-parent-progress">
 
-        <?php
-        $urlMap = [
-            'module'       => 'module_view',
-            'assignment'   => 'assignment_view',
-            'announcement' => 'announcement_view',
-        ];
-        $labelMap = [
-            'module'       => 'New Material',
-            'assignment'   => 'New Assignments',
-            'announcement' => 'Announcements',
-        ];
-
-        if (!empty($feedItems)):
-            foreach ($feedItems as $item):
-                $pageUrl = "/learning_management/public/?url={$urlMap[$item['type']]}&subject={$subject}&id={$item['id']}";
-                $label   = $labelMap[$item['type']];
-                $date    = date('M j', strtotime($item['date']));
-                $subtext = mb_strimwidth(strip_tags($item['subtext']), 0, 120, '...');
-        ?>
-
-            <a href="<?= $pageUrl ?>">
-                <div class="module-progress">
-                    <div class="module-parent">
-                        <div class="module-icon">
-                            <i class="fa fa-layer-group"></i>
-                        </div>
-                        <div class="module-content">
-                            <span><?= htmlspecialchars($label) ?></span>
-
-                            <h3><?= htmlspecialchars($item['heading']) ?></h3>
-
-                            <p><?= htmlspecialchars($subtext) ?></p>
-                        </div>
+        <a href="?url=module_view&subject=ucsp&id=1">
+            <div class="module-progress">
+                <div class="module-parent">
+                    <div class="module-icon">
+                        <i class="fa fa-layer-group"></i>
                     </div>
+                    <div class="module-content">
+                        <span>New Material</span>
 
-                    <hr>
+                        <h3>Name: Module 1 Week 1 - 3</h3>
 
-                    <div class="module-date">
-                        <p>Date Received: <?= $date ?></p>
+                        <p>Topic: Introduction to Pholosophy</p>
                     </div>
                 </div>
-            </a>
 
-        <?php
-            endforeach;
-        else:
-        ?>
-            <p style="color:#aaa; padding:2rem; font-size:14px; text-align:center;">
-                No materials posted yet.
-            </p>
-        <?php endif; ?>
+                <hr>
+
+                <div class="module-date">
+                    <p>Date Received: Mar 18</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="?url=assignment_view&subject=ucsp&id=1">
+            <div class="module-progress">
+                <div class="module-parent">
+                    <div class="module-icon">
+                        <i class="fa fa-layer-group"></i>
+                    </div>
+                    <div class="module-content">
+                        <span>New Assignments</span>
+
+                        <h3>Name: Essay about what you understand in the subject Introduction to Pholosophy </h3>
+
+                        <p>Description: Give me 3-5 sentences send in pdf format using the template below. </p>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="module-date">
+                    <p>Date Received: Mar 18</p>
+                </div>
+            </div>
+        </a>
+
+        <a href="?url=announcement_view&subject=ucsp&id=1">
+            <div class="module-progress">
+                <div class="module-parent">
+                    <div class="module-icon">
+                        <i class="fa fa-layer-group"></i>
+                    </div>
+                    <div class="module-content">
+                        <span>Announcements</span>
+
+                        <h3>Kindly check the module that i send and be ready for recitation and quiz after our
+                            discussion.
+                            Also , dont forget to submit the given task that i end here in our class. Submit it on time.
+                        </h3>
+
+                        <p>Thats all thank you eveyone . </p>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="module-date">
+                    <p>Date Received: Mar 18</p>
+                </div>
+            </div>
+        </a>
 
         <!-- <div class="module-progress" data-module-id="module1">
             <div class="module-progress-header">
 
             </div>
             <div class="module-progress-body">
-                <p>Philosophy</p>
+                <p>Understanding Self</p>
                 <h3>Introduction to Philosophy of Human Person</h3>
 
                 <p>Learn the fundamentals of philosophy, including major branches, key thinkers, and basic
@@ -252,16 +272,19 @@
                 </div>
 
                 <div class="footer-bar">
-                    <a href="/learning_management/public/?url=subject_lessons&subject=philosophy&module=module1">Start
-                        Now</a>
+                    <a href="/learning_management/public/?url=subject_lessons&subject=ucsp&module=module1">Continue
+                        learning
+                        <i class="fa fa-arrow-right"></i></a>
                 </div>
             </div>
         </div>
 
         <div class="module-progress" data-module-id="module2">
-            <div class="module-progress-header"></div>
+            <div class="module-progress-header">
+
+            </div>
             <div class="module-progress-body">
-                <p>Philosophy</p>
+                <p>Understanding Self</p>
                 <h3>Introduction to Philosophy of Human Person</h3>
 
                 <p>Learn the fundamentals of philosophy, including major branches, key thinkers, and basic
@@ -279,16 +302,19 @@
                 </div>
 
                 <div class="footer-bar">
-                    <a href="/learning_management/public/?url=subject_lessons&subject=philosophy&module=module2">Start
-                        Now</a>
+                    <a href="/learning_management/public/?url=subject_lessons&subject=ucsp&module=module2">Continue
+                        learning
+                        <i class="fa fa-arrow-right"></i></a>
                 </div>
             </div>
         </div>
 
         <div class="module-progress" data-module-id="module3">
-            <div class="module-progress-header"></div>
+            <div class="module-progress-header">
+
+            </div>
             <div class="module-progress-body">
-                <p>Philosophy</p>
+                <p>Understanding Self</p>
                 <h3>Introduction to Philosophy of Human Person</h3>
 
                 <p>Learn the fundamentals of philosophy, including major branches, key thinkers, and basic
@@ -306,17 +332,19 @@
                 </div>
 
                 <div class="footer-bar">
-                    <a href="/learning_management/public/?url=subject_lessons&subject=philosophy&module=module3">Start
-                        Now</a>
+                    <a href="/learning_management/public/?url=subject_lessons&subject=ucsp&module=module3">Continue
+                        learning
+                        <i class="fa fa-arrow-right"></i></a>
                 </div>
             </div>
         </div>
 
-
         <div class="module-progress" data-module-id="module4">
-            <div class="module-progress-header"></div>
+            <div class="module-progress-header">
+
+            </div>
             <div class="module-progress-body">
-                <p>Philosophy</p>
+                <p>Understanding Self</p>
                 <h3>Introduction to Philosophy of Human Person</h3>
 
                 <p>Learn the fundamentals of philosophy, including major branches, key thinkers, and basic
@@ -334,8 +362,9 @@
                 </div>
 
                 <div class="footer-bar">
-                    <a href="/learning_management/public/?url=subject_lessons&subject=philosophy&module=module4">Start
-                        Now</a>
+                    <a href="/learning_management/public/?url=subject_lessons&subject=ucsp&module=module3">Continue
+                        learning
+                        <i class="fa fa-arrow-right"></i></a>
                 </div>
             </div>
         </div> -->

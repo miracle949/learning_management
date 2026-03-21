@@ -93,158 +93,171 @@
     font-family: "Titan", sans-serif;
 }
 
-.container-fluid .rightbar .module-parent-progress {
-    /* display: flex;
-    justify-content: left;
-    align-items: center;
-    flex-wrap: wrap; */
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-    /* justify-content: left;
-    align-items: left;
-    flex-direction: column; */
-    /* gap: 2rem; */
-    margin-top: 2rem;
-    /* gap: 2rem;
-    margin-left: 50px; 
-    flex: 1; */
+.container-fluid .parent {
+    margin-top: 3rem;
 }
 
-.container-fluid .rightbar .module-parent-progress .module-progress,
-.title-progress-bar {
-    padding: 0 1rem;
-}
-
-.container-fluid .rightbar .module-parent-progress .module-progress p:nth-child(1){
-    padding: 0 1rem;
-    text-transform: uppercase;
-    margin: 0 0 0px 0;
-    font-weight: 600;
-    color: var(--green);
-    font-size: 14.5px;
-}
-
-.container-fluid .rightbar .module-parent-progress .module-progress h3 {
-    padding: 0 1rem;
-    font-size: 17.5px;
-    /* font-family: "Titan", sans-serif; */
-    max-width: 390px;
-    line-height: 30px;
-    font-weight: bold;
-    margin-top: 0rem;
-}
-
-.container-fluid .rightbar .module-parent-progress .module-progress p:nth-child(3) {
-    padding: 0 1rem;
-}
-
-.container-fluid .rightbar .module-parent-progress .module-progress .parent-progress-bar {
-    padding: 0 1rem;
-}
-
-.container-fluid .rightbar .module-parent-progress .module-progress {
-    /* width: calc(100% / 2.3); */
-    /* width: 100%; */
-    padding: 0 0 0 0;
-    width: 100%;
-    border-radius: 10px;
-    /* position: relative; */
-    /* box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    border: 1px solid rgba(0, 0, 0, 0.1); */
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-    background-color: #ffffff;
-    animation: slideIn 0.4s ease both;
-}
-
-.container-fluid .rightbar .module-parent-progress .module-progress .module-progress-header{
-    width: 100%;
-    height: 120px;
-    background-image: url("../images/philosophy_picture.jpg");
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-}
-
-.container-fluid .rightbar .module-parent-progress .module-progress .module-progress-body{
-    margin-top: 1rem;
-}
-
-.container-fluid .rightbar .module-parent-progress .module-progress:hover {
-    box-shadow: 0 8px 32px rgba(108, 63, 232, 0.13), 0 2px 8px rgba(0, 0, 0, 0.07);
-    transform: translateY(-2px);
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-}
-
-.container-fluid .rightbar h3 {
-    font-size: 20px;
-}
-
-.container-fluid .rightbar .module-parent-progress .module-progress p {
-    /* margin: 1rem 0 1.7rem 0; */
-    /* color: #808080; */
-    font-size: 14.5px;
-    line-height: 30px;
-    color: #6B7280;
-}
-
-.container-fluid .rightbar .module-parent-progress .module-progress .title-progress-bar {
+.container-fluid .module-parent-progress {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
-.container-fluid .rightbar .module-parent-progress .module-progress .title-progress-bar span {
-    font-size: 14.5px;
-}
-
-.container-fluid .rightbar .module-parent-progress .module-progress .progress-bar {
-    width: 100%;
-    /* height: 10px; */
-    padding: 0.3rem;
-    border-radius: 28px;
-    background-color: #D9D9D9;
-    margin: 0.5rem 0 0rem 0;
-    position: relative;
-}
-
-
-
-.container-fluid .rightbar .module-parent-progress .module-progress .footer-bar {
-    /* position: absolute;
-    bottom: 0; */
-    width: 100%;
-    padding: 1.3rem 1rem 1.3rem 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* background-color: #EEF2FF;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px; */
-}
-
-.container-fluid .rightbar .module-parent-progress .module-progress .footer-bar a {
+.container-fluid .module-parent-progress a {
     text-decoration: none;
-    /* color: #4F39F6; */
-    color: #ffffff;
-    font-size: 16px;
-    text-align: center;
-    /* background-color: #5F66AC; */
-    background-color: #9333ea;
-    padding: 7px 40px;
-    width: 100%;
-    font-size: 14.5px;
-    border-radius: 28px;
-    text-transform: uppercase;
-    font-weight: 600;
+    color: #1A1A1A;
 }
 
-.activity-footer{
+.container-fluid .module-parent-progress a:hover {
+    transform: translateY(-2px);
+    transition: all -0.6s ease-in-out;
+}
+
+.container-fluid .module-parent-progress .module-progress {
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    border-radius: 10px;
+    border: 1px solid #E2E8E5;
+}
+
+.container-fluid .module-parent-progress .module-progress hr {
+    margin: 16px 0 8px 0;
+}
+
+.container-fluid .module-parent-progress .module-progress .module-date {
+    padding: 0.5rem 1rem 1rem 1.5rem;
+}
+
+.container-fluid .module-parent-progress .module-progress .module-date p {
+    margin: 0;
+    font-size: 14.5px;
+}
+
+.container-fluid .module-parent-progress .module-progress .module-parent {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 2rem 2rem 0 2rem;
+}
+
+.container-fluid .module-parent-progress .module-progress .module-parent .module-content h3,
+.container-fluid .module-parent-progress .module-progress .module-parent .module-content p {
+    margin: 0;
+    /* font-weight: 600; */
+}
+
+.container-fluid .module-parent-progress .module-progress .module-parent .module-content span,
+.container-fluid .module-parent-progress .module-progress .module-parent .module-content p {
+    font-size: 15.5px;
+    margin: 8px 0 8px 0px;
+    /* font-weight: 600; */
+}
+
+.container-fluid .module-parent-progress .module-progress .module-parent .module-content span {
+    margin: 8px 0 8px 0;
+    width: 500px;
+}
+
+.container-fluid .module-parent-progress .module-progress .module-parent .module-content h3 {
+    font-size: 16px;
+    margin: 8px 0 0 0;
+    font-weight: 600;
+    width: 800px;
+    line-height: 28px;
+}
+
+/* .container-fluid .module-parent-progress .module-progress .module-parent .module-content{
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    padding-left: 2rem;
+} */
+
+.container-fluid .module-parent-progress .module-progress .module-parent .module-icon {
+    background-color: #F5F5F5;
+    border: 1px solid #E2E8E5;
+    padding: 1rem;
+    border-radius: 50%;
+}
+
+.container-fluid .module-parent-progress .module-progress .module-parent .module-icon .fa {
+    font-size: 30px;
+    color: var(--green);
+}
+
+
+.activity-footer {
     padding: 0 0.5rem;
+}
+
+/* module */
+
+.mv-header-card {
+    background: #fff;
+    border: 1px solid #E2E8E5;
+    border-radius: 12px;
+    /* padding: 1.5rem 1.8rem; */
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    /* margin-bottom: 1.4rem; */
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.mv-page {
+    /* padding: 1.5rem; */
+    /* max-width: 900px; */
+    width: 100%;
+}
+
+.mv-parent-icon {
+    display: flex;
+    gap: 1.5rem;
+    /* align-items: center; */
+    padding: 1.5rem 1.8rem 0;
+}
+
+/* hr{
+    margin: 0px 0 0;
+} */
+
+.mv-attachments-card {
+    /* background: #fff; */
+    /* border: 1px solid #E2E8E5; */
+    border-radius: 12px;
+    /* padding: 1.5rem 1.8rem; */
+    padding: 0rem 1.8rem;
+    /* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06); */
+    margin-bottom: 1.4rem;
+}
+
+.mv-attachments-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+.mv-att-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    /* width: 140px; */
+    text-decoration: none;
+}
+
+/* assignment */
+
+.av-file-card {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: center; */
+    gap: 8px;
+    /* width: 140px; */
+    text-decoration: none;
+    cursor: pointer;
+    margin-top: 0.5rem;
 }
 
 @keyframes slideIn {

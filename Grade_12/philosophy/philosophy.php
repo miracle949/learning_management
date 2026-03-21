@@ -1,67 +1,28 @@
 <style>
     .container-fluid .rightbar .module-title {
         width: 100%;
-        /* height: 270px; */
-        /* background-color: #00C950; */
-        /* border: 1px solid rgba(0, 0, 0, 0.2); */
-        /* padding: 3rem; */
         color: white;
-        /* box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; */
         border-radius: 10px;
-        border: 1px solid #e2e8f0;
+        /* border: 1px solid #e2e8f0; */
+        border: 1px solid #E2E8E5;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     }
 
-    /* .container-fluid .rightbar .module-title:hover {
-        box-shadow: 0 8px 32px rgba(108, 63, 232, 0.13), 0 2px 8px rgba(0, 0, 0, 0.07);
-        transform: translateY(-2px);
-        cursor: pointer;
-        transition: all 0.3s ease-in-out;
-    } */
-
-    /* .container-fluid .rightbar .module-title .module-picture {
-        width: 100%;
-        height: 200px;
-        border-top-left-radius: 10px;
-        border-top-right-radius: 10px;
+    .container-fluid .rightbar .module-title .module-picture {
         background-image: url('../images/philosophy_picture.jpg');
+        background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        background-size: cover;
-    } */
-
-    .container-fluid .rightbar .module-title .module-body .module-picture {
-        position: absolute;
-        inset: 0;
-        background-image: url('../images/philosophy_picture.jpg');
-        background-size: cover;
-        background-position: center 30%;
-        opacity: 0.55;
-        height: 100%;
+        width: 100%;
+        height: 180px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
     }
 
     .container-fluid .rightbar .module-title .module-body {
-        /* background-image: url('../images/philosophy_picture.jpg');
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover; */
-        overflow: hidden;
-        position: relative;
-        padding: 1.8rem 1.9rem 1.8rem 1.9rem;
-        display: flex;
-        justify-content: space-between;
-        gap: 2rem;
-        align-items: center;
-        color: #212529;
-        /* background-color: #C8E0C3; */
-        border-radius: 10px;
-        /* border-bottom-left-radius: 10px;
-        border-bottom-right-radius: 10px; */
         background-color: #ffffff;
-        /* margin-bottom: 28px; */
-        /* min-height: 200px; */
-        background: linear-gradient(135deg, #000000 0%, #010103 60%, #0f3460 100%);
-        /* background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%); */
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
     }
 
     .container-fluid .rightbar .module-title .module-body .module-body-child {
@@ -70,30 +31,15 @@
         display: flex;
         gap: 48px;
         align-items: center;
+        padding: 1.8rem 2rem 1.8rem 2rem;
     }
-
-    /* .container-fluid .rightbar .module-title .module-body::before{
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.1);
-    } */
-
-    /* .container-fluid .rightbar .module-title .module-body .module-links {
-        max-width: 250px;
-    } */
 
     .container-fluid .rightbar .module-title .module-body .module-links {
         width: 55%;
     }
 
-    .container-fluid .rightbar .module-title .module-body .module-links span{
-        color: #ffffff;
+    .container-fluid .rightbar .module-title .module-body .module-links span {
+        color: #1A1A1A;
         text-transform: uppercase;
         color: var(--green);
         font-weight: 600;
@@ -113,9 +59,8 @@
     }
 
     .container-fluid .rightbar .module-title .module-body .module-links .module-buttons a:nth-child(2) {
-        border: 2px solid #ffffff;
-        /* color: #5F66AC; */
-        color: #ffffff;
+        border: 2px solid var(--green);
+        color: var(--green);
         padding: 10px 40px;
     }
 
@@ -126,17 +71,13 @@
         text-transform: uppercase;
         font-weight: 600;
         font-size: 13px;
-        /* font-size: 15.5px; */
-        /* color: #5F66AC; */
     }
 
     .container-fluid .rightbar .module-title .module-body .module-links h1 {
         font-size: 22px;
         text-transform: uppercase;
         font-family: "Titan", sans-serif;
-        /* font-weight: bold; */
-        /* color: var(--green-dark); */
-        color: #ffffff;
+        color: var(--green-dark);
         margin-top: 0.7rem;
     }
 
@@ -148,9 +89,7 @@
         line-height: 26px;
         margin: 0;
         font-size: 14px;
-        /* color: #555555; */
-        /* color: #ffffff; */
-        color: rgba(255, 255, 255, .85);
+        color: #1A1A1A;
     }
 
     .container-fluid .rightbar .module-parent-progress .module-progress .progress-bar .progress {
@@ -161,20 +100,26 @@
         background-color: #00C950;
         border-radius: 28px;
     }
+
+    /* ── Fix: <a> wrapping module-progress must not affect layout ── */
+    .module-parent-progress a {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
 </style>
 
 <div class="module-title">
     <!-- <h1>Introduction to Philosophy of Human Person</h1>
     <p><?= $_SESSION['section'] ?></p> -->
 
-    <!-- <div class="module-picture">
+    <div class="module-picture">
 
-    </div> -->
+    </div>
     <div class="module-body">
-        <div class="module-picture"></div>
         <div class="module-body-child">
             <div class="module-links">
-                <span>Currently Enrolled</span>
+                <!-- <span>Currently Enrolled</span> -->
                 <h1>Introduction to Philosophy of Human Person</h1>
 
                 <div class="module-buttons">
@@ -196,7 +141,59 @@
 <div class="parent">
     <div class="module-parent-progress">
 
-        <div class="module-progress" data-module-id="module1">
+        <?php
+        $urlMap = [
+            'module'       => 'module_view',
+            'assignment'   => 'assignment_view',
+            'announcement' => 'announcement_view',
+        ];
+        $labelMap = [
+            'module'       => 'New Material',
+            'assignment'   => 'New Assignments',
+            'announcement' => 'Announcements',
+        ];
+
+        if (!empty($feedItems)):
+            foreach ($feedItems as $item):
+                $pageUrl = "/learning_management/public/?url={$urlMap[$item['type']]}&subject={$subject}&id={$item['id']}";
+                $label   = $labelMap[$item['type']];
+                $date    = date('M j', strtotime($item['date']));
+                $subtext = mb_strimwidth(strip_tags($item['subtext']), 0, 120, '...');
+        ?>
+
+            <a href="<?= $pageUrl ?>">
+                <div class="module-progress">
+                    <div class="module-parent">
+                        <div class="module-icon">
+                            <i class="fa fa-layer-group"></i>
+                        </div>
+                        <div class="module-content">
+                            <span><?= htmlspecialchars($label) ?></span>
+
+                            <h3><?= htmlspecialchars($item['heading']) ?></h3>
+
+                            <p><?= htmlspecialchars($subtext) ?></p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="module-date">
+                        <p>Date Received: <?= $date ?></p>
+                    </div>
+                </div>
+            </a>
+
+        <?php
+            endforeach;
+        else:
+        ?>
+            <p style="color:#aaa; padding:2rem; font-size:14px; text-align:center;">
+                No materials posted yet.
+            </p>
+        <?php endif; ?>
+
+        <!-- <div class="module-progress" data-module-id="module1">
             <div class="module-progress-header">
 
             </div>
@@ -305,7 +302,7 @@
                         Now</a>
                 </div>
             </div>
-        </div>
+        </div> -->
 
     </div>
 </div>

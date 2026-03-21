@@ -15,15 +15,15 @@
                 </a>
             </li>
 
-            <li class="<?= ($current_url === 'subjects_all' || $current_url === 'subjects') ? 'active' : '' ?>">
-                <a href="/learning_management/public/?url=subjects_all" class="text-decoration-none">
+            <li class="<?= ($current_url === 'classes' || $current_url === 'subjects') ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=classes" class="text-decoration-none">
                     <i class="fa fa-book-open"></i>
-                    <span>My Subjects</span>
+                    <span>Classes</span>
                 </a>
             </li>
 
-            <li class="<?= $current_url === 'modules' ? 'active' : '' ?>">
-                <a href="#" class="text-decoration-none">
+            <li class="<?= $current_url === 'module_all' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=module_all" class="text-decoration-none">
                     <i class="fa fa-gear"></i>
                     <span>Modules</span>
                 </a>
@@ -36,10 +36,10 @@
                 </a>
             </li>
 
-            <li class="<?= $current_url === 'classes' ? 'active' : '' ?>">
+            <li class="<?= $current_url === 'progress' ? 'active' : '' ?>">
                 <a href="#" class="text-decoration-none">
                     <i class="fa fa-gear"></i>
-                    <span>Classes</span>
+                    <span>Progress</span>
                 </a>
             </li>
 

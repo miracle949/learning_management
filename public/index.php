@@ -1,4 +1,33 @@
 <?php
+// ============================================================
+// ADD THESE CASES to your existing index.php switch statement
+// All new routes point to $student (StudentsController)
+// ============================================================
+
+// case 'modules':
+//     $student->modules();
+//     break;
+
+// case 'module_detail':
+//     $student->module_detail();
+//     break;
+
+// case 'lesson_view':
+//     $student->lesson_view();
+//     break;
+
+// case 'save_activity':
+//     $student->save_activity();
+//     break;
+
+// case 'save_quiz':
+//     $student->save_quiz();
+//     break;
+
+
+// ============================================================
+// YOUR FULL UPDATED switch should look like this:
+// ============================================================
 
 session_start();
 
@@ -14,8 +43,7 @@ $controller = new HomeController();
 $auth = new AuthController();
 $teacher = new teacher_records();
 $teacherDashboard = new TeacherController();
-$student = new StudentsController(); 
-
+$student = new StudentsController();
 
 switch ($url) {
     case 'landingpage':
@@ -26,12 +54,55 @@ switch ($url) {
         $controller->dashboard();
         break;
 
-    case 'subjects_all':
-        $student->subjects_all();
+    case 'classes':
+        $student->classes();
         break;
 
     case 'subjects':
         $controller->subjects();
+        break;
+
+    // ── Classes feed ───────────────────────────────────────────
+    case 'module_view':
+        $student->module_view();
+        break;
+
+    case 'assignment_view':
+        $student->assignment_view();
+        break;
+
+    case 'announcement_view':
+        $student->announcement_view();
+        break;
+
+    case 'save_lessons':
+        $teacherDashboard->save_lessons();
+        break;
+
+    // ── Interactive Modules (NEW — all go to $student) ────────
+    case 'modules':
+        $student->modules();
+        break;
+
+    case 'module_detail':
+        $student->module_detail();
+        break;
+
+    case 'lesson_view':
+        $student->lesson_view();
+        break;
+
+    case 'save_activity':
+        $student->save_activity();
+        break;
+
+    case 'save_quiz':
+        $student->save_quiz();
+        break;
+    // ──────────────────────────────────────────────────────────
+
+    case 'module_all':
+        $student->module_all();
         break;
 
     case 'addSubject':
@@ -49,12 +120,11 @@ switch ($url) {
     case 'admin':
         $teacher->recentStudents();
         break;
-        
+
     case 'teacher':
         $teacher->teacherDashboard();
         break;
 
-    // ✅ This was the missing route — "View class" now loads records.php
     case 'teacher_class':
         $teacherDashboard->viewClass();
         break;
@@ -66,7 +136,7 @@ switch ($url) {
     case 'teacher_records':
         $teacher->teacherRecords();
         break;
-    
+
     case 'createTeacher':
         $teacher->createTeacher();
         break;
@@ -94,7 +164,7 @@ switch ($url) {
     case 'signup':
         $auth->signup();
         break;
-    
+
     case 'logout':
         $auth->logout();
         break;

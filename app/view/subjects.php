@@ -28,6 +28,11 @@
         <div class="rightbar">
 
             <?php
+            // ============================================================
+// This is your existing subjects.php
+// ADD the 3 lines marked with ← NEW before the include line
+// ============================================================
+            
             $subject = $_GET['subject'] ?? null;
 
             $subjectMap = [
@@ -52,7 +57,15 @@
             ];
 
             if ($subject && isset($subjectMap[$subject])) {
+
+                // ← NEW: fetch the feed items from DB before loading the subject file
+                // This makes $feedItems available inside philosophy.php, ucsp.php, etc.
+                require_once "../app/models/Students.php";      // ← NEW
+                $studentModel = new Students();                 // ← NEW
+                $feedItems = $studentModel->getSubjectFeed($subject);  // ← NEW
+            
                 include $subjectMap[$subject];
+
             } else {
                 echo "<h3>Select a subject</h3>";
             }

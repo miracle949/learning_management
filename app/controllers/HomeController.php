@@ -19,9 +19,9 @@ class HomeController
 
     // }
 
-    public function subjects_all()
+    public function classes()
     {
-        require_once "../app/view/subjects_all.php";
+        require_once "../app/view/classes.php";
     }
 
     public function dashboard()
@@ -36,6 +36,7 @@ class HomeController
 
         require "../app/view/subjects.php";
     }
+
 
     public function subject_lessons()
     {
@@ -90,5 +91,10 @@ class HomeController
     public function lessons()
     {
         require_once "../teacher_folder/lessons.php";
+    }
+
+    public function module_all()
+    {
+        require_once "../app/view/module_all.php";
     }
 }
