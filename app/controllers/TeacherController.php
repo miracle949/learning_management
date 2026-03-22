@@ -29,8 +29,30 @@ class TeacherController
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') { header("Location: ?url=login"); exit; }
         $subject_id     = (int)($_GET['id']       ?? 0);
         $grade_level_id = (int)($_GET['grade_id'] ?? 0);
-        $classInfo = $this->user->getClassInfo($subject_id, $grade_level_id);
-        extract(['subject_id' => $subject_id, 'grade_level_id' => $grade_level_id, 'classInfo' => $classInfo]);
+
+        $teacherModel = new Teacher();
+        $classInfo    = $this->user->getClassInfo($subject_id, $grade_level_id);
+
+        // Fetch modules and interactive modules for this subject
+        $cfModules  = $teacherModel->getModules($subject_id);
+        $imModules  = $teacherModel->getInteractiveModulesWithCount($subject_id);
+        $studentCount = $teacherModel->getStudentCount($subject_id);
+
+        // Total lesson count across all interactive modules
+        $totalLessons = 0;
+        foreach ($imModules as $im) {
+            $totalLessons += (int)$im['lesson_count'];
+        }
+
+        extract([
+            'subject_id'     => $subject_id,
+            'grade_level_id' => $grade_level_id,
+            'classInfo'      => $classInfo,
+            'cfModules'      => $cfModules,
+            'imModules'      => $imModules,
+            'studentCount'   => $studentCount,
+            'totalLessons'   => $totalLessons,
+        ]);
         require "../teacher_folder/records.php";
     }
 
@@ -82,6 +104,9 @@ class TeacherController
             exit;
         }
 
+        // Track skipped (already existing) items to show in modal
+        $skipped = ['cf_modules' => [], 'im_modules' => [], 'lessons' => []];
+
         // Upload folders
         $baseUpload = dirname(__DIR__, 2) . '/uploads/';
         $pdfDir     = $baseUpload . 'modules/pdfs/';
@@ -99,15 +124,26 @@ class TeacherController
         foreach ($cfTitles as $cfIdx => $cfTitle) {
             if (empty(trim($cfTitle))) continue;
 
-            $moduleId = $teacherModel->insertModule(
+            // Auto-number: count existing modules in DB + position in current form
+            $existingCFCount = $teacherModel->countModules($subject_id);
+            $cfModuleNumber  = $existingCFCount + $cfIdx + 1;
+            $numberedCFTitle = 'Module ' . $cfModuleNumber . ': ' . trim($cfTitle);
+
+            $modResult = $teacherModel->insertModule(
                 $subject_id,
-                trim($cfTitle),
+                $numberedCFTitle,
                 trim($cfDescriptions[$cfIdx] ?? ''),
                 $teacher_id,
-                $cfIdx + 1
+                $cfModuleNumber
             );
 
+            $moduleId = $modResult['id'] ?? null;
             if (!$moduleId) continue;
+
+            // Track if this classes feed module already existed
+            if ($modResult['existed']) {
+                $skipped['cf_modules'][] = $numberedCFTitle;
+            }
 
             $pdfFiles  = $_FILES['cf_module_pdf'] ?? [];
             $pdfNames  = $pdfFiles['name'][$cfIdx]     ?? [];
@@ -148,14 +184,25 @@ class TeacherController
         foreach ($moduleTitles as $modIdx => $modTitle) {
             if (empty(trim($modTitle))) continue;
 
-            $interactiveModuleId = $teacherModel->insertInteractiveModule(
+            // Auto-number: count existing interactive modules in DB + position in current form
+            $existingIMCount = $teacherModel->countInteractiveModules($subject_id);
+            $imModuleNumber  = $existingIMCount + $modIdx + 1;
+            $numberedIMTitle = 'Module ' . $imModuleNumber . ': ' . trim($modTitle);
+
+            $imResult = $teacherModel->insertInteractiveModule(
                 $subject_id,
-                trim($modTitle),
+                $numberedIMTitle,
                 trim($moduleContents[$modIdx] ?? ''),
-                $modIdx + 1
+                $imModuleNumber
             );
 
+            $interactiveModuleId = $imResult['id'] ?? null;
             if (!$interactiveModuleId) continue;
+
+            // Track if this interactive module already existed
+            if ($imResult['existed']) {
+                $skipped['im_modules'][] = $numberedIMTitle;
+            }
 
             $lessonTitles   = $_POST['lesson_title'][$modIdx]   ?? [];
             $lessonTopics   = $_POST['lesson_topic'][$modIdx]   ?? [];
@@ -164,15 +211,26 @@ class TeacherController
             foreach ($lessonTitles as $lesIdx => $lesTitle) {
                 if (empty(trim($lesTitle))) continue;
 
-                $lessonId = $teacherModel->insertLesson(
+                // Auto-number: count existing lessons in this module + position in form
+                $existingLesCount = $teacherModel->countLessons($interactiveModuleId);
+                $lessonNumber     = $existingLesCount + $lesIdx + 1;
+                $numberedLesTitle = 'Lesson ' . $lessonNumber . ': ' . trim($lesTitle);
+
+                $lesResult = $teacherModel->insertLesson(
                     $interactiveModuleId,
-                    trim($lesTitle),
+                    $numberedLesTitle,
                     trim($lessonTopics[$lesIdx]   ?? ''),
                     trim($lessonContents[$lesIdx] ?? ''),
-                    $lesIdx + 1
+                    $lessonNumber
                 );
 
+                $lessonId = $lesResult['id'] ?? null;
                 if (!$lessonId) continue;
+
+                // Track if this lesson already existed
+                if ($lesResult['existed']) {
+                    $skipped['lessons'][] = $numberedLesTitle . ' (in ' . $numberedIMTitle . ')';
+                }
 
                 // ── VIDEOS ────────────────────────────────────
                 $videoTitles = $_POST['video_title'][$modIdx][$lesIdx] ?? [];
@@ -332,6 +390,15 @@ class TeacherController
             }
 
         }
+
+        // Store skipped items in session so teacher_class page can show modal
+        $hasSkipped = !empty($skipped['cf_modules']) || !empty($skipped['im_modules']) || !empty($skipped['lessons']);
+        if ($hasSkipped) {
+            $_SESSION['save_skipped'] = $skipped;
+        }
+
+        // Always set success flash — records.php will show the success modal
+        $_SESSION['save_success'] = true;
 
         header("Location: /learning_management/public/?url=teacher_class&id={$subject_id}&grade_id={$grade_level_id}");
         exit;

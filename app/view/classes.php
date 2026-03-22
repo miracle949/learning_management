@@ -46,10 +46,9 @@
                                     </a>
 
                                 <?php else: ?>
-
-                                    <!-- Changed to button, stores redirect URL in data attribute -->
+                                    <!-- FIX: url=classes (not subjects_all) — classes() has the enroll logic -->
                                     <a href="#" class="enroll-btn"
-                                        data-enroll-url="/learning_management/public/?url=subjects_all&enroll=1&subject_id=<?= $subject['id'] ?>&subject_slug=<?= urlencode($subject['slug']) ?>"
+                                        data-enroll-url="/learning_management/public/?url=classes&enroll=1&subject_id=<?= $subject['id'] ?>&subject_slug=<?= urlencode($subject['slug']) ?>"
                                         data-redirect-url="/learning_management/public/?url=subjects&subject=<?= urlencode($subject['slug']) ?>"
                                         data-subject-name="<?= htmlspecialchars($subject['subject_name']) ?>">
                                         <span>Enroll Now</span>
@@ -109,7 +108,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const enrollBtns = document.querySelectorAll('.enroll-btn');
 
-            enrollBtns.forEach(btn => {
+            enrollBtns.forEach(function (btn) {
                 btn.addEventListener('click', function (e) {
                     e.preventDefault();
 
@@ -117,9 +116,9 @@
                     const redirectUrl = this.dataset.redirectUrl;
                     const subjectName = this.dataset.subjectName;
 
-                    // Step 1: Hit the enroll URL silently
+                    // Step 1: Hit the enroll URL (GET request — classes() handles ?enroll=1)
                     fetch(enrollUrl)
-                        .then(() => {
+                        .then(function () {
                             // Step 2: Show modal with subject name
                             document.getElementById('modalSubjectName').textContent = subjectName;
 
@@ -136,7 +135,7 @@
                             const steps = duration / interval;
                             let current = 0;
 
-                            const timer = setInterval(() => {
+                            const timer = setInterval(function () {
                                 current++;
                                 progressBar.style.width = ((current / steps) * 100) + '%';
 
@@ -146,7 +145,7 @@
                                 }
                             }, interval);
                         })
-                        .catch(() => {
+                        .catch(function () {
                             // Fallback: just navigate directly if fetch fails
                             window.location.href = enrollUrl;
                         });

@@ -1,33 +1,4 @@
 <?php
-// ============================================================
-// ADD THESE CASES to your existing index.php switch statement
-// All new routes point to $student (StudentsController)
-// ============================================================
-
-// case 'modules':
-//     $student->modules();
-//     break;
-
-// case 'module_detail':
-//     $student->module_detail();
-//     break;
-
-// case 'lesson_view':
-//     $student->lesson_view();
-//     break;
-
-// case 'save_activity':
-//     $student->save_activity();
-//     break;
-
-// case 'save_quiz':
-//     $student->save_quiz();
-//     break;
-
-
-// ============================================================
-// YOUR FULL UPDATED switch should look like this:
-// ============================================================
 
 session_start();
 
@@ -62,7 +33,7 @@ switch ($url) {
         $controller->subjects();
         break;
 
-    // ── Classes feed ───────────────────────────────────────────
+    // ── Classes feed ──────────────────────────────────────────
     case 'module_view':
         $student->module_view();
         break;
@@ -79,7 +50,7 @@ switch ($url) {
         $teacherDashboard->save_lessons();
         break;
 
-    // ── Interactive Modules (NEW — all go to $student) ────────
+    // ── Interactive Modules ───────────────────────────────────
     case 'modules':
         $student->modules();
         break;
@@ -99,7 +70,46 @@ switch ($url) {
     case 'save_quiz':
         $student->save_quiz();
         break;
-    // ──────────────────────────────────────────────────────────
+
+    // ── Subject Lessons (lesson viewer with tabs) ─────────────
+    // FIX: was $controller->subject_lessons() — now $student
+    case 'subject_lessons':
+        $student->subject_lessons();
+        break;
+
+    // ── Save lesson-level activity & quiz ─────────────────────
+    case 'save_lesson_activity':
+        $student->save_lesson_activity();
+        break;
+
+    case 'save_lesson_quiz':
+        $student->save_lesson_quiz();
+        break;
+
+    case 'mark_lesson_visited':
+        $student->mark_lesson_visited();
+        break;
+
+    case 'save_lesson_answers':
+        $student->save_lesson_answers();
+        break;
+
+    case 'mark_subject_started':
+        $student->mark_subject_started();
+        break;
+
+    case 'mark_module_started':
+        $student->mark_module_started();
+        break;
+
+    case 'mark_module_started':
+        $student->mark_module_started();
+        break;
+
+    // ─────────────────────────────────────────────────────────
+    case 'subject_quiz':
+        $controller->subject_quiz();
+        break;
 
     case 'module_all':
         $student->module_all();
@@ -107,14 +117,6 @@ switch ($url) {
 
     case 'addSubject':
         $teacher->addSubject();
-        break;
-
-    case 'subject_lessons':
-        $controller->subject_lessons();
-        break;
-
-    case 'subject_quiz':
-        $controller->subject_quiz();
         break;
 
     case 'admin':

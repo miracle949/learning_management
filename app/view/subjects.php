@@ -77,16 +77,10 @@
     <!-- bootstrap link javascript -->
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        /* ==========================
-           SUBJECT DETECTION
-        ========================== */
+    <!-- <script>
         const params = new URLSearchParams(window.location.search);
         const subject = params.get("subject") || "default";
 
-        /* ==========================
-           UPDATE ALL MODULE CARDS
-        ========================== */
         document.querySelectorAll(".module-progress").forEach(moduleCard => {
             const moduleId = moduleCard.dataset.moduleId;
 
@@ -107,7 +101,7 @@
 
             moduleCard.querySelector(".progress").style.width =
                 percent + "%";
-        });
+        }); -->
     </script>
 
 </body>

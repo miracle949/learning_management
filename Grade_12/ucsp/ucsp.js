@@ -1,329 +1,296 @@
 /* ==========================
-   SUBJECT DETECTION
+   ANSWER STORE
 ========================== */
-const params = new URLSearchParams(window.location.search);
-const subject = params.get("subject") || "default";
-const moduleParam = params.get("module"); // module1, module2, etc.
+var ANSWERS = {
+    activities: {},  // { actId: { qId: answer } }
+    quizzes: {}   // { qzId:  { qId: answer } }
+};
 
 /* ==========================
-   MODULE + LESSON DATA
+   UNIFIED QUIZ STATE
 ========================== */
-const modules = [
-    {
-        moduleId: "module1",
-        moduleTitle: "Introduction to Networking",
-        lessons: [
-            {
-                title: "What is a Computer Network?",
-                body: `
-                <h4>Understanding Computer Networks</h4> 
-                <p>A computer network is a collection of interconnected devices that can communicate and share resources with each other.</p>
+var UNIFIED_QZ = {
+    cur: 0,
+    total: 0,
+    ans: {}   // { qid: key }
+};
 
-                <h4>Key Notes:</h4> 
-                <p><b>Nodes:</b> Any device connected to the network</p> 
-                <p><b>Links:</b> Physical or wireless connections between nodes</p> 
-                <p><b>Protocols:</b> Rules governing communication between devices</p> 
-                <p><b>Bandwidth:</b> The capacity of the network connection</p> 
+document.addEventListener('DOMContentLoaded', function () {
+    // Count total unified quiz questions
+    var cards = document.querySelectorAll('.unified-q-card');
+    UNIFIED_QZ.total = cards.length;
+});
 
-                <h4>Benefits of Networking:</h4>
-                <p>Resource sharing (files, printers, internet connection)</p> 
-                <p>Enhanced communication (email, messaging, video calls)</p> 
-                <p>Data centralization and backup</p> 
-                <p>Improved productivity and collaboration</p>
-                `
-            },
-            {
-                title: "Types of Computer Networks",
-                body: `
-                <h4>Network Types</h4>
-                <p>LAN, WAN, MAN</p>
-                `
-            },
-            {
-                title: "Network Topologies",
-                body: `
-                <h4>Topologies</h4>
-                <p>Star, Bus, Ring, Mesh</p>
-                `
-            },
-            {
-                title: "Network Topologies",
-                body: `
-                <h4>Topologies</h4>
-                <p>Star, Bus, Ring, Mesh</p>
-                `
-            },
-            {
-                title: "Network Topologies",
-                body: `
-                <h4>Topologies</h4>
-                <p>Star, Bus, Ring, Mesh</p>
-                `
-            },
-            {
-                title: "Network Topologies",
-                body: `
-                <h4>Topologies</h4>
-                <p>Star, Bus, Ring, Mesh</p>
-                `
-            },
-            {
-                title: "Network Topologies",
-                body: `
-                <h4>Topologies</h4>
-                <p>Star, Bus, Ring, Mesh</p>
-                `
-            },
-            {
-                title: "Network Topologies",
-                body: `
-                <h4>Topologies</h4>
-                <p>Star, Bus, Ring, Mesh</p>
-                `
-            },
-            {
-                title: "Network Topologies",
-                body: `
-                <h4>Topologies</h4>
-                <p>Star, Bus, Ring, Mesh</p>
-                `
-            },
-            {
-                title: "Network Topologies",
-                body: `
-                <h4>Topologies</h4>
-                <p>Star, Bus, Ring, Mesh</p>
-                `
-            }
-        ]
-    },
-    {
-        moduleId: "module2",
-        moduleTitle: "Network Security",
-        lessons: [
-            {
-                title: "Security Basics",
-                body: `
-                <h4>Security Concepts</h4>
-                <p>Firewalls, Encryption, Authentication</p>
-                `
-            },
-            {
-                title: "Advanced Security",
-                body: `
-                <h4>Advanced Topics</h4>
-                <p>VPNs, IDS, IPS</p>
-                `
-            },
-            {
-                title: "Advanced Security",
-                body: `
-                <h4>Advanced Topics</h4>
-                <p>VPNs, IDS, IPS</p>
-                `
-            },
-            {
-                title: "Advanced Security",
-                body: `
-                <h4>Advanced Topics</h4>
-                <p>VPNs, IDS, IPS</p>
-                `
-            },
-            {
-                title: "Advanced Security",
-                body: `
-                <h4>Advanced Topics</h4>
-                <p>VPNs, IDS, IPS</p>
-                `
-            }
-        ]
-    },
-    {
-        moduleId: "module3",
-        moduleTitle: "Network Security",
-        lessons: [
-            {
-                title: "Security Basics",
-                body: `
-                <h4>Security Concepts</h4>
-                <p>Firewalls, Encryption, Authentication</p>
-                `
-            },
-            {
-                title: "Advanced Security",
-                body: `
-                <h4>Advanced Topics</h4>
-                <p>VPNs, IDS, IPS</p>
-                `
-            },
-            {
-                title: "Advanced Security",
-                body: `
-                <h4>Advanced Topics</h4>
-                <p>VPNs, IDS, IPS</p>
-                `
-            },
-            {
-                title: "Advanced Security",
-                body: `
-                <h4>Advanced Topics</h4>
-                <p>VPNs, IDS, IPS</p>
-                `
-            },
-            {
-                title: "Advanced Security",
-                body: `
-                <h4>Advanced Topics</h4>
-                <p>VPNs, IDS, IPS</p>
-                `
-            },
-            {
-                title: "Advanced Security",
-                body: `
-                <h4>Advanced Topics</h4>
-                <p>VPNs, IDS, IPS</p>
-                `
-            }
-        ]
-    }
-];
+function unifiedPick(el) {
+    var qi = parseInt(el.dataset.qi);
+    var qid = el.dataset.qid;
+    var key = el.dataset.key;
+    var uid = el.dataset.uid;
+    var qzid = parseInt(el.dataset.qzid);
 
-/* ==========================
-   ACTIVE MODULE (FIXED)
-========================== */
-let currentModuleIndex = modules.findIndex(
-    m => m.moduleId === moduleParam
-);
-
-if (currentModuleIndex === -1) currentModuleIndex = 0;
-
-let currentLessonIndex = 0;
-
-/* ==========================
-   RESTORE SAVED LESSON (PER MODULE)
-========================== */
-const savedLesson = localStorage.getItem(
-    `${subject}_${modules[currentModuleIndex].moduleId}_currentLesson`
-);
-
-if (savedLesson !== null) {
-    currentLessonIndex = parseInt(savedLesson);
-}
-
-let currentModule = modules[currentModuleIndex];
-let lessons = currentModule.lessons;
-
-/* ==========================
-   UI ELEMENTS
-========================== */
-const progressBar = document.querySelector(".progress-lesson");
-const progressPercent = document.querySelector(".progress-title span");
-
-/* ==========================
-   LOAD LESSON
-========================== */
-function loadLesson() {
-    const lesson = lessons[currentLessonIndex];
-
-    document.getElementById("lesson-title").innerText = lesson.title;
-    document.getElementById("lesson-body").innerHTML = lesson.body;
-
-    document.getElementById("lesson-count").innerText =
-        `Lesson ${currentLessonIndex + 1} of ${lessons.length}`;
-
-    document.getElementById("page-indicator").innerText =
-        `${currentLessonIndex + 1} / ${lessons.length}`;
-
-    const prevBtn = document.getElementById("prevBtn");
-    prevBtn.classList.toggle("disabled", currentLessonIndex === 0);
-    prevBtn.style.pointerEvents =
-        currentLessonIndex === 0 ? "none" : "auto";
-
-    updateProgress();
-}
-
-/* ==========================
-   UPDATE PROGRESS
-========================== */
-function updateProgress() {
-    const completedLessons = currentLessonIndex + 1;
-    const totalLessons = lessons.length;
-    const percent = Math.round((completedLessons / totalLessons) * 100);
-
-    progressBar.style.width = percent + "%";
-    progressPercent.innerText = percent + "%";
-
-    localStorage.setItem(
-        `${subject}_${currentModule.moduleId}_completedLessons`,
-        completedLessons
-    );
-
-    localStorage.setItem(
-        `${subject}_${currentModule.moduleId}_totalLessons`,
-        totalLessons
-    );
-
-    localStorage.setItem(
-        `${subject}_${currentModule.moduleId}_lessonPercent`,
-        percent
-    );
-
-    localStorage.setItem(
-        `${subject}_${currentModule.moduleId}_currentLesson`,
-        currentLessonIndex
-    );
-
-    updateModuleCards();
-}
-
-/* ==========================
-   UPDATE MODULE DASHBOARD
-========================== */
-function updateModuleCards() {
-    document.querySelectorAll(".module-progress").forEach(moduleCard => {
-        const moduleId = moduleCard.dataset.moduleId;
-
-        const completed =
-            localStorage.getItem(`${subject}_${moduleId}_completedLessons`) || 0;
-
-        const total =
-            localStorage.getItem(`${subject}_${moduleId}_totalLessons`) || 0;
-
-        const percent =
-            localStorage.getItem(`${subject}_${moduleId}_lessonPercent`) || 0;
-
-        moduleCard.querySelector(".lessonText").innerText =
-            `${completed} of ${total} lessons`;
-
-        moduleCard.querySelector(".lessonPercent").innerText =
-            `${percent}%`;
-
-        moduleCard.querySelector(".progress").style.width =
-            percent + "%";
+    // Deselect siblings in same card
+    el.closest('.q-choices').querySelectorAll('.q-choice').forEach(function (c) {
+        c.classList.remove('selected');
     });
+    el.classList.add('selected');
+
+    // Store answer
+    UNIFIED_QZ.ans[qid] = key;
+    if (!ANSWERS.quizzes[qzid]) ANSWERS.quizzes[qzid] = {};
+    ANSWERS.quizzes[qzid][qid] = key;
+
+    // Update status
+    var cnt = document.getElementById('unified_status');
+    if (cnt) cnt.textContent = Object.keys(UNIFIED_QZ.ans).length + ' / ' + UNIFIED_QZ.total + ' answered';
+
+    // Enable Next button (or hide if last question)
+    var nxt = document.getElementById('unified_next');
+    var last = qi === UNIFIED_QZ.total - 1;
+    if (nxt) {
+        if (last) {
+            nxt.style.display = 'none';
+        } else {
+            nxt.disabled = false;
+            nxt.style.display = 'inline-flex';
+        }
+    }
+
+    checkLessonComplete();
+}
+
+function unifiedNav(dir) {
+    var cards = document.querySelectorAll('.unified-q-card');
+    if (!cards.length) return;
+
+    // Hide current
+    if (cards[UNIFIED_QZ.cur]) cards[UNIFIED_QZ.cur].style.display = 'none';
+
+    UNIFIED_QZ.cur = Math.max(0, Math.min(UNIFIED_QZ.total - 1, UNIFIED_QZ.cur + dir));
+
+    // Show new
+    if (cards[UNIFIED_QZ.cur]) cards[UNIFIED_QZ.cur].style.display = 'block';
+
+    var prev = document.getElementById('unified_prev');
+    var nxt = document.getElementById('unified_next');
+
+    if (prev) prev.style.display = UNIFIED_QZ.cur > 0 ? 'inline-flex' : 'none';
+
+    // Enable Next only if current question already answered
+    if (nxt) {
+        var curCard = cards[UNIFIED_QZ.cur];
+        var firstChoice = curCard ? curCard.querySelector('.q-choice') : null;
+        var curQid = firstChoice ? firstChoice.dataset.qid : null;
+        var alreadyAnswered = curQid && UNIFIED_QZ.ans[curQid];
+        var isLast = UNIFIED_QZ.cur === UNIFIED_QZ.total - 1;
+
+        if (isLast) {
+            nxt.style.display = 'none';
+        } else {
+            nxt.style.display = 'inline-flex';
+            nxt.disabled = !alreadyAnswered;
+        }
+    }
 }
 
 /* ==========================
-   PAGINATION
+   ACTIVITY ANSWER HELPERS
 ========================== */
-document.getElementById("prevBtn").addEventListener("click", e => {
-    e.preventDefault();
-    if (currentLessonIndex > 0) {
-        currentLessonIndex--;
-        loadLesson();
+function lessonPickMC(label, qid, key) {
+    var choices = label.closest('.mc-choices');
+    if (choices) {
+        choices.querySelectorAll('.mc-label').forEach(function (l) {
+            l.classList.remove('selected');
+        });
     }
-});
+    label.classList.add('selected');
 
-document.getElementById("nextBtn").addEventListener("click", e => {
-    e.preventDefault();
-    if (currentLessonIndex < lessons.length - 1) {
-        currentLessonIndex++;
-        loadLesson();
+    var form = label.closest('.activity-answers-form');
+    if (!form) return;
+    var actId = parseInt(form.dataset.actId);
+    if (!ANSWERS.activities[actId]) ANSWERS.activities[actId] = {};
+    ANSWERS.activities[actId][qid] = key;
+
+    checkLessonComplete();
+}
+
+function lessonTextAnswer(textarea, qid) {
+    var form = textarea.closest('.activity-answers-form');
+    if (!form) return;
+    var actId = parseInt(form.dataset.actId);
+    if (!ANSWERS.activities[actId]) ANSWERS.activities[actId] = {};
+    if (textarea.value.trim()) {
+        ANSWERS.activities[actId][qid] = textarea.value.trim();
+    } else {
+        delete ANSWERS.activities[actId][qid];
     }
+    checkLessonComplete();
+}
+
+/* ==========================
+   CHECK IF ALL ANSWERED
+========================== */
+function checkLessonComplete() {
+    if (typeof LESSON_DATA === 'undefined') return;
+
+    var allDone = true;
+
+    // Check activities
+    LESSON_DATA.activities.forEach(function (act) {
+        if (act.done) return;
+        var answered = ANSWERS.activities[act.id] || {};
+        if (Object.keys(answered).length < act.required) allDone = false;
+    });
+
+    // Check quizzes — use unified total
+    if (!allDone) {
+        // Already failed above
+    } else {
+        var totalRequired = 0;
+        LESSON_DATA.quizzes.forEach(function (qz) {
+            if (!qz.done) totalRequired += qz.required;
+        });
+        if (Object.keys(UNIFIED_QZ.ans).length < totalRequired) allDone = false;
+    }
+
+    var nextBtn = document.getElementById('nextBtn');
+    var lockNotice = document.getElementById('lessonLockNotice');
+
+    if (nextBtn) {
+        if (allDone) {
+            nextBtn.style.opacity = '';
+            nextBtn.style.pointerEvents = '';
+            nextBtn.style.cursor = '';
+            nextBtn.classList.remove('disabled');
+        } else {
+            nextBtn.style.opacity = '0.45';
+            nextBtn.style.pointerEvents = 'none';
+            nextBtn.style.cursor = 'not-allowed';
+            nextBtn.classList.add('disabled');
+        }
+    }
+
+    if (lockNotice) lockNotice.style.display = allDone ? 'none' : 'flex';
+}
+
+/* ==========================
+   SAVE ANSWERS + NAVIGATE
+========================== */
+function saveAndGo(href, isFinish) {
+    var lessonId = (typeof LESSON_DATA !== 'undefined') ? LESSON_DATA.lessonId : 0;
+
+    var payload = {
+        lesson_id: lessonId,
+        activities: ANSWERS.activities,
+        quizzes: {}
+    };
+
+    if (typeof LESSON_DATA !== 'undefined') {
+        LESSON_DATA.quizzes.forEach(function (qz) {
+            var ans = ANSWERS.quizzes[qz.id];
+            if (ans && Object.keys(ans).length > 0) {
+                payload.quizzes[qz.id] = {
+                    answers: ans,
+                    passing_score: qz.passing_score
+                };
+            }
+        });
+    }
+
+    fetch('/learning_management/public/?url=save_lesson_answers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    })
+        .then(function () { doNavigate(href, isFinish); })
+        .catch(function () { doNavigate(href, isFinish); });
+}
+
+function doNavigate(href, isFinish) {
+    if (isFinish) {
+        var p = new URLSearchParams(window.location.search);
+        window.location.href = '/learning_management/public/?url=modules&subject=' + (p.get('subject') || '');
+    } else {
+        window.location.href = href;
+    }
+}
+
+/* ==========================
+   TAB SWITCHER (kept for compatibility)
+========================== */
+function switchTab(name, btn) {
+    document.querySelectorAll('.tab-panel').forEach(function (p) { p.style.display = 'none'; });
+    document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active-tab'); });
+    var panel = document.getElementById('panel-' + name);
+    if (panel) panel.style.display = 'block';
+    if (btn) btn.classList.add('active-tab');
+}
+
+/* ==========================
+   PROGRESS BAR + NAV INIT
+========================== */
+document.addEventListener('DOMContentLoaded', function () {
+
+    // Progress bar
+    var lessonCountEl = document.getElementById('lesson-count');
+    var currentIndex = 1, totalLessons = 1;
+    if (lessonCountEl) {
+        var m = lessonCountEl.textContent.match(/(\d+)\s+of\s+(\d+)/);
+        if (m) { currentIndex = parseInt(m[1]); totalLessons = parseInt(m[2]); }
+    }
+    (function () {
+        if (!totalLessons) return;
+        var pct = Math.round((currentIndex / totalLessons) * 100);
+        var bar = document.getElementById('progressBar');
+        var text = document.getElementById('progressPercent');
+        if (bar) bar.style.width = pct + '%';
+        if (text) text.textContent = pct + '%';
+    })();
+
+    // Initial lock check
+    checkLessonComplete();
+
+    // NEXT / FINISH
+    var nextBtn = document.getElementById('nextBtn');
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (nextBtn.classList.contains('disabled')) return;
+            var href = nextBtn.getAttribute('href');
+            var isFinish = (href === '#' || !href);
+            saveAndGo(href, isFinish);
+        });
+    }
+
+    // PREV
+    var prevBtn = document.getElementById('prevBtn');
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function (e) {
+            if (prevBtn.classList.contains('disabled')) return;
+            e.preventDefault();
+            var href = prevBtn.getAttribute('href');
+            if (href && href !== '#') window.location.href = href;
+        });
+    }
+
+    // SIDEBAR
+    document.querySelectorAll('.sidebar-menu li a').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            saveAndGo(link.getAttribute('href'), false);
+        });
+    });
 });
 
 /* ==========================
-   INITIAL LOAD
+   LIGHTBOX
 ========================== */
-loadLesson();
-updateModuleCards();
+function dbLightbox(src) {
+    document.getElementById('dbLightboxImg').src = src;
+    document.getElementById('dbLightbox').classList.add('open');
+}
+function dbLightboxClose() {
+    document.getElementById('dbLightbox').classList.remove('open');
+}
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') dbLightboxClose();
+});

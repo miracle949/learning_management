@@ -86,8 +86,7 @@ class Teacher extends Model
         $stmt->execute();
         $result = $stmt->get_result();
         $students = [];
-        while ($row = $result->fetch_assoc())
-            $students[] = $row;
+        while ($row = $result->fetch_assoc()) $students[] = $row;
         return $students;
     }
 
@@ -157,6 +156,108 @@ class Teacher extends Model
     // CLASSES FEED — modules + module_materials
     // ============================================================
 
+    // Count existing modules for this subject (to auto-number new ones)
+    public function countModules($subjectId)
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) AS total FROM modules WHERE subject_id = ?");
+        $stmt->bind_param("i", $subjectId);
+        $stmt->execute();
+        return (int)$stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    // Count existing interactive modules for this subject
+    public function countInteractiveModules($subjectId)
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) AS total FROM interactive_modules WHERE subject_id = ?");
+        $stmt->bind_param("i", $subjectId);
+        $stmt->execute();
+        return (int)$stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    // Count existing lessons for this interactive module
+    public function countLessons($interactiveModuleId)
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) AS total FROM lessons WHERE interactive_module_id = ?");
+        $stmt->bind_param("i", $interactiveModuleId);
+        $stmt->execute();
+        return (int)$stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    // Get all classes feed modules for a subject
+    public function getModules($subjectId)
+    {
+        $stmt = $this->db->prepare("
+            SELECT m.id, m.title, m.description, m.posted_at, m.sort_order,
+                   COUNT(mm.id) AS material_count
+            FROM modules m
+            LEFT JOIN module_materials mm ON mm.module_id = m.id
+            WHERE m.subject_id = ?
+            GROUP BY m.id
+            ORDER BY m.sort_order ASC, m.posted_at ASC
+        ");
+        $stmt->bind_param("i", $subjectId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Get all interactive modules for a subject with lesson count
+    public function getInteractiveModulesWithCount($subjectId)
+    {
+        $stmt = $this->db->prepare("
+            SELECT im.id, im.title, im.description, im.sort_order, im.created_at,
+                   COUNT(l.id) AS lesson_count
+            FROM interactive_modules im
+            LEFT JOIN lessons l ON l.interactive_module_id = im.id
+            WHERE im.subject_id = ?
+            GROUP BY im.id
+            ORDER BY im.sort_order ASC, im.created_at ASC
+        ");
+        $stmt->bind_param("i", $subjectId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Get all lessons for a specific interactive module
+    public function getLessonsByModule($interactiveModuleId)
+    {
+        $stmt = $this->db->prepare("
+            SELECT id, title, topic, sort_order
+            FROM lessons
+            WHERE interactive_module_id = ?
+            ORDER BY sort_order ASC
+        ");
+        $stmt->bind_param("i", $interactiveModuleId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Get all materials for a specific module
+    public function getMaterialsByModule($moduleId)
+    {
+        $stmt = $this->db->prepare("
+            SELECT id, file_name, file_type, file_size, file_path, sort_order
+            FROM module_materials
+            WHERE module_id = ?
+            ORDER BY sort_order ASC
+        ");
+        $stmt->bind_param("i", $moduleId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Get student count for a subject
+    public function getStudentCount($subjectId)
+    {
+        $stmt = $this->db->prepare("
+            SELECT COUNT(*) AS total FROM student_enrollments WHERE subject_id = ?
+        ");
+        $stmt->bind_param("i", $subjectId);
+        $stmt->execute();
+        return (int)$stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    // ── DUPLICATE CHECK methods ───────────────────────────────
+
     // Returns existing module id if same title already exists for this subject
     public function getModuleByTitle($subjectId, $title)
     {
@@ -169,12 +270,12 @@ class Teacher extends Model
         return $row ? $row['id'] : null;
     }
 
-    // Insert new OR return existing id if same title already exists
+    // Insert new OR return ['id'=>X, 'existed'=>true] if duplicate
     public function insertModule($subjectId, $title, $description, $postedBy, $sortOrder)
     {
         $existingId = $this->getModuleByTitle($subjectId, $title);
         if ($existingId) {
-            return $existingId;  // ← do not duplicate
+            return ['id' => $existingId, 'existed' => true];
         }
 
         $stmt = $this->db->prepare("
@@ -183,7 +284,7 @@ class Teacher extends Model
         ");
         $stmt->bind_param("issii", $subjectId, $title, $description, $postedBy, $sortOrder);
         $stmt->execute();
-        return $this->db->insert_id;
+        return ['id' => $this->db->insert_id, 'existed' => false];
     }
 
     public function insertModuleMaterial($moduleId, $fileName, $filePath, $fileType, $fileSize, $sortOrder)
@@ -216,13 +317,12 @@ class Teacher extends Model
         return $row ? $row['id'] : null;
     }
 
-    // Insert new OR return existing id if same title already exists for this subject
+    // Insert new OR return ['id'=>X, 'existed'=>true] if duplicate
     public function insertInteractiveModule($subjectId, $title, $description, $sortOrder)
     {
-        // Check if module with same title already exists for this subject
         $existingId = $this->getInteractiveModuleByTitle($subjectId, $title);
         if ($existingId) {
-            return $existingId;  // ← return existing id, do not duplicate
+            return ['id' => $existingId, 'existed' => true];
         }
 
         $stmt = $this->db->prepare("
@@ -231,7 +331,7 @@ class Teacher extends Model
         ");
         $stmt->bind_param("issi", $subjectId, $title, $description, $sortOrder);
         $stmt->execute();
-        return $this->db->insert_id;
+        return ['id' => $this->db->insert_id, 'existed' => false];
     }
 
     // Same for lessons — check if lesson already exists inside a module
@@ -248,13 +348,12 @@ class Teacher extends Model
         return $row ? $row['id'] : null;
     }
 
-    // Insert new lesson OR return existing id if same title already exists in module
+    // Insert new lesson OR return ['id'=>X, 'existed'=>true] if duplicate
     public function insertLesson($interactiveModuleId, $title, $topic, $content, $sortOrder)
     {
-        // Check if lesson with same title already exists in this module
         $existingId = $this->getLessonByTitle($interactiveModuleId, $title);
         if ($existingId) {
-            return $existingId;  // ← return existing id, do not duplicate
+            return ['id' => $existingId, 'existed' => true];
         }
 
         $stmt = $this->db->prepare("
@@ -263,7 +362,7 @@ class Teacher extends Model
         ");
         $stmt->bind_param("isssi", $interactiveModuleId, $title, $topic, $content, $sortOrder);
         $stmt->execute();
-        return $this->db->insert_id;
+        return ['id' => $this->db->insert_id, 'existed' => false];
     }
 
     public function insertLessonVideo($lessonId, $title, $videoUrl, $sortOrder)
@@ -302,17 +401,9 @@ class Teacher extends Model
 
     // ── FIXED: null handling for choices ─────────────────────
     public function insertActivityQuestion(
-        $activityId,
-        $questionType,
-        $question,
-        $modelAnswer,
-        $choiceA,
-        $choiceB,
-        $choiceC,
-        $choiceD,
-        $correctAns,
-        $points,
-        $sortOrder
+        $activityId, $questionType, $question,
+        $modelAnswer, $choiceA, $choiceB, $choiceC, $choiceD,
+        $correctAns, $points, $sortOrder
     ) {
         $stmt = $this->db->prepare("
             INSERT INTO activity_questions
@@ -321,19 +412,10 @@ class Teacher extends Model
                  points, sort_order)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
-        $stmt->bind_param(
-            "issssssssii",
-            $activityId,
-            $questionType,
-            $question,
-            $modelAnswer,
-            $choiceA,
-            $choiceB,
-            $choiceC,
-            $choiceD,
-            $correctAns,
-            $points,
-            $sortOrder
+        $stmt->bind_param("issssssssii",
+            $activityId, $questionType, $question, $modelAnswer,
+            $choiceA, $choiceB, $choiceC, $choiceD, $correctAns,
+            $points, $sortOrder
         );
         $stmt->execute();
         return $this->db->insert_id;
@@ -358,17 +440,9 @@ class Teacher extends Model
                 (quiz_id, question, choice_a, choice_b, choice_c, choice_d, correct_ans, points, sort_order)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
-        $stmt->bind_param(
-            "issssssii",
-            $quizId,
-            $question,
-            $choiceA,
-            $choiceB,
-            $choiceC,
-            $choiceD,
-            $correctAns,
-            $points,
-            $sortOrder
+        $stmt->bind_param("issssssii",
+            $quizId, $question, $choiceA, $choiceB, $choiceC,
+            $choiceD, $correctAns, $points, $sortOrder
         );
         $stmt->execute();
         return $this->db->insert_id;

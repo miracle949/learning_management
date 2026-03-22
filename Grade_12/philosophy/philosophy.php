@@ -123,7 +123,7 @@
                 <h1>Introduction to Philosophy of Human Person</h1>
 
                 <div class="module-buttons">
-                    <a href="/learning_management/public/?url=subjects_all">Browse Courses</a>
+                    <a href="/learning_management/public/?url=classes">Browse Courses</a>
                     <a href="#">Learn More</a>
                 </div>
             </div>

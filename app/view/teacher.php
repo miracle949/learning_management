@@ -18,6 +18,58 @@
                 <i class="fa fa-user-circle"></i>
                 <p>Teacher Portal</p>
             </div>
+            <div class="sidebar-menu">
+                <ul>
+                    <li class="<?= $current_url === 'teacher' ? 'active' : '' ?>">
+                        <a href="#">
+                            <i class="fa fa-home"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+
+                    <li class="<?= $current_url === 'classes' ? 'active' : '' ?>">
+                        <a href="#">
+                            <i class="fa fa-home"></i>
+                            <span>Classes</span>
+                        </a>
+                    </li>
+
+                    <li class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">
+                        <a href="#">
+                            <i class="fa fa-home"></i>
+                            <span>Modules</span>
+                        </a>
+                    </li>
+
+                    <li class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">
+                        <a href="#">
+                            <i class="fa fa-home"></i>
+                            <span>Assignments</span>
+                        </a>
+                    </li>
+
+                    <li class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">
+                        <a href="#">
+                            <i class="fa fa-home"></i>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+
+                    <li class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">
+                        <a href="#">
+                            <i class="fa fa-home"></i>
+                            <span>Calendar</span>
+                        </a>
+                    </li>
+
+                    <li class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">
+                        <a href="#">
+                            <i class="fa fa-home"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
 
         <div class="rightbar">

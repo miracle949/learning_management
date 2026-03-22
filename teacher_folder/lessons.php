@@ -86,7 +86,7 @@
             background: #fca5a5;
         }
 
-        /* ── Classes Feed Module section ── */
+        /* ── Classes Feed section ── */
         .section-divider {
             display: flex;
             align-items: center;
@@ -197,17 +197,13 @@
         <main>
             <div class="card-parent-box">
 
-                <!-- ── FORM ── enctype required for file uploads ── -->
                 <form action="/learning_management/public/?url=save_lessons" method="POST"
                     enctype="multipart/form-data">
 
                     <input type="hidden" name="subject_id" value="<?= htmlspecialchars($subject_id ?? '') ?>">
                     <input type="hidden" name="grade_level_id" value="<?= htmlspecialchars($grade_level_id ?? '') ?>">
 
-                    <!-- ══════════════════════════════════════════════
-                         SECTION 1 — CLASSES FEED MODULES
-                         Inserts into: modules + module_materials
-                         ══════════════════════════════════════════════ -->
+                    <!-- ══ SECTION 1 — CLASSES FEED MODULES ══ -->
                     <div class="card-header" style="margin-bottom:0;">
                         <h3>Classes Feed</h3>
                         <div class="buttons">
@@ -224,10 +220,7 @@
                         </div>
                     </div>
 
-                    <!-- ══════════════════════════════════════════════
-                         SECTION 2 — INTERACTIVE MODULES
-                         Inserts into: interactive_modules + lessons + etc.
-                         ══════════════════════════════════════════════ -->
+                    <!-- ══ SECTION 2 — INTERACTIVE MODULES ══ -->
                     <div class="section-divider" style="padding: 0 1.5rem;">
                         <h4><i class="fa fa-layer-group"
                                 style="color:var(--green,#00C950);margin-right:6px;"></i>Interactive Modules</h4>
@@ -251,7 +244,7 @@
 
                     <div class="card-submit">
                         <button type="button">Cancel</button>
-                        <button type="submit">Save Lessons</button>
+                        <button type="submit">Create Module</button>
                     </div>
 
                 </form>
@@ -259,15 +252,106 @@
         </main>
     </div>
 
-    <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
+    <!-- ══════════════════════════════════════════════════════
+         DUPLICATE WARNING MODAL — Bootstrap only
+         Shows when modules or lessons already exist in DB
+         Reads from $_SESSION['save_skipped'] set by controller
+         ══════════════════════════════════════════════════════ -->
+    <?php if (!empty($_SESSION['save_skipped'])): ?>
+        <?php
+        $skipped = $_SESSION['save_skipped'];
+        $cfMods = $skipped['cf_modules'] ?? [];   // modules table duplicates
+        $imMods = $skipped['im_modules'] ?? [];   // interactive_modules table duplicates
+        $lessons = $skipped['lessons'] ?? [];   // lessons table duplicates
+        unset($_SESSION['save_skipped']);           // clear — show only once
+        ?>
 
-    <!-- Classes Feed Module JS (inline, small) -->
+        <div class="modal fade" id="skippedModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <div class="modal-header bg-warning-subtle border-warning-subtle">
+                        <h5 class="modal-title d-flex align-items-center gap-2">
+                            <i class="fa fa-triangle-exclamation text-warning"></i>
+                            Some items already existed
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body">
+                        <p class="text-muted small mb-3">
+                            The items below were <strong>not re-inserted</strong> because they already
+                            exist in the database. Any new content inside them was still saved normally.
+                        </p>
+
+                        <?php if (!empty($cfMods)): ?>
+                            <p class="fw-semibold small mb-1">
+                                <i class="fa fa-inbox text-warning me-1"></i>
+                                Classes Feed Modules
+                                <span class="badge bg-warning text-dark ms-1"><?= count($cfMods) ?> skipped</span>
+                            </p>
+                            <ul class="small text-secondary mb-3 ps-3">
+                                <?php foreach ($cfMods as $name): ?>
+                                    <li><?= htmlspecialchars($name) ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+
+                        <?php if (!empty($imMods)): ?>
+                            <p class="fw-semibold small mb-1">
+                                <i class="fa fa-layer-group text-warning me-1"></i>
+                                Interactive Modules
+                                <span class="badge bg-warning text-dark ms-1"><?= count($imMods) ?> skipped</span>
+                            </p>
+                            <ul class="small text-secondary mb-3 ps-3">
+                                <?php foreach ($imMods as $name): ?>
+                                    <li><?= htmlspecialchars($name) ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+
+                        <?php if (!empty($lessons)): ?>
+                            <p class="fw-semibold small mb-1">
+                                <i class="fa fa-file text-warning me-1"></i>
+                                Lessons
+                                <span class="badge bg-warning text-dark ms-1"><?= count($lessons) ?> skipped</span>
+                            </p>
+                            <ul class="small text-secondary mb-0 ps-3">
+                                <?php foreach ($lessons as $name): ?>
+                                    <li><?= htmlspecialchars($name) ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                            Got it
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    <?php endif; ?>
+
+    <script src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
+
+    <?php if (isset($skipped)): ?>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                new bootstrap.Modal(document.getElementById("skippedModal")).show();
+            });
+        </script>
+    <?php endif; ?>
+
+    <!-- Classes Feed Module JS -->
     <script>
         (function () {
             const container = document.getElementById("cfModuleContainer");
             const addBtn = document.getElementById("addCFModuleBtn");
             const emptyState = document.getElementById("cfEmpty");
-            let cfCount = 0;
 
             function reNumberCF() {
                 container.querySelectorAll(".cf-module-card").forEach((card, i) => {
@@ -313,7 +397,6 @@
                         <button type="button" class="btn-cf-add-pdf mt-2">
                             <i class="fa fa-plus"></i> Add File
                         </button>
-                        <!-- hidden file input — triggered by Add File btn -->
                         <input type="file"
                                name="cf_module_pdf[${idx}][]"
                                class="cf-file-input"
@@ -325,7 +408,6 @@
 
                 container.appendChild(card);
 
-                // wire file picker
                 const addFileBtn = card.querySelector(".btn-cf-add-pdf");
                 const fileInput = card.querySelector(".cf-file-input");
                 const pdfList = card.querySelector(".cf-pdf-list");
@@ -345,7 +427,6 @@
                     });
                 });
 
-                // wire remove card
                 card.querySelector(".cf-remove-btn").addEventListener("click", () => {
                     card.remove();
                     reNumberCF();
@@ -356,6 +437,7 @@
 
     <!-- Interactive Modules JS -->
     <script src="../teacher_folder/lesson_folder/lesson.js"></script>
+
 </body>
 
 </html>
