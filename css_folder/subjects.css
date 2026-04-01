@@ -33,7 +33,8 @@
     /* width: 100%; */
     width: calc(100% - 235px);
     margin-left: 235px;
-    height: calc(100% - 68px);
+    height: calc(100vh - 68px);
+    overflow-y: auto;
     border-left: 1px solid rgba(0, 0, 0, 0.1);
     margin-top: 68px;
     /* margin-left: 250px; */

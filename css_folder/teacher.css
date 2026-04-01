@@ -110,12 +110,14 @@
     justify-content: left;
     align-items: center;
     gap: 1rem;
+    font-size: 15.5px;
     color: #484B4A;
     text-decoration: none;
 }
 
 .container-fluid .rightbar {
     width: calc(100% - 235px);
+    height: 100vh;
     margin-left: 235px;
     border-left: 1px solid rgba(0, 0, 0, 0.1);
     background-color: #F7F9F8;
@@ -171,11 +173,17 @@
     font-family: "Titan", sans-serif;
 }
 
+.welcome-banner p{
+    color: #ffffff;
+    margin: 1rem 0 0 0;
+}
+
 .container-fluid main {
     /* background-color: #f0f2f8; */
     /* background-color: #F7F9F8; */
     /* padding: 3rem; */
     padding: 1.8rem 1.4rem 1.8rem 1.4rem;
+    margin-top: 68px;
 }
 
 .container-fluid main .parent-card {

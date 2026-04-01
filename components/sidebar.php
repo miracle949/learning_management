@@ -18,27 +18,27 @@
             <li class="<?= ($current_url === 'classes' || $current_url === 'subjects') ? 'active' : '' ?>">
                 <a href="/learning_management/public/?url=classes" class="text-decoration-none">
                     <i class="fa fa-book-open"></i>
-                    <span>Classes</span>
+                    <span>Classes</spanz>
                 </a>
             </li>
 
             <li class="<?= $current_url === 'module_all' ? 'active' : '' ?>">
                 <a href="/learning_management/public/?url=module_all" class="text-decoration-none">
-                    <i class="fa fa-gear"></i>
+                    <i class="fa fa-book"></i>
                     <span>Modules</span>
                 </a>
             </li>
 
             <li class="<?= $current_url === 'assignments' ? 'active' : '' ?>">
-                <a href="#" class="text-decoration-none">
-                    <i class="fa fa-gear"></i>
+                <a href="/learning_management/public/?url=assignments" class="text-decoration-none">
+                    <i class="fa fa-calendar-check"></i>
                     <span>Assignments</span>
                 </a>
             </li>
 
             <li class="<?= $current_url === 'progress' ? 'active' : '' ?>">
                 <a href="#" class="text-decoration-none">
-                    <i class="fa fa-gear"></i>
+                    <i class="fa fa-chart-line"></i>
                     <span>Progress</span>
                 </a>
             </li>

@@ -24,32 +24,38 @@ class Teacher extends Model
                 sec.section_name AS section,
                 COUNT(DISTINCT se.student_id) AS student_count,
                 (
-                    SELECT COUNT(m.id)
+                    SELECT COUNT(mm.id)
                     FROM modules m
-                    WHERE m.subject_id = ta.subject_id AND m.posted_by = ta.teacher_id
+                    LEFT JOIN module_materials mm ON mm.module_id = m.id
+                    WHERE m.subject_id = ta.subject_id
+                      AND m.posted_by = ta.teacher_id
                 ) AS material_count,
                 (
                     SELECT COUNT(*)
                     FROM modules m
-                    WHERE m.subject_id = ta.subject_id AND m.posted_by = ta.teacher_id
-                    AND LOWER(m.title) LIKE '%announcement%'
+                    WHERE m.subject_id = ta.subject_id
+                      AND m.posted_by  = ta.teacher_id
+                      AND LOWER(m.title) LIKE '%announcement%'
                 ) AS announcement_count,
                 (
                     SELECT COUNT(*)
                     FROM modules m
-                    WHERE m.subject_id = ta.subject_id AND m.posted_by = ta.teacher_id
+                    WHERE m.subject_id = ta.subject_id
+                      AND m.posted_by  = ta.teacher_id
                 ) AS module_count,
                 (
                     SELECT COUNT(*)
                     FROM interactive_modules im
-                    WHERE im.subject_id = ta.subject_id AND im.teacher_id = ta.teacher_id
+                    WHERE im.subject_id  = ta.subject_id
+                      AND im.teacher_id  = ta.teacher_id
                 ) AS interactive_module_count
             FROM teacher_assignments ta
-            JOIN subjects s    ON ta.subject_id     = s.id
-            JOIN grade_level gl ON ta.grade_level_id = gl.id
-            JOIN sections sec   ON ta.section_id     = sec.id
+            JOIN subjects s     ON ta.subject_id     = s.id
+            JOIN grade_level gl  ON ta.grade_level_id = gl.id
+            JOIN sections sec    ON ta.section_id     = sec.id
             LEFT JOIN student_enrollments se
-                ON se.subject_id = ta.subject_id AND se.section_id = ta.section_id
+                ON se.subject_id  = ta.subject_id
+                AND se.section_id = ta.section_id
             WHERE ta.teacher_id = ?
             GROUP BY ta.subject_id, ta.grade_level_id, ta.section_id,
                      s.subject_name, gl.name, sec.section_name
@@ -62,7 +68,9 @@ class Teacher extends Model
     }
 
     // ============================================================
-    // Get class info for ONE specific section.
+    // NEW: Get class info for ONE specific section only
+    // Fixes the bug where hero showed ALL sections (CSS 11-1, CSS 11-2)
+    // instead of just the section the teacher clicked Manage on.
     // ============================================================
     public function getClassInfo($subjectId, $gradeLevelId, $sectionId = 0)
     {
@@ -76,8 +84,10 @@ class Teacher extends Model
             FROM subjects s
             JOIN grade_level gl  ON gl.id  = s.grade_level_id
             JOIN sections    sec ON sec.grade_level_id = gl.id
-            WHERE s.id = ? AND gl.id = ?
+            WHERE s.id = ?
+              AND gl.id = ?
         ";
+
         $params = [$subjectId, $gradeLevelId];
         $types = "ii";
 
@@ -86,6 +96,7 @@ class Teacher extends Model
             $params[] = $sectionId;
             $types .= "i";
         }
+
         $sql .= " LIMIT 1";
 
         $stmt = $this->db->prepare($sql);
@@ -95,19 +106,23 @@ class Teacher extends Model
     }
 
     // ============================================================
-    // Count students enrolled in a specific subject + section.
+    // NEW: Count students in a specific subject + section
+    // Used on records page to show the correct per-section count
     // ============================================================
     public function getStudentCountBySection($subjectId, $sectionId = 0)
     {
         if ($sectionId > 0) {
             $stmt = $this->db->prepare("
-                SELECT COUNT(*) AS total FROM student_enrollments
+                SELECT COUNT(*) AS total
+                FROM student_enrollments
                 WHERE subject_id = ? AND section_id = ?
             ");
             $stmt->bind_param("ii", $subjectId, $sectionId);
         } else {
             $stmt = $this->db->prepare("
-                SELECT COUNT(*) AS total FROM student_enrollments WHERE subject_id = ?
+                SELECT COUNT(*) AS total
+                FROM student_enrollments
+                WHERE subject_id = ?
             ");
             $stmt->bind_param("i", $subjectId);
         }
@@ -183,6 +198,7 @@ class Teacher extends Model
             $stmt->execute();
             $subject = $stmt->get_result()->fetch_assoc();
             $grade_level_id = $subject['grade_level_id'] ?? null;
+
             foreach ($assigned_sections as $section_id) {
                 $check = $this->db->prepare("SELECT id FROM sections WHERE id = ? AND grade_level_id = ?");
                 $check->bind_param("ii", $section_id, $grade_level_id);
@@ -223,121 +239,9 @@ class Teacher extends Model
     }
 
     // ============================================================
-    // ANNOUNCEMENTS
+    // CLASSES FEED
     // ============================================================
-    public function getAnnouncements($subjectId, $teacherId)
-    {
-        $stmt = $this->db->prepare("SELECT id, title, body, posted_at FROM announcements WHERE subject_id = ? AND teacher_id = ? ORDER BY posted_at DESC");
-        $stmt->bind_param("ii", $subjectId, $teacherId);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    }
 
-    public function insertAnnouncement($subjectId, $teacherId, $title, $body)
-    {
-        $stmt = $this->db->prepare("
-            INSERT INTO announcements (subject_id, teacher_id, title, body, posted_at)
-            VALUES (?, ?, ?, ?, NOW())
-        ");
-        $stmt->bind_param("iiss", $subjectId, $teacherId, $title, $body);
-        $stmt->execute();
-        return $this->db->insert_id;
-    }
-
-    // ============================================================
-    // ASSIGNMENTS
-    // ============================================================
-    public function getAssignments($subjectId, $teacherId)
-    {
-        $stmt = $this->db->prepare("
-        SELECT id, title, description, due_date, points, created_at,
-               file_name, file_path, file_type
-        FROM assignments 
-        WHERE subject_id = ? AND teacher_id = ? 
-        ORDER BY created_at DESC
-    ");
-        $stmt->bind_param("ii", $subjectId, $teacherId);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    }
-
-    public function insertAssignment(
-        $subjectId,
-        $teacherId,
-        $title,
-        $description,
-        $task,
-        $instructions,
-        $type,
-        $dueDate,
-        $points,
-        $fileName = null,
-        $filePath = null,
-        $fileType = null
-    ) {
-        $desc = $description ?? null;
-        $task = $task ?? null;
-        $instr = $instructions ?? null;
-        $type = $type ?? 'seatwork';
-        $due = $dueDate ?? null;
-        $fName = $fileName ?? null;
-        $fPath = $filePath ?? null;
-        $fType = $fileType ?? null;
-
-        $stmt = $this->db->prepare("
-        INSERT INTO assignments 
-            (subject_id, teacher_id, title, description, task, instructions, 
-             type, due_date, points, file_name, file_path, file_type, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
-    ");
-        $stmt->bind_param(
-            "iiisssssisss",
-            $subjectId,
-            $teacherId,
-            $title,
-            $desc,
-            $task,
-            $instr,
-            $type,
-            $due,
-            $points,
-            $fName,
-            $fPath,
-            $fType
-        );
-        $stmt->execute();
-        return $this->db->insert_id;
-    }
-
-    // ============================================================
-    // STUDENT SUBMISSIONS
-    // ============================================================
-    public function getSubmissions($assignmentId)
-    {
-        $stmt = $this->db->prepare("
-            SELECT
-                asub.id,
-                asub.student_id,
-                asub.file_path,
-                asub.submitted_at,
-                asub.status,
-                u.name AS student_name
-            FROM assignment_submissions asub
-            JOIN students st ON st.id = asub.student_id
-            JOIN users    u  ON u.id  = st.user_id
-            WHERE asub.assignment_id = ?
-            ORDER BY asub.submitted_at DESC
-        ");
-        $stmt->bind_param("i", $assignmentId);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    }
-
-    // ============================================================
-    // CLASSES FEED MODULES
-    // Adjusted to work directly with the modules table columns:
-    // file_name, file_path, file_type, file_size (no module_materials table)
-    // ============================================================
     public function countModules($subjectId)
     {
         $stmt = $this->db->prepare("SELECT COUNT(*) AS total FROM modules WHERE subject_id = ?");
@@ -365,49 +269,30 @@ class Teacher extends Model
     public function getModules($subjectId, $teacherId = null)
     {
         $sql = "
-            SELECT id, title, description, posted_at,
-                   file_name, file_path, file_type, file_size
-            FROM modules
-            WHERE subject_id = ?
+            SELECT m.id, m.title, m.description, m.posted_at, m.sort_order,
+                   COUNT(mm.id) AS material_count
+            FROM modules m
+            LEFT JOIN module_materials mm ON mm.module_id = m.id
+            WHERE m.subject_id = ?
         ";
         $params = [$subjectId];
         $types = "i";
         if ($teacherId) {
-            $sql .= " AND posted_by = ?";
+            $sql .= " AND m.posted_by = ?";
             $params[] = $teacherId;
             $types .= "i";
         }
-        $sql .= " ORDER BY posted_at ASC";
+        $sql .= " GROUP BY m.id ORDER BY m.sort_order ASC, m.posted_at ASC";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param($types, ...$params);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
-    /**
-     * getMaterialsByModule is kept for backward compatibility but now
-     * simply returns the file columns from the modules row itself.
-     */
-    public function getMaterialsByModule($moduleId)
-    {
-        $stmt = $this->db->prepare("
-            SELECT id, file_name, file_type, file_size, file_path
-            FROM modules WHERE id = ?
-        ");
-        $stmt->bind_param("i", $moduleId);
-        $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
-        // Return as an array of one item (or empty) to keep view code compatible
-        if ($row && $row['file_name']) {
-            return [$row];
-        }
-        return [];
-    }
-
     public function getInteractiveModulesWithCount($subjectId, $teacherId = null)
     {
         $sql = "
-            SELECT im.id, im.title, im.description, im.created_at,
+            SELECT im.id, im.title, im.description, im.sort_order, im.created_at,
                    COUNT(l.id) AS lesson_count
             FROM interactive_modules im
             LEFT JOIN lessons l ON l.interactive_module_id = im.id
@@ -420,7 +305,7 @@ class Teacher extends Model
             $params[] = $teacherId;
             $types .= "i";
         }
-        $sql .= " GROUP BY im.id ORDER BY im.created_at ASC";
+        $sql .= " GROUP BY im.id ORDER BY im.sort_order ASC, im.created_at ASC";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param($types, ...$params);
         $stmt->execute();
@@ -430,10 +315,21 @@ class Teacher extends Model
     public function getLessonsByModule($interactiveModuleId)
     {
         $stmt = $this->db->prepare("
-        SELECT id, title, topic FROM lessons
-        WHERE interactive_module_id = ? ORDER BY id ASC
-    ");
+            SELECT id, title, topic, sort_order FROM lessons
+            WHERE interactive_module_id = ? ORDER BY sort_order ASC
+        ");
         $stmt->bind_param("i", $interactiveModuleId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getMaterialsByModule($moduleId)
+    {
+        $stmt = $this->db->prepare("
+            SELECT id, file_name, file_type, file_size, file_path, sort_order
+            FROM module_materials WHERE module_id = ? ORDER BY sort_order ASC
+        ");
+        $stmt->bind_param("i", $moduleId);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
@@ -455,49 +351,29 @@ class Teacher extends Model
         return $row ? $row['id'] : null;
     }
 
-    public function insertModule(
-        $subjectId,
-        $title,
-        $description,
-        $postedBy,
-        $fileName = null,
-        $filePath = null,
-        $fileType = null,
-        $fileSize = null
-    ) {
+    public function insertModule($subjectId, $title, $description, $postedBy, $sortOrder)
+    {
         $existingId = $this->getModuleByTitle($subjectId, $title);
         if ($existingId)
             return ['id' => $existingId, 'existed' => true];
-
-        // Assign to variables — bind_param requires references
-        $fName = $fileName ?? null;
-        $fPath = $filePath ?? null;
-        $fType = $fileType ?? null;
-        $fSize = (int) ($fileSize ?? 0);
-
         $stmt = $this->db->prepare("
-        INSERT INTO modules (subject_id, title, description, posted_by, posted_at,
-                             file_name, file_path, file_type, file_size)
-        VALUES (?, ?, ?, ?, NOW(), ?, ?, ?, ?)
-    ");
-
-        // i=subjectId, s=title, s=description, i=postedBy,
-        // s=fileName,  s=filePath, s=fileType, i=fileSize
-        $stmt->bind_param(
-            "ississsi",  // ← visual guide only, actual:
-            // "i s s i s s s i"
-            $subjectId,   // i
-            $title,       // s
-            $description, // s
-            $postedBy,    // i
-            $fName,       // s  ← was wrongly 'i' before!
-            $fPath,       // s
-            $fType,       // s
-            $fSize        // i
-        );
-
+            INSERT INTO modules (subject_id, title, description, posted_by, posted_at, sort_order)
+            VALUES (?, ?, ?, ?, NOW(), ?)
+        ");
+        $stmt->bind_param("issii", $subjectId, $title, $description, $postedBy, $sortOrder);
         $stmt->execute();
         return ['id' => $this->db->insert_id, 'existed' => false];
+    }
+
+    public function insertModuleMaterial($moduleId, $fileName, $filePath, $fileType, $fileSize, $sortOrder)
+    {
+        $stmt = $this->db->prepare("
+            INSERT INTO module_materials (module_id, file_name, file_path, file_type, file_size, sort_order)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+        $stmt->bind_param("isssii", $moduleId, $fileName, $filePath, $fileType, $fileSize, $sortOrder);
+        $stmt->execute();
+        return $this->db->insert_id;
     }
 
     public function getInteractiveModuleByTitle($subjectId, $title)
@@ -515,10 +391,10 @@ class Teacher extends Model
         if ($existingId)
             return ['id' => $existingId, 'existed' => true];
         $stmt = $this->db->prepare("
-            INSERT INTO interactive_modules (subject_id, teacher_id, title, description)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO interactive_modules (subject_id, teacher_id, title, description, sort_order)
+            VALUES (?, ?, ?, ?, ?)
         ");
-        $stmt->bind_param("iiss", $subjectId, $teacherId, $title, $description);
+        $stmt->bind_param("iissi", $subjectId, $teacherId, $title, $description, $sortOrder);
         $stmt->execute();
         return ['id' => $this->db->insert_id, 'existed' => false];
     }
@@ -532,87 +408,69 @@ class Teacher extends Model
         return $row ? $row['id'] : null;
     }
 
-    public function insertLesson($interactiveModuleId, $title, $topic, $content)
+    public function insertLesson($interactiveModuleId, $title, $topic, $content, $sortOrder)
     {
         $existingId = $this->getLessonByTitle($interactiveModuleId, $title);
         if ($existingId)
             return ['id' => $existingId, 'existed' => true];
-        $stmt = $this->db->prepare("INSERT INTO lessons (interactive_module_id, title, topic, content) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("isss", $interactiveModuleId, $title, $topic, $content);
+        $stmt = $this->db->prepare("INSERT INTO lessons (interactive_module_id, title, topic, content, sort_order) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("isssi", $interactiveModuleId, $title, $topic, $content, $sortOrder);
         $stmt->execute();
         return ['id' => $this->db->insert_id, 'existed' => false];
     }
 
-
-    // In Teacher.php — add this method
-    public function insertInteractiveContent($lessonId, $type, $data = [])
+    public function insertLessonVideo($lessonId, $title, $videoUrl, $sortOrder)
     {
-        // Assign all values to variables first — bind_param() requires references
-        $title = $data['title'] ?? null;
-        $instructions = $data['instructions'] ?? null;
-        $question = $data['question'] ?? null;
-        $questionType = $data['question_type'] ?? null;
-        $choiceA = $data['choice_a'] ?? null;
-        $choiceB = $data['choice_b'] ?? null;
-        $choiceC = $data['choice_c'] ?? null;
-        $choiceD = $data['choice_d'] ?? null;
-        $correctAns = $data['correct_ans'] ?? null;
-        $modelAnswer = $data['model_answer'] ?? null;
-        $passingScore = $data['passing_score'] ?? null;
-        $totalPoints = $data['total_points'] ?? null;
-        $cardFront = $data['card_front'] ?? null;
-        $cardBack = $data['card_back'] ?? null;
-        $cardType = $data['card_type'] ?? null;
-        $filePath = $data['file_path'] ?? null;
-        $fileName = $data['file_name'] ?? null;
-        $fileType = $data['file_type'] ?? null;
+        $stmt = $this->db->prepare("INSERT INTO lesson_videos (lesson_id, title, video_url, sort_order) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("issi", $lessonId, $title, $videoUrl, $sortOrder);
+        $stmt->execute();
+        return $this->db->insert_id;
+    }
 
-        $stmt = $this->db->prepare("
-        INSERT INTO interactive_contents (
-            lesson_id, type, title, instructions,
-            question, question_type,
-            choice_a, choice_b, choice_c, choice_d,
-            correct_ans, model_answer,
-            passing_score, total_points,
-            card_front, card_back, card_type,
-            file_path, file_name, file_type,
-            created_at
-        ) VALUES (
-            ?, ?, ?, ?,
-            ?, ?,
-            ?, ?, ?, ?,
-            ?, ?,
-            ?, ?,
-            ?, ?, ?,
-            ?, ?, ?,
-            NOW()
-        )
-    ");
+    public function insertLessonImage($lessonId, $imagePath, $caption, $sortOrder)
+    {
+        $stmt = $this->db->prepare("INSERT INTO lesson_images (lesson_id, image_path, caption, sort_order) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("issi", $lessonId, $imagePath, $caption, $sortOrder);
+        $stmt->execute();
+        return $this->db->insert_id;
+    }
 
-        $stmt->bind_param(
-            "isssssssssssiiisssss",
-            $lessonId,
-            $type,
-            $title,
-            $instructions,
-            $question,
-            $questionType,
-            $choiceA,
-            $choiceB,
-            $choiceC,
-            $choiceD,
-            $correctAns,
-            $modelAnswer,
-            $passingScore,
-            $totalPoints,
-            $cardFront,
-            $cardBack,
-            $cardType,
-            $filePath,
-            $fileName,
-            $fileType
-        );
+    public function insertActivity($lessonId, $interactiveModuleId, $title, $instructions, $totalPoints, $timeLimit, $sortOrder)
+    {
+        $stmt = $this->db->prepare("INSERT INTO activities (lesson_id, interactive_module_id, title, instructions, total_points, time_limit, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("iissiii", $lessonId, $interactiveModuleId, $title, $instructions, $totalPoints, $timeLimit, $sortOrder);
+        $stmt->execute();
+        return $this->db->insert_id;
+    }
 
+    public function insertActivityQuestion($activityId, $questionType, $question, $modelAnswer, $choiceA, $choiceB, $choiceC, $choiceD, $correctAns, $points, $sortOrder)
+    {
+        $stmt = $this->db->prepare("INSERT INTO activity_questions (activity_id, question_type, question, model_answer, choice_a, choice_b, choice_c, choice_d, correct_ans, points, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("issssssssii", $activityId, $questionType, $question, $modelAnswer, $choiceA, $choiceB, $choiceC, $choiceD, $correctAns, $points, $sortOrder);
+        $stmt->execute();
+        return $this->db->insert_id;
+    }
+
+    public function insertQuiz($lessonId, $interactiveModuleId, $title, $instructions, $timeLimit, $passingScore, $sortOrder)
+    {
+        $stmt = $this->db->prepare("INSERT INTO quizzes (lesson_id, interactive_module_id, title, instructions, time_limit, passing_score, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("iissiii", $lessonId, $interactiveModuleId, $title, $instructions, $timeLimit, $passingScore, $sortOrder);
+        $stmt->execute();
+        return $this->db->insert_id;
+    }
+
+    public function insertQuizQuestion($quizId, $question, $choiceA, $choiceB, $choiceC, $choiceD, $correctAns, $points, $sortOrder)
+    {
+        $stmt = $this->db->prepare("INSERT INTO quiz_questions (quiz_id, question, choice_a, choice_b, choice_c, choice_d, correct_ans, points, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("issssssii", $quizId, $question, $choiceA, $choiceB, $choiceC, $choiceD, $correctAns, $points, $sortOrder);
+        $stmt->execute();
+        return $this->db->insert_id;
+    }
+
+    public function insertFlashcard($lessonId, $interactiveModuleId, $cardType, $front, $back, $sortOrder)
+    {
+        $stmt = $this->db->prepare("INSERT INTO im_flashcards (lesson_id, interactive_module_id, card_type, front, back, sort_order) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("iisssi", $lessonId, $interactiveModuleId, $cardType, $front, $back, $sortOrder);
         $stmt->execute();
         return $this->db->insert_id;
     }

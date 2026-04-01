@@ -15,6 +15,29 @@ class teacher_records
         $this->teacherModel = new Teacher();
     }
 
+    public function ClassView()
+    {
+        $teacher_id = $_SESSION['teacher_id'] ?? null;
+
+        $user_id = $_SESSION['user_id'] ?? null;
+
+        $result = $this->teacherModel->getTeacherIdByUserId($user_id);
+        $teacher_id = $result['teacher_id'] ?? null;
+
+        if (!$teacher_id) {
+            die("Teacher record not found.");
+        }
+
+        $_SESSION['teacher_id'] = $teacher_id;
+
+        $classes = $this->teacherModel->getTeacherClasses($teacher_id);
+        $stats = $this->teacherModel->getTeacherStats($teacher_id);
+        $totalStudents = array_sum(array_column($classes, 'student_count'));
+        $teacherInfo = ['name' => $_SESSION['teacher_name'] ?? $_SESSION['name'] ?? 'Teacher'];
+
+        require_once "../teacher_folder/classes.php";
+    }
+
     public function teacherDashboard()
     {
         // Check what session key your teacher login uses

@@ -278,6 +278,20 @@
     display: flex;
 } */
 
+.container-fluid nav .nav-title .nav-class button{
+    font-size: 16px;
+}
+
+.container-fluid nav .nav-title .nav-class .class-icon{
+    padding: 8px 13px;
+    background-color: var(--green-light);
+    border-radius: 10px;
+}
+
+.container-fluid nav .nav-title .nav-class .class-icon .fa-plus{
+    color: var(--green-dark);
+}
+
 .container-fluid nav .nav-acc .nav-list button {
     font-size: 16px;
 }
@@ -299,10 +313,10 @@
     gap: 1rem;
 }
 
-.container-fluid nav .nav-acc .fa-plus,
+/* .container-fluid nav .nav-acc .fa-plus,
 .fa-grip {
     font-size: 20px;
-}
+} */
 
 .container-fluid nav .nav-acc .nav-list {
     display: flex;

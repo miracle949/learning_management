@@ -95,6 +95,14 @@
             display: flex;
             justify-content: space-between;
             gap: 2rem;
+            position: relative;
+        }
+
+        .rightbar .module-parent .learning-catalog {
+            position: sticky;
+            left: 0;
+            top: 80px;
+            height: calc(100% - 68px);
         }
 
         .rightbar .module-parent .learning-catalog h4 {
@@ -247,6 +255,22 @@
         .rightbar .module-parent .learning-module-section .module-card .module-body .module-link a.btn-continue {
             background-color: var(--green-dark, #065f46);
         }
+
+        @media only screen and (min-width: 1265px) {
+            .rightbar .module-parent {
+                justify-content: left;
+                gap: 3rem;
+                width: 100%;
+            }
+
+            .rightbar .module-parent .learning-module-section .module-card {
+                width: 100%;
+            }
+
+            .rightbar .module-parent .learning-module-section {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 
@@ -268,7 +292,8 @@
                     </div>
                     <div class="welcome-body">
                         <div class="buttons-group">
-                            <a href="/learning_management/public/?url=classes">Browse Courses <i class="fa fa-arrow-right"></i></a>
+                            <a href="/learning_management/public/?url=classes">Browse Courses <i
+                                    class="fa fa-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
@@ -296,7 +321,7 @@
 
                     <div class="learning-module-section">
                         <?php foreach ($subjects as $subject):
-                            $slug = $subject['slug'];
+                            $slug = $subject['subject_code'];
                             $isStarted = in_array($slug, $startedSlugs ?? []);
                             $btnText = $isStarted ? 'Continue Learning' : 'Start Now';
                             $btnClass = $isStarted ? 'btn-continue' : 'btn-start';

@@ -1340,5 +1340,31 @@
             </nav>
         </div>
 
+        <!-- <script>
+        const params = new URLSearchParams(window.location.search);
+        const subject = params.get("subject") || "default";
+
+        document.querySelectorAll(".module-progress").forEach(moduleCard => {
+            const moduleId = moduleCard.dataset.moduleId;
+
+            const completed =
+                localStorage.getItem(`${subject}_${moduleId}_completedLessons`) || 0;
+
+            const total =
+                localStorage.getItem(`${subject}_${moduleId}_totalLessons`) || 0;
+
+            const percent =
+                localStorage.getItem(`${subject}_${moduleId}_lessonPercent`) || 0;
+
+            moduleCard.querySelector(".lessonText").innerText =
+                `${completed} of ${total} lessons`;
+
+            moduleCard.querySelector(".lessonPercent").innerText =
+                `${percent}%`;
+
+            moduleCard.querySelector(".progress").style.width =
+                percent + "%";
+        }); -->
+
     </div><!-- /view-lessons -->
 </div><!-- /body-lessons -->

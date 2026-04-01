@@ -40,7 +40,7 @@
                             <div class="card-body-enrolled">
                                 <?php if (in_array($subject['id'], $enrolledSubjectIds)): ?>
                                     <a
-                                        href="/learning_management/public/?url=subjects&subject=<?= urlencode($subject['slug']) ?>">
+                                        href="/learning_management/public/?url=subjects&subject=<?= urlencode($subject['subject_code']) ?>">
                                         <span>Go to Subject</span>
                                         <i class="fa fa-arrow-right"></i>
                                     </a>
@@ -48,8 +48,8 @@
                                 <?php else: ?>
                                     <!-- FIX: url=classes (not subjects_all) — classes() has the enroll logic -->
                                     <a href="#" class="enroll-btn"
-                                        data-enroll-url="/learning_management/public/?url=classes&enroll=1&subject_id=<?= $subject['id'] ?>&subject_slug=<?= urlencode($subject['slug']) ?>"
-                                        data-redirect-url="/learning_management/public/?url=subjects&subject=<?= urlencode($subject['slug']) ?>"
+                                        data-enroll-url="/learning_management/public/?url=classes&enroll=1&subject_id=<?= $subject['id'] ?>&subject_code=<?= urlencode($subject['subject_code']) ?>"
+                                        data-redirect-url="/learning_management/public/?url=subjects&subject=<?= urlencode($subject['subject_code']) ?>"
                                         data-subject-name="<?= htmlspecialchars($subject['subject_name']) ?>">
                                         <span>Enroll Now</span>
                                         <i class="fa fa-arrow-right"></i>

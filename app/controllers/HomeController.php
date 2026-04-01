@@ -97,4 +97,12 @@ class HomeController
     {
         require_once "../app/view/module_all.php";
     }
+
+    public function assignments(){
+        require_once "../app/view/assignments.php";
+    }
+
+    public function classes_teacher(){
+        require_once "../teacher_folder/classes.php";
+    }
 }

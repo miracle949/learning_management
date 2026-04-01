@@ -423,7 +423,7 @@
 
                 <?php else: ?>
 
-                    <a href="/learning_management/public/?url=subjects&subject=<?= htmlspecialchars($assignment['slug']) ?>"
+                    <a href="/learning_management/public/?url=subjects&subject=<?= htmlspecialchars($assignment['subject_code']) ?>"
                         class="av-back-link">
                         <i class="fa fa-arrow-left"></i> Back to <?= htmlspecialchars($assignment['subject_name']) ?>
                     </a>

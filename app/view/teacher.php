@@ -13,79 +13,25 @@
 <body>
 
     <div class="container-fluid p-0">
-        <div class="sidebar">
-            <div class="sidebar-logo">
-                <i class="fa fa-user-circle"></i>
-                <p>Teacher Portal</p>
-            </div>
-            <div class="sidebar-menu">
-                <ul>
-                    <li class="<?= $current_url === 'teacher' ? 'active' : '' ?>">
-                        <a href="#">
-                            <i class="fa fa-home"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
 
-                    <li class="<?= $current_url === 'classes' ? 'active' : '' ?>">
-                        <a href="#">
-                            <i class="fa fa-home"></i>
-                            <span>Classes</span>
-                        </a>
-                    </li>
-
-                    <li class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">
-                        <a href="#">
-                            <i class="fa fa-home"></i>
-                            <span>Modules</span>
-                        </a>
-                    </li>
-
-                    <li class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">
-                        <a href="#">
-                            <i class="fa fa-home"></i>
-                            <span>Assignments</span>
-                        </a>
-                    </li>
-
-                    <li class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">
-                        <a href="#">
-                            <i class="fa fa-home"></i>
-                            <span>Reports</span>
-                        </a>
-                    </li>
-
-                    <li class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">
-                        <a href="#">
-                            <i class="fa fa-home"></i>
-                            <span>Calendar</span>
-                        </a>
-                    </li>
-
-                    <li class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">
-                        <a href="#">
-                            <i class="fa fa-home"></i>
-                            <span>Settings</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+        <?php include("../teacher_folder/sidebar.php") ?>
 
         <div class="rightbar">
-            <nav>
+            <!-- <nav>
                 <div class="nav-logo">
                     <h2>Teacher <b>Dashboard</b></h2>
                 </div>
                 <form action="?url=logout" method="post">
                     <button><i class="fa fa-sign-out"></i> Logout</button>
                 </form>
-            </nav>
+            </nav> -->
+            <?php include("../teacher_folder/nav.php"); ?>
 
             <main>
 
                 <div class="welcome-banner">
                     <h2>Welcome, <?= htmlspecialchars($teacherInfo['name']) ?>! 👋</h2>
+                    <p>Good Day Teacher!</p>
                 </div>
 
                 <div class="parent-card">
@@ -125,7 +71,7 @@
 
                 </div>
 
-                <h5 class="mt-5">Your Classes</h5>
+                <!-- <h5 class="mt-5">Your Classes</h5>
 
                 <div class="parent-classes">
                     <?php if (empty($classes)): ?>
@@ -176,7 +122,7 @@
                         <?php endforeach; ?>
 
                     <?php endif; ?>
-                </div>
+                </div> -->
 
             </main>
         </div>

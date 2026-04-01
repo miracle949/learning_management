@@ -357,7 +357,7 @@
 
                 <?php else: ?>
 
-                    <a href="/learning_management/public/?url=subjects&subject=<?= htmlspecialchars($module['slug']) ?>"
+                    <a href="/learning_management/public/?url=subjects&subject=<?= htmlspecialchars($module['subject_code']) ?>"
                         class="mv-back-link">
                         <i class="fa fa-arrow-left"></i> Back to <?= htmlspecialchars($module['subject_name']) ?>
                     </a>

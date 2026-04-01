@@ -14,12 +14,19 @@
             </div>
         </div> -->
 
-        <div class="search-parent">
+        <!-- <div class="search-parent">
             <i class="fa fa-search"></i>
             <div class="search">
                 <input type="search" name="" id="" placeholder="Search...">
             </div>
-        </div>
+        </div> -->
+        <!-- <div class="nav-class">
+            <button>
+                <div class="class-icon">
+                    <i class="fa fa-plus"></i>
+                </div>
+            </button>
+        </div> -->
     </div>
 
     <!-- <div class="nav-list">
@@ -40,6 +47,11 @@
 
     <div class="nav-acc">
         <div class="nav-list">
+            <button>
+                <div class="notification-icon">
+                    <i class="fa fa-plus"></i>
+                </div>
+            </button>
             <button>
                 <div class="notification-icon">
                     <i class="fa fa-message"></i>

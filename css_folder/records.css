@@ -55,10 +55,90 @@
     font-size: 14.5px;
 } */
 
+.container-fluid .sidebar {
+    width: 225px;
+    height: 100%;
+    background-color: #ffffff;
+    position: fixed;
+    left: 0;
+    top: 0;
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.container-fluid .sidebar .sidebar-menu ul {
+    padding: 0px 1rem 0px 1rem;
+    margin-bottom: 1rem;
+}
+
+.container-fluid .sidebar .sidebar-menu ul li {
+    list-style: none;
+    line-height: 60px;
+    padding: 0 20px;
+}
+
+.container-fluid .sidebar .sidebar-menu ul li:hover {
+    background-color: #E7E8EB;
+    border-radius: 10px;
+}
+
+.container-fluid .sidebar .sidebar-menu ul li a {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 1rem;
+    color: #484B4A;
+    font-size: 15.5px;
+    text-decoration: none;
+}
+
+.container-fluid .rightbar {
+    width: calc(100% - 235px);
+    height: calc(100vh - 66px);
+    overflow-y: auto;
+    margin-left: 235px;
+    /* padding-bottom: 2rem; */
+    margin-top: 66px;
+    /* padding: 1rem; */
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: #F7F9F8;
+}
+
+.container-fluid .sidebar-logo {
+    height: 130px;
+    /* background-color: #5BCA3F; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
+    /* padding-top: 3rem; */
+    margin-top: 1.8rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.container-fluid .sidebar-logo .fa {
+    font-size: 70px;
+    /* color: #5BCA3F; */
+    color: var(--background-icon);
+}
+
+.container-fluid .sidebar-logo p {
+    font-size: 17.5px;
+    font-weight: 600;
+    /* color: #364153; */
+    color: var(--text-dark);
+}
+
+.container-fluid .sidebar .sidebar-menu {
+    margin-top: 1rem;
+}
+
 .container-fluid main {
     /* background-color: #f0f2f8; */
     background-color: #F7F9F8;
-    padding: 2rem 3rem 2rem 3rem;
+    /* padding: 2rem 3rem 2rem 3rem; */
 }
 
 .container-fluid nav {

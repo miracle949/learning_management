@@ -28,7 +28,7 @@ class TeacherController
     }
 
     // ============================================================
-    // VIEW CLASS
+    // VIEW CLASS — now uses section_id so hero shows only THAT section
     // ============================================================
     public function viewClass()
     {
@@ -39,10 +39,11 @@ class TeacherController
 
         $subject_id = (int) ($_GET['id'] ?? 0);
         $grade_level_id = (int) ($_GET['grade_id'] ?? 0);
-        $section_id = (int) ($_GET['section_id'] ?? 0);
+        $section_id = (int) ($_GET['section_id'] ?? 0); // ← NEW: specific section
 
         $teacherModel = new Teacher();
 
+        // ── Resolve real teacher_id ──
         $teacher_id = $_SESSION['teacher_id'] ?? 0;
         if (!$teacher_id) {
             $result = $teacherModel->getTeacherIdByUserId($_SESSION['user_id'] ?? 0);
@@ -50,20 +51,24 @@ class TeacherController
             $_SESSION['teacher_id'] = $teacher_id;
         }
 
+        // ── Get class info for THIS specific section only ──
         $classInfo = $teacherModel->getClassInfo($subject_id, $grade_level_id, $section_id);
 
+        // ── Classes Feed modules (with their attached materials) ──
         $cfModules = $teacherModel->getModules($subject_id, $teacher_id);
         foreach ($cfModules as &$mod) {
             $mod['materials'] = $teacherModel->getMaterialsByModule($mod['id']);
         }
         unset($mod);
 
+        // ── Interactive modules (with their lessons) ──
         $imModules = $teacherModel->getInteractiveModulesWithCount($subject_id, $teacher_id);
         foreach ($imModules as &$im) {
             $im['lessons'] = $teacherModel->getLessonsByModule($im['id']);
         }
         unset($im);
 
+        // ── Student count for this specific section ──
         $studentCount = $teacherModel->getStudentCountBySection($subject_id, $section_id);
 
         $totalLessons = 0;
@@ -80,7 +85,6 @@ class TeacherController
             'imModules' => $imModules,
             'studentCount' => $studentCount,
             'totalLessons' => $totalLessons,
-            'teacherModel' => $teacherModel,
         ]);
         require "../teacher_folder/records.php";
     }
@@ -94,17 +98,11 @@ class TeacherController
         $subject_id = (int) ($_GET['id'] ?? 0);
         $grade_level_id = (int) ($_GET['grade_id'] ?? 0);
         $section_id = (int) ($_GET['section_id'] ?? 0);
-
-        $teacherModel = new Teacher();
-        $classInfo = $teacherModel->getClassInfo($subject_id, $grade_level_id, $section_id);
-
         extract([
             'subject_id' => $subject_id,
             'grade_level_id' => $grade_level_id,
             'section_id' => $section_id,
-            'classInfo' => $classInfo,
         ]);
-
         require "../teacher_folder/lessons.php";
     }
 
@@ -117,112 +115,11 @@ class TeacherController
         $subject_id = (int) ($_GET['id'] ?? 0);
         $grade_level_id = (int) ($_GET['grade_id'] ?? 0);
         $section_id = (int) ($_GET['section_id'] ?? 0);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $title = htmlspecialchars($_POST['title'] ?? '');
+            $content = htmlspecialchars($_POST['content'] ?? '');
+        }
         header("Location: /learning_management/public/?url=teacher_class&id=$subject_id&grade_id=$grade_level_id&section_id=$section_id");
-        exit;
-    }
-
-    public function save_announcement()
-    {
-        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
-            header("Location: ?url=login");
-            exit;
-        }
-        $teacherModel = new Teacher();
-        $subject_id = (int) ($_POST['subject_id'] ?? 0);
-        $grade_level_id = (int) ($_POST['grade_level_id'] ?? 0);
-        $section_id = (int) ($_POST['section_id'] ?? 0);
-        $title = trim($_POST['title'] ?? '');
-        $body = trim($_POST['body'] ?? '');
-
-        $teacher_id = $_SESSION['teacher_id'] ?? 0;
-        if (!$teacher_id) {
-            $result = $teacherModel->getTeacherIdByUserId($_SESSION['user_id'] ?? 0);
-            $teacher_id = (int) ($result['teacher_id'] ?? 0);
-            $_SESSION['teacher_id'] = $teacher_id;
-        }
-
-        if ($subject_id && $title && $body && $teacher_id) {
-            $teacherModel->insertAnnouncement($subject_id, $teacher_id, $title, $body);
-        }
-
-        $_SESSION['save_success'] = true;
-        header("Location: /learning_management/public/?url=teacher_class&id={$subject_id}&grade_id={$grade_level_id}&section_id={$section_id}");
-        exit;
-    }
-
-    public function save_assignment()
-    {
-        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
-            header("Location: ?url=login");
-            exit;
-        }
-        $teacherModel = new Teacher();
-        $subject_id = (int) ($_POST['subject_id'] ?? 0);
-        $grade_level_id = (int) ($_POST['grade_level_id'] ?? 0);
-        $section_id = (int) ($_POST['section_id'] ?? 0);
-
-        $teacher_id = $_SESSION['teacher_id'] ?? 0;
-        if (!$teacher_id) {
-            $result = $teacherModel->getTeacherIdByUserId($_SESSION['user_id'] ?? 0);
-            $teacher_id = (int) ($result['teacher_id'] ?? 0);
-            $_SESSION['teacher_id'] = $teacher_id;
-        }
-
-        $titles = $_POST['assignment_title'] ?? [];
-        $descriptions = $_POST['assignment_description'] ?? [];
-        $tasks = $_POST['assignment_task'] ?? [];
-        $instructions = $_POST['assignment_instructions'] ?? [];
-        $types = $_POST['assignment_type'] ?? [];
-        $due_dates = $_POST['assignment_due_date'] ?? [];
-        $points_arr = $_POST['assignment_points'] ?? [];
-
-        // Restructure $_FILES for easier per-index access
-        $files = $_FILES['assignment_file'] ?? [];
-
-        foreach ($titles as $i => $title) {
-            if (empty(trim($title)))
-                continue;
-
-            // Handle file upload per assignment index
-            $fileName = null;
-            $filePath = null;
-            $fileType = null;
-
-            if (!empty($files['tmp_name'][$i]) && $files['error'][$i] === UPLOAD_ERR_OK) {
-                $originalName = basename($files['name'][$i]);
-                $fileType = $files['type'][$i];
-                $uploadDir = __DIR__ . '/../../uploads/assignments/';
-
-                if (!is_dir($uploadDir))
-                    mkdir($uploadDir, 0755, true);
-
-                $uniqueName = uniqid() . '_' . $originalName;
-                $destPath = $uploadDir . $uniqueName;
-
-                if (move_uploaded_file($files['tmp_name'][$i], $destPath)) {
-                    $fileName = $originalName;
-                    $filePath = 'uploads/assignments/' . $uniqueName;
-                }
-            }
-
-            $teacherModel->insertAssignment(
-                $subject_id,
-                $teacher_id,
-                trim($title),
-                trim($descriptions[$i] ?? ''),
-                trim($tasks[$i] ?? ''),
-                trim($instructions[$i] ?? ''),
-                trim($types[$i] ?? 'seatwork'),
-                trim($due_dates[$i] ?? '') ?: null,
-                (int) ($points_arr[$i] ?? 100),
-                $fileName,
-                $filePath,
-                $fileType
-            );
-        }
-
-        $_SESSION['save_success'] = true;
-        header("Location: /learning_management/public/?url=teacher_class&id={$subject_id}&grade_id={$grade_level_id}&section_id={$section_id}");
         exit;
     }
 
@@ -241,8 +138,6 @@ class TeacherController
 
     // ============================================================
     // SAVE LESSONS
-    // All content (quiz, activity, flashcard, video, image)
-    // now goes into interactive_contents table
     // ============================================================
     public function save_lessons()
     {
@@ -256,6 +151,7 @@ class TeacherController
         $grade_level_id = (int) ($_POST['grade_level_id'] ?? 0);
         $section_id = (int) ($_POST['section_id'] ?? 0);
 
+        // ── Resolve real teacher_id ──
         $teacher_id = $_SESSION['teacher_id'] ?? 0;
         if (!$teacher_id) {
             $result = $teacherModel->getTeacherIdByUserId($_SESSION['user_id'] ?? 0);
@@ -275,9 +171,7 @@ class TeacherController
         $baseUpload = dirname(__DIR__, 2) . '/uploads/';
         $pdfDir = $baseUpload . 'modules/pdfs/';
         $imageDir = $baseUpload . 'lessons/images/';
-        $videoDir = $baseUpload . 'lessons/videos/';
-
-        foreach ([$pdfDir, $imageDir, $videoDir] as $dir) {
+        foreach ([$pdfDir, $imageDir] as $dir) {
             if (!is_dir($dir))
                 mkdir($dir, 0755, true);
         }
@@ -294,8 +188,19 @@ class TeacherController
             $cfModuleNumber = $existingCFCount + $cfIdx + 1;
             $numberedCFTitle = 'Module ' . $cfModuleNumber . ': ' . trim($cfTitle);
 
-            $fileName = $filePath = $fileType = null;
-            $fileSize = 0;
+            $modResult = $teacherModel->insertModule(
+                $subject_id,
+                $numberedCFTitle,
+                trim($cfDescriptions[$cfIdx] ?? ''),
+                $teacher_id,
+                $cfModuleNumber
+            );
+
+            $moduleId = $modResult['id'] ?? null;
+            if (!$moduleId)
+                continue;
+            if ($modResult['existed'])
+                $skipped['cf_modules'][] = $numberedCFTitle;
 
             $pdfFiles = $_FILES['cf_module_pdf'] ?? [];
             $pdfNames = $pdfFiles['name'][$cfIdx] ?? [];
@@ -313,27 +218,15 @@ class TeacherController
                     continue;
                 $uniqueName = uniqid('mod_') . '.' . $ext;
                 if (move_uploaded_file($pdfTmps[$pIdx], $pdfDir . $uniqueName)) {
-                    $fileName = $pdfName;
-                    $filePath = '/learning_management/uploads/modules/pdfs/' . $uniqueName;
-                    $fileType = $ext;
-                    $fileSize = (int) ($pdfSizes[$pIdx] ?? 0);
-                    break;
+                    $teacherModel->insertModuleMaterial(
+                        $moduleId,
+                        $pdfName,
+                        '/learning_management/uploads/modules/pdfs/' . $uniqueName,
+                        $ext,
+                        $pdfSizes[$pIdx] ?? 0,
+                        $pIdx + 1
+                    );
                 }
-            }
-
-            $modResult = $teacherModel->insertModule(
-                $subject_id,
-                $numberedCFTitle,
-                trim($cfDescriptions[$cfIdx] ?? ''),
-                $teacher_id,
-                $fileName,
-                $filePath,
-                $fileType,
-                $fileSize
-            );
-
-            if ($modResult['existed']) {
-                $skipped['cf_modules'][] = $numberedCFTitle;
             }
         }
 
@@ -356,6 +249,7 @@ class TeacherController
                 $imModuleNumber,
                 $teacher_id
             );
+
             $interactiveModuleId = $imResult['id'] ?? null;
             if (!$interactiveModuleId)
                 continue;
@@ -378,30 +272,26 @@ class TeacherController
                     $interactiveModuleId,
                     $numberedLesTitle,
                     trim($lessonTopics[$lesIdx] ?? ''),
-                    trim($lessonContents[$lesIdx] ?? '')
+                    trim($lessonContents[$lesIdx] ?? ''),
+                    $lessonNumber
                 );
+
                 $lessonId = $lesResult['id'] ?? null;
                 if (!$lessonId)
                     continue;
-                if ($lesResult['existed']) {
+                if ($lesResult['existed'])
                     $skipped['lessons'][] = $numberedLesTitle . ' (in ' . $numberedIMTitle . ')';
-                }
 
-                // ── VIDEOS → interactive_contents ──
+                // ── VIDEOS ──
                 $videoTitles = $_POST['video_title'][$modIdx][$lesIdx] ?? [];
                 $videoUrls = $_POST['video_url'][$modIdx][$lesIdx] ?? [];
-
                 foreach ($videoTitles as $vIdx => $vTitle) {
                     if (empty(trim($vTitle)) || empty(trim($videoUrls[$vIdx] ?? '')))
                         continue;
-                    $teacherModel->insertInteractiveContent($lessonId, 'video', [
-                        'title' => trim($vTitle),
-                        'file_path' => trim($videoUrls[$vIdx]),
-                        'file_type' => 'url',
-                    ]);
+                    $teacherModel->insertLessonVideo($lessonId, trim($vTitle), trim($videoUrls[$vIdx]), $vIdx + 1);
                 }
 
-                // ── IMAGES → interactive_contents ──
+                // ── IMAGES ──
                 $imageFiles = $_FILES['image_file'] ?? [];
                 $imageTitles = $_POST['image_title'][$modIdx][$lesIdx] ?? [];
                 $fileNames = $imageFiles['name'][$modIdx][$lesIdx] ?? [];
@@ -409,33 +299,45 @@ class TeacherController
                 $fileErrors = $imageFiles['error'][$modIdx][$lesIdx] ?? [];
                 $fileSizes = $imageFiles['size'][$modIdx][$lesIdx] ?? [];
 
-                foreach ($fileNames as $iIdx => $imgFileName) {
+                foreach ($fileNames as $iIdx => $fileName) {
                     if (($fileErrors[$iIdx] ?? 1) !== UPLOAD_ERR_OK)
                         continue;
-                    if (empty($imgFileName) || ($fileSizes[$iIdx] ?? 0) > 5 * 1024 * 1024)
+                    if (empty($fileName) || ($fileSizes[$iIdx] ?? 0) > 5 * 1024 * 1024)
                         continue;
-                    $ext = strtolower(pathinfo($imgFileName, PATHINFO_EXTENSION));
+                    $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
                     if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
                         continue;
                     $uniqueName = uniqid('img_') . '.' . $ext;
                     if (move_uploaded_file($fileTmps[$iIdx], $imageDir . $uniqueName)) {
-                        $teacherModel->insertInteractiveContent($lessonId, 'image', [
-                            'title' => trim($imageTitles[$iIdx] ?? ''),
-                            'file_path' => '/learning_management/uploads/lessons/images/' . $uniqueName,
-                            'file_name' => $imgFileName,
-                            'file_type' => $ext,
-                        ]);
+                        $teacherModel->insertLessonImage(
+                            $lessonId,
+                            '/learning_management/uploads/lessons/images/' . $uniqueName,
+                            trim($imageTitles[$iIdx] ?? ''),
+                            $iIdx + 1
+                        );
                     }
                 }
 
-                // ── ACTIVITIES → interactive_contents ──
+                // ── ACTIVITIES ──
                 $actTitles = $_POST['activity_title'][$modIdx][$lesIdx] ?? [];
                 $actInstructions = $_POST['activity_instructions'][$modIdx][$lesIdx] ?? [];
                 $actPoints = $_POST['activity_points'][$modIdx][$lesIdx] ?? [];
+                $actTimes = $_POST['activity_time'][$modIdx][$lesIdx] ?? [];
 
                 foreach (array_keys($actTitles) as $loopIdx => $aIdx) {
                     $aTitle = $actTitles[$aIdx];
                     if (empty(trim($aTitle)))
+                        continue;
+                    $activityId = $teacherModel->insertActivity(
+                        $lessonId,
+                        $interactiveModuleId,
+                        trim($aTitle),
+                        trim($actInstructions[$aIdx] ?? ''),
+                        (int) ($actPoints[$aIdx] ?? 0),
+                        (int) ($actTimes[$aIdx] ?? 0),
+                        $loopIdx + 1
+                    );
+                    if (!$activityId)
                         continue;
 
                     $qTypes = $_POST['activity_question_type'][$modIdx][$lesIdx][$aIdx] ?? [];
@@ -451,43 +353,58 @@ class TeacherController
                         if (empty(trim($qText)))
                             continue;
                         $qType = $qTypes[$qIdx] ?? 'essay';
-
-                        $teacherModel->insertInteractiveContent($lessonId, 'activity', [
-                            'title' => trim($aTitle),
-                            'instructions' => trim($actInstructions[$aIdx] ?? ''),
-                            'total_points' => (int) ($actPoints[$aIdx] ?? 0),
-                            'question' => trim($qText),
-                            'question_type' => $qType,
-                            'model_answer' => $qType === 'essay'
-                                ? (trim($qAnswers[$qIdx] ?? '') ?: null)
-                                : null,
-                            'choice_a' => $qType === 'multiple_choice'
-                                ? (trim($qChoiceA[$qIdx] ?? '') ?: null)
-                                : null,
-                            'choice_b' => $qType === 'multiple_choice'
-                                ? (trim($qChoiceB[$qIdx] ?? '') ?: null)
-                                : null,
-                            'choice_c' => $qType === 'multiple_choice'
-                                ? (trim($qChoiceC[$qIdx] ?? '') ?: null)
-                                : null,
-                            'choice_d' => $qType === 'multiple_choice'
-                                ? (trim($qChoiceD[$qIdx] ?? '') ?: null)
-                                : null,
-                            'correct_ans' => $qType === 'multiple_choice'
-                                ? (strtolower($qCorrect[$qIdx] ?? 'a') ?: null)
-                                : null,
-                        ]);
+                        if ($qType === 'multiple_choice') {
+                            $teacherModel->insertActivityQuestion(
+                                $activityId,
+                                $qType,
+                                trim($qText),
+                                null,
+                                trim($qChoiceA[$qIdx] ?? '') ?: null,
+                                trim($qChoiceB[$qIdx] ?? '') ?: null,
+                                trim($qChoiceC[$qIdx] ?? '') ?: null,
+                                trim($qChoiceD[$qIdx] ?? '') ?: null,
+                                strtolower($qCorrect[$qIdx] ?? 'a') ?: null,
+                                1,
+                                $qIdx + 1
+                            );
+                        } else {
+                            $teacherModel->insertActivityQuestion(
+                                $activityId,
+                                $qType,
+                                trim($qText),
+                                trim($qAnswers[$qIdx] ?? '') ?: null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                null,
+                                1,
+                                $qIdx + 1
+                            );
+                        }
                     }
                 }
 
-                // ── QUIZZES → interactive_contents ──
+                // ── QUIZZES ──
                 $quizTitles = $_POST['quiz_title'][$modIdx][$lesIdx] ?? [];
                 $quizInstruct = $_POST['quiz_instructions'][$modIdx][$lesIdx] ?? [];
+                $quizTimes = $_POST['quiz_time_limit'][$modIdx][$lesIdx] ?? [];
                 $quizPassing = $_POST['quiz_passing_score'][$modIdx][$lesIdx] ?? [];
 
                 foreach (array_keys($quizTitles) as $loopIdx => $qzIdx) {
                     $qzTitle = $quizTitles[$qzIdx];
                     if (empty(trim($qzTitle)))
+                        continue;
+                    $quizId = $teacherModel->insertQuiz(
+                        $lessonId,
+                        $interactiveModuleId,
+                        trim($qzTitle),
+                        trim($quizInstruct[$qzIdx] ?? ''),
+                        (int) ($quizTimes[$qzIdx] ?? 30),
+                        (int) ($quizPassing[$qzIdx] ?? 75),
+                        $loopIdx + 1
+                    );
+                    if (!$quizId)
                         continue;
 
                     $qqTexts = $_POST['question_text'][$modIdx][$lesIdx][$qzIdx] ?? [];
@@ -500,23 +417,21 @@ class TeacherController
                     foreach ($qqTexts as $qqIdx => $qqText) {
                         if (empty(trim($qqText)))
                             continue;
-
-                        $teacherModel->insertInteractiveContent($lessonId, 'quiz', [
-                            'title' => trim($qzTitle),
-                            'instructions' => trim($quizInstruct[$qzIdx] ?? ''),
-                            'passing_score' => (int) ($quizPassing[$qzIdx] ?? 75),
-                            'question' => trim($qqText),
-                            'question_type' => 'multiple_choice',
-                            'choice_a' => trim($qqChoiceA[$qqIdx] ?? '') ?: null,
-                            'choice_b' => trim($qqChoiceB[$qqIdx] ?? '') ?: null,
-                            'choice_c' => trim($qqChoiceC[$qqIdx] ?? '') ?: null,
-                            'choice_d' => trim($qqChoiceD[$qqIdx] ?? '') ?: null,
-                            'correct_ans' => strtolower($qqCorrect[$qqIdx] ?? 'a'),
-                        ]);
+                        $teacherModel->insertQuizQuestion(
+                            $quizId,
+                            trim($qqText),
+                            trim($qqChoiceA[$qqIdx] ?? '') ?: null,
+                            trim($qqChoiceB[$qqIdx] ?? '') ?: null,
+                            trim($qqChoiceC[$qqIdx] ?? '') ?: null,
+                            trim($qqChoiceD[$qqIdx] ?? '') ?: null,
+                            strtolower($qqCorrect[$qqIdx] ?? 'a'),
+                            1,
+                            $qqIdx + 1
+                        );
                     }
                 }
 
-                // ── FLASHCARDS → interactive_contents ──
+                // ── FLASHCARDS ──
                 $fcFronts = $_POST['flashcard_front'][$modIdx][$lesIdx] ?? [];
                 $fcBacks = $_POST['flashcard_back'][$modIdx][$lesIdx] ?? [];
                 $fcTypes = $_POST['flashcard_type'][$modIdx][$lesIdx] ?? [];
@@ -524,11 +439,14 @@ class TeacherController
                 foreach ($fcFronts as $fcIdx => $fcFront) {
                     if (empty(trim($fcFront)) || empty(trim($fcBacks[$fcIdx] ?? '')))
                         continue;
-                    $teacherModel->insertInteractiveContent($lessonId, 'flashcard', [
-                        'card_type' => $fcTypes[$fcIdx] ?? 'term_definition',
-                        'card_front' => trim($fcFront),
-                        'card_back' => trim($fcBacks[$fcIdx]),
-                    ]);
+                    $teacherModel->insertFlashcard(
+                        $lessonId,
+                        $interactiveModuleId,
+                        $fcTypes[$fcIdx] ?? 'term_definition',
+                        trim($fcFront),
+                        trim($fcBacks[$fcIdx]),
+                        $fcIdx + 1
+                    );
                 }
             }
         }
