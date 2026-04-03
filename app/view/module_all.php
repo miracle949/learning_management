@@ -18,7 +18,9 @@
         }
 
         .container-fluid .welcome-user {
-            padding: 45px 35px 35px 45px;
+            /* padding: 35px 35px 35px 35px; */
+            padding: 4.5rem 3rem 4.5rem 3rem;
+            /* match dashboard */
             background-color: var(--green);
             width: 100%;
             border-radius: 10px;
@@ -98,12 +100,12 @@
             position: relative;
         }
 
-        .rightbar .module-parent .learning-catalog {
+        /* .rightbar .module-parent .learning-catalog {
             position: sticky;
             left: 0;
             top: 80px;
             height: calc(100% - 68px);
-        }
+        } */
 
         .rightbar .module-parent .learning-catalog h4 {
             font-size: 19px;

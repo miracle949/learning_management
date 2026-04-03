@@ -53,7 +53,7 @@
                     </div>
 
                     <div class="button">
-                        <button class="submit">Login</button>
+                        <button class="submit" class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">Login</button>
                     </div>
 
                     <!-- <h4>Or Login with</h4>

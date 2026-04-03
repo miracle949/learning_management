@@ -25,6 +25,24 @@
                     <button><i class="fa fa-sign-out"></i> Logout</button>
                 </form>
             </nav> -->
+
+
+            <!-- <div class="classes-section-grade">
+                                    <?php foreach ($sections as $section): ?>
+                                        <div class="count section">
+                                            <span><?= htmlspecialchars(trim($section)) ?></span>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div> -->
+
+            <!-- <div class="view-classes">
+                                        <p>Created 1/5/2026</p>
+                                        <a
+                                            href="?url=teacher_class&id=<?= (int) $class['subject_id'] ?>&grade_id=<?= (int) $class['grade_level_id'] ?>">
+                                            View class <i class="fa fa-arrow-right"></i>
+                                        </a>
+                                    </div> -->
+
             <?php include("../teacher_folder/nav.php"); ?>
 
             <main>
@@ -61,7 +79,7 @@
                     <!-- TOTAL MODULES -->
                     <div class="card-box">
                         <div class="card-text">
-                            <span>Total Modules</span>
+                            <span>Submitted Assignments</span>
                             <p><?= (int) ($stats['total_modules'] ?? 0) ?></p>
                         </div>
                         <div class="card-icon">
@@ -71,58 +89,105 @@
 
                 </div>
 
-                <!-- <h5 class="mt-5">Your Classes</h5>
 
-                <div class="parent-classes">
-                    <?php if (empty($classes)): ?>
-                        <p>No classes assigned yet. Please contact your administrator.</p>
-                    <?php else: ?>
-
-                        <?php foreach ($classes as $index => $class):
-                            $sections = array_unique(explode(', ', $class['sections']));
-                            $delay = $index * 0.1;
-                            ?>
-
-                            <div class="classes" style="animation-delay: <?= $delay ?>s">
-                                <div class="class-accent"></div>
-
-                                <div class="classes-name">
-                                    <h3><?= htmlspecialchars($class['subject_name']) ?></h3>
-                                    <p><?= htmlspecialchars($class['grade_name']) ?></p>
+                <div class="parent-box-classes">
+                    <div class="sub-student">
+                        <div class="student-assignment">
+                            <h5>Students</h5>
+                            <div class="student-names">
+                                <div class="student-box">
+                                    <p>Rogelio A. Amoyan Jr.</p>
+                                    <span>CSS 12-1</span>
                                 </div>
 
-                                <div class="classes-section-grade">
-                                    <?php foreach ($sections as $section): ?>
-                                        <div class="count section">
-                                            <span><?= htmlspecialchars(trim($section)) ?></span>
-                                        </div>
-                                    <?php endforeach; ?>
+                                <div class="student-box">
+                                    <p>Rogelio A. Amoyan Jr.</p>
+                                    <span>CSS 12-1</span>
                                 </div>
 
-                                <div class="classes-student-module">
-                                    <div class="students">
-                                        <h4><?= (int) ($class['student_count'] ?? 0) ?></h4>
-                                        <p>Students</p>
-                                    </div>
-                                    <div class="modules">
-                                        <h4><?= (int) ($class['module_count'] ?? 0) ?></h4>
-                                        <p>Modules</p>
-                                    </div>
+                                <div class="student-box">
+                                    <p>Rogelio A. Amoyan Jr.</p>
+                                    <span>CSS 12-1</span>
                                 </div>
 
-                                <div class="view-classes">
-                                    <p>Created 1/5/2026</p>
-                                    <a
-                                        href="?url=teacher_class&id=<?= (int) $class['subject_id'] ?>&grade_id=<?= (int) $class['grade_level_id'] ?>">
-                                        View class <i class="fa fa-arrow-right"></i>
-                                    </a>
+                                <div class="student-box">
+                                    <p>Rogelio A. Amoyan Jr.</p>
+                                    <span>CSS 12-1</span>
                                 </div>
                             </div>
+                        </div>
 
-                        <?php endforeach; ?>
+                        <div class="sub-assignment">
+                            <h5>Assignments Completed</h5>
+                            <div class="assignment-complete">
+                                <div class="assignment-box">
+                                    <p>Rogelio A. Amoyan Jr.</p>
+                                    <span>CSS 12-1</span>
+                                </div>
 
-                    <?php endif; ?>
-                </div> -->
+                                <div class="assignment-box">
+                                    <p>Rogelio A. Amoyan Jr.</p>
+                                    <span>CSS 12-1</span>
+                                </div>
+
+                                <div class="assignment-box">
+                                    <p>Rogelio A. Amoyan Jr.</p>
+                                    <span>CSS 12-1</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="classes-assignment">
+                        <div class="sub-classes">
+                            <h5>Your Classes</h5>
+                            <div class="parent-classes">
+                                <?php if (empty($classes)): ?>
+                                    <p>No classes assigned yet. Please contact your administrator.</p>
+                                <?php else: ?>
+
+                                    <?php foreach ($classes as $index => $class):
+                                        $sections = !empty($class['sections'])
+                                            ? array_unique(explode(', ', $class['sections']))
+                                            : [];
+                                        $delay = $index * 0.1;
+                                        ?>
+
+                                        <div class="classes" style="animation-delay: <?= $delay ?>s">
+                                            <div class="class-accent"></div>
+
+                                            <div class="classes-name">
+                                                <h3>
+                                                    <?= htmlspecialchars($class['subject_name']) ?>
+                                                </h3>
+                                                <p>
+                                                    <?= htmlspecialchars($class['sections'] ?? '') ?>
+                                                </p>
+                                            </div>
+                                            <div class="classes-student-module">
+                                                <div class="students">
+                                                    <h4>
+                                                        <?= (int) ($class['student_count'] ?? 0) ?>
+                                                    </h4>
+                                                    <p>Students</p>
+                                                </div>
+                                                <!-- <div class="modules">
+                                                <h4>
+                                                    <?= (int) ($class['module_count'] ?? 0) ?>
+                                                </h4>
+                                                <p>Modules</p>
+                                            </div> -->
+                                            </div>
+
+
+                                        </div>
+
+                                    <?php endforeach; ?>
+
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
             </main>
         </div>

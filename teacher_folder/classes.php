@@ -274,7 +274,7 @@
             margin: 0;
         }
 
-        .container-fluid .rightbar main{
+        .container-fluid .rightbar main {
             margin-top: 68px;
         }
     </style>

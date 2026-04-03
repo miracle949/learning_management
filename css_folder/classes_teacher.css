@@ -122,7 +122,7 @@
 .container-fluid .rightbar {
     width: calc(100% - 235px);
     height: 100vh;
-    overflow-y: auto;
+    /* overflow-y: auto; */
     margin-left: 235px;
     border-left: 1px solid rgba(0, 0, 0, 0.1);
     background-color: #F7F9F8;

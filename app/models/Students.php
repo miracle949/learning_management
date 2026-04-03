@@ -32,13 +32,46 @@ class Students extends Model
         return [];
     }
 
+    public function getAssignmentSubmission($assignmentId, $studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT id, submitted_at FROM assignment_submissions
+        WHERE assignment_id = ? AND student_id = ? LIMIT 1
+    ");
+        $stmt->bind_param("ii", $assignmentId, $studentId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function saveAssignmentSubmission($assignmentId, $studentId, $filePath, $message)
+    {
+        $stmt = $this->db->prepare("
+        INSERT INTO assignment_submissions 
+            (assignment_id, student_id, file_path, message, submitted_at, status)
+        VALUES (?, ?, ?, ?, NOW(), 'submitted')
+    ");
+        $stmt->bind_param("iiss", $assignmentId, $studentId, $filePath, $message);
+        return $stmt->execute();
+    }
+
     // ============================================================
     // ASSIGNMENT VIEW
     // ============================================================
+    public function deleteAssignmentSubmission($assignmentId, $studentId)
+    {
+        $stmt = $this->db->prepare("
+        DELETE FROM assignment_submissions
+        WHERE assignment_id = ? AND student_id = ?
+        LIMIT 1
+    ");
+        $stmt->bind_param("ii", $assignmentId, $studentId);
+        return $stmt->execute();
+    }
+
     public function getAssignmentByIdAndSlug($assignmentId, $subjectSlug)
     {
         $stmt = $this->db->prepare("
-            SELECT a.id, a.title, a.description, a.posted_at, a.due_date, s.subject_name, s.subject_code
+            SELECT a.id, a.title, a.description, a.task, a.instructions, a.posted_at, a.points, a.due_date, s.subject_name, s.subject_code
             FROM assignments a JOIN subjects s ON a.subject_id = s.id
             WHERE a.id = ? AND s.subject_code = ? LIMIT 1
         ");
@@ -553,5 +586,63 @@ class Students extends Model
         $stmt->execute();
         $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         return array_column($rows, 'interactive_modules_id');
+    }
+
+    public function getCompletedAssignments($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT a.id, a.task, a.due_date, s.subject_code, sub.submitted_at
+        FROM assignments a
+        JOIN assignment_submissions sub ON sub.assignment_id = a.id
+        JOIN subjects s ON a.subject_id = s.id
+        WHERE sub.student_id = ?
+        ORDER BY sub.submitted_at DESC
+    ");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getPendingAssignments($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT a.id, a.task, a.due_date, s.subject_code
+        FROM assignments a
+        JOIN subjects s ON a.subject_id = s.id
+        JOIN student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+        WHERE a.id NOT IN (
+            SELECT assignment_id FROM assignment_submissions WHERE student_id = ?
+        )
+        ORDER BY a.due_date ASC
+    ");
+        $stmt->bind_param("ii", $studentId, $studentId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function countCompletedAssignments($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total FROM assignment_submissions WHERE student_id = ?
+    ");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function countPendingAssignments($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total
+        FROM assignments a
+        JOIN subjects s ON a.subject_id = s.id
+        JOIN student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+        WHERE a.id NOT IN (
+            SELECT assignment_id FROM assignment_submissions WHERE student_id = ?
+        )
+    ");
+        $stmt->bind_param("ii", $studentId, $studentId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
     }
 }

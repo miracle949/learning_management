@@ -396,7 +396,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="col-lg-6 mt-3">
                     <label class="cw-label">Type</label>
                     <div class="cw-select-wrap">
-                        <select name="assignment_type[]" class="cw-select mt-2"><option value="seatwork">Seatwork</option><option value="homework">Homework</option><option value="project">Project</option><option value="quiz">Quiz</option><option value="exam">Exam</option><option value="performance">Performance Task</option></select>
+                        <select name="assignment_type[]" class="cw-select mt-2"><option value="Seatwork">Seatwork</option><option value="Homework">Homework</option><option value="Project">Project</option><option value="Quiz">Quiz</option><option value="Exam">Exam</option><option value="Performance">Performance Task</option></select>
                         <i class="fa fa-chevron-down cw-select-icon"></i>
                     </div>
                 </div>

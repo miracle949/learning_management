@@ -42,7 +42,8 @@
     width: calc(100% - 235px);
     margin-left: 235px;
     /* width: calc(100% - 250px); */
-    height: calc(100% - 66px);
+    height: calc(100vh - 66px);
+    overflow-y: auto;
     margin-top: 66px;
     /* margin-left: 250px; */
     /* padding: 3rem; */
@@ -214,7 +215,7 @@
     text-decoration: none;
     /* background-color: #6B69BA; */
     /* background-color: #9333ea; */
-    background-color: var(--green);
+    background-color: var(--green-dark);
     padding: 10px 35px;
     color: #ffffff;
     text-transform: uppercase;

@@ -15,50 +15,50 @@ class Teacher extends Model
     public function getTeacherClasses($teacher_id)
     {
         $sql = "
-            SELECT
-                ta.subject_id,
-                ta.grade_level_id,
-                ta.section_id,
-                s.subject_name,
-                gl.name AS grade_name,
-                sec.section_name AS section,
-                COUNT(DISTINCT se.student_id) AS student_count,
-                (
-                    SELECT COUNT(m.id)
-                    FROM modules m
-                    WHERE m.subject_id = ta.subject_id AND m.posted_by = ta.teacher_id
-                ) AS material_count,
-                (
-                    SELECT COUNT(*)
-                    FROM modules m
-                    WHERE m.subject_id = ta.subject_id AND m.posted_by = ta.teacher_id
-                    AND LOWER(m.title) LIKE '%announcement%'
-                ) AS announcement_count,
-                (
-                    SELECT COUNT(*)
-                    FROM modules m
-                    WHERE m.subject_id = ta.subject_id AND m.posted_by = ta.teacher_id
-                ) AS module_count,
-                (
-                    SELECT COUNT(*)
-                    FROM interactive_modules im
-                    WHERE im.subject_id = ta.subject_id AND im.teacher_id = ta.teacher_id
-                ) AS interactive_module_count
-            FROM teacher_assignments ta
-            JOIN subjects s    ON ta.subject_id     = s.id
-            JOIN grade_level gl ON ta.grade_level_id = gl.id
-            JOIN sections sec   ON ta.section_id     = sec.id
-            LEFT JOIN student_enrollments se
-                ON se.subject_id = ta.subject_id AND se.section_id = ta.section_id
-            WHERE ta.teacher_id = ?
-            GROUP BY ta.subject_id, ta.grade_level_id, ta.section_id,
-                     s.subject_name, gl.name, sec.section_name
-            ORDER BY gl.name, s.subject_name, sec.section_name
-        ";
+    SELECT
+        ta.subject_id,
+        ta.grade_level_id,
+        ta.section_id,
+        s.subject_name,
+        gl.name AS grade_name,
+        sec.section_name AS section,
+        COUNT(DISTINCT se.student_id) AS student_count,
+        (
+            SELECT COUNT(*) FROM modules m
+            WHERE m.subject_id = ta.subject_id AND m.teacher_id = ta.teacher_id
+        ) AS material_count,
+        (
+            SELECT COUNT(*) FROM announcements a
+            WHERE a.subject_id = ta.subject_id AND a.teacher_id = ta.teacher_id
+        ) AS announcement_count,
+        (
+            SELECT COUNT(*) FROM interactive_modules im
+            WHERE im.subject_id = ta.subject_id AND im.teacher_id = ta.teacher_id
+        ) AS interactive_module_count
+    FROM teacher_assignments ta
+    JOIN subjects s     ON ta.subject_id     = s.id
+    JOIN grade_level gl  ON ta.grade_level_id = gl.id
+    JOIN sections sec    ON ta.section_id     = sec.id
+    LEFT JOIN student_enrollments se
+        ON se.subject_id = ta.subject_id AND se.section_id = ta.section_id
+    WHERE ta.teacher_id = ?
+    GROUP BY ta.subject_id, ta.grade_level_id, ta.section_id,
+             s.subject_name, gl.name, sec.section_name
+    ORDER BY gl.name, s.subject_name, sec.section_name
+    ";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("i", $teacher_id);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getUserIdByTeacherId($teacher_id)
+    {
+        $stmt = $this->db->prepare("SELECT user_id FROM teachers WHERE id = ?");
+        $stmt->bind_param("i", $teacher_id);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        return $row['user_id'] ?? null;
     }
 
     // ============================================================
@@ -175,22 +175,75 @@ class Teacher extends Model
         return $this->db->insert_id;
     }
 
+    private function generateJoinCode($length = 7)
+    {
+        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        do {
+            $code = '';
+            for ($i = 0; $i < $length; $i++) {
+                $code .= $characters[random_int(0, strlen($characters) - 1)];
+            }
+            // Check uniqueness in teacher_assignments now
+            $stmt = $this->db->prepare("SELECT COUNT(*) AS cnt FROM teacher_assignments WHERE join_code = ?");
+            $stmt->bind_param("s", $code);
+            $stmt->execute();
+            $count = (int) $stmt->get_result()->fetch_assoc()['cnt'];
+            $stmt->close();
+        } while ($count > 0);
+
+        return $code;
+    }
+
     public function assignSubjectsAndSections($teacher_id, $assigned_subjects, $assigned_sections)
     {
         foreach ($assigned_subjects as $subject_id) {
+
             $stmt = $this->db->prepare("SELECT grade_level_id FROM subjects WHERE id = ?");
             $stmt->bind_param("i", $subject_id);
             $stmt->execute();
             $subject = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
             $grade_level_id = $subject['grade_level_id'] ?? null;
+
             foreach ($assigned_sections as $section_id) {
                 $check = $this->db->prepare("SELECT id FROM sections WHERE id = ? AND grade_level_id = ?");
                 $check->bind_param("ii", $section_id, $grade_level_id);
                 $check->execute();
-                if ($check->get_result()->fetch_assoc()) {
-                    $insert = $this->db->prepare("INSERT INTO teacher_assignments (teacher_id, subject_id, grade_level_id, section_id) VALUES (?, ?, ?, ?)");
-                    $insert->bind_param("iiii", $teacher_id, $subject_id, $grade_level_id, $section_id);
-                    $insert->execute();
+                $match = $check->get_result()->fetch_assoc();
+                $check->close();
+
+                if ($match) {
+                    // ── Check if this exact assignment already exists ──
+                    $exist = $this->db->prepare("
+                    SELECT id, join_code FROM teacher_assignments
+                    WHERE teacher_id = ? AND subject_id = ? AND section_id = ?
+                ");
+                    $exist->bind_param("iii", $teacher_id, $subject_id, $section_id);
+                    $exist->execute();
+                    $existing = $exist->get_result()->fetch_assoc();
+                    $exist->close();
+
+                    if ($existing) {
+                        // Already assigned — generate code if missing
+                        if (empty($existing['join_code'])) {
+                            $join_code = $this->generateJoinCode(7);
+                            $upd = $this->db->prepare("UPDATE teacher_assignments SET join_code = ? WHERE id = ?");
+                            $upd->bind_param("si", $join_code, $existing['id']);
+                            $upd->execute();
+                            $upd->close();
+                        }
+                    } else {
+                        // New assignment — generate fresh code
+                        $join_code = $this->generateJoinCode(7);
+                        $insert = $this->db->prepare("
+                        INSERT INTO teacher_assignments (teacher_id, subject_id, grade_level_id, section_id, join_code)
+                        VALUES (?, ?, ?, ?, ?)
+                    ");
+                        $insert->bind_param("iiiis", $teacher_id, $subject_id, $grade_level_id, $section_id, $join_code);
+                        $insert->execute();
+                        $insert->close();
+                    }
                 }
             }
         }
@@ -199,27 +252,84 @@ class Teacher extends Model
     public function getAllTeachers()
     {
         $sql = "
-            SELECT t.id AS teacher_id, u.name, u.email,
-                GROUP_CONCAT(DISTINCT s.subject_name ORDER BY s.subject_name SEPARATOR '||') AS subjects,
-                COUNT(DISTINCT s.subject_name) AS class_count,
-                GROUP_CONCAT(DISTINCT CONCAT(gl.name, ' - ', sec.section_name) ORDER BY gl.name SEPARATOR '||') AS sections
-            FROM teachers t
-            JOIN users u ON t.user_id = u.id
-            LEFT JOIN teacher_assignments ta ON ta.teacher_id = t.id
-            LEFT JOIN subjects s ON ta.subject_id = s.id
-            LEFT JOIN sections sec ON ta.section_id = sec.id
-            LEFT JOIN grade_level gl ON ta.grade_level_id = gl.id
-            WHERE u.role = 'teacher' AND u.status = '1'
-            GROUP BY t.id, u.name, u.email ORDER BY u.name ASC
+        SELECT t.id AS teacher_id, u.name, u.email,
+            GROUP_CONCAT(DISTINCT CONCAT(s.id, '~~', s.subject_name, '~~', COALESCE(ta.join_code, ''))
+                ORDER BY s.subject_name SEPARATOR '||') AS subjects,
+            COUNT(DISTINCT ta.subject_id) AS class_count,
+            GROUP_CONCAT(DISTINCT CONCAT(gl.name, ' - ', sec.section_name)
+                ORDER BY gl.name SEPARATOR '||') AS sections
+        FROM teachers t
+        JOIN users u ON t.user_id = u.id
+        LEFT JOIN teacher_assignments ta ON ta.teacher_id = t.id
+        LEFT JOIN subjects s ON ta.subject_id = s.id
+        LEFT JOIN sections sec ON ta.section_id = sec.id
+        LEFT JOIN grade_level gl ON ta.grade_level_id = gl.id
+        WHERE u.role = 'teacher' AND u.status = '1'
+        GROUP BY t.id, u.name, u.email ORDER BY u.name ASC
         ";
+
         $result = $this->db->query($sql);
         $teachers = [];
         while ($row = $result->fetch_assoc()) {
-            $row['subjects'] = $row['subjects'] ? explode('||', $row['subjects']) : [];
+            if ($row['subjects']) {
+                $pairs = explode('||', $row['subjects']);
+                $row['subjects'] = array_map(function ($pair) {
+                    $parts = explode('~~', $pair, 3);
+                    return [
+                        'id' => $parts[0] ?? '',
+                        'name' => $parts[1] ?? '',
+                        'join_code' => $parts[2] ?? ''
+                    ];
+                }, $pairs);
+            } else {
+                $row['subjects'] = [];
+            }
             $row['sections'] = $row['sections'] ? explode('||', $row['sections']) : [];
             $teachers[] = $row;
         }
         return $teachers;
+    }
+
+    public function getEnrolledStudentsBySubject($subject_id, $teacher_id)
+    {
+        $stmt = $this->db->prepare("
+        SELECT u.name, u.email,
+               gl.name AS grade_level,
+               sec.section_name,
+               sec.id AS section_id,
+               ta.join_code
+        FROM student_enrollments se
+        JOIN students st  ON st.id  = se.student_id
+        JOIN users u      ON u.id   = st.user_id
+        JOIN sections sec ON sec.id = se.section_id
+        JOIN grade_level gl ON gl.id = sec.grade_level_id
+        -- Join teacher_assignments to get the join_code for THIS teacher + subject + section
+        LEFT JOIN teacher_assignments ta
+            ON ta.subject_id  = se.subject_id
+            AND ta.section_id  = se.section_id
+            AND ta.teacher_id  = ?
+        WHERE se.subject_id = ?
+        ORDER BY sec.section_name ASC, u.name ASC
+    ");
+        $stmt->bind_param("ii", $teacher_id, $subject_id);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        // Group by section, include join_code per section
+        $grouped = [];
+        foreach ($rows as $row) {
+            $key = $row['grade_level'] . ' - ' . $row['section_name'];
+            if (!isset($grouped[$key])) {
+                $grouped[$key] = [
+                    'section_label' => $key,
+                    'join_code' => $row['join_code'] ?? '',
+                    'students' => []
+                ];
+            }
+            $grouped[$key]['students'][] = $row;
+        }
+
+        return array_values($grouped);
     }
 
     // ============================================================
@@ -264,11 +374,11 @@ class Teacher extends Model
     public function insertAssignment(
         $subjectId,
         $teacherId,
+        $type,
         $title,
         $description,
         $task,
         $instructions,
-        $type,
         $dueDate,
         $points,
         $fileName = null,
@@ -286,19 +396,19 @@ class Teacher extends Model
 
         $stmt = $this->db->prepare("
         INSERT INTO assignments 
-            (subject_id, teacher_id, title, description, task, instructions, 
-             type, due_date, points, file_name, file_path, file_type, created_at)
+            (subject_id, teacher_id, type, title, description, task, instructions, 
+             due_date, points, file_name, file_path, file_type, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     ");
         $stmt->bind_param(
-            "iiisssssisss",
+            "iissssssisss",
             $subjectId,
             $teacherId,
+            $type,
             $title,
             $desc,
             $task,
             $instr,
-            $type,
             $due,
             $points,
             $fName,
@@ -362,18 +472,33 @@ class Teacher extends Model
         return (int) $stmt->get_result()->fetch_assoc()['total'];
     }
 
+    public function backfillJoinCodes()
+    {
+        $stmt = $this->db->prepare("SELECT id FROM teacher_assignments WHERE join_code IS NULL OR join_code = ''");
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        foreach ($rows as $row) {
+            $join_code = $this->generateJoinCode(7);
+            $upd = $this->db->prepare("UPDATE teacher_assignments SET join_code = ? WHERE id = ?");
+            $upd->bind_param("si", $join_code, $row['id']);
+            $upd->execute();
+            $upd->close();
+        }
+    }
+
     public function getModules($subjectId, $teacherId = null)
     {
         $sql = "
-            SELECT id, title, description, posted_at,
-                   file_name, file_path, file_type, file_size
-            FROM modules
-            WHERE subject_id = ?
-        ";
+        SELECT id, title, description, posted_at,
+               file_name, file_path, file_type, file_size
+        FROM modules
+        WHERE subject_id = ?
+    ";
         $params = [$subjectId];
         $types = "i";
         if ($teacherId) {
-            $sql .= " AND posted_by = ?";
+            $sql .= " AND teacher_id = ?";  // ← not posted_by
             $params[] = $teacherId;
             $types .= "i";
         }
@@ -427,6 +552,21 @@ class Teacher extends Model
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function getSectionsByTeacherSubject($subject_id, $teacher_id)
+    {
+        $stmt = $this->db->prepare("
+        SELECT ta.join_code, sec.section_name, gl.name AS grade_name
+        FROM teacher_assignments ta
+        JOIN sections sec ON sec.id = ta.section_id
+        JOIN grade_level gl ON gl.id = ta.grade_level_id
+        WHERE ta.subject_id = ? AND ta.teacher_id = ?
+        ORDER BY gl.name, sec.section_name
+    ");
+        $stmt->bind_param("ii", $subject_id, $teacher_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function getLessonsByModule($interactiveModuleId)
     {
         $stmt = $this->db->prepare("
@@ -459,7 +599,7 @@ class Teacher extends Model
         $subjectId,
         $title,
         $description,
-        $postedBy,
+        $teacherId,
         $fileName = null,
         $filePath = null,
         $fileType = null,
@@ -469,33 +609,27 @@ class Teacher extends Model
         if ($existingId)
             return ['id' => $existingId, 'existed' => true];
 
-        // Assign to variables — bind_param requires references
         $fName = $fileName ?? null;
         $fPath = $filePath ?? null;
         $fType = $fileType ?? null;
         $fSize = (int) ($fileSize ?? 0);
 
         $stmt = $this->db->prepare("
-        INSERT INTO modules (subject_id, title, description, posted_by, posted_at,
-                             file_name, file_path, file_type, file_size)
-        VALUES (?, ?, ?, ?, NOW(), ?, ?, ?, ?)
-    ");
-
-        // i=subjectId, s=title, s=description, i=postedBy,
-        // s=fileName,  s=filePath, s=fileType, i=fileSize
+    INSERT INTO modules (subject_id, teacher_id, title, description, posted_at,
+                         file_name, file_path, file_type, file_size)
+    VALUES (?, ?, ?, ?, NOW(), ?, ?, ?, ?)
+");
         $stmt->bind_param(
-            "ississsi",  // ← visual guide only, actual:
-            // "i s s i s s s i"
-            $subjectId,   // i
-            $title,       // s
-            $description, // s
-            $postedBy,    // i
-            $fName,       // s  ← was wrongly 'i' before!
-            $fPath,       // s
-            $fType,       // s
-            $fSize        // i
+            "iisssssi",
+            $subjectId,
+            $teacherId,
+            $title,
+            $description,
+            $fName,
+            $fPath,
+            $fType,
+            $fSize
         );
-
         $stmt->execute();
         return ['id' => $this->db->insert_id, 'existed' => false];
     }

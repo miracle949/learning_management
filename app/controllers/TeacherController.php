@@ -21,7 +21,8 @@ class TeacherController
         $user_id = $_SESSION['user_id'];
         $teacher_id = $this->user->getTeacherId($user_id);
         $teacherInfo = $this->user->getTeacherInfo($user_id);
-        $classes = $this->user->getAssignedClasses($teacher_id);
+        $teacherModel = new Teacher();
+        $classes = $teacherModel->getTeacherClassesPerSection($teacher_id);
         $stats = $this->user->getTeacherStats($teacher_id);
         extract(['teacherInfo' => $teacherInfo, 'classes' => $classes, 'stats' => $stats]);
         require "../app/view/teacher.php";
@@ -208,11 +209,11 @@ class TeacherController
             $teacherModel->insertAssignment(
                 $subject_id,
                 $teacher_id,
+                trim($types[$i] ?? 'seatwork'),
                 trim($title),
                 trim($descriptions[$i] ?? ''),
                 trim($tasks[$i] ?? ''),
                 trim($instructions[$i] ?? ''),
-                trim($types[$i] ?? 'seatwork'),
                 trim($due_dates[$i] ?? '') ?: null,
                 (int) ($points_arr[$i] ?? 100),
                 $fileName,
@@ -250,6 +251,27 @@ class TeacherController
             header("Location: ?url=login");
             exit;
         }
+
+        // Instantiate FIRST before using it
+        $teacherModel = new Teacher();
+
+        $subject_id = (int) ($_POST['subject_id'] ?? 0);
+        $grade_level_id = (int) ($_POST['grade_level_id'] ?? 0);
+        $section_id = (int) ($_POST['section_id'] ?? 0);
+
+        $teacher_id = $_SESSION['teacher_id'] ?? 0;
+        if (!$teacher_id) {
+            $result = $teacherModel->getTeacherIdByUserId($_SESSION['user_id'] ?? 0);
+            $teacher_id = (int) ($result['teacher_id'] ?? 0);
+            $_SESSION['teacher_id'] = $teacher_id;
+        }
+
+        if (!$teacher_id) {
+            die("Teacher record not found. Please contact your administrator.");
+        }
+
+        // Now get posted_by (user_id) from teacher_id
+        $posted_by = $teacherModel->getUserIdByTeacherId($teacher_id);
 
         $teacherModel = new Teacher();
         $subject_id = (int) ($_POST['subject_id'] ?? 0);

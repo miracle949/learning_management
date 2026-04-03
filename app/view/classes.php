@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subjects</title>
+    <title>My Classes</title>
     <link rel="stylesheet" href="../css_folder/all_subjects.css">
     <link rel="stylesheet" href="../css_folder/components.css">
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
@@ -21,138 +21,142 @@
 
         <div class="rightbar">
 
-            <?php foreach ($subjects as $subject): ?>
-                <div class="card-box-parent">
-                    <div class="card-box">
+            <?php
+            /** @var array $subjects */
+            /** @var int[] $enrolledSubjectIds */
+            /** @var array $enrolledSubjects */
 
-                        <div class="card-box-picture"></div>
+            // Filter to only enrolled subjects
+            $enrolledSubjects = array_filter($subjects, function ($subject) use ($enrolledSubjectIds) {
+                return in_array((int) $subject['id'], $enrolledSubjectIds, true); // strict int comparison
+            });
+            ?>
 
-                        <div class="card-box-body">
-                            <div class="card-body-text">
-                                <p><?= htmlspecialchars($subject['subject_name']) ?></p>
-                                <span>
-                                    <?= !empty($subject['description'])
-                                        ? htmlspecialchars($subject['description'])
-                                        : 'Lorem ipsum dolor sit amet consectetur, adipisicing elit.' ?>
-                                </span>
-                            </div>
+            <div style="display: none;">
+                <?php
+                echo "<pre>";
+                echo "Subjects: ";
+                print_r($subjects);
+                echo "Enrolled IDs: ";
+                print_r($enrolledSubjectIds);
+                echo "Filtered: ";
+                print_r($enrolledSubjects);
+                echo "</pre>";
+                ?>
+            </div>
 
-                            <div class="card-body-enrolled">
-                                <?php if (in_array($subject['id'], $enrolledSubjectIds)): ?>
+
+            <?php if (empty($enrolledSubjects)): ?>
+                <!-- Empty state: no enrolled classes yet -->
+                <div class="classes-empty-state">
+                    <div class="classes-empty-icon">
+                        <i class="fa fa-book-open"></i>
+                    </div>
+                    <h4 class="classes-empty-title">You're not enrolled in any classes yet</h4>
+                    <p class="classes-empty-hint">
+                        Click the <strong><i class="fa fa-plus"></i></strong> button in the top navigation bar and enter
+                        your class code to join a class.
+                    </p>
+                    <button class="classes-join-cta" data-bs-toggle="modal" data-bs-target="#joinClassModal">
+                        <i class="fa fa-plus me-2"></i>Join a Class
+                    </button>
+                </div>
+
+            <?php else: ?>
+                <?php foreach ($enrolledSubjects as $subject): ?>
+                    <div class="card-box-parent">
+                        <div class="card-box">
+
+                            <div class="card-box-picture"></div>
+
+                            <div class="card-box-body">
+                                <div class="card-body-text">
+                                    <p><?= htmlspecialchars($subject['subject_name']) ?></p>
+                                    <span>
+                                        <?= !empty($subject['description'])
+                                            ? htmlspecialchars($subject['description'])
+                                            : 'Lorem ipsum dolor sit amet consectetur, adipisicing elit.' ?>
+                                    </span>
+                                </div>
+
+                                <div class="card-body-enrolled">
                                     <a
                                         href="/learning_management/public/?url=subjects&subject=<?= urlencode($subject['subject_code']) ?>">
                                         <span>Go to Subject</span>
                                         <i class="fa fa-arrow-right"></i>
                                     </a>
-
-                                <?php else: ?>
-                                    <!-- FIX: url=classes (not subjects_all) — classes() has the enroll logic -->
-                                    <a href="#" class="enroll-btn"
-                                        data-enroll-url="/learning_management/public/?url=classes&enroll=1&subject_id=<?= $subject['id'] ?>&subject_code=<?= urlencode($subject['subject_code']) ?>"
-                                        data-redirect-url="/learning_management/public/?url=subjects&subject=<?= urlencode($subject['subject_code']) ?>"
-                                        data-subject-name="<?= htmlspecialchars($subject['subject_name']) ?>">
-                                        <span>Enroll Now</span>
-                                        <i class="fa fa-arrow-right"></i>
-                                    </a>
-
-                                <?php endif; ?>
+                                </div>
                             </div>
-                        </div>
 
-                    </div>
-                </div>
-            <?php endforeach; ?>
-
-        </div>
-    </div>
-
-    <!-- Enrollment Success Modal -->
-    <div class="modal fade" id="enrollmentModal" tabindex="-1" aria-labelledby="enrollmentModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-body text-center py-4">
-
-                    <!-- Success Icon -->
-                    <div class="mb-3">
-                        <div style="
-                            width: 70px; height: 70px;
-                            background: #d4edda;
-                            border-radius: 50%;
-                            display: flex; align-items: center; justify-content: center;
-                            margin: 0 auto;
-                        ">
-                            <i class="fa fa-check" style="font-size: 2rem; color: #28a745;"></i>
                         </div>
                     </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
 
-                    <h5 class="modal-title fw-bold mb-1" id="enrollmentModalLabel">Enrollment Successful!</h5>
-                    <p class="text-muted mb-0">You have successfully enrolled in <strong
-                            id="modalSubjectName"></strong>.</p>
-                    <p class="text-muted mt-1" style="font-size: 0.85rem;">Redirecting you to the subject...</p>
-
-                    <!-- Progress bar -->
-                    <div class="progress mt-3" style="height: 5px;">
-                        <div id="redirectProgress" class="progress-bar bg-success" role="progressbar"
-                            style="width: 0%;"></div>
-                    </div>
-
-                </div>
-            </div>
         </div>
     </div>
 
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const enrollBtns = document.querySelectorAll('.enroll-btn');
+    <style>
+        /* ── Empty state ── */
+        .classes-empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            text-align: center;
+            padding: 40px 20px;
+        }
 
-            enrollBtns.forEach(function (btn) {
-                btn.addEventListener('click', function (e) {
-                    e.preventDefault();
+        .classes-empty-icon {
+            width: 96px;
+            height: 96px;
+            background: #e8f5f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
 
-                    const enrollUrl = this.dataset.enrollUrl;
-                    const redirectUrl = this.dataset.redirectUrl;
-                    const subjectName = this.dataset.subjectName;
+        .classes-empty-icon .fa {
+            font-size: 2.4rem;
+            color: #1e7e5e;
+        }
 
-                    // Step 1: Hit the enroll URL (GET request — classes() handles ?enroll=1)
-                    fetch(enrollUrl)
-                        .then(function () {
-                            // Step 2: Show modal with subject name
-                            document.getElementById('modalSubjectName').textContent = subjectName;
+        .classes-empty-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 10px;
+        }
 
-                            const modal = new bootstrap.Modal(document.getElementById('enrollmentModal'), {
-                                backdrop: 'static',
-                                keyboard: false
-                            });
-                            modal.show();
+        .classes-empty-hint {
+            font-size: .9rem;
+            color: #666;
+            max-width: 380px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
 
-                            // Step 3: Animate progress bar over 2.5s, then redirect
-                            const progressBar = document.getElementById('redirectProgress');
-                            const duration = 2500;
-                            const interval = 30;
-                            const steps = duration / interval;
-                            let current = 0;
+        .classes-join-cta {
+            background: #1e7e5e;
+            color: #fff;
+            border: none;
+            padding: 11px 28px;
+            border-radius: 8px;
+            font-size: .95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .2s;
+        }
 
-                            const timer = setInterval(function () {
-                                current++;
-                                progressBar.style.width = ((current / steps) * 100) + '%';
-
-                                if (current >= steps) {
-                                    clearInterval(timer);
-                                    window.location.href = redirectUrl;
-                                }
-                            }, interval);
-                        })
-                        .catch(function () {
-                            // Fallback: just navigate directly if fetch fails
-                            window.location.href = enrollUrl;
-                        });
-                });
-            });
-        });
-    </script>
+        .classes-join-cta:hover {
+            background: #166347;
+        }
+    </style>
 
 </body>
 

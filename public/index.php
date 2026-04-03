@@ -26,6 +26,10 @@ switch ($url) {
     case 'classes':
         $student->classes();
         break;
+    case 'join_class':
+        $student->join_class();
+        break;
+
     case 'subjects':
         $controller->subjects();
         break;
@@ -86,12 +90,26 @@ switch ($url) {
         $student->mark_module_started();
         break; // ← single, no duplicate
 
-    case 'assignments':
-        $controller->assignments();
+    case 'submit_assignment':
+        $student->submit_assignment();
         break;
+
+    case 'unsubmit_assignment':
+        $student->unsubmit_assignment();
+        break;
+
+    case 'assignments':
+        $student->assignments_view();
+        break;
+
+    case 'progress':
+        $controller->progress();
+        break;
+
     case 'subject_quiz':
         $controller->subject_quiz();
         break;
+
     case 'module_all':
         $student->module_all();
         break;

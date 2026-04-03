@@ -7,6 +7,133 @@ require_once "../app/models/Students.php";
 class StudentsController
 {
 
+    public function unsubmit_assignment()
+    {
+        header('Content-Type: application/json');
+
+        $studentId = $_SESSION['student_id'] ?? 0;
+
+        // Fallback: look up student by user_id
+        if (!$studentId && !empty($_SESSION['user_id'])) {
+            $subjectModel = new subjects();
+            $studentRow = $subjectModel->getStudentByUserId($_SESSION['user_id']);
+            if ($studentRow) {
+                $studentId = (int) $studentRow['id'];
+                $_SESSION['student_id'] = $studentId;
+            }
+        }
+
+        if (!$studentId) {
+            echo json_encode(['success' => false, 'message' => 'Not logged in.']);
+            exit;
+        }
+
+        $assignmentId = (int) ($_POST['assignment_id'] ?? 0);
+        if (!$assignmentId) {
+            echo json_encode(['success' => false, 'message' => 'Invalid assignment.']);
+            exit;
+        }
+
+        $studentModel = new Students();
+        $result = $studentModel->deleteAssignmentSubmission($assignmentId, $studentId);
+
+        if ($result) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Could not delete submission.']);
+        }
+        exit;
+    }
+
+    public function submit_assignment()
+    {
+        header('Content-Type: application/json');
+
+        $studentId = $_SESSION['student_id'] ?? 0;
+
+        if (!$studentId && !empty($_SESSION['user_id'])) {
+            $subjectModel = new subjects();
+            $studentRow = $subjectModel->getStudentByUserId($_SESSION['user_id']);
+            if ($studentRow) {
+                $studentId = (int) $studentRow['id'];
+                $_SESSION['student_id'] = $studentId;
+            }
+        }
+
+        $assignmentId = (int) ($_POST['assignment_id'] ?? 0);
+        $message = trim($_POST['comment'] ?? '');
+
+        if (!$studentId) {
+            echo json_encode(['success' => false, 'message' => 'Not logged in.']);
+            exit;
+        }
+
+        $filePath = null;
+
+        // Handle file upload
+        if (!empty($_FILES['submission_file']['name'])) {
+            $uploadDir = '../uploads/submissions/';
+            if (!is_dir($uploadDir))
+                mkdir($uploadDir, 0777, true);
+
+            $originalName = basename($_FILES['submission_file']['name']);
+            $uniqueName = uniqid() . '_' . $originalName;
+            $destination = $uploadDir . $uniqueName;
+
+            if (move_uploaded_file($_FILES['submission_file']['tmp_name'], $destination)) {
+                $filePath = 'uploads/submissions/' . $uniqueName;
+            } else {
+                echo json_encode(['success' => false, 'message' => 'File upload failed.']);
+                exit;
+            }
+        }
+
+        if (!$filePath && !$message) {
+            echo json_encode(['success' => false, 'message' => 'Please attach a file or add a message.']);
+            exit;
+        }
+
+        $studentModel = new Students();
+
+        // Check if already submitted
+        $existing = $studentModel->getAssignmentSubmission($assignmentId, $studentId);
+        if ($existing) {
+            echo json_encode(['success' => false, 'message' => 'You have already submitted this assignment.']);
+            exit;
+        }
+
+        $result = $studentModel->saveAssignmentSubmission($assignmentId, $studentId, $filePath, $message);
+
+        if ($result) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Database error. Please try again.']);
+        }
+        exit;
+    }
+
+    public function assignments_view()
+    {
+        $studentId = $_SESSION['student_id'] ?? 0;
+        if (!$studentId && !empty($_SESSION['user_id'])) {
+            $subjectModel = new subjects();
+            $studentRow = $subjectModel->getStudentByUserId($_SESSION['user_id']);
+            if ($studentRow) {
+                $studentId = (int) $studentRow['id'];
+                $_SESSION['student_id'] = $studentId;
+            }
+        }
+
+        $studentModel = new Students();
+        $completedAssignments = $studentId ? $studentModel->getCompletedAssignments($studentId) : [];
+        $pendingAssignments = $studentId ? $studentModel->getPendingAssignments($studentId) : [];
+        $completedCount = $studentId ? $studentModel->countCompletedAssignments($studentId) : 0;
+        $pendingCount = $studentId ? $studentModel->countPendingAssignments($studentId) : 0;
+        $gradedCount = 1; // static for now as requested
+
+        require "../app/view/assignments.php";
+    }
+
     // ── INTERACTIVE MODULES ────────────────────────────────────
     public function modules()
     {
@@ -448,11 +575,28 @@ class StudentsController
 
     public function assignment_view()
     {
+        date_default_timezone_set('Asia/Manila');
         $studentModel = new Students();
         $assignmentId = isset($_GET['id']) ? (int) trim($_GET['id']) : 0;
         $subjectSlug = isset($_GET['subject']) ? trim($_GET['subject']) : '';
         $assignment = $studentModel->getAssignmentByIdAndSlug($assignmentId, $subjectSlug);
         $templates = $assignment ? $studentModel->getAssignmentTemplates($assignmentId) : [];
+
+        // ← ADD THIS
+        $studentId = $_SESSION['student_id'] ?? 0;
+        if (!$studentId && !empty($_SESSION['user_id'])) {
+            require_once "../app/models/subjects.php";
+            $subjectModel = new subjects();
+            $studentRow = $subjectModel->getStudentByUserId($_SESSION['user_id']);
+            if ($studentRow) {
+                $studentId = (int) $studentRow['id'];
+                $_SESSION['student_id'] = $studentId;
+            }
+        }
+        $existingSubmission = ($assignment && $studentId)
+            ? $studentModel->getAssignmentSubmission($assignmentId, $studentId)
+            : null;
+
         require_once "../app/view/assignment_view.php";
     }
 
@@ -527,5 +671,70 @@ class StudentsController
         $studentModel = new Students();
         $startedSlugs = $studentModel->getStartedSubjectSlugs($student_id);
         require "../app/view/module_all.php";
+    }
+
+    public function join_class()
+    {
+        ob_start(); // catch any stray output
+        header('Content-Type: application/json');
+
+        $studentId = $_SESSION['student_id'] ?? 0;
+        if (!$studentId && !empty($_SESSION['user_id'])) {
+            $subjectModel = new subjects();
+            $studentRow = $subjectModel->getStudentByUserId($_SESSION['user_id']);
+            if ($studentRow) {
+                $studentId = (int) $studentRow['id'];
+                $_SESSION['student_id'] = $studentId;
+                $_SESSION['section_id'] = $studentRow['section_id'];
+            }
+        }
+
+        if (!$studentId) {
+            ob_end_clean();
+            echo json_encode(['ok' => false, 'msg' => 'Not logged in.']);
+            exit;
+        }
+
+        $code = trim($_POST['subject_code'] ?? '');
+        if (!$code) {
+            ob_end_clean();
+            echo json_encode(['ok' => false, 'msg' => 'Please enter a class code.']);
+            exit;
+        }
+
+        $subjectModel = new subjects();
+        $subject = $subjectModel->getSubjectByCode($code);
+
+        if (!$subject) {
+            ob_end_clean();
+            echo json_encode(['ok' => false, 'msg' => 'No class found with that code. Ask your teacher for the correct code.']);
+            exit;
+        }
+
+        $subjectId = (int) $subject['id'];
+
+        if ($subjectModel->isEnrolled($studentId, $subjectId)) {
+            ob_end_clean();
+            echo json_encode([
+                'ok' => false,
+                'already_enrolled' => true,
+                'redirect_url' => '/learning_management/public/?url=subjects&subject=' . urlencode($subject['subject_code']),
+            ]);
+            exit;
+        }
+
+        $sectionId = (int) ($subject['section_id']
+            ?? $subjectModel->getSectionForSubject($studentId, $subjectId)
+            ?? ($_SESSION['section_id'] ?? 0));
+
+        $subjectModel->enrollStudent($studentId, $subjectId, $sectionId);
+
+        ob_end_clean();
+        echo json_encode([
+            'ok' => true,
+            'subject_name' => $subject['subject_name'],
+            'redirect_url' => '/learning_management/public/?url=subjects&subject=' . urlencode($subject['subject_code']),
+        ]);
+        exit;
     }
 }

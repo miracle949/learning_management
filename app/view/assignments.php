@@ -25,7 +25,7 @@
                     <div class="box-text">
                         <p>Pending</p>
 
-                        <h4>3</h4>
+                        <h4><?= $pendingCount ?></h4>
                     </div>
                     <div class="box-icon">
                         <i class="fa fa-clock"></i>
@@ -36,7 +36,7 @@
                     <div class="box-text">
                         <p>Completed</p>
 
-                        <h4>2</h4>
+                        <h4><?= $completedCount ?></h4>
                     </div>
                     <div class="box-icon">
                         <i class="fa fa-check-circle"></i>
@@ -56,31 +56,92 @@
             </div>
 
             <div class="parent-pending">
-                <div class="pendings">
-                    <h3>Pending Submissions</h3>
-
-                    <div class="pending-parent-card">
-                        <div class="pending-card">
-                            <p>Hlelo</p>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="complete-grade">
                     <div class="complete-parent">
-                        <h3>Completed Task</h3>
+                        <div class="header">
+                            <h3>Completed Task</h3>
 
-                        <div class="complete-box">
-                            <h4>qweqwe</h4>
+                            <a href="#">View all</a>
+                        </div>
+
+                        <div class="complete">
+                            <?php foreach ($completedAssignments as $item): ?>
+                                <div class="complete-box">
+                                    <h5><?= htmlspecialchars($item['task']) ?></h5>
+                                    <p>Date Submitted:
+                                        <?= !empty($item['submitted_at']) ? date('F j, Y', strtotime($item['submitted_at'])) : 'N/A' ?>
+                                    </p>
+                                    <span>Completed</span>
+                                    <a
+                                        href="/learning_management/public/?url=assignment_view&subject=<?= urlencode($item['subject_code']) ?>&id=<?= $item['id'] ?>">
+                                        View Task <i class="fa fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
 
                     <div class="graded">
-                        <h3>Graded Task</h3>
+                        <div class="header">
+                            <h3>Graded Task</h3>
 
-                        <div class="graded-box">
-                            <h4>qweqwe</h4>
+                            <a href="#">View all</a>
                         </div>
+
+                        <div class="graded-parent">
+                            <div class="graded-box">
+                                <h5>Research Paper</h5>
+                                <p>Due Date: March 26, 2026</p>
+                                <span>6 days left</span>
+
+                                <a href="#">View Task <i class="fa fa-arrow-right"></i></a>
+                            </div>
+
+                            <div class="graded-box">
+                                <h5>Research Paper</h5>
+                                <p>Due Date: March 26, 2026</p>
+                                <span>6 days left</span>
+
+                                <a href="#">View Task <i class="fa fa-arrow-right"></i></a>
+                            </div>
+
+                            <div class="graded-box">
+                                <h5>Research Paper</h5>
+                                <p>Due Date: March 26, 2026</p>
+                                <span>6 days left</span>
+
+                                <a href="#">View Task <i class="fa fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pendings">
+                    <div class="header">
+                        <h3>Pending Submissions</h3>
+
+                        <a href="#">View all</a>
+                    </div>
+
+                    <div class="pending-parent-card">
+                        <?php foreach ($pendingAssignments as $item):
+                            $daysLeft = '';
+                            if (!empty($item['due_date'])) {
+                                $diff = (int) ceil((strtotime($item['due_date']) - time()) / 86400);
+                                $daysLeft = $diff > 0 ? $diff . ' days left' : ($diff === 0 ? 'Due today' : abs($diff) . ' days overdue');
+                            }
+                            ?>
+                            <div class="pending-card">
+                                <h5><?= htmlspecialchars($item['task']) ?></h5>
+                                <p>Due Date:
+                                    <?= !empty($item['due_date']) ? date('F j, Y', strtotime($item['due_date'])) : 'No due date' ?>
+                                </p>
+                                <?php if ($daysLeft): ?><span><?= htmlspecialchars($daysLeft) ?></span><?php endif; ?>
+                                <a
+                                    href="/learning_management/public/?url=assignment_view&subject=<?= urlencode($item['subject_code']) ?>&id=<?= $item['id'] ?>">
+                                    View Task <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>

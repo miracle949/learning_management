@@ -239,10 +239,13 @@ div.rightbar{
 
 .container-fluid .rightbar .card-parent-box {
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     /* justify-content: center; */
     /* justify-content: center; */
+    /* justify-content: space-between; */
     align-items: center;
+    justify-content: space-between;
+    width: 100%;
     /* gap: 1rem; */
     flex-wrap: wrap;
     /* width: 100%; */
@@ -257,7 +260,10 @@ div.rightbar{
 
 .container-fluid .rightbar .card-parent-box .card-box {
     /* width: calc(100% / 4.5); */
+    width: 100%;
     max-width: 230px;
+    /* width: 100%; */
+    /* width: calc(100% / 4); */
     background-color: white;
     padding: 1.5rem 1.1rem 1.5rem 1.1rem;
     display: flex;

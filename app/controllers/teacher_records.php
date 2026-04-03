@@ -35,7 +35,7 @@ class teacher_records
         $totalStudents = array_sum(array_column($classes, 'student_count'));
         $teacherInfo = ['name' => $_SESSION['teacher_name'] ?? $_SESSION['name'] ?? 'Teacher'];
 
-        require_once "../teacher_folder/classes.php";
+        require_once "../teacher_folder/classes.php"; // ← which classes.php loads here?
     }
 
     public function teacherDashboard()
@@ -72,19 +72,26 @@ class teacher_records
 
     public function teacherRecords()
     {
+        $this->teacherModel->backfillJoinCodes(); // ← add this line
+
         $grade11Subjects = $this->subjectModel->getGrade11Subjects();
         $grade12Subjects = $this->subjectModel->getGrade12Subjects();
         $grade11Sections = $this->gradeLevel->getGrade11Sections();
         $grade12Sections = $this->gradeLevel->getGrade12Sections();
         $teachers = $this->teacherModel->getAllTeachers();
 
-        // Legacy classCounts kept for backward compatibility
-        // $classCountsRaw = $this->teacherModel->getStudentCountPerClass($_SESSION['teacher_id']);
-        // $classCounts = [];
-        // foreach ($classCountsRaw as $row) {
-        //     $key = $row['subject_id'] . '_' . $row['section_id'];
-        //     $classCounts[$key] = $row['total_students'];
-        // }
+        // Attach enrolled students (grouped by section) to each subject
+        foreach ($teachers as &$teacher) {
+            foreach ($teacher['subjects'] as &$subject) {
+                $subject['students'] = !empty($subject['id'])
+                    ? $this->teacherModel->getEnrolledStudentsBySubject(
+                        (int) $subject['id'],
+                        (int) $teacher['teacher_id']   // ← pass teacher_id now
+                    )
+                    : [];
+            }
+        }
+        unset($teacher, $subject);
 
         require_once "../admin_folder/teacher_records.php";
     }
@@ -106,8 +113,13 @@ class teacher_records
 
             $teacher_id = $this->teacherModel->createTeacher($name, $email, $password);
 
-            if (!empty($assigned_subjects) && !empty($assigned_sections)) {
-                $this->teacherModel->assignSubjectsAndSections($teacher_id, $assigned_subjects, $assigned_sections);
+            // ── Assign even if only subjects OR sections provided ──
+            if (!empty($assigned_subjects) || !empty($assigned_sections)) {
+                $this->teacherModel->assignSubjectsAndSections(
+                    $teacher_id,
+                    $assigned_subjects,
+                    $assigned_sections
+                );
             }
 
             $_SESSION['success'] = "Teacher created successfully.";

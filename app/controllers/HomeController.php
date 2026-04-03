@@ -102,6 +102,10 @@ class HomeController
         require_once "../app/view/assignments.php";
     }
 
+    public function progress(){
+        require_once "../app/view/progress.php";
+    }
+
     public function classes_teacher(){
         require_once "../teacher_folder/classes.php";
     }

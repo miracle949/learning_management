@@ -5,7 +5,6 @@ require_once "../core/Model.php";
 class subjects extends Model
 {
 
-
     public function getSectionForSubject($student_id, $subject_id)
     {
         $sql = "
@@ -84,7 +83,7 @@ class subjects extends Model
         $stmt->execute();
         $result = $stmt->get_result();
         $rows = $result->fetch_all(MYSQLI_ASSOC);
-        return array_column($rows, 'subject_id');
+        return array_map('intval', array_column($rows, 'subject_id')); // ← ensure integers
     }
 
     public function insertSubject($subject_name, $grade_level_id)
@@ -93,5 +92,25 @@ class subjects extends Model
         $stmt->bind_param("si", $subject_name, $grade_level_id);
         $stmt->execute();
         return $this->db->insert_id;
+    }
+
+    /**
+     * Look up a subject by its join code.
+     * Returns the subject row (with id, subject_name, subject_code) or null.
+     */
+    public function getSubjectByCode($code)
+    {
+        $sql = "
+        SELECT s.id, s.subject_name, s.subject_code, 
+               ta.section_id, ta.grade_level_id, ta.join_code
+        FROM teacher_assignments ta
+        JOIN subjects s ON s.id = ta.subject_id
+        WHERE ta.join_code = ?
+        LIMIT 1
+    ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("s", $code);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc() ?: null;
     }
 }

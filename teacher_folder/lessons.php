@@ -286,7 +286,7 @@
 
         .cw-textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 150px;
         }
 
         .cw-row {
