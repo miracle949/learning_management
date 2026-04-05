@@ -90,14 +90,24 @@
 }
 
 .container-fluid .sidebar .sidebar-menu ul {
-    padding: 0px 1rem 0px 1rem;
-    margin-bottom: 1rem;
+    padding: 0.3px 1rem 0px 1rem;
+    /* margin-top: 1rem; */
+}
+
+.container-fluid .sidebar .sidebar-menu ul .sidebar-category h5 {
+    margin: 10px 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #808080;
 }
 
 .container-fluid .sidebar .sidebar-menu ul li {
     list-style: none;
-    line-height: 60px;
-    padding: 0 20px;
+    line-height: 50px;
+    padding: 0 10px;
+    border-radius: 10px;
+    margin-top: 0.5rem;
 }
 
 .container-fluid .sidebar .sidebar-menu ul li:hover {
@@ -110,49 +120,123 @@
     justify-content: left;
     align-items: center;
     gap: 1rem;
-    font-size: 15.5px;
-    color: #484B4A;
+    color: var(--green-text);
+    font-size: 15px;
+    font-weight: 600;
     text-decoration: none;
+}
+
+.container-fluid .sidebar .sidebar-menu ul li a .fa {
+    font-size: 18px;
+}
+
+.container-fluid .sidebar .sidebar-menu ul li.active {
+    background-color: var(--green);
+    color: #ffffff;
+}
+
+.container-fluid .sidebar .sidebar-menu ul li.active a {
+    color: #ffffff;
+}
+
+.container-fluid .sidebar .sidebar-footer {
+    /* padding: 1rem; */
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    /* height: 300px; */
+    /* height: 100%; */
+    /* height: 200px; */
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 1rem;
+    font-size: 15.5px;
+    font-weight: 600;
+    color: var(--green-text);
+    /* padding: 0px 26px 0px 26px; */
+    padding: 26px;
+}
+
+
+.container-fluid .sidebar .sidebar-footer .fa {
+    font-size: 18px;
+}
+
+.container-fluid .sidebar .sidebar-footer p {
+    margin: 0;
+    /* font-size: 13.5px; */
+}
+
+.container-fluid .rightbar {
+    width: calc(100% - 235px);
+    /* height: 100vh; */
+    margin-top: 68px;
+    /* overflow-y: auto; */
+    margin-left: 235px;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: #F7F9F8;
 }
 
 .container-fluid {
     height: 100vh;
 }
 
-.container-fluid .rightbar {
-    width: calc(100% - 235px);
-    /* height: 100vh; */
-    margin-left: 235px;
-    border-left: 1px solid rgba(0, 0, 0, 0.1);
-    background-color: #F7F9F8;
-}
-
 .container-fluid .sidebar-logo {
-    height: 130px;
+    /* height: 130px; */
+    height: 100px;
     /* background-color: #5BCA3F; */
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    /* flex-direction: column; */
     gap: 1rem;
-    /* padding-top: 3rem; */
-    margin-top: 1.8rem;
-    padding-bottom: 1rem;
+    /* margin-top: 1.8rem; */
+    /* padding-bottom: 1rem; */
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.container-fluid .sidebar-logo .fa {
-    font-size: 70px;
-    /* color: #5BCA3F; */
-    color: var(--background-icon);
-}
+/* 
+.container-fluid .sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+} */
 
 .container-fluid .sidebar-logo p {
-    font-size: 17.5px;
-    font-weight: 600;
-    /* color: #364153; */
-    color: var(--text-dark);
+    /* font-size: 17px; */
+    font-size: 22px;
+    /* font-weight: bold; */
+    margin: 0;
+    font-family: "Titan", sans-serif;
+    color: var(--green);
 }
+
+.container-fluid .sidebar-logo p b {
+    color: #212529;
+    font-family: "Titan", sans-serif;
+}
+
+.container-fluid .sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    gap: 0.5rem;
+}
+
+.container-fluid .sidebar-logo .logo-icon {
+    /* padding: 8px; */
+    padding: 11px;
+    background-color: var(--green-light);
+    border-radius: 10px;
+}
+
+.container-fluid .sidebar-logo .logo-icon .fa-solid {
+    color: var(--green);
+    /* font-size: 18px; */
+    font-size: 20px;
+}
+
 
 .container-fluid .sidebar .sidebar-menu {
     margin-top: 1rem;
@@ -206,7 +290,9 @@
     padding: 1.5rem 1.5rem 1.5rem 1.5rem;
     background-color: #ffffff;
     border-radius: 10px;
-    box-shadow: 0 4px 16px rgba(108, 63, 232, 0.10), 0 1px 4px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    animation: slideIn 0.4s ease both;
     /* border: 1px solid rgba(0, 0, 0, 0.1); */
     overflow: hidden;
     /* padding: 0 2rem 0 0; */
@@ -273,62 +359,87 @@
     display: flex;
     gap: 2rem;
     margin-top: 2rem;
+    flex-direction: column;
     /* justify-content: space-between; */
 }
 
-.container-fluid main .sub-student{
+.container-fluid main .sub-student {
     width: 100%;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    /* align-items: center; */
+    /* flex-direction: column; */
     gap: 2rem;
 }
 
-.container-fluid main .student-assignment{
+.container-fluid main .student-assignment {
     width: 100%;
     height: 100%;
     background-color: #ffffff;
     border: 1px solid #e2e8f0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     border-radius: 10px;
+    animation: slideIn 0.4s ease both;
 }
 
-.container-fluid main .student-assignment h5{
+.container-fluid main .student-assignment h5 {
     padding: 2rem;
     margin: 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     font-size: 16px;
 }
 
-.container-fluid main .sub-assignment{
+.container-fluid main .sub-assignment {
     width: 100%;
     height: 100%;
     background-color: #ffffff;
     border: 1px solid #e2e8f0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     border-radius: 10px;
+    animation: slideIn 0.4s ease both;
 }
 
-.container-fluid main .sub-assignment .assignment-complete{
+.container-fluid main .sub-assignment .assignment-complete {
     padding: 2rem;
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    overflow-y: auto;
+    height: 62vh;
 }
 
-.container-fluid main .sub-assignment .assignment-complete .assignment-box{
+.container-fluid main .sub-assignment .assignment-complete .assignment-box {
     background-color: #ffffff;
     border: 1px solid #e2e8f0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     padding: 1.5rem 2rem 1.5rem;
     border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
 }
 
-.container-fluid main .sub-assignment .assignment-complete .assignment-box p{
+.container-fluid main .sub-assignment .assignment-complete .assignment-box p {
     margin: 0;
+}
+
+.container-fluid main .sub-assignment .assignment-complete .assignment-box p:nth-child(1){
+    font-size: 15.5px;
     font-weight: 600;
 }
 
-.container-fluid main .sub-assignment h5{
+.container-fluid main .sub-assignment .assignment-complete .assignment-box p:nth-child(2){
+    font-size: 14.5px;
+    color: #808080;
+}
+
+.container-fluid main .sub-assignment .assignment-complete .assignment-box span{
+    font-size: 14.5px;
+    color: var(--green);
+    font-weight: 600;
+}
+
+.container-fluid main .sub-assignment h5 {
     padding: 2rem;
     margin: 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -346,34 +457,56 @@
     flex-direction: column;
     gap: 1.5rem;
     overflow-y: auto;
-    height: 71vh;
+    height: 62vh;
 }
 
-.container-fluid main .student-assignment .student-names .student-box{
+.container-fluid main .student-assignment .student-names .student-box {
     background-color: #ffffff;
     border: 1px solid #e2e8f0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     padding: 1.5rem 2rem 1.5rem;
     border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
 }
 
 
-.container-fluid main .student-assignment .student-names .student-box p{
+.container-fluid main .student-assignment .student-names .student-box p {
     margin: 0;
-    font-weight: 600;
     /* font-size: 16px; */
 }
 
-.container-fluid main .student-assignment .student-names .student-box span{
+.container-fluid main .student-assignment .student-names .student-box p:nth-child(1) {
+    font-weight: 600;
+    font-size: 15.5px;
+}
+
+.container-fluid main .student-assignment .student-names .student-box p:nth-child(2) {
     font-size: 14.5px;
     color: #808080;
 }
 
-.container-fluid main .classes-assignment{
+.container-fluid main .student-assignment .student-names .student-box .grade-section{
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.container-fluid main .student-assignment .student-names .student-box span {
+    font-size: 13.5px;
+    color: var(--green);
+    background-color: var(--green-light);
+    padding: 5px 10px;
+    border-radius: 7px;
+    font-weight: 500;
+}
+
+.container-fluid main .classes-assignment {
     width: 100%;
 }
 
-.container-fluid main .sub-classes{
+.container-fluid main .sub-classes {
     width: 100%;
     height: 100%;
     background-color: #ffffff;
@@ -382,8 +515,8 @@
     border-radius: 10px;
 }
 
-.container-fluid main .sub-classes h5{
-    padding: 2rem;
+.container-fluid main .sub-classes h5 {
+    padding: 1.8rem;
     margin: 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     font-size: 16px;
@@ -396,9 +529,9 @@
     height: 100%;
     gap: 1.5rem;
     border-radius: 10px;
-    padding: 2rem;
-    overflow-y: auto;
-    height: 71vh;
+    padding: 1.8rem;
+    /* overflow-y: auto;
+    height: 71vh; */
 }
 
 /* .card-section{
@@ -408,6 +541,7 @@
 .container-fluid main .parent-classes .classes {
     /* width: 100%; */
     display: flex;
+    align-items: center;
     /* justify-content: space-between;
     align-items: center; */
     width: 100%;
@@ -440,21 +574,35 @@
 }
 
 .class-accent {
-    width: 9px;
+    width: 6px;
     align-self: stretch;
     background: linear-gradient(180deg, var(--green), var(--green));
     border-radius: 0;
 }
 
 .container-fluid main .parent-classes .classes .classes-name {
-    padding: 1.5rem 0.5rem 1.5rem 1.5rem;
     /* width: 25%; */
+    padding: 1.5rem 1.5rem 1.5rem 1.5rem;
     width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
+
+/* .container-fluid main .parent-classes .classes .classes-name p{
+    background-color: var(--green-light);
+    color: var(--green);
+    padding: 5px 10px;
+    border-radius: 7px;
+} */
 
 .container-fluid main .parent-classes .classes .classes-name h3 {
     font-size: 15.5px;
     font-weight: 600;
+    margin: 0;
+    width: 100%;
+    max-width: 220px;
+    line-height: 22px;
 }
 
 .container-fluid main .parent-classes .classes .classes-name p {
@@ -462,8 +610,11 @@
 }
 
 .container-fluid main .parent-classes .classes .classes-name p {
-    font-size: 14.5px;
-    color: #808080;
+    font-size: 13.5px;
+    background-color: var(--green-light);
+    color: var(--green);
+    padding: 5px 10px;
+    border-radius: 7px;
 }
 
 .container-fluid main .parent-classes .classes .classes-section-grade {
@@ -510,6 +661,7 @@
     width: 40%;
     gap: 1rem;
     padding: 1.5rem 1.5rem 1.5rem 0rem;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
     /* border-right: 1px solid rgba(0, 0, 0, 0.1); */
 }
 
@@ -544,7 +696,7 @@
 }
 
 .container-fluid main .parent-classes .classes .classes-student-module .modules h4 {
-    font-size: 20px;
+    font-size: 18.5px;
     color: #212529;
     font-weight: 600;
 }

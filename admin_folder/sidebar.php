@@ -1,5 +1,5 @@
 <?php
-$current_url = isset($_GET['url']) ? $_GET['url'] : 'teacher';
+$current_url = isset($_GET['url']) ? $_GET['url'] : 'admin';
 ?>
 <div class="sidebar">
     <div class="sidebar-logo">
@@ -15,18 +15,18 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'teacher';
             <div class="sidebar-category">
                 <h5>Menu</h5>
             </div>
-            <li class="<?= ($current_url ?? '') === 'teacher' ? 'active' : '' ?>">
-                <a href="/learning_management/public/?url=teacher">
+            <li class="<?= ($current_url ?? '') === 'admin' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=admin">
                     <i class="fa fa-home"></i><span>Dashboard</span>
                 </a>
             </li>
-            <li class="<?= ($current_url ?? '') === 'classes_teacher' ? 'active' : '' ?>">
-                <a href="/learning_management/public/?url=classes_teacher">
+            <!-- <li class="<?= ($current_url ?? '') === 'classes_teacher' ? 'active' : '' ?>">
+                <a href="#">
                     <i class="fa fa-book-open"></i>
                     <span>Classes</span>
                 </a>
             </li>
-            <!-- <li>
+            <li>
                 <a href="#">
                     <i class="fa fa-book"></i>
                     <span>Modules</span>

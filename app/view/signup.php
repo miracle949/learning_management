@@ -29,12 +29,15 @@
 
                     <div class="form-logo">
                         <div class="parent-logo">
-                            <img src="../images/ilearn-logo4.png" alt="">
+                            <!-- <div class="logo"></div> -->
+                            <div class="logo-icon">
+                                <i class="fa-solid fa-lightbulb"></i>
+                            </div>
                             <div class="logo-text">
-                                <p><b>I</b>Learn</p>
+                                <p><b>i</b>Learn</p>
                             </div>
                         </div>
-                        <h2 class="fw-semibold">Start your learning journey today.</h2>
+                        <h2 class="fw-semibold">Start your <b>learning</b> journey today.</h2>
                         <p>Create an account and start learning today.</p>
                     </div>
 
@@ -107,10 +110,11 @@
                         <div class="col-lg-6 mt-3">
                             <div class="text-box">
                                 <label>Grade Level</label>
-                                <select name="grade_level_id" id="" class="form-select" required>
+                                <select name="grade_level_id" id="grade_level_select" class="form-select" required>
                                     <option value="">Select grade level</option>
                                     <?php foreach ($grades as $grade): ?>
-                                        <option value="<?= $grade['id']; ?>">
+                                        <option value="<?= $grade['id']; ?>"
+                                            data-name="<?= htmlspecialchars($grade['name']); ?>">
                                             <?= $grade['name']; ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -121,17 +125,19 @@
                         <div class="col-lg-6 mt-3">
                             <div class="text-box">
                                 <label>Section</label>
-                                <select name="section_id" class="form-select" id="" required>
+                                <select name="section_id" id="section_select" class="form-select" required>
                                     <option value="">Select section</option>
                                     <?php foreach ($sections as $section): ?>
-                                        <option value="<?= $section['id']; ?>">
+                                        <option value="<?= $section['id']; ?>"
+                                            data-grade-id="<?= $section['grade_level_id']; ?>" class="section-option">
                                             <?= $section['section_name']; ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
-                                <!-- <input type="text" class="form-control" placeholder="e.g. CSS 11-A" name="section" id="" required> -->
                             </div>
                         </div>
+
+
 
                     </div>
 
@@ -166,6 +172,29 @@
 
     <!-- bootstrap link javascript -->
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const gradeSelect = document.getElementById('grade_level_select');
+        const sectionSelect = document.getElementById('section_select');
+        const allSectionOptions = Array.from(sectionSelect.querySelectorAll('.section-option'));
+
+        gradeSelect.addEventListener('change', function () {
+            const selectedGradeId = this.value;
+
+            // Reset section
+            sectionSelect.innerHTML = '<option value="">Select section</option>';
+
+            if (selectedGradeId) {
+                const filtered = allSectionOptions.filter(opt => opt.dataset.gradeId === selectedGradeId);
+
+                if (filtered.length > 0) {
+                    filtered.forEach(opt => sectionSelect.appendChild(opt.cloneNode(true)));
+                } else {
+                    sectionSelect.innerHTML = '<option value="">No sections available</option>';
+                }
+            }
+        });
+    </script>
 </body>
 
 </html>

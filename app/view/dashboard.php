@@ -99,9 +99,6 @@
                 </div>
 
                 <div class="parent-performance">
-                    <div class="perform performance-trend">
-                        <h2>Hello</h2>
-                    </div>
                     <div class="update subject-performance">
                         <div class="header">
                             <h3>Upcoming Tasks</h3>
@@ -127,210 +124,13 @@
                             </div>
                         </div>
                     </div>
+                    <div class="perform performance-trend">
+                        <h2>Hello</h2>
+                    </div>
                     <div class="perform enrolled-subjects">
                         <h2>Hello</h2>
                     </div>
-                    <div class="update upcoming-task">
-                        <div class="header">
-                            <h3>Upcoming Tasks</h3>
-                            <a href="#">View all</a>
-                        </div>
-                        <div class="body">
-                            <div class="update-box">
-                                <p>Build a Personal Portfolio</p>
-                                <span>Due: 3/15/2026</span>
-                                <span>7 days left</span>
-                            </div>
-
-                            <div class="update-box">
-                                <p>Build a Personal Portfolio</p>
-                                <span>Due: 3/15/2026</span>
-                                <span>7 days left</span>
-                            </div>
-
-                            <div class="update-box">
-                                <p>Build a Personal Portfolio</p>
-                                <span>Due: 3/15/2026</span>
-                                <span>7 days left</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
-
-                <div class="subject-parents">
-                    <div class="subject-header">
-                        <h3>My Subjects</h3>
-                    </div>
-                </div>
-
-                <!-- <div class="text-progress">
-                    <h2>Subjects Progress</h2>
-                </div>
-
-                <div class="progress-parent-box">
-
-                    <div class="progress-box">
-                        <div class="progress-parent">
-                            <div class="progress-title">
-                                <div class="parent-icon"><i class="fa fa-book-open"></i></div>
-                                <span>Introduction to Philosophy of Human Person</span>
-                            </div>
-                            <div class="continue-parent">
-                                <div class="progress-percent-parent">
-                                    <div class="progress-percent-title">
-                                        <p>Progress</p>
-                                        <span>50%</span>
-                                    </div>
-                                    <div class="progress-percent">
-                                        <div class="percent"></div>
-                                    </div>
-                                </div>
-                                <div class="continue">
-                                    <a href="#">Continue <i class="fa fa-arrow-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="progress-box">
-                        <div class="progress-parent">
-                            <div class="progress-title">
-                                <div class="parent-icon"><i class="fa fa-book-open"></i></div>
-                                <span>Understanding Culture Society and Politics</span>
-                            </div>
-                            <div class="continue-parent">
-                                <div class="progress-percent-parent">
-                                    <div class="progress-percent-title">
-                                        <p>Progress</p>
-                                        <span>50%</span>
-                                    </div>
-                                    <div class="progress-percent">
-                                        <div class="percent"></div>
-                                    </div>
-                                </div>
-                                <div class="continue">
-                                    <a href="#">Continue <i class="fa fa-arrow-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="progress-box">
-                        <div class="progress-parent">
-                            <div class="progress-title">
-                                <div class="parent-icon"><i class="fa fa-book-open"></i></div>
-                                <span>Computer System Servicing</span>
-                            </div>
-                            <div class="continue-parent">
-                                <div class="progress-percent-parent">
-                                    <div class="progress-percent-title">
-                                        <p>Progress</p>
-                                        <span>50%</span>
-                                    </div>
-                                    <div class="progress-percent">
-                                        <div class="percent"></div>
-                                    </div>
-                                </div>
-                                <div class="continue">
-                                    <a href="#">Continue <i class="fa fa-arrow-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="progress-box">
-                        <div class="progress-parent">
-                            <div class="progress-title">
-                                <div class="parent-icon"><i class="fa fa-book-open"></i></div>
-                                <span>Physical Education</span>
-                            </div>
-                            <div class="continue-parent">
-                                <div class="progress-percent-parent">
-                                    <div class="progress-percent-title">
-                                        <p>Progress</p>
-                                        <span>50%</span>
-                                    </div>
-                                    <div class="progress-percent">
-                                        <div class="percent"></div>
-                                    </div>
-                                </div>
-                                <div class="continue">
-                                    <a href="#">Continue <i class="fa fa-arrow-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="progress-box">
-                        <div class="progress-parent">
-                            <div class="progress-title">
-                                <div class="parent-icon"><i class="fa fa-book-open"></i></div>
-                                <span>Inquiries, Investigation and Immersion</span>
-                            </div>
-                            <div class="continue-parent">
-                                <div class="progress-percent-parent">
-                                    <div class="progress-percent-title">
-                                        <p>Progress</p>
-                                        <span>50%</span>
-                                    </div>
-                                    <div class="progress-percent">
-                                        <div class="percent"></div>
-                                    </div>
-                                </div>
-                                <div class="continue">
-                                    <a href="#">Continue <i class="fa fa-arrow-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="progress-box">
-                        <div class="progress-parent">
-                            <div class="progress-title">
-                                <div class="parent-icon"><i class="fa fa-book-open"></i></div>
-                                <span>Entrepreneurship</span>
-                            </div>
-                            <div class="continue-parent">
-                                <div class="progress-percent-parent">
-                                    <div class="progress-percent-title">
-                                        <p>Progress</p>
-                                        <span>50%</span>
-                                    </div>
-                                    <div class="progress-percent">
-                                        <div class="percent"></div>
-                                    </div>
-                                </div>
-                                <div class="continue">
-                                    <a href="#">Continue <i class="fa fa-arrow-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="progress-box">
-                        <div class="progress-parent">
-                            <div class="progress-title">
-                                <div class="parent-icon"><i class="fa fa-book-open"></i></div>
-                                <span>Work Immersion</span>
-                            </div>
-                            <div class="continue-parent">
-                                <div class="progress-percent-parent">
-                                    <div class="progress-percent-title">
-                                        <p>Progress</p>
-                                        <span>50%</span>
-                                    </div>
-                                    <div class="progress-percent">
-                                        <div class="percent"></div>
-                                    </div>
-                                </div>
-                                <div class="continue">
-                                    <a href="#">Continue <i class="fa fa-arrow-right"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div> -->
 
             <?php elseif (!empty($_SESSION['grade_level']) && $_SESSION['grade_level'] === 'Grade 11'): ?>
 
@@ -402,9 +202,6 @@
                 </div>
 
                 <div class="parent-performance">
-                    <div class="perform performance-trend">
-                        <h2>Hello</h2>
-                    </div>
                     <div class="update subject-performance">
                         <div class="header">
                             <h3>Upcoming Tasks</h3>
@@ -430,39 +227,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="perform enrolled-subjects">
+                    <div class="perform performance-trend">
                         <h2>Hello</h2>
                     </div>
-                    <div class="update upcoming-task">
-                        <div class="header">
-                            <h3>Upcoming Tasks</h3>
-                            <a href="#">View all</a>
-                        </div>
-                        <div class="body">
-                            <div class="update-box">
-                                <p>Build a Personal Portfolio</p>
-                                <span>Due: 3/15/2026</span>
-                                <span>7 days left</span>
-                            </div>
-
-                            <div class="update-box">
-                                <p>Build a Personal Portfolio</p>
-                                <span>Due: 3/15/2026</span>
-                                <span>7 days left</span>
-                            </div>
-
-                            <div class="update-box">
-                                <p>Build a Personal Portfolio</p>
-                                <span>Due: 3/15/2026</span>
-                                <span>7 days left</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="subject-parents">
-                    <div class="subject-header">
-                        <h3>My Subjects</h3>
+                    <div class="perform enrolled-subjects">
+                        <h2>Hello</h2>
                     </div>
                 </div>
 

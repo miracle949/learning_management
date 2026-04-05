@@ -73,6 +73,46 @@ class HomeController
         require_once "../app/view/teacher.php";
     }
 
+    // public function student_works(){
+    //     require_once "../teacher_folder/student_works.php";
+    // }
+
+    public function student_works()
+    {
+        require_once "../app/models/Teacher.php";
+
+        $teacherModel = new Teacher();
+
+        $assignment_id = isset($_GET['assignment_id']) ? (int) $_GET['assignment_id'] : 0;
+        $subject_id = isset($_GET['subject_id']) ? (int) $_GET['subject_id'] : 0;
+
+        $assignmentInfo = $assignment_id ? $teacherModel->getAssignmentById($assignment_id) : null;
+        $submissions = $assignment_id ? $teacherModel->getSubmissions($assignment_id) : [];
+
+        require_once "../teacher_folder/student_works.php";
+    }
+
+    public function works()
+    {
+        require_once "../app/models/Teacher.php";
+
+        $teacherModel = new Teacher();
+
+        $assignment_id = isset($_GET['assignment_id']) ? (int) $_GET['assignment_id'] : 0;
+        $subject_id = isset($_GET['subject_id']) ? (int) $_GET['subject_id'] : 0;
+        $student_index = isset($_GET['student_index']) ? (int) $_GET['student_index'] : 0;
+
+        $assignmentInfo = $assignment_id ? $teacherModel->getAssignmentById($assignment_id) : null;
+        $submissions = $assignment_id ? $teacherModel->getSubmissions($assignment_id) : [];
+
+        // Current student submission based on index
+        $totalStudents = count($submissions);
+        $student_index = max(0, min($student_index, $totalStudents - 1));
+        $currentSub = $submissions[$student_index] ?? null;
+
+        require_once "../teacher_folder/works.php";
+    }
+
     public function student_records()
     {
         require_once "../admin_folder/student_records.php";
@@ -98,15 +138,18 @@ class HomeController
         require_once "../app/view/module_all.php";
     }
 
-    public function assignments(){
+    public function assignments()
+    {
         require_once "../app/view/assignments.php";
     }
 
-    public function progress(){
+    public function progress()
+    {
         require_once "../app/view/progress.php";
     }
 
-    public function classes_teacher(){
+    public function classes_teacher()
+    {
         require_once "../teacher_folder/classes.php";
     }
 }

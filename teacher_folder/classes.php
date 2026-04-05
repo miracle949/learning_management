@@ -441,7 +441,7 @@
 
                                     <!-- Manage button -->
                                     <a href="?url=teacher_class&id=<?= (int) $class['subject_id'] ?>&grade_id=<?= (int) $class['grade_level_id'] ?>&section_id=<?= (int) $class['section_id'] ?>"
-                                        class="tc-manage">
+                                        class="tc-manage <?= ($current_url ?? '') === 'classes_teacher' ? 'active' : '' ?>">
                                         Manage <i class="fa fa-arrow-right"></i>
                                     </a>
                                 </div>

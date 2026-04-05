@@ -64,14 +64,33 @@ document.addEventListener("DOMContentLoaded", function () {
                     <label>Upload Image *</label>
                     <div class="image-upload-area mt-2">
                         <input type="file" name="image_file[${modIdx}][${lesIdx}][]" class="image-file-input" accept="image/*" style="display:none;">
-                        <div class="image-upload-box">
-                            <i class="fa fa-cloud-upload-alt"></i>
-                            <p>Click to upload image</p>
-                            <span>JPG, PNG, GIF (max 5MB)</span>
+                        <div class="image-upload-box" style="
+                            border: 2px dashed var(--green);
+                            border-radius: 14px;
+                            padding: 2rem 1rem;
+                            text-align: center;
+                            cursor: pointer;
+                            background: #f0fff4;
+                            transition: background .2s, border-color .2s;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            gap: 8px;
+                        ">
+                            <div style="width:56px;height:56px;border-radius:50%;background:#d1fae5;display:flex;align-items:center;justify-content:center;">
+                                <i class="fa fa-cloud-upload-alt" style="font-size:24px;color:var(--green);"></i>
+                            </div>
+                            <p style="font-size:14px;font-weight:700;color:#374151;margin:0;">Click to upload image</p>
+                            <span style="font-size:12px;color:#9ca3af;">JPG, PNG, GIF &nbsp;·&nbsp; Max 5MB</span>
+                            <div style="margin-top:6px;background:var(--green);color:#fff;font-size:12px;font-weight:600;padding:6px 18px;border-radius:20px;cursor:pointer;">
+                                Choose File
+                            </div>
                         </div>
-                        <div class="image-preview" style="display:none;">
-                            <img src="" alt="Preview" class="preview-img">
-                            <button type="button" class="remove-preview-btn"><i class="fa fa-times"></i> Remove</button>
+                        <div class="image-preview" style="display:none; flex-direction:column; align-items:center; gap:10px; padding:10px; background:#f0fff4; border:2px solid #00C950; border-radius:14px;">
+                            <img src="" alt="Preview" class="preview-img" style="max-width:100%;max-height:220px;border-radius:10px;object-fit:cover;">
+                            <button type="button" class="remove-preview-btn" style="background:#fee2e2;border:none;color:#dc2626;font-size:13px;font-weight:600;padding:6px 16px;border-radius:8px;cursor:pointer;">
+                                <i class="fa fa-times"></i> Remove Image
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -143,8 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="row">
                 <div class="col-lg-12 mt-4"><label>Activity Title *</label><input type="text" name="activity_title[${modIdx}][${lesIdx}][]" class="form-control mt-2" placeholder="Enter activity title"></div>
                 <div class="col-lg-12 mt-4"><label>Instructions</label><textarea name="activity_instructions[${modIdx}][${lesIdx}][]" class="form-control mt-2" rows="3" placeholder="Instructions for students"></textarea></div>
-                <div class="col-lg-6 mt-4"><label>Total Points</label><input type="number" name="activity_points[${modIdx}][${lesIdx}][]" class="form-control mt-2" placeholder="e.g. 10" min="1"></div>
-                <div class="col-lg-6 mt-4"><label>Time Limit (minutes)</label><input type="number" name="activity_time[${modIdx}][${lesIdx}][]" class="form-control mt-2" placeholder="e.g. 20" min="1"></div>
+                <div class="col-lg-12 mt-4"><label>Total Points</label><input type="number" name="activity_points[${modIdx}][${lesIdx}][]" class="form-control mt-2" placeholder="e.g. 10" min="1"></div>
             </div>
             <div class="activity-questions-container mt-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -205,7 +223,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="row">
                 <div class="col-lg-12 mt-4"><label>Quiz Title *</label><input type="text" name="quiz_title[${modIdx}][${lesIdx}][]" class="form-control mt-2" placeholder="Enter quiz title"></div>
                 <div class="col-lg-12 mt-4"><label>Instructions</label><textarea name="quiz_instructions[${modIdx}][${lesIdx}][]" class="form-control mt-2" rows="3" placeholder="Instructions for students"></textarea></div>
-                <div class="col-lg-6 mt-4"><label>Time Limit (minutes)</label><input type="number" name="quiz_time_limit[${modIdx}][${lesIdx}][]" class="form-control mt-2" placeholder="e.g. 30" min="1"></div>
+                <div class="col-lg-6 mt-4"><label>Total Points</label><input type="number" name="quiz_total_points[${modIdx}][${lesIdx}][]" class="form-control mt-2" placeholder="e.g. 100" min="1"></div>
                 <div class="col-lg-6 mt-4"><label>Passing Score (%)</label><input type="number" name="quiz_passing_score[${modIdx}][${lesIdx}][]" class="form-control mt-2" placeholder="e.g. 75" min="1" max="100"></div>
             </div>
             <div class="quiz-questions-container mt-4">

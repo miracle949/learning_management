@@ -15,15 +15,15 @@ class AuthController
 
             if ($user && password_verify($password, $user['password'])) {
                 $_SESSION['user_id'] = $user['id'];
-                $_SESSION['role']    = $user['role'];
-                $_SESSION['email']   = $user['email'];
-                $_SESSION['name']    = $userModel->getName($user['id']);
+                $_SESSION['role'] = $user['role'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['name'] = $userModel->getName($user['id']);
 
                 // Fetch grade and section for students
                 if ($user['role'] === 'student') {
                     $studentInfo = $userModel->getStudentInfo($user['id']);
                     $_SESSION['grade_level'] = $studentInfo['grade_level'] ?? null;
-                    $_SESSION['section']     = $studentInfo['section_name'] ?? null;
+                    $_SESSION['section'] = $studentInfo['section_name'] ?? null;
                 }
 
                 if ($_SESSION['role'] === 'admin') {
@@ -69,12 +69,27 @@ class AuthController
                 die("Passwords do not match.");
             }
 
+            // Validate that the selected section belongs to the selected grade level
+            $userModel = new User();
+            $sections = $userModel->getSections();
+
+            $sectionBelongsToGrade = false;
+            foreach ($sections as $section) {
+                if ($section['id'] == $section_id && $section['grade_level_id'] == $grade_level_id) {
+                    $sectionBelongsToGrade = true;
+                    break;
+                }
+            }
+
+            if (!$sectionBelongsToGrade) {
+                die("Invalid selection: The chosen section does not belong to the selected grade level. Please go back and select the correct section.");
+            }
+
             // Combine name into one
-            $name = trim($firstname . ' ' . ($middle ? $middle . ' ' : '') . $lastname);
+            $name = trim($firstname . ' ' . ($middle ? $middle . '. ' : '') . $lastname);
 
             $password_HASH = password_hash($password, PASSWORD_DEFAULT);
 
-            $userModel = new User();
             $userModel->signup(
                 $student_id,
                 $name,

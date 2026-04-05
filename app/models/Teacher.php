@@ -252,21 +252,21 @@ class Teacher extends Model
     public function getAllTeachers()
     {
         $sql = "
-        SELECT t.id AS teacher_id, u.name, u.email,
-            GROUP_CONCAT(DISTINCT CONCAT(s.id, '~~', s.subject_name, '~~', COALESCE(ta.join_code, ''))
-                ORDER BY s.subject_name SEPARATOR '||') AS subjects,
-            COUNT(DISTINCT ta.subject_id) AS class_count,
-            GROUP_CONCAT(DISTINCT CONCAT(gl.name, ' - ', sec.section_name)
-                ORDER BY gl.name SEPARATOR '||') AS sections
-        FROM teachers t
-        JOIN users u ON t.user_id = u.id
-        LEFT JOIN teacher_assignments ta ON ta.teacher_id = t.id
-        LEFT JOIN subjects s ON ta.subject_id = s.id
-        LEFT JOIN sections sec ON ta.section_id = sec.id
-        LEFT JOIN grade_level gl ON ta.grade_level_id = gl.id
-        WHERE u.role = 'teacher' AND u.status = '1'
-        GROUP BY t.id, u.name, u.email ORDER BY u.name ASC
-        ";
+    SELECT t.id AS teacher_id, u.name, u.email,
+        GROUP_CONCAT(DISTINCT CONCAT(s.id, '~~', s.subject_name)
+            ORDER BY s.subject_name SEPARATOR '||') AS subjects,
+        COUNT(DISTINCT ta.id) AS class_count,
+        GROUP_CONCAT(DISTINCT CONCAT(gl.name, ' - ', sec.section_name)
+            ORDER BY gl.name SEPARATOR '||') AS sections
+    FROM teachers t
+    JOIN users u ON t.user_id = u.id
+    LEFT JOIN teacher_assignments ta ON ta.teacher_id = t.id
+    LEFT JOIN subjects s ON ta.subject_id = s.id
+    LEFT JOIN sections sec ON ta.section_id = sec.id
+    LEFT JOIN grade_level gl ON ta.grade_level_id = gl.id
+    WHERE u.role = 'teacher' AND u.status = '1'
+    GROUP BY t.id, u.name, u.email ORDER BY u.name ASC
+    ";
 
         $result = $this->db->query($sql);
         $teachers = [];
@@ -274,11 +274,11 @@ class Teacher extends Model
             if ($row['subjects']) {
                 $pairs = explode('||', $row['subjects']);
                 $row['subjects'] = array_map(function ($pair) {
-                    $parts = explode('~~', $pair, 3);
+                    $parts = explode('~~', $pair, 2);
                     return [
                         'id' => $parts[0] ?? '',
                         'name' => $parts[1] ?? '',
-                        'join_code' => $parts[2] ?? ''
+                        'join_code' => ''  // fetched separately below
                     ];
                 }, $pairs);
             } else {
@@ -425,20 +425,39 @@ class Teacher extends Model
     public function getSubmissions($assignmentId)
     {
         $stmt = $this->db->prepare("
-            SELECT
-                asub.id,
-                asub.student_id,
-                asub.file_path,
-                asub.submitted_at,
-                asub.status,
-                u.name AS student_name
-            FROM assignment_submissions asub
-            JOIN students st ON st.id = asub.student_id
-            JOIN users    u  ON u.id  = st.user_id
-            WHERE asub.assignment_id = ?
-            ORDER BY asub.submitted_at DESC
-        ");
+        SELECT
+            asub.id,
+            asub.student_id,
+            asub.file_path,
+            asub.submitted_at,
+            asub.status,
+            asub.points_earned,
+            asub.feedback,
+            u.name AS student_name
+        FROM assignment_submissions asub
+        JOIN students st ON st.id = asub.student_id
+        JOIN users    u  ON u.id  = st.user_id
+        WHERE asub.assignment_id = ?
+        ORDER BY asub.submitted_at DESC
+    ");
         $stmt->bind_param("i", $assignmentId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getEnrolledStudentsBySection($subject_id, $section_id)
+    {
+        $stmt = $this->db->prepare("
+        SELECT u.name, sec.section_name, gl.name AS grade_level
+        FROM student_enrollments se
+        JOIN students st  ON st.id  = se.student_id
+        JOIN users u      ON u.id   = st.user_id
+        JOIN sections sec ON sec.id = se.section_id
+        JOIN grade_level gl ON gl.id = sec.grade_level_id
+        WHERE se.subject_id = ? AND se.section_id = ?
+        ORDER BY u.name ASC
+    ");
+        $stmt->bind_param("ii", $subject_id, $section_id);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
@@ -749,5 +768,95 @@ class Teacher extends Model
 
         $stmt->execute();
         return $this->db->insert_id;
+    }
+
+    // Total submitted assignments across all teacher's subjects
+    public function getTotalSubmittedAssignments($teacher_id)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(asub.id) AS total
+        FROM assignment_submissions asub
+        JOIN assignments a ON a.id = asub.assignment_id
+        WHERE a.teacher_id = ?
+    ");
+        $stmt->bind_param("i", $teacher_id);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    // All unique enrolled students across teacher's classes
+    public function getEnrolledStudentsByTeacher($teacher_id)
+    {
+        $stmt = $this->db->prepare("
+        SELECT DISTINCT
+            u.name,
+            u.email,
+            gl.name AS grade_level,
+            sec.section_name
+        FROM teacher_assignments ta
+        JOIN student_enrollments se
+            ON se.subject_id = ta.subject_id AND se.section_id = ta.section_id
+        JOIN students st ON st.id = se.student_id
+        JOIN users u ON u.id = st.user_id
+        JOIN grade_level gl ON gl.id = ta.grade_level_id
+        JOIN sections sec ON sec.id = ta.section_id
+        WHERE ta.teacher_id = ?
+        ORDER BY gl.name, sec.section_name, u.name
+    ");
+        $stmt->bind_param("i", $teacher_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // All submissions for this teacher's assignments
+    public function getSubmittedAssignmentsByTeacher($teacher_id)
+    {
+        $stmt = $this->db->prepare("
+        SELECT
+            a.title AS assignment_title,
+            s.subject_name,
+            u.name AS student_name,
+            gl.name AS grade_level,
+            sec.section_name,
+            asub.submitted_at,
+            asub.status
+        FROM assignment_submissions asub
+        JOIN assignments a ON a.id = asub.assignment_id
+        JOIN subjects s ON s.id = a.subject_id
+        JOIN students st ON st.id = asub.student_id
+        JOIN users u ON u.id = st.user_id
+        JOIN sections sec ON sec.id = st.section_id
+        JOIN grade_level gl ON gl.id = st.grade_level_id
+        WHERE a.teacher_id = ?
+        ORDER BY asub.submitted_at DESC
+    ");
+        $stmt->bind_param("i", $teacher_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getAssignmentById($assignment_id)
+    {
+        $stmt = $this->db->prepare("
+        SELECT id, title, description, due_date, points, 
+               file_name, file_path, file_type
+        FROM assignments 
+        WHERE id = ?
+        LIMIT 1
+    ");
+        $stmt->bind_param("i", $assignment_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function saveGrade($submission_id, $points_earned, $feedback)
+    {
+        $stmt = $this->db->prepare("
+        UPDATE assignment_submissions 
+        SET points_earned = ?, feedback = ?, graded_at = NOW()
+        WHERE id = ?
+    ");
+        $stmt->bind_param("isi", $points_earned, $feedback, $submission_id);
+        $stmt->execute();
     }
 }

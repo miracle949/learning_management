@@ -13,7 +13,6 @@ class StudentsController
 
         $studentId = $_SESSION['student_id'] ?? 0;
 
-        // Fallback: look up student by user_id
         if (!$studentId && !empty($_SESSION['user_id'])) {
             $subjectModel = new subjects();
             $studentRow = $subjectModel->getStudentByUserId($_SESSION['user_id']);
@@ -112,8 +111,15 @@ class StudentsController
         exit;
     }
 
-    public function assignments_view()
+    public function assignment_view()
     {
+        date_default_timezone_set('Asia/Manila');
+        $studentModel = new Students();
+        $assignmentId = isset($_GET['id']) ? (int) trim($_GET['id']) : 0;
+        $subjectSlug = isset($_GET['subject']) ? trim($_GET['subject']) : '';
+        $assignment = $studentModel->getAssignmentByIdAndSlug($assignmentId, $subjectSlug);
+        $templates = $assignment ? $studentModel->getAssignmentTemplates($assignmentId) : [];
+
         $studentId = $_SESSION['student_id'] ?? 0;
         if (!$studentId && !empty($_SESSION['user_id'])) {
             $subjectModel = new subjects();
@@ -123,15 +129,11 @@ class StudentsController
                 $_SESSION['student_id'] = $studentId;
             }
         }
+        $existingSubmission = ($assignment && $studentId)
+            ? $studentModel->getAssignmentSubmission($assignmentId, $studentId)
+            : null;
 
-        $studentModel = new Students();
-        $completedAssignments = $studentId ? $studentModel->getCompletedAssignments($studentId) : [];
-        $pendingAssignments = $studentId ? $studentModel->getPendingAssignments($studentId) : [];
-        $completedCount = $studentId ? $studentModel->countCompletedAssignments($studentId) : 0;
-        $pendingCount = $studentId ? $studentModel->countPendingAssignments($studentId) : 0;
-        $gradedCount = 1; // static for now as requested
-
-        require "../app/view/assignments.php";
+        require_once "../app/view/assignment_view.php";
     }
 
     // ── INTERACTIVE MODULES ────────────────────────────────────
@@ -240,60 +242,19 @@ class StudentsController
         }
 
         // Completion status per lesson for sidebar checkmarks
-        // A lesson shows checkmark ONLY if:
-        //   - It has been visited (lesson_visits table) OR
-        //   - Student passed quiz / submitted activity
-        // Future lessons always show circle (green dot), never checkmark
         $lessonCompletion = [];
-        $foundCurrent = false;
-        foreach ($lessons as $l) {
-            if ($l['id'] == $lessonId) {
-                // Current active lesson — always circle
-                $lessonCompletion[$l['id']] = false;
-                $foundCurrent = true;
-            } elseif (!$foundCurrent) {
-                // Lessons BEFORE current — checkmark if visited or completed
-                $lessonCompletion[$l['id']] = $studentId
-                    ? ($studentModel->isLessonVisited($l['id'], $studentId) ||
-                        $studentModel->isLessonCompleted($l['id'], $studentId))
-                    : false;
-            } else {
-                // Lessons AFTER current — always circle
-                $lessonCompletion[$l['id']] = false;
-            }
-        }
-
-        // Progress percentage
-        $completedCount = count(array_filter($lessonCompletion));
         $totalLessons = count($lessons);
+        $completedCount = 0;
 
-        // Load the correct subject view file
-        $subjectViewMap = [
-            "philosophy" => "../Grade_12/philosophy/philosophy_lessons.php",
-            "ucsp" => "../Grade_12/ucsp/ucsp_lessons.php",
-            "css" => "../Grade_12/css/css_lessons.php",
-            "pe" => "../Grade_12/pe/pe_lessons.php",
-            "3i" => "../Grade_12/3i/3i_lessons.php",
-            "entrep" => "../Grade_12/entrep/entrep_lessons.php",
-            "work_immersion" => "../Grade_12/work_immersion/work_immersion_lessons.php",
-            "media_info_literature" => "../Grade_11/media_info_literature/media_info_literature_lessons.php",
-            "p_e" => "../Grade_11/p_e/pe_lessons.php",
-            "css_11" => "../Grade_11/css_11/css_lessons.php",
-            "reading_writing" => "../Grade_11/reading_writing/reading_writing_lessons.php",
-            "pagbasa_pagsusuri" => "../Grade_11/pagbasa_pagsusuri/pagbasa_pagsusuri_lessons.php",
-            "practical_research" => "../Grade_11/practical_research/practical_research_lessons.php",
-            "physical_science" => "../Grade_11/physical_science/physical_science_lessons.php",
-            "statistics_probability" => "../Grade_11/statistics_probability/statistics_probability_lessons.php",
-        ];
-
-        $viewFile = $subjectViewMap[$subject] ?? null;
-        if ($viewFile && file_exists($viewFile)) {
-            // subject_lessons.php is the HTML wrapper with CSS/JS links
-            // It checks $viewFile which is already set above
-            require "../app/view/subject_lessons.php";
-        } else {
-            echo "<h3>Lesson view not found for: " . htmlspecialchars($subject) . "</h3>";
+        foreach ($lessons as $l) {
+            $done = $studentId ? $studentModel->isLessonCompleted($l['id'], $studentId) : false;
+            $lessonCompletion[$l['id']] = $done;
+            if ($done)
+                $completedCount++;
         }
+
+        // Always use the single shared lessons view
+        require "../app/view/subject_lessons.php";
     }
 
     // ── SAVE LESSON ANSWERS (AJAX — called on Next/Finish) ────
@@ -348,7 +309,8 @@ class StudentsController
                         if ($submitted === $correct)
                             $score++;
                     }
-                    $studentModel->saveIMQuizResult($qzId, $studentId, $score, $total, $passingScore);
+                    // Save with the representative quiz ID (MIN id of the group)
+                    $studentModel->saveIMQuizResult($qzId, $studentId, $score, $total, $passingScore, json_encode($answers));
                 }
             }
         }
@@ -573,31 +535,33 @@ class StudentsController
         require_once "../app/view/module_view.php";
     }
 
-    public function assignment_view()
+    public function assignments_view()
     {
-        date_default_timezone_set('Asia/Manila');
-        $studentModel = new Students();
-        $assignmentId = isset($_GET['id']) ? (int) trim($_GET['id']) : 0;
-        $subjectSlug = isset($_GET['subject']) ? trim($_GET['subject']) : '';
-        $assignment = $studentModel->getAssignmentByIdAndSlug($assignmentId, $subjectSlug);
-        $templates = $assignment ? $studentModel->getAssignmentTemplates($assignmentId) : [];
+        // Always resolve fresh — never trust session alone
+        $studentId = 0;
 
-        // ← ADD THIS
-        $studentId = $_SESSION['student_id'] ?? 0;
+        if (!empty($_SESSION['student_id'])) {
+            $studentId = (int) $_SESSION['student_id'];
+        }
+
         if (!$studentId && !empty($_SESSION['user_id'])) {
-            require_once "../app/models/subjects.php";
             $subjectModel = new subjects();
-            $studentRow = $subjectModel->getStudentByUserId($_SESSION['user_id']);
+            $studentRow = $subjectModel->getStudentByUserId((int) $_SESSION['user_id']);
             if ($studentRow) {
                 $studentId = (int) $studentRow['id'];
                 $_SESSION['student_id'] = $studentId;
             }
         }
-        $existingSubmission = ($assignment && $studentId)
-            ? $studentModel->getAssignmentSubmission($assignmentId, $studentId)
-            : null;
 
-        require_once "../app/view/assignment_view.php";
+        $studentModel = new Students();
+        $completedAssignments = $studentId ? $studentModel->getCompletedAssignments($studentId) : [];
+        $pendingAssignments = $studentId ? $studentModel->getPendingAssignments($studentId) : [];
+        $gradedAssignments = $studentId ? $studentModel->getGradedAssignments($studentId) : [];
+        $completedCount = $studentId ? $studentModel->countCompletedAssignments($studentId) : 0;
+        $pendingCount = $studentId ? $studentModel->countPendingAssignments($studentId) : 0;
+        $gradedCount = $studentId ? $studentModel->countGradedAssignments($studentId) : 0;
+
+        require "../app/view/assignments.php";
     }
 
     public function announcement_view()

@@ -90,6 +90,10 @@
     z-index: 999;
 }
 
+input, textarea, label{
+    font-size: 14.5px;
+}
+
 .container-fluid nav .nav-logo {
     display: flex;
     align-items: center;
@@ -131,14 +135,24 @@
 }
 
 .container-fluid .sidebar .sidebar-menu ul {
-    padding: 0px 1rem 0px 1rem;
-    margin-bottom: 1rem;
+    padding: 0.3px 1rem 0px 1rem;
+    /* margin-top: 1rem; */
+}
+
+.container-fluid .sidebar .sidebar-menu ul .sidebar-category h5{
+    margin: 10px 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #808080;
 }
 
 .container-fluid .sidebar .sidebar-menu ul li {
     list-style: none;
-    line-height: 60px;
-    padding: 0 20px;
+    line-height: 50px;
+    padding: 0 10px;
+    border-radius: 10px;
+    margin-top: 0.5rem;
 }
 
 .container-fluid .sidebar .sidebar-menu ul li:hover {
@@ -151,14 +165,58 @@
     justify-content: left;
     align-items: center;
     gap: 1rem;
-    font-size: 15.5px;
-    color: #484B4A;
+    color: var(--green-text);
+    font-size: 15px;
+    font-weight: 600;
     text-decoration: none;
+}
+
+.container-fluid .sidebar .sidebar-menu ul li a .fa{
+    font-size: 18px;
+}
+
+.container-fluid .sidebar .sidebar-menu ul li.active {
+    background-color: var(--green);
+    color: #ffffff;
+}
+
+.container-fluid .sidebar .sidebar-menu ul li.active a {
+    color: #ffffff;
+}
+
+.container-fluid .sidebar .sidebar-footer{
+    /* padding: 1rem; */
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    /* height: 300px; */
+    /* height: 100%; */
+    /* height: 200px; */
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 1rem;
+    font-size: 15.5px;
+    font-weight: 600;
+    color: var(--green-text);
+    /* padding: 0px 26px 0px 26px; */
+    padding: 26px;
+}
+
+
+.container-fluid .sidebar .sidebar-footer .fa{
+    font-size: 18px;
+}
+
+.container-fluid .sidebar .sidebar-footer p{
+    margin: 0;
+    /* font-size: 13.5px; */
+}
+
+.container-fluid{
+    height: 100vh;
 }
 
 .container-fluid .rightbar {
     width: calc(100% - 235px);
-    height: 100vh;
     margin-top: 68px;
     /* overflow-y: auto; */
     margin-left: 235px;
@@ -167,31 +225,61 @@
 }
 
 .container-fluid .sidebar-logo {
-    height: 130px;
+    /* height: 130px; */
+    height: 100px;
     /* background-color: #5BCA3F; */
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    /* flex-direction: column; */
     gap: 1rem;
-    /* padding-top: 3rem; */
-    margin-top: 1.8rem;
-    padding-bottom: 1rem;
+    /* margin-top: 1.8rem; */
+    /* padding-bottom: 1rem; */
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
-
-.container-fluid .sidebar-logo .fa {
-    font-size: 70px;
-    /* color: #5BCA3F; */
-    color: var(--background-icon);
-}
+/* 
+.container-fluid .sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+} */
 
 .container-fluid .sidebar-logo p {
-    font-size: 17.5px;
-    font-weight: 600;
-    /* color: #364153; */
-    color: var(--text-dark);
+    /* font-size: 17px; */
+    font-size: 22px;
+    /* font-weight: bold; */
+    margin: 0;
+    font-family: "Titan", sans-serif;
+    color: var(--green);
 }
+
+.container-fluid .sidebar-logo p b{
+    color: #212529;
+    font-family: "Titan", sans-serif;
+}
+
+.container-fluid .sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    gap: 0.5rem;
+}
+
+.container-fluid .sidebar-logo .logo-icon {
+    /* padding: 8px; */
+    padding: 11px;
+    background-color: var(--green-light);
+    border-radius: 10px;
+}
+
+.container-fluid .sidebar-logo .logo-icon .fa-solid {
+    color: var(--green);
+    /* font-size: 18px; */
+    font-size: 20px;
+}
+
 
 .container-fluid .sidebar .sidebar-menu {
     margin-top: 1rem;
@@ -282,12 +370,17 @@
     border-radius: 10px;
 }
 
+.container-fluid main .card-parent-box .card-body input{
+    font-size: 14.5px;
+}
+
 .container-fluid main .card-parent-box .card-body textarea {
     height: 150px;
+    font-size: 14.5px;
 }
 
 .container-fluid main .card-parent-box .card-body .buttons button {
-    padding: 10px 30px;
+    padding: 7px 25px;
     border-radius: 10px;
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: none;
@@ -338,7 +431,7 @@
 }
 
 .container-fluid main .card-parent-box .card-body .card-body-header .card-icon .fa-file {
-    color: #3B5BDB;
+    color: var(--green);
     font-size: 20px;
 }
 
@@ -576,7 +669,7 @@ hr {
 
 /* ── Module icon ── */
 .module-item .card-icon .fa-layer-group {
-    color: #3B5BDB;
+    color: var(--green);
     font-size: 20px;
 }
 

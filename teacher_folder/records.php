@@ -22,6 +22,28 @@
             color: #111827;
         } */
 
+        /* parent icons */
+
+        /* .parent-icons{
+            padding: 1.2rem 1.5rem;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: end;
+            gap: 1rem;
+            border: 1px solid black;
+        }
+
+        .parent-icons .icons{
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .parent-icons .fa{
+            font-size: 19px;
+            color: var(--green);
+        } */
+
         /* ── HERO BANNER ── */
         .hero-banner {
             width: 100%;
@@ -30,6 +52,7 @@
             background-size: cover;
             background-position: center;
             position: relative;
+            margin-top: 1rem;
         }
 
         .hero-banner::after {
@@ -319,7 +342,7 @@
             background: #fff;
             border: 1px solid #e4e7eb;
             border-radius: 12px;
-            margin-bottom: 12px;
+            margin-bottom: 20px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
             overflow: hidden;
             transition: box-shadow .15s;
@@ -378,6 +401,12 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        .submit-points {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .assign-pts {
@@ -477,9 +506,9 @@
             font-weight: 600;
             padding: 2px 9px;
             border-radius: 20px;
-            background: #dcfce7;
+            /* background: #dcfce7; */
             color: #16a34a;
-            border: 1px solid #bbf7d0;
+            /* border: 1px solid #bbf7d0; */
             margin-left: 8px;
         }
 
@@ -505,8 +534,8 @@
         /* ── CREATE DROPDOWN ── */
         .create-wrap {
             position: fixed;
-            bottom: 7%;
-            right: 5%;
+            bottom: 5%;
+            right: 2%;
             z-index: 999;
         }
 
@@ -752,6 +781,16 @@
             unset($asgn);
             ?>
 
+            <!-- <div class="parent-icons">
+                <div class="icons">
+                    <i class="fa fa-users"></i>
+
+                    <i class="fa fa-question-circle"></i>
+
+                    <i class="fa fa-bars"></i>
+                </div>
+            </div> -->
+
             <!-- HERO BANNER -->
             <div class="hero-banner" style="background-image:<?= $bannerBg ?>;"></div>
 
@@ -766,6 +805,7 @@
                 <div class="tabs">
                     <button class="tab-btn active" data-tab="stream">Stream</button>
                     <button class="tab-btn" data-tab="classwork">Classwork</button>
+                    <button class="tab-btn" data-tab="people">People</button>
                 </div>
             </div>
 
@@ -898,23 +938,25 @@
                         </div>
                     <?php else: ?>
 
-                        <p class="cw-section-title"><i class="fa fa-clipboard-list me-1"></i> Assignments</p>
+                        <!-- <p class="cw-section-title"><i class="fa fa-clipboard-list me-1"></i> Assignments</p> -->
 
                         <?php foreach ($assignments as $asgn):
                             $subCount = count($asgn['submissions'] ?? []);
                             ?>
-                            <div class="assign-card">
+                            <div class="assign-card"
+                                onclick="window.location.href='/learning_management/public/?url=student_works&assignment_id=<?= $asgn['id'] ?>&subject_id=<?= $subject_id ?>'">
                                 <!-- Assignment header — click to toggle submissions -->
-                                <div class="assign-inner" onclick="toggleSubmissions(this)">
+                                <div class="assign-inner">
                                     <div class="assign-icon">
                                         <div class="stack-lines"><span></span><span></span><span></span></div>
                                     </div>
                                     <div class="assign-body">
                                         <div class="assign-label">
                                             New Assignment
-                                            <?php if ($subCount > 0): ?>
-                                                <span class="sub-count-badge"><?= $subCount ?> submitted</span>
-                                            <?php endif; ?>
+                                            <!-- Add this line below -->
+                                            <span style="font-size:11px;font-weight:500;color:#6b7280;margin-left:8px;">
+                                                <?= htmlspecialchars($classInfo['subject_name'] ?? '') ?>
+                                            </span>
                                         </div>
                                         <div class="assign-line">
                                             <strong>Name :</strong> <?= htmlspecialchars($asgn['title']) ?>
@@ -968,7 +1010,14 @@
                                 <div class="assign-footer">
                                     <span>Due Date :
                                         <?= !empty($asgn['due_date']) ? date('M d', strtotime($asgn['due_date'])) : '—' ?></span>
-                                    <span class="assign-pts"><?= (int) ($asgn['points'] ?? 100) ?> pts</span>
+
+                                    <div class="submit-points">
+                                        <?php if ($subCount > 0): ?>
+                                            <span class="sub-count-badge"><?= $subCount ?> submitted</span>
+                                        <?php endif; ?>
+
+                                        <span class="assign-pts"><?= (int) ($asgn['points'] ?? 100) ?> pts</span>
+                                    </div>
                                 </div>
 
                                 <!-- Student submissions (accordion) -->
@@ -982,18 +1031,73 @@
                                             $stuInitials = getInitials($sub['student_name'] ?? 'S');
                                             $status = $sub['status'] ?? 'submitted';
                                             $statusLabel = ucfirst($status);
+
+                                            $subExt = '';
+                                            $subFilePath = '';
+                                            $subFileName = '';
+                                            $subOriginalName = '';
+                                            if (!empty($sub['file_path'])) {
+                                                $subFilePath = $sub['file_path'];
+                                                if (!str_starts_with($subFilePath, '/') && !str_starts_with($subFilePath, 'http')) {
+                                                    $subFilePath = '/learning_management/' . $subFilePath;
+                                                }
+                                                $subFileName = basename($sub['file_path']);
+                                                $subExt = strtolower(pathinfo($subFileName, PATHINFO_EXTENSION));
+
+                                                // Strip the unique prefix (e.g. "69cf73c9475c0_") to get the original name
+                                                $subOriginalName = preg_replace('/^[a-f0-9]+_/', '', $subFileName);
+                                            }
+
+                                            // Pick icon based on extension
+                                            if (in_array($subExt, ['ppt', 'pptx'])) {
+                                                $subIco = 'fa-file-powerpoint';
+                                                $subIcoColor = '#d04423';
+                                            } elseif (in_array($subExt, ['doc', 'docx'])) {
+                                                $subIco = 'fa-file-word';
+                                                $subIcoColor = '#1e5ebb';
+                                            } elseif ($subExt === 'pdf') {
+                                                $subIco = 'fa-file-pdf';
+                                                $subIcoColor = '#e53e3e';
+                                            } else {
+                                                $subIco = 'fa-file-arrow-down';
+                                                $subIcoColor = '#6b7280';
+                                            }
+
+                                            // Format submitted time — show time if today, otherwise date + time
+                                            $submittedAt = '';
+                                            $submittedTime = '';
+                                            if (!empty($sub['submitted_at'])) {
+                                                $ts = strtotime($sub['submitted_at']);
+                                                $submittedAt = date('M d', $ts);
+                                                $submittedTime = date('h:i A', $ts); // e.g. 02:35 PM
+                                            }
                                             ?>
                                             <div class="sub-row">
                                                 <div class="sub-avatar"><?= $stuInitials ?></div>
+
+                                                <!-- Student name -->
                                                 <span class="sub-name"><?= htmlspecialchars($sub['student_name'] ?? '—') ?></span>
-                                                <span
-                                                    class="sub-date"><?= !empty($sub['submitted_at']) ? date('M d', strtotime($sub['submitted_at'])) : '' ?></span>
+
+                                                <!-- File chip — shows cleaned original filename, clickable to open viewer -->
                                                 <?php if (!empty($sub['file_path'])): ?>
-                                                    <a class="sub-file-link" href="<?= htmlspecialchars($sub['file_path']) ?>"
-                                                        target="_blank" title="View file">
-                                                        <i class="fa fa-file-arrow-down"></i>
+                                                    <a class="sub-file-chip" href="javascript:void(0)"
+                                                        onclick="openFileViewer('<?= htmlspecialchars($subFilePath) ?>', '<?= htmlspecialchars($subFileName) ?>', '<?= $subExt ?>')"
+                                                        title="View <?= htmlspecialchars($subOriginalName) ?>">
+                                                        <i class="fa <?= $subIco ?>" style="color:<?= $subIcoColor ?>;"></i>
+                                                        <span><?= htmlspecialchars($subOriginalName) ?></span>
                                                     </a>
+                                                <?php else: ?>
+                                                    <span style="flex:1;"></span>
                                                 <?php endif; ?>
+
+                                                <!-- Submitted date + time instead of download icon -->
+                                                <?php if ($submittedAt): ?>
+                                                    <span class="sub-date">
+                                                        <?= $submittedAt ?> · <span
+                                                            style="color:#374151;font-weight:600;"><?= $submittedTime ?></span>
+                                                    </span>
+                                                <?php endif; ?>
+
                                                 <span class="sub-status <?= $status ?>"><?= $statusLabel ?></span>
                                             </div>
                                         <?php endforeach; ?>
@@ -1005,6 +1109,38 @@
                     <?php endif; ?>
 
                 </div><!-- /classwork -->
+
+                <div class="tab-pane" id="tab-people">
+                    <div class="people-header">
+                        <h4>Students</h4>
+                        <p><?= count($enrolledStudents ?? []) ?> Students</p>
+                    </div>
+                    <div class="list-people">
+                        <?php if (empty($enrolledStudents)): ?>
+                            <div class="empty-state">
+                                <i class="fa fa-users"></i>
+                                <p>No students enrolled yet.</p>
+                            </div>
+                        <?php else: ?>
+                            <?php foreach ($enrolledStudents as $stu):
+                                $stuInitial = strtoupper(substr($stu['name'], 0, 1));
+                                $sectionLabel = $stu['section_name'];
+                                ?>
+                                <div class="student">
+                                    <div class="student-header">
+                                        <div class="icon">
+                                            <span><?= $stuInitial ?></span>
+                                        </div>
+                                        <p><?= htmlspecialchars($stu['name']) ?></p>
+                                    </div>
+                                    <div class="student-section">
+                                        <p><?= htmlspecialchars($sectionLabel) ?></p>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
 
             </main>
 

@@ -288,7 +288,8 @@
 
 .container-fluid .rightbar .parent-pending .complete-grade .complete-parent .complete .complete-box span {
     font-size: 13.5px;
-    color: #C82525;
+    /* color: #C82525; */
+    color: var(--green);
     font-weight: 600;
 }
 
@@ -356,7 +357,7 @@
 
 .container-fluid .rightbar .parent-pending .complete-grade .graded .graded-parent .graded-box span {
     font-size: 13.5px;
-    color: #C82525;
+    /* color: #C82525; */
     font-weight: 600;
 }
 

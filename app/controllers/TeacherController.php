@@ -72,6 +72,8 @@ class TeacherController
             $totalLessons += (int) $im['lesson_count'];
         }
 
+        $enrolledStudents = $teacherModel->getEnrolledStudentsBySection($subject_id, $section_id);
+
         extract([
             'subject_id' => $subject_id,
             'grade_level_id' => $grade_level_id,
@@ -82,7 +84,9 @@ class TeacherController
             'studentCount' => $studentCount,
             'totalLessons' => $totalLessons,
             'teacherModel' => $teacherModel,
+            'enrolledStudents' => $enrolledStudents,  // ← add this
         ]);
+
         require "../teacher_folder/records.php";
     }
 
@@ -563,4 +567,5 @@ class TeacherController
         header("Location: /learning_management/public/?url=teacher_class&id={$subject_id}&grade_id={$grade_level_id}&section_id={$section_id}");
         exit;
     }
+
 }

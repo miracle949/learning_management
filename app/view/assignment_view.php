@@ -98,7 +98,7 @@
 
         .av-due-badge {
             display: inline-block;
-            background-color: #E8F5EE;
+            /* background-color: #E8F5EE; */
             color: var(--green);
             font-size: 13.5px;
             font-weight: 600;
@@ -703,15 +703,16 @@
                                     <h5>Description</h5>
                                     <p><?= htmlspecialchars($assignment['description']) ?></p>
                                 </div>
+                                <div class="date-received">
+                                    <span class="av-date">
+                                        Date Received:
+                                        <?= date('M j', strtotime($assignment['posted_at'])) ?>
+                                    </span>
+                                </div>
                                 <div class="av-date-parent">
-                                    <div class="date-received">
-                                        <span class="av-date">
-                                            Date Received: <?= date('M j', strtotime($assignment['posted_at'])) ?>
-                                        </span>
-                                        <span class="av-points">
-                                            <?= htmlspecialchars($assignment['points']) ?> pts
-                                        </span>
-                                    </div>
+                                    <span class="av-points">
+                                        <?= htmlspecialchars($assignment['points']) ?> pts
+                                    </span>
                                     <div class="due-date">
                                         <?php if (!empty($assignment['due_date'])): ?>
                                             <span class="av-due-badge">

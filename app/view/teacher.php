@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher</title>
     <link rel="stylesheet" href="../css_folder/teacher.css">
+    <!-- <link rel="stylesheet" href="../css_folder/components.css"> -->
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
 </head>
@@ -69,18 +70,18 @@
                     <div class="card-box">
                         <div class="card-text">
                             <span>Total Students</span>
-                            <p><?= (int) ($totalStudents ?? 0) ?></p>
+                            <p><?= count($totalStudents ?? []) ?></p>
                         </div>
                         <div class="card-icon">
                             <i class="fa fa-users"></i>
                         </div>
                     </div>
 
-                    <!-- TOTAL MODULES -->
+                    <!-- SUBMITTED ASSIGNMENTS -->
                     <div class="card-box">
                         <div class="card-text">
                             <span>Submitted Assignments</span>
-                            <p><?= (int) ($stats['total_modules'] ?? 0) ?></p>
+                            <p><?= (int) ($submittedCount ?? 0) ?></p>
                         </div>
                         <div class="card-icon">
                             <i class="fa fa-book-open"></i>
@@ -95,45 +96,61 @@
                         <div class="student-assignment">
                             <h5>Students</h5>
                             <div class="student-names">
-                                <div class="student-box">
-                                    <p>Rogelio A. Amoyan Jr.</p>
-                                    <span>CSS 12-1</span>
-                                </div>
-
-                                <div class="student-box">
-                                    <p>Rogelio A. Amoyan Jr.</p>
-                                    <span>CSS 12-1</span>
-                                </div>
-
-                                <div class="student-box">
-                                    <p>Rogelio A. Amoyan Jr.</p>
-                                    <span>CSS 12-1</span>
-                                </div>
-
-                                <div class="student-box">
-                                    <p>Rogelio A. Amoyan Jr.</p>
-                                    <span>CSS 12-1</span>
-                                </div>
+                                <?php if (empty($enrolledStudents)): ?>
+                                    <p style="font-size:13px;color:#9ca3af;text-align:center;padding:1rem 0;">
+                                        No enrolled students yet.
+                                    </p>
+                                <?php else: ?>
+                                    <?php foreach ($enrolledStudents as $stu): ?>
+                                        <div class="student-box">
+                                            <p>
+                                                <?= htmlspecialchars($stu['name']) ?>
+                                            </p>
+                                            <p>
+                                                <?= htmlspecialchars($stu['email']) ?>
+                                            </p>
+                                            <div class="grade-section">
+                                                <span>
+                                                    <?= htmlspecialchars($stu['grade_level']) ?>
+                                                </span>
+                                                <span>
+                                                    <?= htmlspecialchars($stu['section_name']) ?>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </div>
                         </div>
 
                         <div class="sub-assignment">
                             <h5>Assignments Completed</h5>
                             <div class="assignment-complete">
-                                <div class="assignment-box">
-                                    <p>Rogelio A. Amoyan Jr.</p>
-                                    <span>CSS 12-1</span>
-                                </div>
-
-                                <div class="assignment-box">
-                                    <p>Rogelio A. Amoyan Jr.</p>
-                                    <span>CSS 12-1</span>
-                                </div>
-
-                                <div class="assignment-box">
-                                    <p>Rogelio A. Amoyan Jr.</p>
-                                    <span>CSS 12-1</span>
-                                </div>
+                                <?php if (empty($submittedAssignments)): ?>
+                                    <p style="font-size:13px;color:#9ca3af;text-align:center;padding:1rem 0;">
+                                        No submissions yet.
+                                    </p>
+                                <?php else: ?>
+                                    <?php foreach ($submittedAssignments as $sub): ?>
+                                        <div class="assignment-box">
+                                            <p>
+                                                <?= htmlspecialchars($sub['student_name']) ?> ·
+                                                <?= htmlspecialchars($sub['section_name']) ?>
+                                            </p>
+                                            <p>
+                                                <?= htmlspecialchars($sub['assignment_title']) ?>
+                                            </p>
+                                            <span>Date Submitted:
+                                                <?= !empty($sub['submitted_at'])
+                                                    ? date('F j, Y', strtotime($sub['submitted_at']))
+                                                    : '—' ?>
+                                            </span>
+                                            <!-- <span>
+                                                <?= ucfirst(htmlspecialchars($sub['status'] ?? 'submitted')) ?>
+                                            </span> -->
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -146,39 +163,37 @@
                                 <?php else: ?>
 
                                     <?php foreach ($classes as $index => $class):
-                                        $sections = !empty($class['sections'])
-                                            ? array_unique(explode(', ', $class['sections']))
-                                            : [];
                                         $delay = $index * 0.1;
                                         ?>
 
-                                        <div class="classes" style="animation-delay: <?= $delay ?>s">
+                                        <div class="classes" style="animation-delay: <?= $delay ?>">
                                             <div class="class-accent"></div>
 
                                             <div class="classes-name">
-                                                <h3>
-                                                    <?= htmlspecialchars($class['subject_name']) ?>
-                                                </h3>
+                                                <h3><?= htmlspecialchars($class['subject_name']) ?></h3>
                                                 <p>
-                                                    <?= htmlspecialchars($class['sections'] ?? '') ?>
+                                                    <!-- <?= htmlspecialchars($class['grade_name'] ?? '') ?>
+                                                    <?php if (!empty($class['section'])): ?>
+                                                        · <?= htmlspecialchars($class['section']) ?>
+                                                    <?php endif; ?> -->
+
+                                                    <!-- <?= htmlspecialchars($class['grade_name'] ?? '') ?> -->
+                                                    <?php if (!empty($class['section'])): ?>
+                                                        <?= htmlspecialchars($class['section']) ?>
+                                                    <?php endif; ?>
                                                 </p>
                                             </div>
+
                                             <div class="classes-student-module">
                                                 <div class="students">
-                                                    <h4>
-                                                        <?= (int) ($class['student_count'] ?? 0) ?>
-                                                    </h4>
+                                                    <h4><?= (int) ($class['student_count'] ?? 0) ?></h4>
                                                     <p>Students</p>
                                                 </div>
-                                                <!-- <div class="modules">
-                                                <h4>
-                                                    <?= (int) ($class['module_count'] ?? 0) ?>
-                                                </h4>
-                                                <p>Modules</p>
-                                            </div> -->
+                                                <div class="modules">
+                                                    <h4><?= (int) ($class['module_count'] ?? 0) ?></h4>
+                                                    <p>Modules</p>
+                                                </div>
                                             </div>
-
-
                                         </div>
 
                                     <?php endforeach; ?>

@@ -578,14 +578,6 @@ color: var(--text-dark); */
     color: #808080;
 }
 
-/* .container-fluid .sidebar .sidebar-menu ul .sidebar-category:nth-child(2) h5{
-    margin: 10px 10px;
-    font-size: 13.5px;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: #808080;
-} */
-
 .container-fluid .sidebar .sidebar-menu ul li {
     list-style: none;
     line-height: 50px;
@@ -610,9 +602,7 @@ color: var(--text-dark); */
     align-items: center;
     gap: 1rem;
     color: var(--green-text);
-    /* color: #1a1a1a; */
-    /* font-size: 15px; */
-    font-size: 15.5px;
+    font-size: 15px;
     font-weight: 600;
 
 }
@@ -647,16 +637,6 @@ color: var(--text-dark); */
     padding: 26px;
 }
 
-/* .container-fluid .sidebar .sidebar-menu ul li a {
-    display: flex;
-    justify-content: left;
-    align-items: center;
-    gap: 1rem;
-    color: var(--green-text);
-    font-size: 15.5px;
-    font-weight: 600;
-
-} */
 
 .container-fluid .sidebar .sidebar-footer .fa{
     font-size: 18px;

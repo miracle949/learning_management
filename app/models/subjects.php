@@ -38,13 +38,12 @@ class subjects extends Model
         return $this->getSubjectsByGradeLevel(2);
     }
 
-    public function getStudentByUserId($user_id)
+    public function getStudentByUserId($userId)
     {
-        $stmt = $this->db->prepare("SELECT id, section_id FROM students WHERE user_id = ?");
-        $stmt->bind_param("i", $user_id);
+        $stmt = $this->db->prepare("SELECT * FROM students WHERE user_id = ? LIMIT 1");
+        $stmt->bind_param("i", $userId);
         $stmt->execute();
-        $result = $stmt->get_result();
-        return $result->fetch_assoc();
+        return $stmt->get_result()->fetch_assoc();
     }
 
     public function getSubjectsByGradeLevel($grade_level_id)

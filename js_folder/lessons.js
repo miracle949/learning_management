@@ -25,7 +25,6 @@ function unifiedPick(el) {
     var qi = parseInt(el.dataset.qi);
     var qid = el.dataset.qid;
     var key = el.dataset.key;
-    var uid = el.dataset.uid;
     var qzid = parseInt(el.dataset.qzid);
 
     // Deselect siblings in same card
@@ -43,18 +42,6 @@ function unifiedPick(el) {
     var cnt = document.getElementById('unified_status');
     if (cnt) cnt.textContent = Object.keys(UNIFIED_QZ.ans).length + ' / ' + UNIFIED_QZ.total + ' answered';
 
-    // Enable Next button (or hide if last question)
-    var nxt = document.getElementById('unified_next');
-    var last = qi === UNIFIED_QZ.total - 1;
-    if (nxt) {
-        if (last) {
-            nxt.style.display = 'none';
-        } else {
-            nxt.disabled = false;
-            nxt.style.display = 'inline-flex';
-        }
-    }
-
     checkLessonComplete();
 }
 
@@ -62,12 +49,8 @@ function unifiedNav(dir) {
     var cards = document.querySelectorAll('.unified-q-card');
     if (!cards.length) return;
 
-    // Hide current
     if (cards[UNIFIED_QZ.cur]) cards[UNIFIED_QZ.cur].style.display = 'none';
-
     UNIFIED_QZ.cur = Math.max(0, Math.min(UNIFIED_QZ.total - 1, UNIFIED_QZ.cur + dir));
-
-    // Show new
     if (cards[UNIFIED_QZ.cur]) cards[UNIFIED_QZ.cur].style.display = 'block';
 
     var prev = document.getElementById('unified_prev');
@@ -75,7 +58,6 @@ function unifiedNav(dir) {
 
     if (prev) prev.style.display = UNIFIED_QZ.cur > 0 ? 'inline-flex' : 'none';
 
-    // Enable Next only if current question already answered
     if (nxt) {
         var curCard = cards[UNIFIED_QZ.cur];
         var firstChoice = curCard ? curCard.querySelector('.q-choice') : null;
@@ -141,10 +123,8 @@ function checkLessonComplete() {
         if (Object.keys(answered).length < act.required) allDone = false;
     });
 
-    // Check quizzes — use unified total
-    if (!allDone) {
-        // Already failed above
-    } else {
+    // Check quizzes
+    if (allDone) {
         var totalRequired = 0;
         LESSON_DATA.quizzes.forEach(function (qz) {
             if (!qz.done) totalRequired += qz.required;
@@ -201,8 +181,111 @@ function saveAndGo(href, isFinish) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
     })
-        .then(function () { doNavigate(href, isFinish); })
-        .catch(function () { doNavigate(href, isFinish); });
+        .then(function () {
+            if (isFinish) {
+                markLessonFinished();
+            } else {
+                window.location.href = href;
+            }
+        })
+        .catch(function () {
+            if (isFinish) {
+                markLessonFinished();
+            } else {
+                window.location.href = href;
+            }
+        });
+}
+
+/* ==========================
+   MARK LESSON AS FINISHED
+   - Disable Finish button
+   - Change label to "Completed"
+   - Update progress bar to 100%
+   - Update completed count in header
+========================== */
+function markLessonFinished() {
+    // 1. Disable the Finish button and change its label
+    var nextBtn = document.getElementById('nextBtn');
+    if (nextBtn) {
+        nextBtn.style.pointerEvents = 'none';
+        nextBtn.style.cursor = 'default';
+        nextBtn.style.opacity = '1';
+        nextBtn.innerHTML = '<span>Completed</span> <i class="fa fa-check-double"></i>';
+        nextBtn.style.background = '#16a34a';
+        nextBtn.classList.remove('disabled');
+    }
+
+    // 2. Update progress bar to 100%
+    var progressBar = document.getElementById('progressBar');
+    if (progressBar) {
+        progressBar.style.width = '100%';
+        progressBar.style.transition = 'width 0.6s ease';
+    }
+    var progressPercent = document.getElementById('progressPercent');
+    if (progressPercent) {
+        progressPercent.textContent = '100%';
+    }
+
+    // 3. Update the "Completed" count in the module header stats
+    // Find the module stat that shows "X Completed"
+    var statNums = document.querySelectorAll('.module-stat-num');
+    statNums.forEach(function (el) {
+        var parent = el.closest('.module-stat');
+        if (parent && parent.textContent.includes('Completed')) {
+            // Increment the completed count by 1
+            var current = parseInt(el.textContent) || 0;
+            el.textContent = current + 1;
+        }
+    });
+
+    // 4. Update the sidebar — mark current lesson as done (green check)
+    var activeLi = document.querySelector('.sidebar-menu li.active-lesson');
+    if (activeLi) {
+        activeLi.classList.add('done-lesson');
+        var icon = activeLi.querySelector('.lesson-icon-status');
+        if (icon) {
+            icon.classList.remove('fa-circle');
+            icon.classList.add('fa-check');
+        }
+    }
+
+    // 5. Show a brief success toast
+    showFinishToast();
+}
+
+function showFinishToast() {
+    var toast = document.createElement('div');
+    toast.style.cssText = [
+        'position:fixed',
+        'bottom:28px',
+        'left:50%',
+        'transform:translateX(-50%)',
+        'background:#16a34a',
+        'color:#fff',
+        'padding:12px 28px',
+        'border-radius:30px',
+        'font-size:14px',
+        'font-weight:600',
+        'box-shadow:0 4px 20px rgba(0,0,0,.18)',
+        'z-index:99999',
+        'display:flex',
+        'align-items:center',
+        'gap:8px',
+        'opacity:0',
+        'transition:opacity .3s'
+    ].join(';');
+    toast.innerHTML = '<i class="fa fa-check-circle"></i> Lesson completed!';
+    document.body.appendChild(toast);
+
+    // Fade in
+    setTimeout(function () { toast.style.opacity = '1'; }, 50);
+
+    // Fade out and remove after 3s
+    setTimeout(function () {
+        toast.style.opacity = '0';
+        setTimeout(function () { toast.remove(); }, 400);
+    }, 3000);
 }
 
 function doNavigate(href, isFinish) {
@@ -215,7 +298,7 @@ function doNavigate(href, isFinish) {
 }
 
 /* ==========================
-   TAB SWITCHER (kept for compatibility)
+   TAB SWITCHER
 ========================== */
 function switchTab(name, btn) {
     document.querySelectorAll('.tab-panel').forEach(function (p) { p.style.display = 'none'; });
@@ -230,31 +313,18 @@ function switchTab(name, btn) {
 ========================== */
 document.addEventListener('DOMContentLoaded', function () {
 
-    // Progress bar
-    var lessonCountEl = document.getElementById('lesson-count');
-    var currentIndex = 1, totalLessons = 1;
-    if (lessonCountEl) {
-        var m = lessonCountEl.textContent.match(/(\d+)\s+of\s+(\d+)/);
-        if (m) { currentIndex = parseInt(m[1]); totalLessons = parseInt(m[2]); }
-    }
-    (function () {
-        if (!totalLessons) return;
-        var pct = Math.round((currentIndex / totalLessons) * 100);
-        var bar = document.getElementById('progressBar');
-        var text = document.getElementById('progressPercent');
-        if (bar) bar.style.width = pct + '%';
-        if (text) text.textContent = pct + '%';
-    })();
-
     // Initial lock check
     checkLessonComplete();
 
     // NEXT / FINISH
     var nextBtn = document.getElementById('nextBtn');
-    if (nextBtn) {
+    if (nextBtn && nextBtn.tagName === 'A') {
+        // Only attach click if it's an anchor (not already-completed div)
         nextBtn.addEventListener('click', function (e) {
             e.preventDefault();
             if (nextBtn.classList.contains('disabled')) return;
+            // Extra guard — if button already says Completed, do nothing
+            if (nextBtn.textContent.trim().startsWith('Completed')) return;
             var href = nextBtn.getAttribute('href');
             var isFinish = (href === '#' || !href);
             saveAndGo(href, isFinish);

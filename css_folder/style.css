@@ -311,6 +311,10 @@ div.rightbar{
     border-radius: 7px;
 }
 
+.parent-performance .enrolled-subjects{
+    width: 100%;
+}
+
 .parent-performance .update{
     width: 39%;
     /* border: 2px solid #6CCA55; */

@@ -15,36 +15,59 @@
     font-family: 'Poppins', sans-serif;
 }
 
-.container-fluid .login-parent{
+:root {
+    --green: #4CAF7D;
+    --green-dark: #2D6A4F;
+    --green-light: #E8F5EE;
+    --green-mid: #c8e6d6;
+    --orange: #FF8A65;
+    --orange-light: #FFF3EF;
+    --orange-dark: #bf5b3a;
+    --bg: #F9FBF9;
+    --white: #ffffff;
+    --card-border: rgba(0, 0, 0, 0.07);
+    --text: #2D6A4F;
+    --text-dark: #1a3a2a;
+    --text-muted: #7a9a8a;
+    --sidebar-bg: #ffffff;
+    --shadow: 0 2px 12px rgba(76, 175, 125, 0.08);
+    --background-icon: #2d3748;
+    --green-text: #4a6a58;
+}
+
+.container-fluid .login-parent {
     /* height: 100vh; */
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 3rem;
     width: 100%;
+    background-color: #F7F9F8;
     /* overflow: hidden; */
 }
 
-.container-fluid .login-parent .image-container{
+.container-fluid .login-parent .image-container {
     /* background-image: url(../images/login-bg.jpg);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover; */
-    border-right: 1px solid rgba(0,0,0,0.1);
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.container-fluid .login-parent .image-container img{
+.container-fluid .login-parent .image-container img {
     width: 100%;
     height: 100%;
 }
 
-.container-fluid .login-parent .form-extension{
+.container-fluid .login-parent .form-extension {
     width: calc(100% / 2);
-    /* height: 100%; */
     animation: slideIn 0.4s ease both;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
 }
 
 @keyframes slideIn {
@@ -79,50 +102,68 @@
     margin-top: 20rem;
 } */
 
-.container-fluid .login-parent .form .form-logo .parent-logo{
-    display: flex;
-    justify-content: left;
-    align-items: center;
-    /* gap: 0.8rem; */
-    /* margin-top: 1.5rem; */
+.container-fluid .login-parent .form .form-logo .parent-logo p {
+    font-size: 17px;
+    font-weight: bold;
+    margin: 0;
 }
 
-.container-fluid .login-parent .form .form-logo .parent-logo img {
-    width: 50px;
-    height: 50px;
+.container-fluid .login-parent .form .form-logo .parent-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    gap: 0.5rem;
+}
+
+.container-fluid .login-parent .form .form-logo .parent-logo .logo-icon {
+    padding: 8px;
+    background-color: var(--green-light);
+    border-radius: 10px;
+}
+
+.container-fluid .login-parent .form .form-logo .parent-logo .logo-icon .fa-solid {
+    color: var(--green);
+    font-size: 22px;
+}
+
+.container-fluid .login-parent .form .form-logo .parent-logo p {
+    font-size: 22px;
+    font-family: "Titan", sans-serif;
+    font-weight: normal;
+    color: var(--green);
 }
 
 .container-fluid .login-parent .form .form-logo .parent-logo p b {
     font-weight: normal;
-    color: #4f89a5;
+    color: #212529;
     font-family: "Titan", sans-serif;
 }
 
-.container-fluid .login-parent .form .form-logo .parent-logo .logo-text p{
-    all: unset;
-    font-weight: 500;
-    font-family: "Titan", sans-serif;
-    font-size: 19.5px;
-}
-
-.container-fluid .login-parent .form .form-logo .parent-logo .logo{
+/* .container-fluid .login-parent .form .form-logo .parent-logo .logo {
     width: 60px;
     height: 60px;
     background-image: url(../images/login-logo2.jpg);
     background-position: center;
     background-repeat: no-repeat;
-    background-size: contain;
+    background-size: cover;
     border-radius: 7px;
-    /* border-radius: 50%; */
-    /* margin-top: 2.5rem; */
-}
+    border-radius: 50%;
+    margin-top: 2.5rem;
+} */
 
-.container-fluid .login-parent .form .form-logo p{
+.container-fluid .login-parent .form .form-logo p {
     font-size: 14.5px;
     color: #808080;
+    text-align: center;
 }
 
-.container-fluid .login-parent .form{
+/* .container-fluid .login-parent .form .form-logo p {
+    font-size: 14.5px;
+    color: #808080;
+} */
+
+.container-fluid .login-parent .form {
     /* padding-top: 13rem; */
     /* padding-top: 4.5rem;
     padding-left: 4.5rem;
@@ -132,7 +173,7 @@
     padding-left: 3rem;
     padding-right: 3rem;
     padding-bottom: 2rem;
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    /* box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px; */
     border-radius: 20px;
 }
 
@@ -152,26 +193,31 @@
     margin-top: 1.5rem;
 } */
 
-.container-fluid .login-parent .form .text-box input, 
+.container-fluid .login-parent .form .text-box:nth-child(1) {
+    margin-top: 0.5rem;
+}
+
+.container-fluid .login-parent .form .text-box input,
 .container-fluid .login-parent .form .text-box label,
-.container-fluid .login-parent .form .text-box select{
+.container-fluid .login-parent .form .text-box select {
     font-size: 14.5px;
 }
 
 .container-fluid .login-parent .form .text-box input {
     margin-top: 0.3rem;
-    border: 1px solid rgba(0,0,0,0.3);
+    border: 1px solid rgba(0, 0, 0, 0.3);
     border-radius: 28px;
     padding: 8px 15px;
 }
+
 select.form-select {
     margin-top: 0.3rem;
-    border: 1px solid rgba(0,0,0,0.3);
+    border: 1px solid rgba(0, 0, 0, 0.3);
     border-radius: 28px;
     color: #6F7174;
 }
 
-select.form-select:valid{
+select.form-select:valid {
     color: #212529;
 }
 
@@ -180,46 +226,54 @@ select.form-select:valid{
     color: white;
 } */
 
-.container-fluid .login-parent .form h2{
+.container-fluid .login-parent .form h2 {
     font-size: 23px;
+    margin-top: 1rem;
+    font-family: "Titan", sans-serif;
+    text-align: center;
+}
+
+.container-fluid .login-parent .form h2 b {
+    font-family: "Titan", sans-serif;
+    color: var(--green);
+}
+
+.container-fluid .login-parent .form .forgot {
     margin-top: 1.5rem;
 }
 
-.container-fluid .login-parent .form .forgot{
-    margin-top: 1.5rem;
-}
-
-.container-fluid .login-parent .form .forgot a{
+.container-fluid .login-parent .form .forgot a {
     font-size: 14.5px;
     color: #212529;
 }
 
-.container-fluid .login-parent .form .button{
+.container-fluid .login-parent .form .button {
     margin-top: 1.5rem;
 }
 
-.container-fluid .login-parent .form .button button{
+.container-fluid .login-parent .form .button button {
     padding: 8px;
-    border: 1px solid rgba(0,0,0,0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     outline: none;
     width: 100%;
     border-radius: 28px;
     font-size: 14.5px;
     /* text-transform: uppercase; */
     /* background-color: #0d589f; */
-    background-color: #212529;
+    /* background-color: #212529; */
+    background-color: var(--green);
     color: white;
     font-weight: bold;
 }
 
-.container-fluid .login-parent .form h4{
+.container-fluid .login-parent .form h4 {
     margin-top: 3rem;
     text-align: center;
     font-size: 14.5px;
     font-weight: normal;
 }
 
-.container-fluid .login-parent .form .accounts{
+.container-fluid .login-parent .form .accounts {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -228,7 +282,7 @@ select.form-select:valid{
     gap: 1rem;
 }
 
-.container-fluid .login-parent .form .accounts a{
+.container-fluid .login-parent .form .accounts a {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -240,17 +294,18 @@ select.form-select:valid{
     border-radius: 7px;
 }
 
-.container-fluid .login-parent .form .accounts a p{
+.container-fluid .login-parent .form .accounts a p {
     font-size: 14.5px;
 }
 
-.container-fluid .login-parent .form .change{
+.container-fluid .login-parent .form .change {
     width: 100%;
     text-align: center;
     margin-top: 2.5rem;
 }
 
-.container-fluid .login-parent .form .change label, .container-fluid .login-parent .form .change a{
+.container-fluid .login-parent .form .change label,
+.container-fluid .login-parent .form .change a {
     color: #212529;
     font-size: 15px;
 }
@@ -281,7 +336,7 @@ select.form-select:valid{
     }
 }
 
-@media only screen and (max-width: 500px){
+@media only screen and (max-width: 500px) {
     .container-fluid .login-parent .form {
         padding: 45rem 1.5rem 4rem 1.5rem;
     }

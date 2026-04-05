@@ -118,42 +118,67 @@ switch ($url) {
     case 'addSubject':
         $teacher->addSubject();
         break;
+
     case 'admin':
         $teacher->RecentStudents();
         break;
+
     case 'teacher':
         $teacher->teacherDashboard();
         break;
+
     case 'classes_teacher':
         $teacher->ClassView();
         break; // ← single, no duplicate
+
     case 'teacher_class':
         $teacherDashboard->viewClass();
         break;
+
     case 'student_records':
         $controller->student_records();
         break;
+
     case 'teacher_records':
         $teacher->teacherRecords();
         break;
+
     case 'createTeacher':
         $teacher->createTeacher();
         break;
+
     case 'records':
         $controller->records();
         break;
+
+    case 'student_works':
+        $controller->student_works();
+        break;
+
+    case 'works':
+        $controller->works();
+        break;
+
+    case 'save_grade':
+        $teacher->save_grade();
+        break;
+
     case 'lessons':
         $teacherDashboard->lessons();
         break;
+
     case 'announce':
         $teacherDashboard->announce();
         break;
+
     case 'save_announcement':
         $teacherDashboard->save_announcement();
         break;
+
     case 'save_assignment':
         $teacherDashboard->save_assignment();
         break;
+
     case 'upload':
         $teacherDashboard->upload();
         break;

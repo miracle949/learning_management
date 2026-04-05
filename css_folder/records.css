@@ -1,4 +1,12 @@
 @font-face {
+    font-family: 'Titan';
+    src: url('../Titan_One/TitanOne-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+
+@font-face {
     font-family: 'Poppins';
     src: url('../Poppins/Poppins-Regular.ttf') format('truetype');
     font-weight: 400;
@@ -38,7 +46,7 @@
     text-transform: uppercase;
 }
 
-.container-fluid nav .nav-menu button{
+.container-fluid nav .nav-menu button {
     border: none;
     outline: none;
     background: none;
@@ -67,14 +75,24 @@
 }
 
 .container-fluid .sidebar .sidebar-menu ul {
-    padding: 0px 1rem 0px 1rem;
-    margin-bottom: 1rem;
+    padding: 0.3px 1rem 0px 1rem;
+    /* margin-top: 1rem; */
+}
+
+.container-fluid .sidebar .sidebar-menu ul .sidebar-category h5 {
+    margin: 10px 6px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #808080;
 }
 
 .container-fluid .sidebar .sidebar-menu ul li {
     list-style: none;
-    line-height: 60px;
-    padding: 0 20px;
+    line-height: 50px;
+    padding: 0 10px;
+    border-radius: 10px;
+    margin-top: 0.5rem;
 }
 
 .container-fluid .sidebar .sidebar-menu ul li:hover {
@@ -87,49 +105,119 @@
     justify-content: left;
     align-items: center;
     gap: 1rem;
-    color: #484B4A;
-    font-size: 15.5px;
+    color: var(--green-text);
+    font-size: 15px;
+    font-weight: 600;
     text-decoration: none;
+}
+
+.container-fluid .sidebar .sidebar-menu ul li a .fa {
+    font-size: 18px;
+}
+
+.container-fluid .sidebar .sidebar-menu ul li.active {
+    background-color: var(--green);
+    color: #ffffff;
+}
+
+.container-fluid .sidebar .sidebar-menu ul li.active a {
+    color: #ffffff;
+}
+
+.container-fluid .sidebar .sidebar-footer {
+    /* padding: 1rem; */
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    /* height: 300px; */
+    /* height: 100%; */
+    /* height: 200px; */
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 1rem;
+    font-size: 15.5px;
+    font-weight: 600;
+    color: var(--green-text);
+    /* padding: 0px 26px 0px 26px; */
+    padding: 26px;
+}
+
+
+.container-fluid .sidebar .sidebar-footer .fa {
+    font-size: 18px;
+}
+
+.container-fluid .sidebar .sidebar-footer p {
+    margin: 0;
+    /* font-size: 13.5px; */
 }
 
 .container-fluid .rightbar {
     width: calc(100% - 235px);
-    height: calc(100vh - 66px);
-    overflow-y: auto;
+    height: 100vh;
+    margin-top: 68px;
+    /* overflow-y: auto; */
     margin-left: 235px;
-    /* padding-bottom: 2rem; */
-    margin-top: 66px;
-    /* padding: 1rem; */
     border-left: 1px solid rgba(0, 0, 0, 0.1);
     background-color: #F7F9F8;
 }
 
 .container-fluid .sidebar-logo {
-    height: 130px;
+    /* height: 130px; */
+    height: 100px;
     /* background-color: #5BCA3F; */
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
+    /* flex-direction: column; */
     gap: 1rem;
-    /* padding-top: 3rem; */
-    margin-top: 1.8rem;
-    padding-bottom: 1rem;
+    /* margin-top: 1.8rem; */
+    /* padding-bottom: 1rem; */
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.container-fluid .sidebar-logo .fa {
-    font-size: 70px;
-    /* color: #5BCA3F; */
-    color: var(--background-icon);
-}
+/* 
+.container-fluid .sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+} */
 
 .container-fluid .sidebar-logo p {
-    font-size: 17.5px;
-    font-weight: 600;
-    /* color: #364153; */
-    color: var(--text-dark);
+    /* font-size: 17px; */
+    font-size: 22px;
+    /* font-weight: bold; */
+    margin: 0;
+    font-family: "Titan", sans-serif;
+    color: var(--green);
 }
+
+.container-fluid .sidebar-logo p b {
+    color: #212529;
+    font-family: "Titan", sans-serif;
+}
+
+.container-fluid .sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    gap: 0.5rem;
+}
+
+.container-fluid .sidebar-logo .logo-icon {
+    /* padding: 8px; */
+    padding: 11px;
+    background-color: var(--green-light);
+    border-radius: 10px;
+}
+
+.container-fluid .sidebar-logo .logo-icon .fa-solid {
+    color: var(--green);
+    /* font-size: 18px; */
+    font-size: 20px;
+}
+
 
 .container-fluid .sidebar .sidebar-menu {
     margin-top: 1rem;
@@ -447,3 +535,95 @@ select.form-select {
     table-layout: fixed;
 }
 
+.sub-file-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #f3f4f6;
+    border: 1px solid #e4e7eb;
+    border-radius: 6px;
+    padding: 3px 9px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #374151;
+    text-decoration: none;
+    white-space: nowrap;
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background .12s, color .12s;
+    flex-shrink: 0;
+    margin-left: auto;
+    /* pushes it to the right, before date */
+}
+
+.sub-file-chip:hover {
+    background: #e8f5ee;
+    color: #009e3e;
+    border-color: #bbf7d0;
+}
+
+.sub-file-chip i {
+    flex-shrink: 0;
+}
+
+/* People tab */
+
+.people-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1) ;
+    padding: 0 0 1.5rem 0;
+}
+
+.people-header h4, 
+.people-header p{
+    margin: 0;
+}
+
+.people-header h4{
+    font-weight: 600;
+    font-size: 21px;
+}
+
+.people-header p{
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.list-people .student{
+    padding: 1.5rem 0 1.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+} 
+
+.list-people .student .student-header{
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.list-people .student .student-header p{
+    font-size: 15px;
+}
+
+.list-people .student .student-header .icon{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--green);
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.list-people .student .student-section p{
+    font-size: 15px;
+}

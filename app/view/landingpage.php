@@ -40,7 +40,7 @@
                     </ul>
                 </div> -->
 
-                <a target="blank__" href="/learning_management/public/?url=login">Login</a>
+                <a href="/learning_management/public/?url=login">Login</a>
             </div>
         </div>
 
@@ -58,6 +58,9 @@
 
             <div class="nav-acc">
                 <ul class="m-0 p-0">
+                    <!-- <li>
+                        <a href="#homepage">Home</a>
+                    </li> -->
                     <li>
                         <a href="#features">Features</a>
                     </li>
@@ -68,7 +71,7 @@
                         <a href="#for-teachers">For Teachers</a>
                     </li>
                     <li>
-                        <a target="blank__" href="/learning_management/public/?url=login">Get Started</a>
+                        <a href="/learning_management/public/?url=login">Get Started</a>
                         <i class="fa fa-arrow-right"></i>
                     </li>
                 </ul>
@@ -90,8 +93,8 @@
                     <span class="word-wrap">
                         <span>Education</span>
                         <span>Learning</span>
+                        <span>Mastery</span>
                         <span>Knowledge</span>
-                        <span>Study</span>
                         <span>Teaching</span>
                     </span>
                     with Moderm LMS

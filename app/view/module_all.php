@@ -350,6 +350,80 @@
                 </div>
 
             <?php elseif (!empty($_SESSION['grade_level']) && $_SESSION['grade_level'] === 'Grade 11'): ?>
+
+                <div class="welcome-user">
+                    <div class="welcome-text">
+                        <h2>Welcome,
+                            <?= htmlspecialchars($_SESSION["name"]) ?>! 👋
+                        </h2>
+                        <div class="d-flex gap-2">
+                            <span>Gets Ready to Learn!</span>
+                        </div>
+                    </div>
+                    <div class="welcome-body">
+                        <div class="buttons-group">
+                            <a href="/learning_management/public/?url=classes">Browse Courses <i
+                                    class="fa fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="module-parent">
+                    <div class="learning-catalog">
+                        <h4>Learning Catalog</h4>
+                        <p>Grade 12</p>
+                        <div class="learning-module">
+                            <?php foreach ($grade12Subjects as $subject): ?>
+                                <ul>
+                                    <li>
+                                        <?= htmlspecialchars($subject['subject_name']) ?>
+                                    </li>
+                                </ul>
+                            <?php endforeach; ?>
+                        </div>
+                        <p>Grade 11</p>
+                        <div class="learning-module">
+                            <?php foreach ($grade11Subjects as $subject): ?>
+                                <ul>
+                                    <li>
+                                        <?= htmlspecialchars($subject['subject_name']) ?>
+                                    </li>
+                                </ul>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <div class="learning-module-section">
+                        <?php foreach ($subjects as $subject):
+                            $slug = $subject['subject_code'];
+                            $isStarted = in_array($slug, $startedSlugs ?? []);
+                            $btnText = $isStarted ? 'Continue Learning' : 'Start Now';
+                            $btnClass = $isStarted ? 'btn-continue' : 'btn-start';
+                            ?>
+                            <div class="module-card">
+                                <div class="module-header"></div>
+                                <div class="module-body">
+                                    <div class="module-text">
+                                        <h4>
+                                            <?= htmlspecialchars($subject['subject_name']) ?>
+                                        </h4>
+                                        <p>
+                                            <?= !empty($subject['description']) ? htmlspecialchars($subject['description']) : 'Lorem ipsum dolor sit amet consectetur' ?>
+                                        </p>
+                                    </div>
+                                    <div class="module-link">
+                                        <a href="/learning_management/public/?url=modules&subject=<?= urlencode($slug) ?>"
+                                            class="<?= $btnClass ?>" data-slug="<?= htmlspecialchars($slug) ?>"
+                                            onclick="handleStart(event, this)">
+                                            <?= $btnText ?> <i class="fa fa-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                
             <?php else: ?>
                 <div class="welcoming">
                     <h2>No grade level or section assigned. Please contact your administrator.</h2>

@@ -261,7 +261,7 @@ html {
     line-height: 1.2em;
     color: var(--green);
     font-family: "Titan", sans-serif;
-    font-weight: bold;
+    /* font-weight: bold; */
     white-space: nowrap;
     opacity: 0;
     animation: slideWord 8s ease-in-out infinite;

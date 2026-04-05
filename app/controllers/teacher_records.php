@@ -40,12 +40,9 @@ class teacher_records
 
     public function teacherDashboard()
     {
-        // Check what session key your teacher login uses
-        // Try teacher_id first, fallback to user_id
         $teacher_id = $_SESSION['teacher_id'] ?? null;
 
         if (!$teacher_id) {
-            // Find teacher_id from users table using user_id session
             $user_id = $_SESSION['user_id'] ?? null;
             if (!$user_id) {
                 header("Location: /learning_management/public/?url=login");
@@ -64,7 +61,10 @@ class teacher_records
 
         $classes = $this->teacherModel->getTeacherClasses($teacher_id);
         $stats = $this->teacherModel->getTeacherStats($teacher_id);
-        $totalStudents = array_sum(array_column($classes, 'student_count'));
+        $totalStudents = $this->teacherModel->getEnrolledStudentsByTeacher($teacher_id);
+        $submittedCount = $this->teacherModel->getTotalSubmittedAssignments($teacher_id);
+        $enrolledStudents = $totalStudents; // for the student list panel
+        $submittedAssignments = $this->teacherModel->getSubmittedAssignmentsByTeacher($teacher_id);
         $teacherInfo = ['name' => $_SESSION['teacher_name'] ?? $_SESSION['name'] ?? 'Teacher'];
 
         require_once "../app/view/teacher.php";
@@ -158,5 +158,24 @@ class teacher_records
         $recentStudents = $this->teacherModel->getRecentStudents(5);
 
         require_once "../app/view/admin.php";
+    }
+
+    public function save_grade()
+    {
+        $teacherModel = new Teacher();
+
+        $submission_id = (int) ($_POST['submission_id'] ?? 0);
+        $points_earned = (int) ($_POST['points_earned'] ?? 0);
+        $feedback = trim($_POST['feedback'] ?? '');
+        $assignment_id = (int) ($_POST['assignment_id'] ?? 0);
+        $subject_id = (int) ($_POST['subject_id'] ?? 0);
+        $student_index = (int) ($_POST['student_index'] ?? 0);
+
+        if ($submission_id) {
+            $teacherModel->saveGrade($submission_id, $points_earned, $feedback);
+        }
+
+        header("Location: /learning_management/public/?url=works&assignment_id={$assignment_id}&subject_id={$subject_id}&student_index={$student_index}");
+        exit;
     }
 }

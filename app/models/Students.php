@@ -5,6 +5,34 @@ require_once "../core/Model.php";
 class Students extends Model
 {
 
+    public function getGradedAssignments($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT a.id, a.task, a.due_date, a.points AS total_points,
+               s.subject_code, sub.submitted_at, sub.graded_at,
+               sub.points_earned, sub.feedback
+        FROM assignments a
+        JOIN assignment_submissions sub ON sub.assignment_id = a.id
+        JOIN subjects s ON a.subject_id = s.id
+        WHERE sub.student_id = ? AND sub.points_earned IS NOT NULL
+        ORDER BY sub.graded_at DESC
+    ");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function countGradedAssignments($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total FROM assignment_submissions
+        WHERE student_id = ? AND points_earned IS NOT NULL
+    ");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
     // ============================================================
     // MODULE VIEW
     // ============================================================
@@ -312,11 +340,12 @@ class Students extends Model
     public function getLessonQuizzes($lessonId)
     {
         $stmt = $this->db->prepare("
-            SELECT id, title, instructions, passing_score
-            FROM interactive_contents
-            WHERE lesson_id = ? AND type = 'quiz'
-            ORDER BY id ASC
-        ");
+        SELECT MIN(id) AS id, title, instructions, passing_score
+        FROM interactive_contents
+        WHERE lesson_id = ? AND type = 'quiz'
+        GROUP BY title, instructions, passing_score
+        ORDER BY MIN(id) ASC
+    ");
         $stmt->bind_param("i", $lessonId);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -340,45 +369,59 @@ class Students extends Model
         if (!$studentId)
             return false;
 
-        // Check if student passed a quiz in this lesson
+        // Get quiz groups (same MIN(id) logic as getLessonQuizzes)
         $stmt = $this->db->prepare("
-            SELECT ic.id FROM interactive_contents ic
-            JOIN quiz_results qr ON qr.content_id = ic.id
-            WHERE ic.lesson_id = ? AND ic.type = 'quiz'
-            AND qr.student_id = ? AND qr.passed = 1
-            LIMIT 1
-        ");
-        $stmt->bind_param("ii", $lessonId, $studentId);
+        SELECT MIN(id) AS quiz_id
+        FROM interactive_contents
+        WHERE lesson_id = ? AND type = 'quiz'
+        GROUP BY title
+    ");
+        $stmt->bind_param("i", $lessonId);
         $stmt->execute();
-        if ($stmt->get_result()->fetch_assoc())
-            return true;
+        $quizGroups = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
-        // Check if student submitted an activity in this lesson
+        // Check activity count
         $stmt = $this->db->prepare("
-            SELECT ic.id FROM interactive_contents ic
-            JOIN activity_submissions sub ON sub.content_id = ic.id
+        SELECT COUNT(DISTINCT title) AS acount
+        FROM interactive_contents
+        WHERE lesson_id = ? AND type = 'activity'
+    ");
+        $stmt->bind_param("i", $lessonId);
+        $stmt->execute();
+        $acount = (int) $stmt->get_result()->fetch_assoc()['acount'];
+
+        // No quiz and no activity — complete just by visiting
+        if (empty($quizGroups) && $acount === 0) {
+            return $this->isLessonVisited($lessonId, $studentId);
+        }
+
+        // Check each quiz group has a saved result
+        foreach ($quizGroups as $group) {
+            $stmt = $this->db->prepare("
+            SELECT id FROM quiz_results
+            WHERE content_id = ? AND student_id = ? LIMIT 1
+        ");
+            $stmt->bind_param("ii", $group['quiz_id'], $studentId);
+            $stmt->execute();
+            if (!$stmt->get_result()->fetch_assoc())
+                return false;
+        }
+
+        // Check activity submission exists (by lesson, not by specific content_id)
+        if ($acount > 0) {
+            $stmt = $this->db->prepare("
+            SELECT s.id FROM activity_submissions s
+            JOIN interactive_contents ic ON s.content_id = ic.id
             WHERE ic.lesson_id = ? AND ic.type = 'activity'
-            AND sub.student_id = ?
-            LIMIT 1
+            AND s.student_id = ? LIMIT 1
         ");
-        $stmt->bind_param("ii", $lessonId, $studentId);
-        $stmt->execute();
-        if ($stmt->get_result()->fetch_assoc())
-            return true;
+            $stmt->bind_param("ii", $lessonId, $studentId);
+            $stmt->execute();
+            if (!$stmt->get_result()->fetch_assoc())
+                return false;
+        }
 
-        // If no quiz or activity exists, mark as completed
-        $stmt = $this->db->prepare("
-            SELECT
-                (SELECT COUNT(*) FROM interactive_contents WHERE lesson_id = ? AND type = 'quiz')     AS qcount,
-                (SELECT COUNT(*) FROM interactive_contents WHERE lesson_id = ? AND type = 'activity') AS acount
-        ");
-        $stmt->bind_param("ii", $lessonId, $lessonId);
-        $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
-        if ($row['qcount'] == 0 && $row['acount'] == 0)
-            return true;
-
-        return false;
+        return true;
     }
 
     // ============================================================
@@ -464,37 +507,48 @@ class Students extends Model
 
     public function getIMQuizQuestions($quizId)
     {
+        // Get the title and lesson_id of the quiz group
         $stmt = $this->db->prepare("
-            SELECT id, question, choice_a, choice_b, choice_c, choice_d, correct_ans, total_points AS points
-            FROM interactive_contents
-            WHERE id = ? AND type = 'quiz'
-            LIMIT 1
-        ");
+        SELECT title, lesson_id FROM interactive_contents 
+        WHERE id = ? AND type = 'quiz' LIMIT 1
+    ");
         $stmt->bind_param("i", $quizId);
         $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
-        return $row ? [$row] : [];
+        $quiz = $stmt->get_result()->fetch_assoc();
+        if (!$quiz)
+            return [];
+
+        // Fetch ALL questions with the same title in the same lesson
+        $stmt = $this->db->prepare("
+        SELECT id, question, choice_a, choice_b, choice_c, choice_d, 
+               correct_ans, total_points AS points
+        FROM interactive_contents
+        WHERE lesson_id = ? AND type = 'quiz' AND title = ?
+        ORDER BY id ASC
+    ");
+        $stmt->bind_param("is", $quiz['lesson_id'], $quiz['title']);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
     public function getIMQuizResult($quizId, $studentId)
     {
         $stmt = $this->db->prepare("
-            SELECT id, score, total, passed, taken_at FROM quiz_results
-            WHERE content_id = ? AND student_id = ? LIMIT 1
+            SELECT id, score, total, passed, answers_json, taken_at FROM quiz_results WHERE content_id = ? AND student_id = ? LIMIT 1
         ");
         $stmt->bind_param("ii", $quizId, $studentId);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
     }
 
-    public function saveIMQuizResult($quizId, $studentId, $score, $total, $passingScore)
+    public function saveIMQuizResult($quizId, $studentId, $score, $total, $passingScore, $answersJson = null)
     {
         $passed = ($total > 0 && (($score / $total) * 100) >= $passingScore) ? 1 : 0;
         $stmt = $this->db->prepare("
-            INSERT INTO quiz_results (content_id, student_id, score, total, passed, taken_at)
-            VALUES (?, ?, ?, ?, ?, NOW())
-        ");
-        $stmt->bind_param("iiiii", $quizId, $studentId, $score, $total, $passed);
+        INSERT INTO quiz_results (content_id, student_id, score, total, passed, answers_json, taken_at)
+        VALUES (?, ?, ?, ?, ?, ?, NOW())
+    ");
+        $stmt->bind_param("iiiiss", $quizId, $studentId, $score, $total, $passed, $answersJson);
         return $stmt->execute();
     }
 

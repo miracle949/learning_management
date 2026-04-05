@@ -47,7 +47,7 @@
                     <div class="box-text">
                         <p>Graded</p>
 
-                        <h4>1</h4>
+                        <h4><?= $gradedCount ?></h4>
                     </div>
                     <div class="box-icon">
                         <i class="fas fa-file-alt"></i>
@@ -84,34 +84,40 @@
                     <div class="graded">
                         <div class="header">
                             <h3>Graded Task</h3>
-
                             <a href="#">View all</a>
                         </div>
 
                         <div class="graded-parent">
-                            <div class="graded-box">
-                                <h5>Research Paper</h5>
-                                <p>Due Date: March 26, 2026</p>
-                                <span>6 days left</span>
-
-                                <a href="#">View Task <i class="fa fa-arrow-right"></i></a>
-                            </div>
-
-                            <div class="graded-box">
-                                <h5>Research Paper</h5>
-                                <p>Due Date: March 26, 2026</p>
-                                <span>6 days left</span>
-
-                                <a href="#">View Task <i class="fa fa-arrow-right"></i></a>
-                            </div>
-
-                            <div class="graded-box">
-                                <h5>Research Paper</h5>
-                                <p>Due Date: March 26, 2026</p>
-                                <span>6 days left</span>
-
-                                <a href="#">View Task <i class="fa fa-arrow-right"></i></a>
-                            </div>
+                            <?php if (empty($gradedAssignments)): ?>
+                                <p style="color:#888; padding: 10px;">No graded tasks yet.</p>
+                            <?php else: ?>
+                                <?php foreach ($gradedAssignments as $item): ?>
+                                    <div class="graded-box">
+                                        <h5><?= htmlspecialchars($item['task']) ?></h5>
+                                        <p>Graded:
+                                            <?= !empty($item['graded_at']) ? date('F j, Y', strtotime($item['graded_at'])) : 'N/A' ?>
+                                        </p>
+                                        <?php
+                                        $percent = $item['total_points'] > 0
+                                            ? ($item['points_earned'] / $item['total_points']) * 100
+                                            : 0;
+                                        $scoreColor = $percent >= 75 ? '#4CAF7D' : '#C82525';
+                                        ?>
+                                        <span style="color: <?= $scoreColor ?>;">
+                                            <?= (int) $item['points_earned'] ?> / <?= (int) $item['total_points'] ?>
+                                        </span>
+                                        <!-- <?php if (!empty($item['feedback'])): ?>
+                                            <p style="font-size:0.8rem; color:#555; margin-top:4px;">
+                                                "<?= htmlspecialchars($item['feedback']) ?>"
+                                            </p>
+                                        <?php endif; ?> -->
+                                        <a
+                                            href="/learning_management/public/?url=assignment_view&subject=<?= urlencode($item['subject_code']) ?>&id=<?= $item['id'] ?>">
+                                            View Task <i class="fa fa-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
