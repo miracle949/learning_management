@@ -28,8 +28,10 @@ class Teacher extends Model
             WHERE m.subject_id = ta.subject_id AND m.teacher_id = ta.teacher_id
         ) AS material_count,
         (
-            SELECT COUNT(*) FROM announcements a
-            WHERE a.subject_id = ta.subject_id AND a.teacher_id = ta.teacher_id
+            SELECT COUNT(*) FROM notifications n
+            WHERE n.subject_id = ta.subject_id 
+            AND n.sender_id = ta.teacher_id
+            AND n.type = 'announcement'
         ) AS announcement_count,
         (
             SELECT COUNT(*) FROM interactive_modules im
@@ -333,11 +335,18 @@ class Teacher extends Model
     }
 
     // ============================================================
-    // ANNOUNCEMENTS
-    // ============================================================
+// NOTIFICATIONS (formerly announcements)
+// ============================================================
     public function getAnnouncements($subjectId, $teacherId)
     {
-        $stmt = $this->db->prepare("SELECT id, title, body, posted_at FROM announcements WHERE subject_id = ? AND teacher_id = ? ORDER BY posted_at DESC");
+        $stmt = $this->db->prepare("
+        SELECT id, title, message AS body, created_at AS posted_at 
+        FROM notifications 
+        WHERE subject_id = ? 
+          AND sender_id = ? 
+          AND type = 'announcement'
+        ORDER BY created_at DESC
+    ");
         $stmt->bind_param("ii", $subjectId, $teacherId);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -346,10 +355,10 @@ class Teacher extends Model
     public function insertAnnouncement($subjectId, $teacherId, $title, $body)
     {
         $stmt = $this->db->prepare("
-            INSERT INTO announcements (subject_id, teacher_id, title, body, posted_at)
-            VALUES (?, ?, ?, ?, NOW())
-        ");
-        $stmt->bind_param("iiss", $subjectId, $teacherId, $title, $body);
+        INSERT INTO notifications (sender_id, subject_id, title, message, type, created_at)
+        VALUES (?, ?, ?, ?, 'announcement', NOW())
+    ");
+        $stmt->bind_param("iiss", $teacherId, $subjectId, $title, $body);
         $stmt->execute();
         return $this->db->insert_id;
     }
@@ -858,5 +867,187 @@ class Teacher extends Model
     ");
         $stmt->bind_param("isi", $points_earned, $feedback, $submission_id);
         $stmt->execute();
+    }
+
+    public function getAllGradeLevels()
+    {
+        $result = $this->db->query("SELECT id, name FROM grade_level ORDER BY name ASC");
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getAllSubjectsWithGrade()
+    {
+        $result = $this->db->query("
+        SELECT s.id, s.subject_name, s.subject_description,
+               s.subject_code, s.subject_image, s.grade_level_id,
+               gl.name AS grade_name
+        FROM subjects s
+        LEFT JOIN grade_level gl ON gl.id = s.grade_level_id
+        ORDER BY gl.name ASC, s.subject_name ASC
+    ");
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getSubjectsByGradeLevel($gradeLevelId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT s.id, s.subject_name, s.subject_description,
+               s.subject_code, s.subject_image, s.grade_level_id,
+               gl.name AS grade_name
+        FROM subjects s
+        LEFT JOIN grade_level gl ON gl.id = s.grade_level_id
+        WHERE s.grade_level_id = ?
+        ORDER BY s.subject_name ASC
+    ");
+        $stmt->bind_param("i", $gradeLevelId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getSubjectWithGrade($id)
+    {
+        $stmt = $this->db->prepare("
+        SELECT s.id, s.subject_name, s.subject_description,
+               s.subject_code, s.subject_image, s.grade_level_id,
+               gl.name AS grade_name
+        FROM subjects s
+        LEFT JOIN grade_level gl ON gl.id = s.grade_level_id
+        WHERE s.id = ?
+        LIMIT 1
+    ");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function getModuleById($moduleId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT id, title, description, created_at 
+        FROM interactive_modules 
+        WHERE id = ? 
+        LIMIT 1
+    ");
+        $stmt->bind_param("i", $moduleId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function getLessonById($lessonId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT id, title, topic, content 
+        FROM lessons 
+        WHERE id = ? 
+        LIMIT 1
+    ");
+        $stmt->bind_param("i", $lessonId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function getLessonImages($lessonId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT title, file_path, file_name, file_type 
+        FROM interactive_contents 
+        WHERE lesson_id = ? AND type = 'image'
+        ORDER BY id ASC
+    ");
+        $stmt->bind_param("i", $lessonId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getLessonVideos($lessonId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT title, file_path, file_type 
+        FROM interactive_contents 
+        WHERE lesson_id = ? AND type = 'video'
+        ORDER BY id ASC
+    ");
+        $stmt->bind_param("i", $lessonId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getLessonFlashcards($lessonId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT card_front, card_back, card_type 
+        FROM interactive_contents 
+        WHERE lesson_id = ? AND type = 'flashcard'
+        ORDER BY id ASC
+    ");
+        $stmt->bind_param("i", $lessonId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getLessonActivityData($lessonId, $studentId = 0)
+    {
+        $stmt = $this->db->prepare("
+        SELECT id, title, instructions, total_points,
+               question, question_type,
+               choice_a, choice_b, choice_c, choice_d,
+               correct_ans, model_answer
+        FROM interactive_contents
+        WHERE lesson_id = ? AND type = 'activity'
+        ORDER BY id ASC
+    ");
+        $stmt->bind_param("i", $lessonId);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $grouped = [];
+        foreach ($rows as $row) {
+            $key = $row['title'];
+            if (!isset($grouped[$key])) {
+                $grouped[$key] = [
+                    'activity' => [
+                        'title' => $row['title'],
+                        'instructions' => $row['instructions'],
+                        'total_points' => $row['total_points'],
+                    ],
+                    'questions' => []
+                ];
+            }
+            $grouped[$key]['questions'][] = $row;
+        }
+        return $grouped;
+    }
+
+    public function getLessonQuizData($lessonId, $studentId = 0)
+    {
+        $stmt = $this->db->prepare("
+        SELECT id, title, instructions, passing_score,
+               question, question_type,
+               choice_a, choice_b, choice_c, choice_d,
+               correct_ans
+        FROM interactive_contents
+        WHERE lesson_id = ? AND type = 'quiz'
+        ORDER BY id ASC
+    ");
+        $stmt->bind_param("i", $lessonId);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $grouped = [];
+        foreach ($rows as $row) {
+            $key = $row['title'];
+            if (!isset($grouped[$key])) {
+                $grouped[$key] = [
+                    'quiz' => [
+                        'title' => $row['title'],
+                        'instructions' => $row['instructions'],
+                        'passing_score' => $row['passing_score'],
+                    ],
+                    'questions' => []
+                ];
+            }
+            $grouped[$key]['questions'][] = $row;
+        }
+        return $grouped;
     }
 }

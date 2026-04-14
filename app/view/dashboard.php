@@ -56,7 +56,7 @@
                     <div class="card-box">
                         <div class="data_text">
                             <span>Enrolled Subjects</span>
-                            <p>4</p>
+                            <p>#</p>
                             <span>Active this semester</span>
                         </div>
                         <div class="data_icon">
@@ -67,7 +67,7 @@
                     <div class="card-box">
                         <div class="data_text">
                             <span>Pending Task</span>
-                            <p>8</p>
+                            <p>#</p>
                             <span>Active this semester</span>
                         </div>
                         <div class="data_icon">
@@ -78,7 +78,7 @@
                     <div class="card-box">
                         <div class="data_text">
                             <span>Study Time</span>
-                            <p>15h</p>
+                            <p>#</p>
                             <span>Active this semester</span>
                         </div>
                         <div class="data_icon">
@@ -89,7 +89,7 @@
                     <div class="card-box">
                         <div class="data_text">
                             <span>Progress</span>
-                            <p>15h</p>
+                            <p>#</p>
                             <span>Active this semester</span>
                         </div>
                         <div class="data_icon">
@@ -101,26 +101,32 @@
                 <div class="parent-performance">
                     <div class="update subject-performance">
                         <div class="header">
-                            <h3>Upcoming Tasks</h3>
+                            <h3>Pending Tasks</h3>
                             <a href="#">View all</a>
                         </div>
                         <div class="body">
                             <div class="update-box">
-                                <p>Build a Personal Portfolio</p>
-                                <span>Due: 3/15/2026</span>
-                                <span>7 days left</span>
+                                <p>LOREM IPSUM LOREM IPSUM</p>
+                                <span>lorem ipsum</span>
+                                <span>lorem</span>
                             </div>
 
                             <div class="update-box">
-                                <p>Build a Personal Portfolio</p>
-                                <span>Due: 3/15/2026</span>
-                                <span>7 days left</span>
+                                <p>LOREM IPSUM LOREM IPSUM</p>
+                                <span>lorem ipsum</span>
+                                <span>lorem</span>
                             </div>
 
-                            <div class="update-box">
+                            <!-- <div class="update-box">
                                 <p>Build a Personal Portfolio</p>
                                 <span>Due: 3/15/2026</span>
                                 <span>7 days left</span>
+                            </div> -->
+
+                            <div class="update-box">
+                                <p>LOREM IPSUM LOREM IPSUM</p>
+                                <span>lorem ipsum</span>
+                                <span>lorem</span>
                             </div>
                         </div>
                     </div>

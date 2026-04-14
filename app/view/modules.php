@@ -311,7 +311,7 @@
                                 <p><?= htmlspecialchars($subjectInfo['subject_description'] ?? 'No description available.') ?>
                                 </p>
                             </div>
-                            <a href="/learning_management/public/?url=classes" class="module-browse-btn">
+                            <a href="/learning_management/public/?url=module_all" class="module-browse-btn">
                                 Browse <i class="fa fa-arrow-right"></i>
                             </a>
                         </div>

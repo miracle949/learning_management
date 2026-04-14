@@ -7,8 +7,12 @@ class User extends Model
     
     public function login($email)
     {
+        // $stmt = $this->db->prepare(
+        //     "SELECT * FROM users WHERE email = ? AND status = '1'"
+        // );
+
         $stmt = $this->db->prepare(
-            "SELECT * FROM users WHERE email = ? AND status = '1'"
+            "SELECT * FROM users WHERE email = ?"
         );
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -18,7 +22,7 @@ class User extends Model
     public function signup($student_no, $name, $email, $username, $password, $grade_level_id, $section_id)
     {
         $sql = "INSERT INTO users (name, email, username, password, role, status) 
-            VALUES (?, ?, ?, ?, 'student', '1')";
+            VALUES (?, ?, ?, ?, 'student', 'Pending')";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("ssss", $name, $email, $username, $password);
         $stmt->execute();

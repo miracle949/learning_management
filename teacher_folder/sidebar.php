@@ -26,6 +26,12 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'teacher';
                     <span>Classes</span>
                 </a>
             </li>
+            <li class="<?= ($current_url ?? '') === 'modules_teacher' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=modules_teacher">
+                    <i class="fa fa-book"></i>
+                    <span>Modules</span>
+                </a>
+            </li>
             <!-- <li>
                 <a href="#">
                     <i class="fa fa-book"></i>

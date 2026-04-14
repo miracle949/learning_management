@@ -195,7 +195,7 @@
 
         /* ─── Submission area ─── */
         .av-message-card {
-            margin-top: 3rem;
+            margin-top: 5rem;
         }
 
         /*
@@ -691,6 +691,11 @@
 
                 <?php else: ?>
 
+                    <a href="/learning_management/public/?url=subjects&subject=<?= htmlspecialchars($subjectSlug) ?>"
+                        class="av-back-link">
+                        <i class="fa fa-arrow-left"></i> Back to Subject
+                    </a>
+
                     <div class="av-header-card">
                         <div class="av-header-top">
                             <div class="av-header-icon">
@@ -766,11 +771,7 @@
                             <input type="file" id="attachVideoInput" accept="video/*" style="display:none">
 
                             <?php if ($existingSubmission): ?>
-                                <!-- ══ STATE: ALREADY SUBMITTED ══
-                                 Box  = green tint
-                                 Icon = green checkmark
-                                 Btn  = RED X  →  click = unsubmit dialog
-                            -->
+                                <!-- ══ SUBMITTED STATE ══ -->
                                 <div class="av-message-box submitted" id="msgBox">
                                     <div class="av-msg-left">
                                         <i class="fa fa-check-circle av-msg-status-icon green"></i>
@@ -782,25 +783,15 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <!-- RED X = unsubmit -->
                                     <button class="av-msg-btn danger" title="Unsubmit" onclick="confirmUnsubmit()">
                                         <i class="fa fa-times"></i>
                                     </button>
                                 </div>
-                                <div class="av-message-actions locked">
-                                    <button><i class="fa fa-paperclip"></i></button>
-                                    <button><i class="fa fa-image"></i></button>
-                                    <button><i class="fa fa-film"></i></button>
-                                </div>
 
                             <?php else: ?>
-                                <!-- ══ STATE: NOT YET SUBMITTED ══
-                                 No file  → grey paper-plane  → click = warn
-                                 Has file → GREEN paper-plane → click = SUBMIT
-                                 (X never appears here — only after submission)
-                            -->
+                                <!-- ══ NOT SUBMITTED STATE ══ -->
                                 <div id="attachPreview" style="display:none; margin:0 20px 10px; padding:10px;
-                                        background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px;">
+                background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px;">
                                     <img id="previewImage"
                                         style="display:none; max-width:100%; max-height:200px; border-radius:8px;">
                                     <video id="previewVideo" controls
@@ -815,30 +806,39 @@
                                         </div>
                                         <span class="av-msg-placeholder" id="msgPlaceholder">No file insert...</span>
                                     </div>
-                                    <!--
-                                    idle  class = grey  paper-plane (no file)
-                                    ready class = green paper-plane (file attached, ready to submit)
-                                    danger class = red X (submitted — set by JS after submit, or via PHP above)
-                                -->
                                     <button class="av-msg-btn idle" id="msgActionBtn" title="Attach a file first"
                                         onclick="handleMsgBtn()">
                                         <i class="fa fa-paper-plane" id="msgBtnIcon"></i>
                                     </button>
                                 </div>
 
-                                <div class="av-message-actions" id="attachActions">
-                                    <button title="Attach file" onclick="document.getElementById('attachFileInput').click()">
-                                        <i class="fa fa-paperclip"></i>
-                                    </button>
-                                    <button title="Image" onclick="document.getElementById('attachImageInput').click()">
-                                        <i class="fa fa-image"></i>
-                                    </button>
-                                    <button title="Video" onclick="document.getElementById('attachVideoInput').click()">
-                                        <i class="fa fa-film"></i>
+                            <?php endif; ?>
+
+                            <!-- ★ MESSAGE BOX — always visible, below everything -->
+                            <div id="msgBoxWrapper" style="margin: 10px 20px 0;">
+                                <div
+                                    style="background:#fff; border:1px solid rgba(0,0,0,0.1); border-radius:10px; padding:10px 16px; display:flex; align-items:center; gap:10px;">
+                                    <input type="text" id="msgInput" placeholder="Message ..."
+                                        style="flex:1; border:none; outline:none; font-size:14px; color:#333; background:transparent;">
+                                    <button class="av-msg-btn ready" title="Send message" id="msgSendBtn"
+                                        onclick="sendMessage()">
+                                        <i class="fa fa-paper-plane" id="msgSendIcon"></i>
                                     </button>
                                 </div>
+                            </div>
 
-                            <?php endif; ?>
+                            <div class="av-message-actions <?= $existingSubmission ? 'locked' : '' ?>" id="attachActions">
+                                <button <?= $existingSubmission ? '' : 'title="Attach file" onclick="document.getElementById(\'attachFileInput\').click()"' ?>>
+                                    <i class="fa fa-paperclip"></i>
+                                </button>
+                                <button <?= $existingSubmission ? '' : 'title="Image" onclick="document.getElementById(\'attachImageInput\').click()"' ?>>
+                                    <i class="fa fa-image"></i>
+                                </button>
+                                <button <?= $existingSubmission ? '' : 'title="Video" onclick="document.getElementById(\'attachVideoInput\').click()"' ?>>
+                                    <i class="fa fa-film"></i>
+                                </button>
+                            </div>
+
                         </div><!-- /av-message-card -->
                     </div><!-- /av-header-card -->
 
@@ -930,60 +930,101 @@
         }
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-        // ── Submission logic (only injected when NOT yet submitted) ────────────────
+        // ── Send Message — works in both submitted and not-submitted states ─────────
+        function sendMessage() {
+            const input = document.getElementById('msgInput');
+            const icon = document.getElementById('msgSendIcon');
+            if (!input) return;
+
+            const text = input.value.trim();
+            if (!text) {
+                // Just shake the input, no network call
+                input.style.outline = '2px solid #ef4444';
+                input.placeholder = 'Please type a message first!';
+                setTimeout(() => {
+                    input.style.outline = '';
+                    input.placeholder = 'Message ...';
+                }, 2500);
+                return;
+            }
+
+            icon.className = 'fa fa-spinner fa-spin';
+            document.getElementById('msgSendBtn').disabled = true;
+
+            const formData = new FormData();
+            formData.append('assignment_id', '<?= $assignment["id"] ?? 0 ?>');
+            formData.append('message', text);
+
+            fetch('/learning_management/public/?url=send_assignment_message', { method: 'POST', body: formData })
+                .then(r => r.text())
+                .then(raw => {
+                    let data;
+                    try { data = JSON.parse(raw); } catch (e) { data = { success: false }; }
+                    if (data.success) {
+                        input.value = '';
+                        showToast('Message sent!', 'success');
+                    } else {
+                        showToast(data.message || 'Could not send message.', 'error');
+                    }
+                })
+                .catch(() => showToast('Network error. Please check your connection.', 'error'))
+                .finally(() => {
+                    icon.className = 'fa fa-paper-plane';
+                    document.getElementById('msgSendBtn').disabled = false;
+                });
+        }
+
+        // Enter key on message input
+        document.getElementById('msgInput').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // ── Submission logic (only when NOT yet submitted) ─────────────────────────
         <?php if (!$existingSubmission): ?>
 
             let attachedFile = null;
             let attachedType = null;
             let isSubmitting = false;
 
-            const msgBox = document.getElementById('msgBox');
-            const msgIcon = document.getElementById('msgIcon');
-            const msgTextCol = document.getElementById('msgTextCol');
-            const msgTitle = document.getElementById('msgTitle');
-            const msgPlaceholder = document.getElementById('msgPlaceholder');
-            const msgActionBtn = document.getElementById('msgActionBtn');
-            const msgBtnIcon = document.getElementById('msgBtnIcon');
-            const attachActions = document.getElementById('attachActions');
+            window.msgBox = document.getElementById('msgBox');
+            window.msgIcon = document.getElementById('msgIcon');
+            window.msgTextCol = document.getElementById('msgTextCol');
+            window.msgTitle = document.getElementById('msgTitle');
+            window.msgPlaceholder = document.getElementById('msgPlaceholder');
+            window.msgActionBtn = document.getElementById('msgActionBtn');
+            window.msgBtnIcon = document.getElementById('msgBtnIcon');
+            window.attachActions = document.getElementById('attachActions');
 
-            // File picker listeners
-            document.getElementById('attachFileInput').addEventListener('change', function () {
-                if (this.files[0]) setFile(this.files[0], 'file');
-            });
-            document.getElementById('attachImageInput').addEventListener('change', function () {
-                if (this.files[0]) setFile(this.files[0], 'image');
-            });
-            document.getElementById('attachVideoInput').addEventListener('change', function () {
-                if (this.files[0]) setFile(this.files[0], 'video');
-            });
+            function bindFileInputs() {
+                document.getElementById('attachFileInput').addEventListener('change', function () {
+                    if (this.files[0]) setFile(this.files[0], 'file');
+                });
+                document.getElementById('attachImageInput').addEventListener('change', function () {
+                    if (this.files[0]) setFile(this.files[0], 'image');
+                });
+                document.getElementById('attachVideoInput').addEventListener('change', function () {
+                    if (this.files[0]) setFile(this.files[0], 'video');
+                });
+            }
+            bindFileInputs();
 
             function setFile(file, type) {
                 attachedFile = file;
                 attachedType = type;
-
-                // Box turns green tint
                 msgBox.classList.add('has-file');
                 msgBox.style.border = '';
                 msgBox.style.animation = '';
-
-                // Show file icon + name inside box
                 msgPlaceholder.style.display = 'none';
                 msgIcon.style.display = 'block';
                 msgTextCol.style.display = 'flex';
                 msgTitle.textContent = file.name;
-
-                if (type === 'image') msgIcon.className = 'fa fa-image av-msg-status-icon green';
-                else if (type === 'video') msgIcon.className = 'fa fa-film  av-msg-status-icon green';
+                if (type === 'image') msgIcon.className = 'fa fa-image    av-msg-status-icon green';
+                else if (type === 'video') msgIcon.className = 'fa fa-film     av-msg-status-icon green';
                 else msgIcon.className = 'fa fa-file-pdf av-msg-status-icon green';
-
-                // ★ Button → GREEN paper-plane (ready to submit)
-                //   NOT red X — that only appears after submission
                 msgBtnIcon.className = 'fa fa-paper-plane';
                 msgActionBtn.classList.remove('idle', 'danger');
                 msgActionBtn.classList.add('ready');
                 msgActionBtn.title = 'Submit assignment';
-
-                // Show image/video thumbnail strip
                 showPreviewStrip(file, type);
             }
 
@@ -993,7 +1034,6 @@
                 const vid = document.getElementById('previewVideo');
                 img.style.display = 'none';
                 vid.style.display = 'none';
-
                 if (type === 'image') {
                     const reader = new FileReader();
                     reader.onload = e => { img.src = e.target.result; img.style.display = 'block'; };
@@ -1008,47 +1048,20 @@
                 }
             }
 
-            function clearFile() {
-                attachedFile = null; attachedType = null;
-
-                msgBox.classList.remove('has-file');
-                msgBox.style.border = '';
-                msgBox.style.animation = '';
-
-                msgPlaceholder.style.display = 'block';
-                msgPlaceholder.textContent = 'No file insert...';
-                msgIcon.style.display = 'none';
-                msgTextCol.style.display = 'none';
-                msgTitle.textContent = '';
-
-                // Back to grey idle paper-plane
-                msgBtnIcon.className = 'fa fa-paper-plane';
-                msgActionBtn.classList.remove('ready', 'danger');
-                msgActionBtn.classList.add('idle');
-                msgActionBtn.title = 'Attach a file first';
-
-                document.getElementById('attachPreview').style.display = 'none';
-                document.getElementById('previewImage').src = '';
-                document.getElementById('previewVideo').src = '';
-                ['attachFileInput', 'attachImageInput', 'attachVideoInput']
-                    .forEach(id => document.getElementById(id).value = '');
-            }
-
             function handleMsgBtn() {
                 if (isSubmitting) return;
-
                 if (attachedFile) {
-                    // GREEN paper-plane clicked with file ready → SUBMIT
                     doSubmit();
                 } else {
-                    // GREY paper-plane clicked with no file → warn
                     msgBox.style.border = '2px solid #ef4444';
                     msgBox.style.animation = 'none';
                     setTimeout(() => { msgBox.style.animation = 'shake .4s ease'; }, 10);
                     msgPlaceholder.textContent = 'Please attach a file first!';
                     showToast('Please attach a file before submitting.', 'warn');
-                    setTimeout(() => { msgPlaceholder.textContent = 'No file insert...'; }, 3000);
-                    setTimeout(() => { msgBox.style.border = ''; }, 3000);
+                    setTimeout(() => {
+                        msgPlaceholder.textContent = 'No file insert...';
+                        msgBox.style.border = '';
+                    }, 3000);
                 }
             }
 
@@ -1068,12 +1081,15 @@
                     .then(text => {
                         let data;
                         try { data = JSON.parse(text); }
-                        catch (e) {
-                            showToast('Server error. Please try again.', 'error');
-                            resetToReady(); return;
-                        }
+                        catch (e) { showToast('Server error. Please try again.', 'error'); resetToReady(); return; }
+
                         if (data.success) {
-                            renderSubmittedState('Just now');
+                            const now = new Date();
+                            const dateStr = now.toLocaleString('en-US', {
+                                month: 'short', day: 'numeric', year: 'numeric',
+                                hour: 'numeric', minute: '2-digit', hour12: true
+                            });
+                            renderSubmittedState(dateStr);
                             showToast('Assignment submitted successfully!', 'success');
                         } else {
                             showToast(data.message || 'Submission failed. Please try again.', 'error');
@@ -1087,7 +1103,6 @@
             }
 
             function resetToReady() {
-                // File still attached — keep green paper-plane
                 isSubmitting = false;
                 msgActionBtn.disabled = false;
                 msgBtnIcon.className = 'fa fa-paper-plane';
@@ -1096,13 +1111,12 @@
             }
 
             function renderSubmittedState(dateStr) {
-                document.getElementById('attachPreview').style.display = 'none';
+                const preview = document.getElementById('attachPreview');
+                if (preview) preview.style.display = 'none';
 
-                // Box → submitted state
+                // Update submit box → submitted
                 msgBox.classList.remove('has-file');
                 msgBox.classList.add('submitted');
-
-                // Left: green checkmark + "Assignment Submitted"
                 msgIcon.className = 'fa fa-check-circle av-msg-status-icon green';
                 msgIcon.style.display = 'block';
                 msgTextCol.style.display = 'flex';
@@ -1117,19 +1131,21 @@
                 sub.textContent = 'Submitted on ' + dateStr;
                 msgPlaceholder.style.display = 'none';
 
-                // ★ NOW the button becomes RED X (unsubmit)
+                // Button → RED X
                 msgActionBtn.disabled = false;
                 msgActionBtn.classList.remove('idle', 'ready');
                 msgActionBtn.classList.add('danger');
                 msgActionBtn.title = 'Unsubmit';
                 msgBtnIcon.className = 'fa fa-times';
-                isSubmitting = false;
-
-                // Wire X to unsubmit dialog
                 msgActionBtn.onclick = confirmUnsubmit;
+                isSubmitting = false;
 
                 // Lock attachment row
                 attachActions.classList.add('locked');
+
+                // Clear file vars
+                attachedFile = null;
+                attachedType = null;
             }
 
         <?php endif; ?>
@@ -1163,7 +1179,7 @@
                     if (data.success) {
                         closeUnsubmitDialog();
                         showToast('Submission removed. You can re-submit.', 'success');
-                        renderUnsubmittedState(); // ← instead of window.location.reload()
+                        renderUnsubmittedState();
                     } else {
                         closeUnsubmitDialog();
                         showToast(data.message || 'Could not unsubmit. Please try again.', 'error');
@@ -1178,45 +1194,76 @@
         }
 
         function renderUnsubmittedState() {
-            const msgBox = document.getElementById('msgBox');
-            const msgIcon = document.getElementById('msgIcon');
-            const msgTextCol = document.getElementById('msgTextCol');
-            const msgTitle = document.getElementById('msgTitle');
-            const msgPlaceholder = document.getElementById('msgPlaceholder');
-            const msgActionBtn = document.getElementById('msgActionBtn');
-            const msgBtnIcon = document.getElementById('msgBtnIcon');
-            const attachActions = document.getElementById('attachActions');
+            const submissionArea = document.getElementById('submissionArea');
 
-            // Restore box to "has-file" green tint (file is still attached)
-            msgBox.classList.remove('submitted');
-            msgBox.classList.add('has-file');
+            submissionArea.innerHTML = `
+            <input type="file" id="attachFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx" style="display:none">
+            <input type="file" id="attachImageInput" accept="image/*" style="display:none">
+            <input type="file" id="attachVideoInput" accept="video/*" style="display:none">
 
-            // Restore left side: file icon + filename
-            msgIcon.className = 'fa fa-file-pdf av-msg-status-icon green';
-            msgIcon.style.display = 'block';
-            msgTextCol.style.display = 'flex';
-            msgTitle.textContent = attachedFile ? attachedFile.name : '';
+            <div id="attachPreview" style="display:none; margin:0 20px 10px; padding:10px;
+                    background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px;">
+                <img id="previewImage" style="display:none; max-width:100%; max-height:200px; border-radius:8px;">
+                <video id="previewVideo" controls style="display:none; max-width:100%; max-height:200px; border-radius:8px;"></video>
+            </div>
 
-            // Remove the "Submitted on..." sub-label if it exists
-            const sub = msgTextCol.querySelector('.av-msg-sub');
-            if (sub) sub.remove();
+            <div class="av-message-box" id="msgBox">
+                <div class="av-msg-left">
+                    <i class="fa fa-file av-msg-status-icon green" id="msgIcon" style="display:none;"></i>
+                    <div class="av-msg-text-col" id="msgTextCol" style="display:none;">
+                        <span class="av-msg-title" id="msgTitle"></span>
+                    </div>
+                    <span class="av-msg-placeholder" id="msgPlaceholder">No file insert...</span>
+                </div>
+                <button class="av-msg-btn idle" id="msgActionBtn" title="Attach a file first" onclick="handleMsgBtn()">
+                    <i class="fa fa-paper-plane" id="msgBtnIcon"></i>
+                </button>
+            </div>
 
-            msgPlaceholder.style.display = 'none';
+            <div id="msgBoxWrapper" style="margin: 10px 20px 0;">
+                <div style="background:#fff; border:1px solid rgba(0,0,0,0.1); border-radius:10px; padding:10px 14px; display:flex; align-items:center; gap:10px;">
+                    <input type="text" id="msgInput" placeholder="Message ..."
+                        style="flex:1; border:none; outline:none; font-size:14px; color:#333; background:transparent;">
+                    <button class="av-msg-btn ready" title="Send message" id="msgSendBtn" onclick="sendMessage()">
+                        <i class="fa fa-paper-plane" id="msgSendIcon"></i>
+                    </button>
+                </div>
+            </div>
 
-            // Button → GREEN paper-plane (ready to re-submit)
-            msgActionBtn.classList.remove('idle', 'danger');
-            msgActionBtn.classList.add('ready');
-            msgActionBtn.title = 'Submit assignment';
-            msgActionBtn.disabled = false;
-            msgActionBtn.onclick = handleMsgBtn; // restore original handler
-            msgBtnIcon.className = 'fa fa-paper-plane';
+            <div class="av-message-actions" id="attachActions">
+                <button title="Attach file" onclick="document.getElementById('attachFileInput').click()">
+                    <i class="fa fa-paperclip"></i>
+                </button>
+                <button title="Image" onclick="document.getElementById('attachImageInput').click()">
+                    <i class="fa fa-image"></i>
+                </button>
+                <button title="Video" onclick="document.getElementById('attachVideoInput').click()">
+                    <i class="fa fa-film"></i>
+                </button>
+            </div>`;
 
-            // Unlock attachment row
-            attachActions.classList.remove('locked');
-
+            // Reset state
+            attachedFile = null;
+            attachedType = null;
             isSubmitting = false;
-        }
 
+            // Re-grab DOM refs
+            window.msgBox = document.getElementById('msgBox');
+            window.msgIcon = document.getElementById('msgIcon');
+            window.msgTextCol = document.getElementById('msgTextCol');
+            window.msgTitle = document.getElementById('msgTitle');
+            window.msgPlaceholder = document.getElementById('msgPlaceholder');
+            window.msgActionBtn = document.getElementById('msgActionBtn');
+            window.msgBtnIcon = document.getElementById('msgBtnIcon');
+            window.attachActions = document.getElementById('attachActions');
+
+            // Re-bind Enter key on new input
+            document.getElementById('msgInput').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') sendMessage();
+            });
+
+            bindFileInputs();
+        }
     </script>
 </body>
 

@@ -1,0 +1,715 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url('../Poppins/Poppins-Regular.ttf') format('truetype');
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: 'Titan';
+    src: url('../Titan_One/TitanOne-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+:root {
+    --green: #4CAF7D;
+    --green-dark: #2D6A4F;
+    --green-light: #E8F5EE;
+    --green-mid: #c8e6d6;
+    --orange: #FF8A65;
+    --orange-light: #FFF3EF;
+    --orange-dark: #bf5b3a;
+    --bg: #F9FBF9;
+    --white: #ffffff;
+    --card-border: rgba(0, 0, 0, 0.07);
+    --text: #2D6A4F;
+    --text-dark: #1a3a2a;
+    --text-muted: #7a9a8a;
+    --sidebar-bg: #ffffff;
+    --shadow: 0 2px 12px rgba(76, 175, 125, 0.08);
+    --background-icon: #2d3748;
+    --green-text: #4a6a58;
+}
+
+.container-fluid nav {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* padding: 1.5rem 1.5rem 1.5rem 1.5rem; */
+    padding: 1rem 2rem 1rem 1rem;
+    background-color: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    z-index: 999;
+}
+
+.container-fluid nav .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.container-fluid nav h2 {
+    font-size: 18px;
+    margin: 0;
+    /* font-weight: bold; */
+    text-transform: uppercase;
+    font-family: "Titan", sans-serif;
+}
+
+.container-fluid nav h2 b {
+    color: var(--green);
+    font-family: "Titan", sans-serif;
+}
+
+.container-fluid nav form button {
+    padding: 8px 30px;
+    border-radius: 10px;
+    border: none;
+    background-color: var(--green);
+    color: white;
+    font-weight: 600;
+    font-size: 14.5px;
+}
+
+.container-fluid .rightbar {
+    width: calc(100% - 235px);
+    /* height: 100vh; */
+    margin-top: 68px;
+    /* overflow-y: auto; */
+    margin-left: 235px;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: #F7F9F8;
+}
+
+.container-fluid {
+    height: 100vh;
+    /* overflow-y: auto; */
+}
+
+.container-fluid .sidebar-logo {
+    /* height: 130px; */
+    height: 100px;
+    /* background-color: #5BCA3F; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* flex-direction: column; */
+    gap: 1rem;
+    /* margin-top: 1.8rem; */
+    /* padding-bottom: 1rem; */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* 
+.container-fluid .sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+} */
+
+.container-fluid .sidebar-logo p {
+    /* font-size: 17px; */
+    font-size: 22px;
+    /* font-weight: bold; */
+    margin: 0;
+    font-family: "Titan", sans-serif;
+    color: var(--green);
+}
+
+.container-fluid .sidebar-logo p b {
+    color: #212529;
+    font-family: "Titan", sans-serif;
+}
+
+.container-fluid .sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    gap: 0.5rem;
+}
+
+.container-fluid .sidebar-logo .logo-icon {
+    /* padding: 8px; */
+    padding: 11px;
+    background-color: var(--green-light);
+    border-radius: 10px;
+}
+
+.container-fluid .sidebar-logo .logo-icon .fa-solid {
+    color: var(--green);
+    /* font-size: 18px; */
+    font-size: 20px;
+}
+
+
+.container-fluid .sidebar .sidebar-menu {
+    margin-top: 1rem;
+}
+
+.container-fluid main {
+    /* background-color: #F2F3FF; */
+    background-color: #F7F9F8;
+    /* padding: 1.8rem 1.4rem 1.8rem 1.4rem; */
+}
+
+.container-fluid main .header .card {
+    width: 100%;
+    border-radius: 0;
+}
+
+.container-fluid main .header .card .card-header {
+    height: 149px;
+}
+
+.container-fluid main .header .card .card-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+}
+
+.container-fluid main .header .card .card-body .card-text {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.container-fluid main .header .card .card-body .card-text h4 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.container-fluid main .header .card .card-body .card-text small{
+    margin: 0 0 0;
+}
+
+.container-fluid main .header .card .card-body .card-text span {
+    font-size: 15px;
+    color: #808080;
+}
+
+.container-fluid main .body {
+    padding: 1.8rem 1.4rem 1.8rem 1.4rem;
+}
+
+
+.container-fluid main .card-parent-box {
+    background-color: #ffffff;
+    padding: 2rem 3rem;
+    border: 1px solid #E2E8E5;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    border-radius: 10px;
+    margin-top: 1rem;
+}
+
+.container-fluid main .card-parent-box button{
+    font-size: 15px;
+}
+
+.container-fluid main .card-parent-box h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.container-fluid main .card-parent-box .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container-fluid main .card-parent-box .card-header h3 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.container-fluid main .card-parent-box .card-header .buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.container-fluid main .card-parent-box .card-header .buttons button {
+    padding: 10px 25px;
+    border-radius: 7px;
+    border: none;
+    outline: none;
+    background: none;
+    color: white;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-weight: 600;
+}
+
+.container-fluid main .card-parent-box .card-header .buttons button:nth-child(1) {
+    background-color: var(--green);
+}
+
+.container-fluid main .card-parent-box .card-header .buttons button:nth-child(2) {
+    background-color: #4CAF7D;
+}
+
+.container-fluid main .card-parent-box .card-header .buttons button:nth-child(3) {
+    background-color: #2D6A4F;
+}
+
+.container-fluid main .card-parent-box .card-header .buttons button:nth-child(4) {
+    background-color: #FF8A65;
+}
+
+.container-fluid main .card-parent-box .card-header .buttons button:nth-child(5) {
+    background-color: #4a6a58;
+}
+
+.container-fluid main .card-parent-box .card-body.module-item {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    margin-top: 2rem;
+    border-radius: 10px;
+}
+
+.container-fluid main .card-parent-box .card-body input{
+    font-size: 14.5px;
+}
+
+.container-fluid main .card-parent-box .card-body textarea {
+    height: 150px;
+    font-size: 14.5px;
+}
+
+.container-fluid main .card-parent-box .card-body .buttons button {
+    padding: 7px 25px;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: none;
+    font-size: 14.5px;
+}
+
+.container-fluid main .card-parent-box .card-body button {
+    padding: 0.5rem;
+    background-color: var(--green-light);
+    color: var(--green);
+}
+
+.container-fluid main .card-parent-box .card-body .remove-item button {
+    padding: 0.5rem;
+    background-color: var(--green-light);
+    color: var(--green);
+    border-radius: 50%;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header button {
+    border-radius: 50%;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header .card-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header p {
+    margin: 0;
+    font-size: 20px;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header .card-icon {
+    background-color: #efefef;
+    padding: 0.4rem;
+    border-radius: 28px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header .card-icon .fa-file {
+    color: var(--green);
+    font-size: 20px;
+}
+
+.container-fluid main .card-parent-box .card-body:nth-child(2) .card-body-header .card-icon .fa-file {
+    color: var(--green);
+    font-size: 20px;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header .card-icon .fa-file {
+    color: var(--green);
+    font-size: 20px;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header .card-icon .fa-video {
+    color: var(--green-dark);
+    font-size: 20px;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header .card-icon .fa-image {
+    color: var(--orange);
+    font-size: 20px;
+}
+
+.container-fluid main .card-parent-box .card-body .card-body-header .card-icon .fa-circle-question {
+    color: var(--green-dark);
+    font-size: 20px;
+}
+
+hr {
+    margin-top: 2rem;
+}
+
+.container-fluid main .card-parent-box .card-footer {
+    margin-top: 3.5rem;
+}
+
+.container-fluid main .card-parent-box .card-footer h3 {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.container-fluid main .card-parent-box .card-footer .card-materials {
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 3rem;
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.container-fluid main .card-parent-box .card-footer .card-materials .fa {
+    font-size: 45px;
+    color: var(--green);
+}
+
+.container-fluid main .card-parent-box .card-footer .card-materials p {
+    margin: 0;
+    font-size: 15.5px;
+}
+
+.container-fluid main .card-parent-box .card-footer .card-materials span {
+    color: #808080;
+    font-size: 15.5px;
+}
+
+.container-fluid main .card-parent-box .card-footer .card-materials input {
+    width: 250px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    border-radius: 10px;
+    font-size: 14.4px;
+    cursor: pointer;
+}
+
+.container-fluid main .card-parent-box .card-submit {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.container-fluid main .card-parent-box .card-submit a{
+    width: 100%;
+}
+
+.container-fluid main .card-parent-box .card-submit button {
+    width: 100%;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 10px 30px;
+    font-weight: 600;
+    border-radius: 10px;
+}
+
+.container-fluid main .card-parent-box .card-submit button:nth-child(1) {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.container-fluid main .card-parent-box .card-submit button:nth-child(2) {
+    background-color: var(--green);
+    color: white;
+}
+
+.text-content {
+    width: 100%;
+    padding: 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    /* margin-top: 2rem; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.9rem;
+    flex-direction: column;
+}
+
+.text-content .fa {
+    font-size: 45px;
+    color: var(--green);
+}
+
+.text-content p {
+    margin: 0;
+    font-size: 14.5px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   NESTING  —  Module  ›  Lesson  ›  Video / Image / Activity / Quiz
+   No design changes — same borders, colors, padding as existing cards
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Level 1: Lessons nested inside a Module ── */
+.nested-lessons-container {
+    padding-left: 1.5rem;
+    border-left: 3px solid var(--green-mid);
+    margin-left: 0.5rem;
+    margin-top: 1rem;
+}
+
+.nested-lessons-container>.lesson-item {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    margin-top: 1.5rem;
+    border-radius: 10px;
+    background-color: #ffffff;
+}
+
+.nested-lessons-empty.text-content {
+    margin-top: 0.5rem !important;
+}
+
+/* ── Level 2: Videos / Images / Activities / Quizzes nested inside a Lesson ── */
+.lesson-nested-container {
+    padding-left: 1.5rem;
+    border-left: 3px solid var(--green-mid);
+    margin-left: 0.5rem;
+    margin-top: 1rem;
+}
+
+.lesson-nested-container>.card-body {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    margin-top: 1.2rem;
+    border-radius: 10px;
+    background-color: #ffffff;
+}
+
+.lesson-nested-empty.text-content {
+    margin-top: 0.5rem !important;
+}
+
+/* ── Module: "Add Lesson" button — same style as existing .buttons buttons ── */
+.module-item>.buttons {
+    gap: 0.8rem;
+}
+
+.module-item>.buttons .btn-add-lesson-in-module {
+    background-color: var(--green);
+    color: #ffffff;
+    box-shadow: 0 3px 10px rgba(76, 175, 125, 0.30);
+}
+
+.module-item>.buttons .btn-add-lesson-in-module:hover {
+    background-color: var(--green-dark);
+    color: #ffffff;
+}
+
+/* ── Lesson: content buttons (Video / Image / Activity / Quiz) ── */
+.lesson-content-buttons {
+    gap: 0.8rem;
+}
+
+.lesson-content-buttons .btn-add-video-in-lesson {
+    background-color: var(--green-dark);
+    color: #ffffff;
+    box-shadow: 0 3px 10px rgba(45, 106, 79, 0.30);
+}
+
+.lesson-content-buttons .btn-add-image-in-lesson {
+    background-color: var(--orange);
+    color: #ffffff;
+    box-shadow: 0 3px 10px rgba(255, 138, 101, 0.30);
+}
+
+.lesson-content-buttons .btn-add-activity-in-lesson {
+    background-color: var(--green-text);
+    color: #ffffff;
+    box-shadow: 0 3px 10px rgba(74, 106, 88, 0.25);
+}
+
+.lesson-content-buttons .btn-add-quiz-in-lesson {
+    background-color: #3B5BDB;
+    color: #ffffff;
+    box-shadow: 0 3px 10px rgba(59, 91, 219, 0.25);
+}
+
+.lesson-content-buttons .btn-add-video-in-lesson:hover {
+    background-color: var(--green);
+    color: #fff;
+}
+
+.lesson-content-buttons .btn-add-image-in-lesson:hover {
+    background-color: var(--orange-dark);
+    color: #fff;
+}
+
+.lesson-content-buttons .btn-add-activity-in-lesson:hover {
+    background-color: var(--green);
+    color: #fff;
+}
+
+.lesson-content-buttons .btn-add-quiz-in-lesson:hover {
+    background-color: #2f4ac7;
+    color: #fff;
+}
+
+/* ── Module icon ── */
+.module-item .card-icon .fa-layer-group {
+    color: var(--green);
+    font-size: 20px;
+}
+
+/* ── Lesson icon (fa-file already styled above; this keeps it green) ── */
+.lesson-item>.card-body-header .card-icon .fa-file {
+    color: var(--green);
+    font-size: 20px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   QUIZ QUESTION ITEMS  — unchanged from your original
+   ══════════════════════════════════════════════════════════════ */
+
+div.card-body.quiz-item button {
+    border-radius: 10px;
+}
+
+div.question-item.card-body {
+    margin: 0.5rem 0 0;
+}
+
+div.question-item {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    padding: 2rem;
+}
+
+.question-item .card-icon .fa-list-check {
+    color: #3B5BDB;
+    font-size: 20px;
+}
+
+.question-item .remove-question {
+    padding: 0.5rem;
+    background-color: var(--green-light);
+    color: var(--green);
+    border-radius: 50%;
+    border: none;
+}
+
+.btn-add-question {
+    padding: 8px 18px;
+    border-radius: 7px;
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 13.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    background-color: #3B5BDB;
+    box-shadow: 0 3px 10px rgba(59, 91, 219, 0.25);
+}
+
+.btn-add-question:hover {
+    background-color: #2f4ac7;
+}
+
+.quiz-item .card-icon .fa-pen-to-square {
+    color: #3B5BDB;
+    font-size: 20px;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   ACTIVITY QUESTION ITEMS  — unchanged from your original
+   ══════════════════════════════════════════════════════════════ */
+
+div.activity-question-item.card-body {
+    margin: 0.5rem 0 0;
+}
+
+div.activity-question-item {
+    background-color: #ffffff;
+    padding: 2rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.activity-question-item .card-icon .fa-pencil {
+    color: var(--orange);
+    font-size: 20px;
+}
+
+.activity-question-item .remove-activity-question {
+    padding: 0.5rem;
+    background-color: var(--green-light);
+    color: var(--green);
+    border-radius: 50%;
+    border: none;
+}
+
+.btn-add-activity-question {
+    padding: 8px 18px;
+    border-radius: 7px;
+    border: none;
+    outline: none;
+    color: white;
+    font-size: 13.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    /* background-color: var(--orange);
+    box-shadow: 0 3px 10px rgba(255, 138, 101, 0.30); */
+}
+
+.btn-add-activity-question:hover {
+    background-color: var(--orange-dark);
+}
+
+.activity-item .card-icon .fa-circle-question {
+    color: var(--orange);
+    font-size: 20px;
+}
+
+.activity-question-type-select {
+    cursor: pointer;
+}
+
+.activity-mc-fields {
+    padding-left: 15px;
+    padding-right: 15px;
+}

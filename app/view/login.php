@@ -20,61 +20,109 @@
 
         <form action="?url=login" method="post">
             <div class="login-parent">
-                <div class="form-extension form">
-
-                    <div class="form-logo">
-                        <div class="parent-logo">
-                            <!-- <div class="logo"></div> -->
-                            <div class="logo-icon">
-                                <i class="fa-solid fa-lightbulb"></i>
+                <!-- <div class="form-logo">
+                    <div class="parent-logo">
+                        <div class="logo-icon">
+                            <i class="fa-solid fa-lightbulb"></i>
+                        </div>
+                        <div class="logo-text">
+                            <p><b>i</b>Learn</p>
+                        </div>
+                    </div>
+                    <h2>Let's the learning journey begin.</h2>
+                    <p>Unlock a world of learning with just one click. Log in to get started.</p>
+                </div> -->
+                <div class="image-form">
+                    <div class="image-parent">
+                        <div class="image-container">
+                            <div class="image-nav">
+                                <i class="fa fa-star"></i>
+                                <span>Education Platform</span>
                             </div>
-                            <div class="logo-text">
-                                <p><b>i</b>Learn</p>
+
+                            <h3>Start your <b>learning journey</b> today and take the first step toward achieving your
+                                goals.</h3>
+
+                            <p>Join thousands of students unlocking their potential through quality education, gaining
+                                new
+                                skills, building confidence, and achieving their academic goals every day.</p>
+                        </div>
+                        <div class="image-footer">
+                            <div class="footer">
+                                <p>10k+</p>
+                                <span>Students</span>
+                            </div>
+
+                            <div class="footer">
+                                <p>500+</p>
+                                <span>Courses</span>
+                            </div>
+
+                            <div class="footer">
+                                <p>98%</p>
+                                <span>Satisfaction</span>
                             </div>
                         </div>
-                        <h2 class="fw-semibold">Let's the <b>learning</b> journey begin.</h2>
-                        <p>Unlock a world of learning with just one click. Log in to get started.</p>
                     </div>
+                </div>
+                <div class="field-form">
+                    <div class="form-extension form">
 
-                    <div class="text-box">
-                        <label>Username or Email</label>
-                        <input type="text" class="form-control" placeholder="Enter username or email" name="email" id=""
-                            required>
-                    </div>
+                        <!-- <p>Just one step away from your courses—step in and start learning.</p> -->
 
-                    <div class="text-box">
-                        <label>Password</label>
-                        <input type="password" class="form-control" placeholder="Enter password" name="password" id=""
-                            required>
-                    </div>
+                        <div class="form-logo">
+                            <div class="parent-logo">
+                                <a href="/learning_management/public/?url=landingpage">
+                                    <div class="logo-icon">
+                                        <i class="fa-solid fa-lightbulb"></i>
+                                    </div>
+                                </a>
+                                <div class="logo-text">
+                                    <p><b>i</b>Learn</p>
+                                </div>
+                            </div>
+                            <h2>Let's the learning journey begin.</h2>
+                            <p>Unlock a world of learning with just one click. Log in to get started.</p>
+                        </div>
 
-                    <div class="forgot text-end">
+
+                        <div class="text-box">
+                            <label>Email</label>
+                            <input type="text" class="form-control mt-2" placeholder="Enter email" name="email" id=""
+                                required>
+                        </div>
+
+                        <div class="text-box">
+                            <div class="forgot">
+                                <label>Password</label>
+                                <a href="#">Forgot Password?</a>
+                            </div>
+                            <input type="password" class="form-control mt-2" placeholder="Enter password"
+                                name="password" id="" required>
+                        </div>
+
+                        <!-- <div class="forgot text-end">
                         <a href="#">Forgot Password</a>
-                    </div>
-
-                    <div class="button">
-                        <button class="submit" class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">Login</button>
-                    </div>
-
-                    <!-- <h4>Or Login with</h4>
-
-                    <div class="accounts">
-                        <a href="#">
-                            <i class="fa-brands fa-google"></i>
-                            <p class="m-0">Google</p>
-                        </a>
-
-                        <a href="#">
-                            <i class="fa-brands fa-facebook"></i>
-                            <p class="m-0">Facebook</p>
-                        </a>
                     </div> -->
 
-                    <div class="change">
-                        <label>Don't have an account? <a href="/learning_management/public/?url=signup">Signup</a>
-                        </label>
+                        <div class="button">
+                            <button class="submit"
+                                class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">Login</button>
+                        </div>
+
+                        <div class="change">
+                            <label>Don't have an account? <a href="/learning_management/public/?url=signup">Sign up here
+                                    to
+                                    create</a>
+                            </label>
+                        </div>
+
                     </div>
 
+                    <div class="change">
+
+                        <label>Need help? Contact us at <a href="#">helloilearn@gmail.com</a></label>
+                    </div>
                 </div>
 
             </div>

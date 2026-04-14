@@ -32,7 +32,7 @@
                 $subjectInfo = $studentModel->getSubjectBySlug($subject);
 
                 if ($subjectInfo):
-                    $feedItems = $studentModel->getSubjectFeed($subject);
+                    $feedItems = $studentModel->getSubjectFeed($subject, $_SESSION['student_id'] ?? 0);
                     ?>
 
                     <style>
@@ -159,10 +159,10 @@
                                     <h1><?= htmlspecialchars($subjectInfo['subject_name']) ?></h1>
                                     <div class="module-buttons">
                                         <a href="/learning_management/public/?url=classes">Browse Courses</a>
-                                        <a
+                                        <!-- <a
                                             href="/learning_management/public/?url=subject_lessons&subject=<?= urlencode($subject) ?>">
                                             View Lessons
-                                        </a>
+                                        </a> -->
                                     </div>
                                 </div>
                                 <div class="module-text">
@@ -209,8 +209,20 @@
                                                 </div>
                                             </div>
                                             <hr>
-                                            <div class="module-date">
-                                                <p>Date Received: <?= $date ?></p>
+                                            <div class="module-date"
+                                                style="display:flex; justify-content:space-between; align-items:center;">
+                                                <p style="margin:0;">Date Received: <?= $date ?></p>
+                                                <?php if ($item['type'] === 'assignment' && isset($item['points_earned']) && $item['points_earned'] !== null): ?>
+                                                    <?php
+                                                    $percent = $item['total_points'] > 0
+                                                        ? ($item['points_earned'] / $item['total_points']) * 100
+                                                        : 0;
+                                                    $scoreColor = $percent >= 75 ? '#4CAF7D' : '#C82525';
+                                                    ?>
+                                                    <p style="margin:0; font-weight:700; color:<?= $scoreColor ?>;">
+                                                        <?= (int) $item['points_earned'] ?> / <?= (int) $item['total_points'] ?> 
+                                                    </p>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                     </a>

@@ -125,13 +125,14 @@ class Students extends Model
     public function getAnnouncementByIdAndSlug($announcementId, $subjectSlug)
     {
         $stmt = $this->db->prepare("
-            SELECT an.id, an.title, an.body, an.posted_at,
-                   u.name AS teacher_name, s.subject_name, s.slug
-            FROM announcements an
-            JOIN subjects s ON an.subject_id = s.id
-            JOIN users    u ON an.posted_by  = u.id
-            WHERE an.id = ? AND s.slug = ? LIMIT 1
-        ");
+        SELECT n.id, n.title, n.message AS body, n.created_at AS posted_at,
+               u.name AS teacher_name, s.subject_name, s.slug
+        FROM notifications n
+        JOIN subjects s ON n.subject_id = s.id
+        JOIN users    u ON n.sender_id  = u.id
+        WHERE n.id = ? AND s.slug = ? AND n.type = 'announcement'
+        LIMIT 1
+    ");
         $stmt->bind_param("is", $announcementId, $subjectSlug);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
@@ -140,23 +141,44 @@ class Students extends Model
     // ============================================================
     // SUBJECT FEED
     // ============================================================
-    public function getSubjectFeed($subjectSlug)
+    public function getSubjectFeed($subjectSlug, $studentId = null)
     {
+        $studentId = $studentId ?? $_SESSION['student_id'] ?? 0;
+
         $stmt = $this->db->prepare("
-            (SELECT 'module' AS type, m.id, 'New Material' AS label,
-                    m.title AS heading, m.description AS subtext, m.posted_at AS date
-             FROM modules m JOIN subjects s ON m.subject_id = s.id WHERE s.subject_code = ?)
-            UNION ALL
-            (SELECT 'assignment', a.id, 'New Assignment',
-                    a.title, a.description, a.posted_at
-             FROM assignments a JOIN subjects s ON a.subject_id = s.id WHERE s.subject_code = ?)
-            UNION ALL
-            (SELECT 'announcement', an.id, 'Announcement',
-                    an.title, an.body, an.posted_at
-             FROM announcements an JOIN subjects s ON an.subject_id = s.id WHERE s.subject_code = ?)
-            ORDER BY date DESC
-        ");
-        $stmt->bind_param("sss", $subjectSlug, $subjectSlug, $subjectSlug);
+        (SELECT 'module' AS type, m.id, 'New Material' AS label,
+                m.title AS heading, m.description AS subtext, m.posted_at AS date,
+                NULL AS total_points, NULL AS points_earned
+         FROM modules m
+         JOIN subjects s ON m.subject_id = s.id
+         WHERE s.subject_code = ?)
+
+        UNION ALL
+
+        (SELECT 'assignment', a.id, 'New Assignment',
+                a.task, a.description, a.posted_at,
+                a.points AS total_points,
+                sub.points_earned AS points_earned
+         FROM assignments a
+         JOIN subjects s ON a.subject_id = s.id
+         LEFT JOIN assignment_submissions sub
+                ON sub.assignment_id = a.id
+                AND sub.student_id = ?
+         WHERE s.subject_code = ?)
+
+        UNION ALL
+
+        (SELECT 'announcement', n.id, 'Announcement',
+                n.title, n.message, n.created_at,
+                NULL AS total_points, NULL AS points_earned
+         FROM notifications n
+         JOIN subjects s ON n.subject_id = s.id
+         WHERE s.subject_code = ? AND n.type = 'announcement')
+
+        ORDER BY date DESC
+    ");
+
+        $stmt->bind_param("siss", $subjectSlug, $studentId, $subjectSlug, $subjectSlug);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }

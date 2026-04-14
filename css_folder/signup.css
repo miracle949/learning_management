@@ -38,23 +38,146 @@
 .container-fluid .login-parent {
     /* height: 100vh; */
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    padding: 3rem;
-    width: 100%;
+    /* flex-direction: column; */
+    /* padding: 3rem; */
+    /* width: 100%; */
+    /* background-color: #F7F9F8; */
+    /* height: 100vh; */
+    height: 100vh;
+    overflow-y: auto;
     background-color: #F7F9F8;
+    /* background: linear-gradient(
+        to bottom, 
+        var(--green) 40%,
+        #ffffff 40%
+    ); */
+    /* height: calc(100% / 2); */
     /* overflow: hidden; */
 }
 
-.container-fluid .login-parent .image-container {
+.container-fluid .login-parent .image-form {
     /* background-image: url(../images/login-bg.jpg);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover; */
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
+    /* border-right: 1px solid rgba(0, 0, 0, 0.1); */
+    /* background-image:
+        linear-gradient(rgba(0, 0, 0, 0.50)),
+        url('../images/Senior-High-School.webp'); */
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.60)),
+        url('../images/ilearnbg.png');
+    /* background-image: 
+        linear-gradient(var(--green-dark)), 
+        url('../images/ilearnbg.png'); */
+    /* background-image:
+        linear-gradient(rgba(45, 106, 79, 0.85), rgba(45, 106, 79, 0.85)),
+        url('../images/ilearnbg.png'); */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
     display: flex;
     justify-content: center;
+    align-items: left;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    padding: 2rem;
+    position: relative;
+    /* position: fixed; */
+}
+
+.container-fluid .login-parent .image-form .image-parent{
+    position: absolute;
+    bottom: 60px;
+    left: 40px;
+}
+
+.container-fluid .login-parent .image-form .image-nav {
+    /* background-color: transparent; */
+    /* background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.35); */
+    background: rgba(76, 175, 125, 0.25);
+    border: 1px solid rgba(76, 175, 125, 0.5);
+    width: 185px;
+    padding: 5px 15px;
+    border-radius: 28px;
+}
+
+.container-fluid .login-parent .image-form .image-nav .fa {
+    /* color: #ffffff; */
+    color: #a8f0c8;
+    font-size: 12px;
+}
+
+.container-fluid .login-parent .image-form .image-nav span {
+    /* color: #ffffff; */
+    color: #a8f0c8;
+    font-size: 13.5px;
+}
+
+
+.container-fluid .login-parent .image-form h3,
+.container-fluid .login-parent .image-form p {
+    color: #ffffff;
+    margin: 0;
+}
+
+.container-fluid .login-parent .image-form h3 {
+    margin-top: 1rem;
+    /* font-weight: 600; */
+    width: 100%;
+    max-width: 580px;
+    font-size: 30px;
+    line-height: 43px;
+    font-family: "Titan", sans-serif;
+    text-transform: capitalize;
+}
+
+.container-fluid .login-parent .image-form h3 b {
+    color: var(--green);
+    font-family: "Titan", sans-serif;
+}
+
+.container-fluid .login-parent .image-form p {
+    margin-top: 0.5rem;
+    color: #FFFFFFBF;
+    font-size: 14.5px;
+    width: 100%;
+    max-width: 450px;
+    line-height: 25px;
+}
+
+.container-fluid .login-parent .image-form .image-footer{
+    display: flex;
     align-items: center;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.container-fluid .login-parent .image-form .image-footer .footer{
+    background: rgba(76, 175, 125, 0.25);
+    border: 1px solid rgba(76, 175, 125, 0.5);
+    padding: 1rem;
+    text-align: center;
+    border-radius: 10px;
+    /* width: calc(100% / 5); */
+    /* width: 100%;
+    max-width: 103px; */
+}
+
+.container-fluid .login-parent .image-form .image-footer .footer p{
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--green);
+}
+
+.container-fluid .login-parent .image-form .image-footer .footer span{
+    color: #ffffff;
+    font-size: 14.5px;
+    font-weight: 600;
 }
 
 .container-fluid .login-parent .image-container img {
@@ -62,13 +185,65 @@
     height: 100%;
 }
 
-.container-fluid .login-parent .form-extension {
-    width: calc(100% / 2);
-    animation: slideIn 0.4s ease both;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-    border: 1px solid #e2e8f0;
-    background-color: #ffffff;
+.container-fluid .login-parent .field-form {
+    height: 100vh;
+    overflow-y: auto;
+    /* height: 100%; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    padding-top: 33rem;
+    padding-bottom: 2rem;
+    background-color: #F7F9F8;
+    /* padding-bottom: 10rem; */
+    /* padding-bottom: 30rem; */
 }
+
+.container-fluid .login-parent .form-extension {
+    animation: slideIn 0.4s ease both;
+    /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04); */
+    /* border: 1px solid #e2e8f0; */
+    width: 100%;
+    /* max-width: 560px; */
+    max-width: 520px;
+    /* background-color: #ffffff; */
+    /* background-color: #ffffff; */
+    /* background: transparent; */
+    /* background-color: #ffffff; */
+}
+
+.container-fluid .login-parent .form {
+    padding-top: 2.3rem;
+    padding-left: 2.3rem;
+    padding-right: 2.3rem;
+    padding-bottom: 2.3rem;
+    /* box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px; */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    border-radius: 20px;
+    background-color: #ffffff;
+    /* background-color: #ffffff; */
+}
+
+/* .container-fluid .login-parent .form-extension::-webkit-scrollbar{
+    width: 0;
+} */
+
+/* .reminder{
+    margin-top: 0.5rem;
+}
+
+.reminder span{
+    color: #808080;
+    font-size: 14.5px;
+} */
+
+label span {
+    color: #808080;
+    font-size: 14.5px;
+}
+
 
 @keyframes slideIn {
     from {
@@ -102,39 +277,43 @@
     margin-top: 20rem;
 } */
 
-.container-fluid .login-parent .form .form-logo .parent-logo p {
+/* .container-fluid .login-parent .form-logo .parent-logo p {
     font-size: 17px;
     font-weight: bold;
     margin: 0;
-}
+} */
 
-.container-fluid .login-parent .form .form-logo .parent-logo {
+.container-fluid .login-parent .form-logo .parent-logo {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
     position: relative;
     gap: 0.5rem;
+    width: 100%;
 }
 
-.container-fluid .login-parent .form .form-logo .parent-logo .logo-icon {
-    padding: 8px;
+.container-fluid .login-parent .form-logo .parent-logo .logo-icon {
+    padding: 9px;
     background-color: var(--green-light);
     border-radius: 10px;
+    /* border: 1px solid rgba(0, 0, 0, 0.1); */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
-.container-fluid .login-parent .form .form-logo .parent-logo .logo-icon .fa-solid {
+.container-fluid .login-parent .form-logo .parent-logo .logo-icon .fa-solid {
     color: var(--green);
-    font-size: 22px;
+    font-size: 20px;
 }
 
-.container-fluid .login-parent .form .form-logo .parent-logo p {
+.container-fluid .login-parent .form-logo .parent-logo p {
     font-size: 22px;
     font-family: "Titan", sans-serif;
     font-weight: normal;
     color: var(--green);
+    margin: 0;
 }
 
-.container-fluid .login-parent .form .form-logo .parent-logo p b {
+.container-fluid .login-parent .form-logo .parent-logo p b {
     font-weight: normal;
     color: #212529;
     font-family: "Titan", sans-serif;
@@ -152,30 +331,22 @@
     margin-top: 2.5rem;
 } */
 
-.container-fluid .login-parent .form .form-logo p {
-    font-size: 14.5px;
+/* .container-fluid .login-parent .form .form-logo p {
+    font-size: 15px;
     color: #808080;
-    text-align: center;
+    text-align: left;
+} */
+
+.container-fluid .login-parent .form .form-logo p:nth-child(3) {
+    font-size: 15px;
+    color: #808080;
+    text-align: left;
 }
 
 /* .container-fluid .login-parent .form .form-logo p {
     font-size: 14.5px;
     color: #808080;
 } */
-
-.container-fluid .login-parent .form {
-    /* padding-top: 13rem; */
-    /* padding-top: 4.5rem;
-    padding-left: 4.5rem;
-    padding-right: 4.5rem; */
-    /* padding: 20rem 4.5rem 4rem 4.5rem; */
-    padding-top: 2rem;
-    padding-left: 3rem;
-    padding-right: 3rem;
-    padding-bottom: 2rem;
-    /* box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px; */
-    border-radius: 20px;
-}
 
 /* .container-fluid .login-parent .form .text-box{
     margin-top: 1.5rem;
@@ -200,7 +371,7 @@
 .container-fluid .login-parent .form .text-box input,
 .container-fluid .login-parent .form .text-box label,
 .container-fluid .login-parent .form .text-box select {
-    font-size: 14.5px;
+    font-size: 15px;
 }
 
 .container-fluid .login-parent .form .text-box input {
@@ -227,10 +398,10 @@ select.form-select:valid {
 } */
 
 .container-fluid .login-parent .form h2 {
-    font-size: 23px;
+    font-size: 21px;
     margin-top: 1rem;
     font-family: "Titan", sans-serif;
-    text-align: center;
+    text-align: left;
 }
 
 .container-fluid .login-parent .form h2 b {
@@ -243,8 +414,9 @@ select.form-select:valid {
 }
 
 .container-fluid .login-parent .form .forgot a {
-    font-size: 14.5px;
-    color: #212529;
+    font-size: 15px;
+    /* color: #212529; */
+    color: var(--green);
 }
 
 .container-fluid .login-parent .form .button {
@@ -257,7 +429,7 @@ select.form-select:valid {
     outline: none;
     width: 100%;
     border-radius: 28px;
-    font-size: 14.5px;
+    font-size: 15px;
     /* text-transform: uppercase; */
     /* background-color: #0d589f; */
     /* background-color: #212529; */
@@ -269,7 +441,7 @@ select.form-select:valid {
 .container-fluid .login-parent .form h4 {
     margin-top: 3rem;
     text-align: center;
-    font-size: 14.5px;
+    font-size: 15px;
     font-weight: normal;
 }
 
@@ -295,7 +467,7 @@ select.form-select:valid {
 }
 
 .container-fluid .login-parent .form .accounts a p {
-    font-size: 14.5px;
+    font-size: 15px;
 }
 
 .container-fluid .login-parent .form .change {
@@ -306,8 +478,33 @@ select.form-select:valid {
 
 .container-fluid .login-parent .form .change label,
 .container-fluid .login-parent .form .change a {
-    color: #212529;
+    /* color: #212529; */
     font-size: 15px;
+}
+
+.container-fluid .login-parent .form .change label a {
+    color: var(--green);
+}
+
+.container-fluid .login-parent .change {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+    gap: 0.5rem;
+    margin-top: 2.5rem;
+    width: 100%;
+    max-width: 550px;
+}
+
+.container-fluid .login-parent .change label,
+.container-fluid .login-parent .change a {
+    /* color: #212529; */
+    font-size: 15px;
+}
+
+.container-fluid .login-parent .change label a {
+    color: var(--green);
 }
 
 @media only screen and (max-width: 1020px) {

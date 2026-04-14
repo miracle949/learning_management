@@ -92,7 +92,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="add-subject-row mt-3">
+
+                                    <div class="add-subject-row mt-3" style="display: none;">
                                         <i class="fa fa-plus-circle"></i>
                                         <input type="text" name="subject_name" form="addSubjectForm"
                                             id="add-sub-name-input" placeholder="Subject name e.g. Filipino">

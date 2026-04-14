@@ -26,19 +26,38 @@ class AuthController
                     $_SESSION['section'] = $studentInfo['section_name'] ?? null;
                 }
 
-                if ($_SESSION['role'] === 'admin') {
-                    header("Location: /learning_management/public/?url=admin");
-                } elseif ($_SESSION['role'] === 'teacher') {
-                    header("Location: /learning_management/public/?url=teacher");
-                } elseif ($_SESSION['role'] === 'student') {
-                    header("Location: /learning_management/public/?url=dashboard");
+                if ($_SESSION['status'] === 'Pending') {
+
+                    session_destroy();
+
+                    header("Location: /learning_management/public?url=login");
+
+                    $error = "Your account is pending still review";
+
+
                 } else {
-                    echo "<h1>Unknown role</h1>";
+
+                    if ($_SESSION['role'] === 'superadmin') {
+
+                        header("Location: /learning_management/public/?url=super_admin");
+
+                    } elseif ($_SESSION['role'] === 'admin') {
+                        header("Location: /learning_management/public/?url=admin");
+                    } elseif ($_SESSION['role'] === 'teacher') {
+                        header("Location: /learning_management/public/?url=teacher");
+                    } elseif ($_SESSION['role'] === 'student') {
+                        header("Location: /learning_management/public/?url=dashboard");
+                    } else {
+                        echo "<h1>Unknown role</h1>";
+                    }
+
+                    exit;
                 }
 
-                exit;
             } else {
+
                 $error = "Invalid email or password.";
+
             }
         }
 
@@ -59,6 +78,7 @@ class AuthController
             $confirm_password = $_POST["confirm_password"] ?? null;
             $grade_level_id = $_POST["grade_level_id"] ?? null;
             $section_id = $_POST["section_id"] ?? null;
+            // $status = "Pending";
 
             // Basic validation
             if (!$student_id || !$firstname || !$lastname || !$email || !$username || !$password || !$grade_level_id || !$section_id) {

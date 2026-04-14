@@ -454,7 +454,7 @@
                         <select class="module-type-select" id="moduleTypeSelect"
                             onchange="switchModulePanel(this.value)">
                             <option value="classes-feed" selected> Modules</option>
-                            <option value="interactive">Interactive Module</option>
+                            <!-- <option value="interactive">Activity</option> -->
                             <option value="announcement"> Announcements</option>
                         </select>
                     </div>
@@ -497,6 +497,7 @@
 
                     <!-- ── Panel: Interactive Module ── -->
                     <div class="stream-panel" id="panel-interactive">
+                        
                         <form action="/learning_management/public/?url=save_lessons" method="POST"
                             enctype="multipart/form-data">
 

@@ -10,6 +10,14 @@
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
     <style>
+        .av-desc-card{
+            padding: 8px 0;
+        }
+
+        /* .av-desc-card p{
+            font-size: 14px;
+        } */
+
         .mv-back-link {
             display: inline-flex;
             align-items: center;
@@ -40,8 +48,8 @@
 
         .mv-header-info small {
             font-size: 12px;
-            /* color: #aaa; */
-            color: #1a1a1a;
+            color: #aaa;
+            /* color: #1a1a1a; */
             font-weight: 600;
             display: block;
             margin-bottom: 4px;
@@ -51,15 +59,28 @@
             font-size: 20px;
             font-weight: 800;
             color: #1a1a1a;
-            margin: 0 0 4px;
+            margin: 0 0 6px;
         }
 
         .mv-header-info p {
-            font-size: 13.5px;
+            font-size: 14px;
             /* color: #555; */
-            color: #1a1a1a;
+            /* color: #1a1a1a; */
+            color: #444444;
             margin: 0 0 2px;
+            border-left: 4px solid var(--green);
+            padding-left: 14px;
         }
+
+        /* .mv-header-info p::before{
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            top: 0;
+            height: 100%;
+            width: ;
+        } */
 
         .mv-date {
             font-size: 12px;
@@ -370,7 +391,9 @@
                             <div class="mv-header-info">
                                 <small>New Material</small>
                                 <h2><?= htmlspecialchars($module['title']) ?></h2>
-                                <p><?= htmlspecialchars($module['description']) ?></p>
+                                <div class="av-desc-card">
+                                    <p><?= htmlspecialchars($module['description']) ?></p>
+                                </div>
                                 <span class="mv-date">Date Received:
                                     <?= date('M j', strtotime($module['posted_at'])) ?></span>
                             </div>

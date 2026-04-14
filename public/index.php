@@ -7,6 +7,7 @@ require_once "../app/controllers/AuthController.php";
 require_once "../app/controllers/teacher_records.php";
 require_once "../app/controllers/TeacherController.php";
 require_once "../app/controllers/StudentsController.php";
+require_once "../app/controllers/SuperAdminController.php";
 
 $url = $_GET['url'] ?? '';
 
@@ -15,6 +16,7 @@ $auth = new AuthController();
 $teacher = new teacher_records();
 $teacherDashboard = new TeacherController();
 $student = new StudentsController();
+$super_controller = new SuperAdminController();
 
 switch ($url) {
     case 'landingpage':
@@ -46,6 +48,16 @@ switch ($url) {
         break;
     case 'save_lessons':
         $teacherDashboard->save_lessons();
+        break;
+
+    // case 'modules_teacher':
+    //     $controller->module_teacher();
+    //     break;
+
+    case 'static_lesson':
+        $subject = $_GET['subject'] ?? '';
+        $staticId = $_GET['id'] ?? '';
+        include '../app/view/subject_lessons.php';
         break;
 
     // ── Interactive Modules ───────────────────────────────────
@@ -181,6 +193,48 @@ switch ($url) {
 
     case 'upload':
         $teacherDashboard->upload();
+        break;
+
+    case 'modules_teacher':
+        $teacherDashboard->module_teacher();
+        break;
+
+    case 'view_modules_teacher':
+        $teacherDashboard->view_modules_teacher();
+        break;
+
+    case 'subject_lessons_teacher':
+        $teacherDashboard->subject_lessons_teacher();
+        break;
+
+    case 'create_module':
+        $teacherDashboard->create_module();
+        break;
+
+    case 'save_module':
+        $teacherDashboard->save_module();
+        break;
+
+    // super admin
+
+    case 'super_admin':
+        $controller->super_admin();
+        break;
+
+    case 'activities':
+        $super_controller->activities();
+        break;
+
+    case 'create_activities':
+        $super_controller->create_activities();
+        break;
+
+    case 'save_interactive_module':        // ← ADD THIS
+        $super_controller->save_interactive_module();
+        break;
+
+    case 'save_subject':
+        $super_controller->save_subject();
         break;
 
     case 'login':

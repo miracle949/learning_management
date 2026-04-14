@@ -760,6 +760,16 @@
                     background: none;
                     border: none;
                 }
+
+                .back-module{
+                    padding: 1rem;
+                }
+
+                .back-module a{
+                    text-decoration: none;
+                    font-size: 14.5px;
+                    color: var(--green);
+                }
             </style>
 
             <!-- ── NAVBAR ── -->
@@ -774,6 +784,11 @@
                         <div class="progress-lesson" id="progressBar" style="width:<?= $progressPct ?>%"></div>
                     </div>
                 </div>
+            </div>
+
+            <div class="back-module">
+                <a href="/learning_management/public/?url=modules&subject=<?= urlencode($subject) ?>"><i
+                        class="fa fa-arrow-left"></i> Back to modules</a>
             </div>
 
             <!-- ── MODULE HEADER CARD ── -->
@@ -943,19 +958,13 @@
                                             </div>
 
                                             <?php if ($submission): ?>
-                                                <!-- <div class="submitted-notice" style="margin-bottom:16px;">
-                                                    <i class="fa fa-check-circle"></i>
-                                                    Activity submitted! Your answers have been recorded.
-                                                </div> -->
-
+                                                <!-- ── READ-ONLY REVIEW (already submitted) ── -->
                                                 <?php
-                                                // Decode saved answers for review
                                                 $savedAnswers = [];
                                                 if (!empty($submission['answers'])) {
                                                     $savedAnswers = json_decode($submission['answers'], true) ?? [];
                                                 }
                                                 ?>
-
                                                 <?php foreach ($questions as $qi => $q): ?>
                                                     <div class="activity-question" style="margin-bottom:12px;">
                                                         <p class="aq-num">Question <?= $qi + 1 ?></p>
@@ -973,7 +982,6 @@
                                                                 $isCorrect = (strtolower($keyR) === strtolower($q['correct_ans'] ?? ''));
                                                                 $isPicked = ($keyR === $studentPicked);
                                                                 $isWrong = ($isPicked && !$isCorrect);
-
                                                                 if ($isCorrect) {
                                                                     $bStyle = 'border-color:#22c55e;background:#f0fdf4;';
                                                                     $lStyle = 'background:#22c55e;color:#fff;';
@@ -997,7 +1005,6 @@
                                                             <?php endforeach; ?>
 
                                                         <?php else: ?>
-                                                            <!-- Essay answer review -->
                                                             <?php $essayAnswer = $savedAnswers[$q['id']] ?? ''; ?>
                                                             <div
                                                                 style="background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:8px;padding:12px 14px;font-size:14px;color:#374151;line-height:1.6;">
@@ -1007,21 +1014,18 @@
                                                                     <span style="color:#aaa;font-style:italic;">No answer provided.</span>
                                                                 <?php endif; ?>
                                                             </div>
-                                                            <!-- <?php if (!empty($q['model_answer'])): ?>
-                                                                <div
-                                                                    style="margin-top:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 14px;font-size:13px;color:#065f46;">
-                                                                    <strong>Model Answer:</strong>
-                                                                    <?= nl2br(htmlspecialchars($q['model_answer'])) ?>
-                                                                </div>
-                                                            <?php endif; ?> -->
                                                         <?php endif; ?>
                                                     </div>
                                                 <?php endforeach; ?>
-                                                <!-- <div class="activity-answers-form" data-act-id="<?= (int) $act['id'] ?>">
+
+                                            <?php else: ?>
+                                                <!-- ── INTERACTIVE FORM (not yet submitted) ── -->
+                                                <div class="activity-answers-form" data-act-id="<?= (int) $act['id'] ?>">
                                                     <?php foreach ($questions as $qi => $q): ?>
                                                         <div class="activity-question">
                                                             <p class="aq-num">Question <?= $qi + 1 ?></p>
                                                             <p class="aq-text"><?= htmlspecialchars($q['question']) ?></p>
+
                                                             <?php if ($q['question_type'] === 'multiple_choice'): ?>
                                                                 <div class="mc-choices">
                                                                     <?php
@@ -1033,11 +1037,15 @@
                                                                             continue; ?>
                                                                         <label class="mc-label"
                                                                             onclick="lessonPickMC(this, <?= (int) $q['id'] ?>, '<?= $key ?>')">
+                                                                            <input type="radio"
+                                                                                name="act_<?= (int) $act['id'] ?>_q<?= (int) $q['id'] ?>"
+                                                                                value="<?= $key ?>">
                                                                             <span class="mc-letter"><?= $actLtrs[$li++] ?></span>
                                                                             <?= htmlspecialchars($val) ?>
                                                                         </label>
                                                                     <?php endforeach; ?>
                                                                 </div>
+
                                                             <?php else: ?>
                                                                 <textarea class="activity-answer" data-qid="<?= (int) $q['id'] ?>"
                                                                     placeholder="Write your answer here..." rows="3"
@@ -1045,7 +1053,8 @@
                                                             <?php endif; ?>
                                                         </div>
                                                     <?php endforeach; ?>
-                                                </div> -->
+                                                </div>
+
                                             <?php endif; ?>
                                         </div>
                                     <?php endforeach; ?>
@@ -1127,7 +1136,8 @@
                                                             <?= htmlspecialchars($firstQz['instructions']) ?>
                                                         </p>
                                                     <?php endif; ?>
-                                                    <div class="activity-meta-pills" style="display: flex; justify-content: space-between; align-items: center;">
+                                                    <div class="activity-meta-pills"
+                                                        style="display: flex; justify-content: space-between; align-items: center;">
                                                         <div class="questions-passing">
                                                             <span class="meta-pill pill-purple">
                                                                 <?= $grandTotal ?> Questions

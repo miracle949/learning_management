@@ -43,6 +43,10 @@ class HomeController
         require_once "../app/view/subject_lessons.php";
     }
 
+    public function module_teacher(){
+        require_once "../teacher_folder/modules_teacher.php";
+    }
+
     public function subject_quiz()
     {
         require_once "../app/view/subject_quiz.php";
@@ -71,6 +75,18 @@ class HomeController
     public function teacher()
     {
         require_once "../app/view/teacher.php";
+    }
+
+    public function super_admin(){
+        require_once "../app/view/super_admin.php";
+    }
+
+    public function activities(){
+        require_once "../super_admin_folder/activities.php";
+    }
+
+    public function create_activities(){
+        require_once "../super_admin_folder/create_activities.php";
     }
 
     // public function student_works(){
