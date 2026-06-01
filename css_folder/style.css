@@ -243,29 +243,32 @@ div.rightbar{
     /* justify-content: center; */
     /* justify-content: center; */
     /* justify-content: space-between; */
+    justify-content: center;
     align-items: center;
-    justify-content: space-between;
-    width: 100%;
+    /* justify-content: space-between; */
+    /* width: 100%; */
     /* gap: 1rem; */
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
     /* width: 100%; */
     margin-top: 2rem;
     /* gap: 1rem; */
     /* gap: 1rem; */
     animation: slideIn 0.4s ease both;
     /* gap: 2rem; */
-    gap: 0.8rem;
+    gap: 1rem;
     /* padding: 0 16px; */
 }
 
 .container-fluid .rightbar .card-parent-box .card-box {
-    /* width: calc(100% / 4.5); */
-    width: 100%;
-    max-width: 230px;
+    /* width: calc(100% / 3); */
+    /* width: 100%; */
+    /* max-width: 230px; */
     /* width: 100%; */
     /* width: calc(100% / 4); */
-    background-color: white;
-    padding: 1.5rem 1.1rem 1.5rem 1.1rem;
+    width: 100%;
+    background-color: var(--green);
+    /* padding: 1.5rem 1.1rem 1.5rem 1.1rem; */
+    padding: 2rem 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -281,6 +284,15 @@ div.rightbar{
     border: 2px solid #6CCA55; */
 }
 
+.container-fluid .rightbar .card-parent-box .card-box a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    color: var(--green);
+    width: 100%;
+}
+
 .container-fluid .rightbar .card-parent-box .card-box:hover {
     box-shadow: 0 8px 32px rgba(108, 63, 232, 0.13), 0 2px 8px rgba(0, 0, 0, 0.07);
     transform: translateY(-2px);
@@ -292,88 +304,244 @@ div.rightbar{
     margin: 0;
 }
 
-.parent-performance{
+.parent-performance {
     display: flex;
     justify-content: space-between;
     /* align-items: center; */
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
     gap: 1rem;
     margin-top: 1.5rem;
     animation: slideIn 0.4s ease both;
 }
 
-.parent-performance .perform{
-    width: 59%;
-    /* border: 2px solid #6CCA55; */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-    border: 1px solid #e2e8f0;
-    background-color: #ffffff;
-    border-radius: 7px;
-}
-
-.parent-performance .enrolled-subjects{
+.perform {
+    /* width: 59%; */
     width: 100%;
-}
-
-.parent-performance .update{
-    width: 39%;
     /* border: 2px solid #6CCA55; */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     border: 1px solid #e2e8f0;
     background-color: #ffffff;
     border-radius: 7px;
-    padding: 1.4rem 1.5rem 1.5rem 1.5rem;
 }
 
-.parent-performance .update .header{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
 
-.parent-performance .update h3{
+.perform h3 {
     font-size: 15.5px;
+    margin: 0;
+    font-weight: 600;
+    /* padding: 1.4rem 1.5rem 1rem 1.5rem; */
+    /* padding: 1.5rem 1.2rem 0.5rem; */
+    /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
+    height: 100%;
+    /* max-height: 59px; */
+}
+
+.perform .header {
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: center;
+    width: 100%;
+    gap: 0.8rem;
+    /* padding: 2rem; */
+    padding: 1.5rem 1.2rem 0.5rem;
+}
+
+.perform .header .fa {
+    color: var(--green);
+}
+
+.perform .body {
+    /* padding: 24px 1.2rem 0.5rem 1.2rem; */
+    padding: 1.5rem 1.2rem 0;
+    /* margin-top: 16px; */
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-y: auto;
+    height: 100%;
+    max-height: 350px;
+}
+
+.perform .body::-webkit-scrollbar {
+    display: none;
+}
+
+.perform .body h4 {
+    font-size: 16px;
+    margin: 0;
     font-weight: 600;
 }
 
-.parent-performance .update a{
-    text-decoration: none;
-    color: #155DFC;
-    font-size: 14.5px;
-}
-
-.parent-performance .update .body{
-    margin-top: 1rem;
+.perform .body .progress-box {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    /* background-color: #ffffff; */
+    /* background-color: #efefef; */
+    padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+    border-radius: 10px;
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.parent-performance .update .body .update-box{
+.perform .body .progress-box .view {
     display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    border: 1.5px solid #E5E7EB;
-    padding: 1rem;
-    border-radius: 7px;
+    justify-content: end;
 }
 
-.parent-performance .update .body .update-box p{
+.perform .body .progress-box .view a {
+    text-decoration: underline;
+    font-size: 13.5px;
+    color: var(--green);
+    font-weight: 600;
+}
+
+.perform .body .progress-box .parent-progress .progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* margin-top: 1.5rem; */
+    font-size: 14.5px;
+}
+
+.perform .body .progress-box .parent-progress .progress-header p,
+.perform .body .progress-box .parent-progress .progress-header span {
+    margin: 0;
+    font-weight: 600;
+}
+
+.perform .body .progress-box .parent-progress .parent-progress-percent {
+    margin-top: 0.7rem;
+    background-color: #dfdfdf;
+    padding: 0.5rem;
+    width: 100%;
+    position: relative;
+    border-radius: 28px;
+}
+
+.perform .body .progress-box .parent-progress .parent-progress-percent .progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 45%;
+    padding: 0.5rem;
+    border-radius: 28px;
+    background-color: var(--green);
+}
+
+.enrolled-subjects {
+    width: 100%;
+    margin-top: 1.5rem;
+}
+
+.enrolled-subjects .header {
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: center;
+    width: 100%;
+    gap: 0.8rem;
+    /* padding: 2rem; */
+    padding: 1.5rem 1.2rem 0.5rem;
+}
+
+.parent-performance .update {
+    /* width: 39%; */
+    width: 100%;
+    height: 450px;
+    /* border: 2px solid #6CCA55; */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    border-radius: 7px;
+    /* padding: 1.4rem 1.5rem 1.5rem 1.5rem; */
+}
+
+.parent-performance .update .header {
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: center;
+    gap: 0.8rem;
+    /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
+    /* padding: 1.4rem 1.5rem 1rem 1.5rem; */
+    padding: 1.5rem 1.2rem 0.5rem;
+}
+
+.parent-performance .update .header .fa {
+    color: var(--green);
+}
+
+.parent-performance .update h3 {
+    font-size: 15.5px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.parent-performance .update a {
+    text-decoration: none;
+    color: #155DFC;
+    /* color: #212529; */
+    font-size: 13.5px;
+}
+
+.parent-performance .update .body {
+    /* margin-top: 1rem; */
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem 1.2rem 0;
+    overflow-y: auto;
+    height: 100%;
+    max-height: 350px;
+
+}
+
+.parent-performance .update .body::-webkit-scrollbar {
+    scrollbar-width: none;
+}
+
+.parent-performance .update .body .update-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    padding: 1.5rem 1rem;
+    border-radius: 7px;
+    position: relative;
+}
+
+.parent-performance .update .body a {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    text-decoration: none;
+    background-color: var(--green);
+    padding: 5px 15px;
+    border-radius: 10px;
+    color: #ffffff;
+    font-size: 12.5px;
+    font-weight: 600;
+}
+
+.parent-performance .update .body .update-box p {
     margin: 0;
     font-weight: 600;
     font-size: 15.5px;
 }
 
-.parent-performance .update .body .update-box span{
+.parent-performance .update .body .update-box span {
     color: #6A7282;
-    font-size: 14.5px;
+    font-size: 13.5px;
 }
 
-.parent-performance .perform{
-    padding: 1rem;
+.parent-performance .update .body .update-box span:nth-child(3) {
+    color: #C82525;
+    font-weight: 600;
 }
 
-.subject-parents{
+.subject-parents {
     background-color: #ffffff;
     margin-top: 1.5rem;
     padding: 1.5rem;
@@ -382,7 +550,7 @@ div.rightbar{
     border-radius: 7px;
 }
 
-.subject-parents .subject-header h3{
+.subject-parents .subject-header h3 {
     font-size: 15.5px;
     font-weight: 600;
 }
@@ -400,19 +568,24 @@ div.rightbar{
 
 .container-fluid .rightbar .card-parent-box .card-box .data_text span {
     font-size: 14.5px;
-    color: #808080;
-    /* text-transform: uppercase; */
+    /* color: #808080; */
+    /* color: var(--text-muted); */
+    color: #ffffffbf;
+    text-transform: uppercase;
+    font-weight: 600;
 }
 
-.container-fluid .rightbar .card-parent-box .card-box .data_text span:nth-child(3){
+/* .container-fluid .rightbar .card-parent-box .card-box .data_text span:nth-child(3) {
     font-size: 12.5px;
     color: var(--green);
     font-weight: 600;
-}
+} */
 
 .container-fluid .rightbar .card-parent-box .card-box .data_text p {
-    font-size: 23px;
+    font-size: 28px;
     font-weight: 600;
+    /* color: var(--green); */
+    color: #ffffff;
 }
 
 .container-fluid .rightbar .card-parent-box .card-box .data_text {
@@ -421,18 +594,17 @@ div.rightbar{
     gap: 0.5rem;
 }
 
-.container-fluid .rightbar .card-parent-box .card-box .data_icon{
-    padding: 0.5rem;
-    background-color: var(--green-light);
+.container-fluid .rightbar .card-parent-box .card-box .data_icon {
+    padding: 0.8rem;
+    /* background-color: var(--green-light); */
+    background: rgba(255, 255, 255, .22);
     border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .container-fluid .rightbar .card-parent-box .card-box .data_icon .fa {
-    font-size: 22px;
-    color: var(--green);
+    font-size: 19.5px;
+    /* color: var(--green); */
+    color: #ffffff;
 }
 
 /* .container-fluid .rightbar .card-parent-box .card-box .data_icon .fa-book-open {
@@ -466,7 +638,7 @@ div.rightbar{
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
-.container-fluid .rightbar .progress-parent-box .progress-box .progress-parent .continue-parent{
+.container-fluid .rightbar .progress-parent-box .progress-box .progress-parent .continue-parent {
     width: 100%;
     display: flex;
     align-items: center;
@@ -548,7 +720,7 @@ div.rightbar{
     font-size: 15px;
 }
 
-.container-fluid .rightbar .progress-parent-box .progress-box .progress-parent .progress-percent-parent span{
+.container-fluid .rightbar .progress-parent-box .progress-box .progress-parent .progress-percent-parent span {
     font-size: 15px;
 }
 
@@ -621,17 +793,17 @@ div.rightbar{
     border-radius: 28px;
 }
 
-.container-fluid .rightbar .progress-parent-box .progress-box .progress-parent .continue{
+.container-fluid .rightbar .progress-parent-box .progress-box .progress-parent .continue {
     width: 50%;
 }
 
-.container-fluid .rightbar .progress-parent-box .progress-box .progress-parent .continue a{
+.container-fluid .rightbar .progress-parent-box .progress-box .progress-parent .continue a {
     font-size: 13.5px;
     text-decoration: none;
     color: #212529;
     background-color: #F4F5F7;
     padding: 10px 20px;
-    border: 1px solid rgba(0,0,0,0.1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 10px;
 }
 
@@ -651,17 +823,21 @@ div.rightbar{
     margin: 0rem 0rem 2.5rem 0rem;
 }
 
-@media only screen and (max-width: 1270px){
-    .container-fluid .rightbar .card-parent-box .card-box{
+#inviteModal.show-modal {
+    display: flex !important;
+}
+
+/* @media only screen and (max-width: 1270px) {
+    .container-fluid .rightbar .card-parent-box .card-box {
         width: 230px;
     }
 }
 
-@media only screen and (min-width: 1260px){
-    .container-fluid .rightbar .card-parent-box .card-box{
+@media only screen and (min-width: 1260px) {
+    .container-fluid .rightbar .card-parent-box .card-box {
         width: 240px;
     }
-}
+} */
 
 @media only screen and (max-width: 1013px) {
     .container-fluid .rightbar .progress-parent-box {

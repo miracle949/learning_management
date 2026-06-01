@@ -119,7 +119,7 @@ class Teacher extends Model
 
     public function getTeacherStats($teacher_id)
     {
-        $sql = "SELECT COUNT(DISTINCT ta.subject_id) AS total_classes, 0 AS total_modules
+        $sql = "SELECT COUNT(*) AS total_classes, 0 AS total_modules
                 FROM teacher_assignments ta WHERE ta.teacher_id = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("i", $teacher_id);
@@ -167,10 +167,11 @@ class Teacher extends Model
     public function createTeacher($name, $email, $password)
     {
         $hashed = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $this->db->prepare("INSERT INTO users (name, email, password, role, status) VALUES (?, ?, ?, 'teacher', '1')");
+        $stmt = $this->db->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, 'teacher')");
         $stmt->bind_param("sss", $name, $email, $hashed);
         $stmt->execute();
         $user_id = $this->db->insert_id;
+
         $stmt2 = $this->db->prepare("INSERT INTO teachers (user_id) VALUES (?)");
         $stmt2->bind_param("i", $user_id);
         $stmt2->execute();
@@ -251,6 +252,226 @@ class Teacher extends Model
         }
     }
 
+    public function getAllStudents($limit = 10, $offset = 0)
+    {
+        $sql = "
+        SELECT 
+            s.id AS student_id,
+            s.user_id,
+            s.grade_level_id,
+            s.section_id,
+            s.student_LRN,
+            s.status,
+            u.name,
+            u.email,
+            gl.name AS grade_level,
+            sec.section_name
+        FROM students s
+        JOIN users u ON s.user_id = u.id
+        JOIN grade_level gl ON s.grade_level_id = gl.id
+        JOIN sections sec ON s.section_id = sec.id
+        WHERE u.role = 'student'
+        ORDER BY gl.name ASC, sec.section_name ASC, u.name ASC
+        LIMIT ? OFFSET ?
+    ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("ii", $limit, $offset);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function countAllStudents()
+    {
+        $sql = "
+        SELECT COUNT(*) AS total
+        FROM students s
+        JOIN users u ON s.user_id = u.id
+        WHERE u.role = 'student'
+    ";
+        $result = $this->db->query($sql);
+        return (int) $result->fetch_assoc()['total'];
+    }
+
+    public function getAllTeachersFiltered(
+        string $search = '',
+        string $grade = '',
+        string $section = '',
+        string $status = ''
+    ): array {
+
+        /* Step 1 — inner query aggregates every teacher unconditionally */
+        $innerSQL = "
+            SELECT
+                t.id   AS teacher_id,
+                u.name,
+                u.email,
+                COUNT(DISTINCT ta.id) AS class_count,
+                GROUP_CONCAT(
+                    DISTINCT CONCAT(s.id, '~~', s.subject_name)
+                    ORDER BY s.subject_name SEPARATOR '||'
+                ) AS subjects_raw,
+                GROUP_CONCAT(
+                    DISTINCT CONCAT(gl.name, ' - ', sec.section_name)
+                    ORDER BY gl.name, sec.section_name SEPARATOR '||'
+                ) AS sections_raw,
+                GROUP_CONCAT(
+                    DISTINCT LOWER(gl.name)
+                    ORDER BY gl.name SEPARATOR '|'
+                ) AS grades_raw
+            FROM teachers t
+            JOIN  users u  ON t.user_id = u.id
+            LEFT JOIN teacher_assignments ta ON ta.teacher_id = t.id
+            LEFT JOIN subjects s             ON ta.subject_id   = s.id
+            LEFT JOIN sections sec           ON ta.section_id   = sec.id
+            LEFT JOIN grade_level gl         ON ta.grade_level_id = gl.id
+            WHERE u.role = 'teacher'
+            GROUP BY t.id, u.name, u.email
+        ";
+
+        /* Step 2 — outer query filters on the aggregated columns */
+        $outerWhere = [];
+        $params = [];
+        $types = '';
+
+        if ($search !== '') {
+            $like = '%' . $search . '%';
+            $outerWhere[] = "(name LIKE ? OR email LIKE ?)";
+            $params[] = $like;
+            $params[] = $like;
+            $types .= 'ss';
+        }
+
+        if ($grade !== '') {
+            /*
+             * grades_raw = "grade 11|grade 12"
+             * We need an exact pipe-delimited token match so "grade 1"
+             * doesn't match "grade 11".
+             * Use: FIND_IN_SET with '|' separator via REPLACE trick.
+             */
+            $outerWhere[] = "FIND_IN_SET(LOWER(?), REPLACE(LOWER(COALESCE(grades_raw,'')), '|', ',')) > 0";
+            $params[] = strtolower($grade);
+            $types .= 's';
+        }
+
+        if ($section !== '') {
+            /*
+             * sections_raw = "Grade 12 - CSS 12-1||Grade 11 - CSS 11-1"
+             * We check if the section name part (after " - ") appears.
+             */
+            $outerWhere[] = "LOWER(COALESCE(sections_raw,'')) LIKE ?";
+            $params[] = '%' . strtolower($section) . '%';
+            $types .= 's';
+        }
+
+        $outerWhereClause = $outerWhere
+            ? 'WHERE ' . implode(' AND ', $outerWhere)
+            : '';
+
+        $sql = "
+            SELECT *
+            FROM ({$innerSQL}) AS teacher_agg
+            {$outerWhereClause}
+            ORDER BY name ASC
+        ";
+
+        if ($params) {
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            $result = $stmt->get_result();
+        } else {
+            $result = $this->db->query($sql);
+        }
+
+        $teachers = [];
+        while ($row = $result->fetch_assoc()) {
+
+            /* Parse subjects */
+            if (!empty($row['subjects_raw'])) {
+                $pairs = explode('||', $row['subjects_raw']);
+                $row['subjects'] = array_map(function ($pair) {
+                    $parts = explode('~~', $pair, 2);
+                    return ['id' => $parts[0] ?? '', 'name' => $parts[1] ?? '', 'join_code' => ''];
+                }, $pairs);
+            } else {
+                $row['subjects'] = [];
+            }
+
+            /* Parse sections */
+            $row['sections'] = !empty($row['sections_raw'])
+                ? explode('||', $row['sections_raw'])
+                : [];
+
+            /* Cleanup helper columns */
+            unset($row['subjects_raw'], $row['sections_raw'], $row['grades_raw']);
+
+            /* Derive status */
+            $isActive = (int) $row['class_count'] > 0;
+            $row['status_label'] = $isActive ? 'Active' : 'Not Active';
+
+            /* Status post-filter (derived value, can't do in SQL) */
+            if ($status !== '' && strtolower($status) !== strtolower($row['status_label'])) {
+                continue;
+            }
+
+            $teachers[] = $row;
+        }
+
+        return $teachers;
+    }
+
+    public function updateTeacherInfo(int $teacher_id, string $name, string $email, string $password = ''): void
+    {
+        // Get the user_id linked to this teacher
+        $stmt = $this->db->prepare("SELECT user_id FROM teachers WHERE id = ?");
+        $stmt->bind_param("i", $teacher_id);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+
+        if (!$row)
+            return;
+        $user_id = (int) $row['user_id'];
+
+        if (!empty($password)) {
+            // Update name, email, and password
+            $hashed = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $this->db->prepare("UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?");
+            $stmt->bind_param("sssi", $name, $email, $hashed, $user_id);
+        } else {
+            // Update name and email only
+            $stmt = $this->db->prepare("UPDATE users SET name = ?, email = ? WHERE id = ?");
+            $stmt->bind_param("ssi", $name, $email, $user_id);
+        }
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    /**
+     * Delete all teacher_assignments rows for a teacher.
+     */
+    public function deleteTeacherAssignments(int $teacher_id): void
+    {
+        $stmt = $this->db->prepare("DELETE FROM teacher_assignments WHERE teacher_id = ?");
+        $stmt->bind_param("i", $teacher_id);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    public function updateTeacherAssignments(int $teacher_id, array $subject_ids, array $section_ids): void
+    {
+        /* Delete all existing assignments for this teacher */
+        $del = $this->db->prepare("DELETE FROM teacher_assignments WHERE teacher_id = ?");
+        $del->bind_param("i", $teacher_id);
+        $del->execute();
+        $del->close();
+
+        /* Re-assign using the existing assignSubjectsAndSections logic */
+        if (!empty($subject_ids) && !empty($section_ids)) {
+            $this->assignSubjectsAndSections($teacher_id, $subject_ids, $section_ids);
+        }
+    }
+
     public function getAllTeachers()
     {
         $sql = "
@@ -266,7 +487,7 @@ class Teacher extends Model
     LEFT JOIN subjects s ON ta.subject_id = s.id
     LEFT JOIN sections sec ON ta.section_id = sec.id
     LEFT JOIN grade_level gl ON ta.grade_level_id = gl.id
-    WHERE u.role = 'teacher' AND u.status = '1'
+    WHERE u.role = 'teacher'
     GROUP BY t.id, u.name, u.email ORDER BY u.name ASC
     ";
 
@@ -337,28 +558,37 @@ class Teacher extends Model
     // ============================================================
 // NOTIFICATIONS (formerly announcements)
 // ============================================================
-    public function getAnnouncements($subjectId, $teacherId)
+    public function getAnnouncements($subjectId, $teacherId, $sectionId = 0)
     {
-        $stmt = $this->db->prepare("
-        SELECT id, title, message AS body, created_at AS posted_at 
-        FROM notifications 
-        WHERE subject_id = ? 
-          AND sender_id = ? 
-          AND type = 'announcement'
-        ORDER BY created_at DESC
-    ");
-        $stmt->bind_param("ii", $subjectId, $teacherId);
+        $sql = "SELECT id, title, message AS body, created_at AS posted_at 
+            FROM notifications 
+            WHERE subject_id = ? AND type = 'announcement'";
+        $params = [$subjectId];
+        $types = "i";
+
+        if ($sectionId > 0) {
+            $sql .= " AND section_id = ?";
+            $params[] = $sectionId;
+            $types .= "i";
+        }
+        $sql .= " ORDER BY created_at DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param($types, ...$params);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function insertAnnouncement($subjectId, $teacherId, $title, $body)
+    public function insertAnnouncement($subjectId, $sectionId, $teacherId, $title, $body)
     {
+        $userId = $this->getUserIdByTeacherId($teacherId);
+        if (!$userId)
+            return null;
+
         $stmt = $this->db->prepare("
-        INSERT INTO notifications (sender_id, subject_id, title, message, type, created_at)
-        VALUES (?, ?, ?, ?, 'announcement', NOW())
+        INSERT INTO notifications (sender_id, subject_id, section_id, title, message, type, created_at)
+        VALUES (?, ?, ?, ?, ?, 'announcement', NOW())
     ");
-        $stmt->bind_param("iiss", $teacherId, $subjectId, $title, $body);
+        $stmt->bind_param("iiiss", $userId, $subjectId, $sectionId, $title, $body);
         $stmt->execute();
         return $this->db->insert_id;
     }
@@ -366,22 +596,32 @@ class Teacher extends Model
     // ============================================================
     // ASSIGNMENTS
     // ============================================================
-    public function getAssignments($subjectId, $teacherId)
+    public function getAssignments($subjectId, $teacherId, $sectionId = 0)
     {
-        $stmt = $this->db->prepare("
-        SELECT id, title, description, due_date, points, created_at,
-               file_name, file_path, file_type
-        FROM assignments 
-        WHERE subject_id = ? AND teacher_id = ? 
-        ORDER BY created_at DESC
-    ");
-        $stmt->bind_param("ii", $subjectId, $teacherId);
+        $sql = "SELECT id, title, description, due_date, due_time, points, created_at,
+                   file_name, file_path, file_type
+            FROM assignments 
+            WHERE subject_id = ? AND teacher_id = ?";
+
+        $params = [$subjectId, $teacherId];
+        $types = "ii";
+
+        if ($sectionId > 0) {
+            $sql .= " AND section_id = ?";
+            $params[] = $sectionId;
+            $types .= "i";
+        }
+
+        $sql .= " ORDER BY created_at DESC";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param($types, ...$params);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
     public function insertAssignment(
         $subjectId,
+        $sectionId,
         $teacherId,
         $type,
         $title,
@@ -389,6 +629,7 @@ class Teacher extends Model
         $task,
         $instructions,
         $dueDate,
+        $due_time,
         $points,
         $fileName = null,
         $filePath = null,
@@ -399,19 +640,21 @@ class Teacher extends Model
         $instr = $instructions ?? null;
         $type = $type ?? 'seatwork';
         $due = $dueDate ?? null;
+        $dTime = $due_time ?? '23:59:00';  // ← ADD THIS
         $fName = $fileName ?? null;
         $fPath = $filePath ?? null;
         $fType = $fileType ?? null;
 
         $stmt = $this->db->prepare("
         INSERT INTO assignments 
-            (subject_id, teacher_id, type, title, description, task, instructions, 
-             due_date, points, file_name, file_path, file_type, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+            (subject_id, section_id, teacher_id, type, title, description, task, instructions, 
+             due_date, due_time, points, file_name, file_path, file_type, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     ");
         $stmt->bind_param(
-            "iissssssisss",
+            "iiisssssssisss",
             $subjectId,
+            $sectionId,
             $teacherId,
             $type,
             $title,
@@ -419,6 +662,7 @@ class Teacher extends Model
             $task,
             $instr,
             $due,
+            $dTime,   // ← ADD THIS
             $points,
             $fName,
             $fPath,
@@ -515,19 +759,22 @@ class Teacher extends Model
         }
     }
 
-    public function getModules($subjectId, $teacherId = null)
+    public function getModules($subjectId, $teacherId = null, $sectionId = 0)
     {
-        $sql = "
-        SELECT id, title, description, posted_at,
-               file_name, file_path, file_type, file_size
-        FROM modules
-        WHERE subject_id = ?
-    ";
+        $sql = "SELECT id, title, description, posted_at,
+                   file_name, file_path, file_type, file_size
+            FROM modules WHERE subject_id = ?";
         $params = [$subjectId];
         $types = "i";
+
         if ($teacherId) {
-            $sql .= " AND teacher_id = ?";  // ← not posted_by
+            $sql .= " AND teacher_id = ?";
             $params[] = $teacherId;
+            $types .= "i";
+        }
+        if ($sectionId > 0) {
+            $sql .= " AND section_id = ?";   // ← ADD THIS
+            $params[] = $sectionId;
             $types .= "i";
         }
         $sql .= " ORDER BY posted_at ASC";
@@ -557,25 +804,18 @@ class Teacher extends Model
         return [];
     }
 
-    public function getInteractiveModulesWithCount($subjectId, $teacherId = null)
+    public function getInteractiveModulesWithCount($subjectId)
     {
         $sql = "
-            SELECT im.id, im.title, im.description, im.created_at,
-                   COUNT(l.id) AS lesson_count
-            FROM interactive_modules im
-            LEFT JOIN lessons l ON l.interactive_module_id = im.id
-            WHERE im.subject_id = ?
-        ";
-        $params = [$subjectId];
-        $types = "i";
-        if ($teacherId) {
-            $sql .= " AND im.teacher_id = ?";
-            $params[] = $teacherId;
-            $types .= "i";
-        }
-        $sql .= " GROUP BY im.id ORDER BY im.created_at ASC";
+        SELECT im.id, im.title, im.description, im.created_at,
+               COUNT(l.id) AS lesson_count
+        FROM interactive_modules im
+        LEFT JOIN lessons l ON l.interactive_module_id = im.id
+        WHERE im.subject_id = ?
+        GROUP BY im.id ORDER BY im.created_at ASC
+    ";
         $stmt = $this->db->prepare($sql);
-        $stmt->bind_param($types, ...$params);
+        $stmt->bind_param("i", $subjectId);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
@@ -847,7 +1087,7 @@ class Teacher extends Model
     public function getAssignmentById($assignment_id)
     {
         $stmt = $this->db->prepare("
-        SELECT id, title, description, due_date, points, 
+        SELECT id, title, description, due_date, due_time, points, 
                file_name, file_path, file_type
         FROM assignments 
         WHERE id = ?
@@ -1049,5 +1289,886 @@ class Teacher extends Model
             $grouped[$key]['questions'][] = $row;
         }
         return $grouped;
+    }
+
+    public function countDistinctStudentsByTeacher($teacher_id)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(DISTINCT se.student_id) AS total
+        FROM student_enrollments se
+        WHERE se.subject_id IN (
+            SELECT DISTINCT subject_id 
+            FROM teacher_assignments 
+            WHERE teacher_id = ?
+        )
+    ");
+        $stmt->bind_param("i", $teacher_id);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function getStudentById($student_id)
+    {
+        $stmt = $this->db->prepare("
+        SELECT s.id AS student_id, s.student_LRN, u.id AS user_id,
+               u.name, u.email, u.status,
+               gl.id AS grade_level_id, gl.name AS grade_level,
+               sec.id AS section_id, sec.section_name
+        FROM students s
+        JOIN users u ON s.user_id = u.id
+        JOIN grade_level gl ON s.grade_level_id = gl.id
+        JOIN sections sec ON s.section_id = sec.id
+        WHERE s.id = ?
+        LIMIT 1
+    ");
+        $stmt->bind_param("i", $student_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function updateStudent($user_id, $name, $email, $status, $grade_level_id, $section_id, $student_LRN, $student_id, $decline_reason = '', $approved_by = null)
+    {
+        // Update name and email in users table
+        $stmt = $this->db->prepare("
+        UPDATE users SET name = ?, email = ? WHERE id = ?
+    ");
+        $stmt->bind_param("ssi", $name, $email, $user_id);
+        $stmt->execute();
+        $stmt->close();
+
+        // Use different queries depending on whether approved_by is provided
+        if ($approved_by !== null) {
+            $approvedBy = (int) $approved_by;
+            $stmt2 = $this->db->prepare("
+            UPDATE students 
+            SET grade_level_id = ?, section_id = ?, student_LRN = ?, 
+                status = ?, reason = ?, approved_by = ?, updated_at = NOW()
+            WHERE id = ?
+        ");
+            $stmt2->bind_param(
+                "iisssii",
+                $grade_level_id,
+                $section_id,
+                $student_LRN,
+                $status,
+                $decline_reason,
+                $approvedBy,
+                $student_id
+            );
+        } else {
+            $stmt2 = $this->db->prepare("
+            UPDATE students 
+            SET grade_level_id = ?, section_id = ?, student_LRN = ?, 
+                status = ?, reason = ?, updated_at = NOW()
+            WHERE id = ?
+        ");
+            $stmt2->bind_param(
+                "iisssi",
+                $grade_level_id,
+                $section_id,
+                $student_LRN,
+                $status,
+                $decline_reason,
+                $student_id
+            );
+        }
+        $stmt2->execute();
+        $stmt2->close();
+    }
+
+    public function getAllSections()
+    {
+        $result = $this->db->query("
+        SELECT sec.id, sec.section_name, gl.id AS grade_level_id, gl.name AS grade_name
+        FROM sections sec
+        JOIN grade_level gl ON gl.id = sec.grade_level_id
+        ORDER BY gl.name ASC, sec.section_name ASC
+    ");
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // ============================================================
+// ENROLLMENT INVITATIONS
+// ============================================================
+
+    public function getApprovedStudentsNotEnrolled(int $subjectId, int $sectionId): array
+    {
+        $stmt = $this->db->prepare("
+        SELECT u.email, u.name
+        FROM users u
+        JOIN students s ON s.user_id = u.id
+        WHERE u.role = 'student'
+          AND s.status = 'Approved'
+          AND s.id NOT IN (
+              SELECT se.student_id
+              FROM student_enrollments se
+              WHERE se.subject_id = ? AND se.section_id = ?
+          )
+        ORDER BY u.name ASC
+    ");
+        $stmt->bind_param("ii", $subjectId, $sectionId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getApprovedStudentByEmail(string $email)
+    {
+        $stmt = $this->db->prepare("
+        SELECT s.id AS student_id, u.id AS user_id, u.name, u.email, s.status,
+               s.grade_level_id, s.section_id
+        FROM students s
+        JOIN users u ON u.id = s.user_id
+        WHERE u.email = ? AND u.role = 'student' AND s.status = 'Approved'
+        LIMIT 1
+    ");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function isAlreadyEnrolled(int $studentId, int $subjectId, int $sectionId): bool
+    {
+        $stmt = $this->db->prepare("
+        SELECT id FROM student_enrollments
+        WHERE student_id = ? AND subject_id = ? AND section_id = ?
+        LIMIT 1
+    ");
+        $stmt->bind_param("iii", $studentId, $subjectId, $sectionId);
+        $stmt->execute();
+        return (bool) $stmt->get_result()->fetch_assoc();
+    }
+
+    public function hasPendingInvitation(string $email, int $subjectId, int $sectionId): bool
+    {
+        $stmt = $this->db->prepare("
+        SELECT id FROM enrollment_invitations
+        WHERE student_email = ? AND subject_id = ? AND section_id = ?
+          AND status = 'pending' 
+          AND expires_at > NOW()
+        LIMIT 1
+    ");
+        $stmt->bind_param("sii", $email, $subjectId, $sectionId);
+        $stmt->execute();
+        return (bool) $stmt->get_result()->fetch_assoc();
+    }
+
+    public function createInvitation(
+        int $teacherId,
+        int $subjectId,
+        int $gradeLevelId,
+        int $sectionId,
+        string $studentEmail,
+        ?int $studentId
+    ): string {
+        $token = bin2hex(random_bytes(32));
+        $expiresAt = date('Y-m-d H:i:s', strtotime('+5 days'));
+
+        $stmt = $this->db->prepare("
+        INSERT INTO enrollment_invitations
+            (token, teacher_id, subject_id, grade_level_id, section_id,
+             student_email, student_id, status, created_at, expires_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), ?)
+    ");
+        $stmt->bind_param(
+            "siiissss",
+            $token,
+            $teacherId,
+            $subjectId,
+            $gradeLevelId,
+            $sectionId,
+            $studentEmail,
+            $studentId,
+            $expiresAt
+        );
+        $stmt->execute();
+        return $token;
+    }
+
+    public function getInvitationByToken(string $token): ?array
+    {
+        $stmt = $this->db->prepare("
+        SELECT ei.*,
+               s.subject_name,
+               gl.name AS grade_name,
+               sec.section_name,
+               t.user_id AS teacher_user_id,
+               u.name AS teacher_name
+        FROM enrollment_invitations ei
+        JOIN subjects s     ON s.id  = ei.subject_id
+        JOIN grade_level gl  ON gl.id = ei.grade_level_id
+        JOIN sections sec    ON sec.id = ei.section_id
+        JOIN teachers t      ON t.id  = ei.teacher_id
+        JOIN users u         ON u.id  = t.user_id
+        WHERE ei.token = ?
+          AND ei.status = 'pending'
+          AND (ei.expires_at IS NULL OR ei.expires_at > NOW())
+        LIMIT 1
+    ");
+        $stmt->bind_param("s", $token);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc() ?: null;
+    }
+
+    public function acceptInvitation(string $token): array
+    {
+        $inv = $this->getInvitationByToken($token);
+        if (!$inv) {
+            return ['success' => false, 'message' => 'Invitation is invalid or has expired.'];
+        }
+
+        // Resolve student_id from email if not stored
+        $studentId = $inv['student_id'];
+        if (!$studentId) {
+            $stu = $this->getApprovedStudentByEmail($inv['student_email']);
+            if (!$stu) {
+                return ['success' => false, 'message' => 'Student account not found or not yet approved.'];
+            }
+            $studentId = $stu['student_id'];
+        }
+
+        if ($this->isAlreadyEnrolled($studentId, $inv['subject_id'], $inv['section_id'])) {
+            // Mark token used anyway
+            $this->markInvitationAccepted($token, $studentId);
+            return ['success' => true, 'message' => 'You are already enrolled in this subject.', 'already' => true];
+        }
+
+        // Enroll the student
+        $stmt = $this->db->prepare("
+        INSERT INTO student_enrollments (student_id, subject_id, section_id, enrolled_at)
+        VALUES (?, ?, ?, NOW())
+    ");
+        $stmt->bind_param("iii", $studentId, $inv['subject_id'], $inv['section_id']);
+        $stmt->execute();
+
+        $this->markInvitationAccepted($token, $studentId);
+
+        return [
+            'success' => true,
+            'message' => 'You have been successfully enrolled!',
+            'subject_name' => $inv['subject_name'],
+            'section_name' => $inv['section_name'],
+            'teacher_name' => $inv['teacher_name'],
+        ];
+    }
+
+    private function markInvitationAccepted(string $token, int $studentId): void
+    {
+        $stmt = $this->db->prepare("
+        UPDATE enrollment_invitations
+        SET status = 'accepted', student_id = ?
+        WHERE token = ?
+    ");
+        $stmt->bind_param("is", $studentId, $token);
+        $stmt->execute();
+    }
+
+    public function getClassInfoForInviteModal(int $teacherId, int $subjectId, int $sectionId): ?array
+    {
+        $stmt = $this->db->prepare("
+        SELECT s.subject_name, gl.name AS grade_name, sec.section_name,
+               ta.grade_level_id
+        FROM teacher_assignments ta
+        JOIN subjects s     ON s.id  = ta.subject_id
+        JOIN grade_level gl  ON gl.id = ta.grade_level_id
+        JOIN sections sec    ON sec.id = ta.section_id
+        WHERE ta.teacher_id = ? AND ta.subject_id = ? AND ta.section_id = ?
+        LIMIT 1
+    ");
+        $stmt->bind_param("iii", $teacherId, $subjectId, $sectionId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc() ?: null;
+    }
+
+    public function getAllApprovedStudents(): array
+    {
+        $stmt = $this->db->prepare("
+        SELECT u.email, u.name
+        FROM users u
+        JOIN students s ON s.user_id = u.id
+        WHERE u.role = 'student' AND s.status = 'Approved'
+        ORDER BY u.name ASC
+    ");
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Assignments with upcoming due dates across teacher's classes
+    public function getUpcomingAssignments($teacher_id)
+    {
+        $stmt = $this->db->prepare("
+        SELECT DISTINCT
+            a.id,
+            a.title,
+            a.due_date,
+            a.due_time,
+            a.type,
+            a.points,
+            s.subject_name,
+            sec.section_name,
+            gl.name AS grade_level
+        FROM assignments a
+        JOIN subjects s ON s.id = a.subject_id
+        -- Join teacher_assignments to get the correct section for this teacher
+        JOIN teacher_assignments ta
+            ON ta.subject_id  = a.subject_id
+            AND ta.teacher_id = a.teacher_id
+            AND (a.section_id = 0 OR a.section_id = ta.section_id)
+        JOIN sections sec ON sec.id = ta.section_id
+        JOIN grade_level gl ON gl.id = sec.grade_level_id
+        WHERE a.teacher_id = ?
+          AND a.due_date IS NOT NULL
+          -- Not yet overdue: future date, OR same day but time hasn't passed yet
+          AND (
+              a.due_date > CURDATE()
+              OR (
+                  a.due_date = CURDATE()
+                  AND COALESCE(a.due_time, '23:59:00') >= CURTIME()
+              )
+          )
+          -- Within 5 days from now
+          AND a.due_date <= DATE_ADD(CURDATE(), INTERVAL 5 DAY)
+        ORDER BY a.due_date ASC, a.due_time ASC
+        LIMIT 10
+    ");
+        $stmt->bind_param("i", $teacher_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // All announcements across teacher's subjects
+    public function getAnnouncementsByTeacher($teacher_id)
+    {
+        $stmt = $this->db->prepare("
+        SELECT n.title, n.message, n.created_at,
+               s.subject_name,
+               sec.section_name,
+               u.name AS teacher_name
+        FROM notifications n
+        JOIN subjects s ON s.id = n.subject_id
+        JOIN teacher_assignments ta 
+            ON ta.subject_id = n.subject_id AND ta.teacher_id = ?
+        JOIN sections sec ON sec.id = ta.section_id
+        JOIN users u ON u.id = n.sender_id
+        WHERE n.type = 'announcement'
+        ORDER BY n.created_at DESC
+        LIMIT 10
+    ");
+        $stmt->bind_param("i", $teacher_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getInvitationStatus(string $email, int $subjectId, int $sectionId): ?array
+    {
+        // Auto-expire pending invites past their expires_at
+        $this->db->query(
+            "UPDATE enrollment_invitations
+         SET status = 'expired'
+         WHERE status = 'pending'
+           AND expires_at IS NOT NULL
+           AND expires_at < NOW()"
+        );
+
+        $stmt = $this->db->prepare(
+            "SELECT status, expires_at
+         FROM enrollment_invitations
+         WHERE student_email = ?
+           AND subject_id    = ?
+           AND section_id    = ?
+         ORDER BY created_at DESC
+         LIMIT 1"
+        );
+        // MySQLi style — bind_param instead of execute([...])
+        $stmt->bind_param("sii", $email, $subjectId, $sectionId);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        return $result ?: null;
+    }
+
+    // ============================================================
+// CF MODULE — maps to the existing `modules` table
+// ============================================================
+    public function insertCFModule($subjectId, $sectionId, $teacherId, $title, $description)
+    {
+        $stmt = $this->db->prepare("
+        SELECT id FROM modules 
+        WHERE subject_id = ? AND section_id = ? AND teacher_id = ? AND title = ? 
+        LIMIT 1
+    ");
+        $stmt->bind_param("iiis", $subjectId, $sectionId, $teacherId, $title);
+        $stmt->execute();
+        if ($stmt->get_result()->fetch_assoc())
+            return null;
+
+        $stmt = $this->db->prepare("
+        INSERT INTO modules (subject_id, section_id, teacher_id, title, description, posted_at)
+        VALUES (?, ?, ?, ?, ?, NOW())
+    ");
+        $stmt->bind_param("iiiss", $subjectId, $sectionId, $teacherId, $title, $description);
+        $stmt->execute();
+        return $this->db->insert_id;
+    }
+
+    public function insertModuleMaterial($moduleId, $originalName, $filePath, $fileType, $fileSize)
+    {
+        // Since modules table stores ONE file per row inline,
+        // we update the module row with the first file,
+        // or insert a duplicate row for additional files.
+
+        // Check if this module already has a file
+        $stmt = $this->db->prepare("SELECT file_name FROM modules WHERE id = ? LIMIT 1");
+        $stmt->bind_param("i", $moduleId);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+
+        if (empty($row['file_name'])) {
+            // No file yet — update the existing row
+            $stmt = $this->db->prepare("
+            UPDATE modules 
+            SET file_name = ?, file_path = ?, file_type = ?, file_size = ?
+            WHERE id = ?
+        ");
+            $stmt->bind_param("sssii", $originalName, $filePath, $fileType, $fileSize, $moduleId);
+            $stmt->execute();
+        } else {
+            // Already has a file — get this module's info and insert a new row
+            $stmt = $this->db->prepare("
+            SELECT subject_id, teacher_id, title, description FROM modules WHERE id = ?
+        ");
+            $stmt->bind_param("i", $moduleId);
+            $stmt->execute();
+            $mod = $stmt->get_result()->fetch_assoc();
+
+            $stmt = $this->db->prepare("
+            INSERT INTO modules (subject_id, teacher_id, title, description, 
+                                 file_name, file_path, file_type, file_size, posted_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        ");
+            $stmt->bind_param(
+                "iissssi",
+                $mod['subject_id'],
+                $mod['teacher_id'],
+                $mod['title'],
+                $mod['description'],
+                $originalName,
+                $filePath,
+                $fileType,
+                $fileSize
+            );
+            $stmt->execute();
+        }
+        return $this->db->insert_id;
+    }
+
+    public function updateTeacherStatus(int $teacher_id, string $status): void
+    {
+        $stmt = $this->db->prepare("
+        UPDATE teacher_assignments SET Status = ? WHERE teacher_id = ?
+    ");
+        $stmt->bind_param("si", $status, $teacher_id);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    public function assignPairs(int $teacher_id, array $pairs): void
+    {
+        // $pairs = [ section_id => [subject_id, subject_id, ...], ... ]
+        foreach ($pairs as $section_id => $subject_ids) {
+            $section_id = (int) $section_id;
+
+            // Get grade_level_id for this section
+            $stmt = $this->db->prepare("SELECT grade_level_id FROM sections WHERE id = ?");
+            $stmt->bind_param("i", $section_id);
+            $stmt->execute();
+            $sec = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            if (!$sec)
+                continue;
+            $grade_level_id = (int) $sec['grade_level_id'];
+
+            foreach ($subject_ids as $subject_id) {
+                $subject_id = (int) $subject_id;
+
+                // Check if already exists
+                $exist = $this->db->prepare("
+                SELECT id, join_code FROM teacher_assignments
+                WHERE teacher_id = ? AND subject_id = ? AND section_id = ?
+            ");
+                $exist->bind_param("iii", $teacher_id, $subject_id, $section_id);
+                $exist->execute();
+                $existing = $exist->get_result()->fetch_assoc();
+                $exist->close();
+
+                if ($existing) {
+                    // Fill missing join code if needed
+                    if (empty($existing['join_code'])) {
+                        $code = $this->generateJoinCode(7);
+                        $upd = $this->db->prepare("UPDATE teacher_assignments SET join_code = ? WHERE id = ?");
+                        $upd->bind_param("si", $code, $existing['id']);
+                        $upd->execute();
+                        $upd->close();
+                    }
+                } else {
+                    $join_code = $this->generateJoinCode(7);
+                    $insert = $this->db->prepare("
+                    INSERT INTO teacher_assignments 
+                        (teacher_id, subject_id, grade_level_id, section_id, join_code)
+                    VALUES (?, ?, ?, ?, ?)
+                ");
+                    $insert->bind_param("iiiis", $teacher_id, $subject_id, $grade_level_id, $section_id, $join_code);
+                    $insert->execute();
+                    $insert->close();
+                }
+            }
+        }
+    }
+
+    public function getAllStudentsFiltered($limit, $offset, $search = '', $grade = '', $section = '', $status = '')
+    {
+        $where = ["u.role = 'student'"];
+        $params = [];
+        $types = '';
+
+        if ($search) {
+            $where[] = "(u.name LIKE ? OR u.email LIKE ? OR s.student_LRN LIKE ?)";
+            $like = "%$search%";
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+            $types .= 'sss';  // ← was 'isss', remove the 'i'
+        }
+        if ($grade) {
+            $where[] = "LOWER(gl.name) = ?";
+            $params[] = strtolower($grade);
+            $types .= 's';
+        }
+        if ($section) {
+            $where[] = "LOWER(sec.section_name) = ?";
+            $params[] = strtolower($section);
+            $types .= 's';
+        }
+        if ($status) {
+            $where[] = "LOWER(s.status) = ?";
+            $params[] = strtolower($status);
+            $types .= 's';
+        }
+
+        $whereClause = implode(' AND ', $where);
+        $sql = "
+            SELECT s.id AS student_id, s.user_id, s.grade_level_id, s.section_id,
+            s.student_LRN, s.status, s.reason, u.name, u.email,  
+            u.id AS id,
+            gl.name AS grade_level, sec.section_name
+            FROM students s
+            JOIN users u ON s.user_id = u.id
+            JOIN grade_level gl ON s.grade_level_id = gl.id
+            JOIN sections sec ON s.section_id = sec.id
+            WHERE $whereClause
+            ORDER BY u.id ASC
+            LIMIT ? OFFSET ?
+        ";
+        $params[] = $limit;
+        $params[] = $offset;
+        $types .= 'ii';
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function countAllStudentsFiltered($search = '', $grade = '', $section = '', $status = '')
+    {
+        $where = ["u.role = 'student'"];
+        $params = [];
+        $types = '';
+
+        if ($search) {
+            $where[] = "(u.name LIKE ? OR u.email LIKE ?)";
+            $like = "%$search%";
+            $params[] = $like;
+            $params[] = $like;
+            $types .= 'ss';
+        }
+        if ($grade) {
+            $where[] = "LOWER(gl.name) = ?";
+            $params[] = strtolower($grade);
+            $types .= 's';
+        }
+        if ($section) {
+            $where[] = "LOWER(sec.section_name) = ?";
+            $params[] = strtolower($section);
+            $types .= 's';
+        }
+        if ($status) {
+            $where[] = "LOWER(s.status) = ?";
+            $params[] = strtolower($status);
+            $types .= 's';
+        }
+
+        $whereClause = implode(' AND ', $where);
+        $sql = "
+        SELECT COUNT(*) AS total
+        FROM students s
+        JOIN users u ON s.user_id = u.id
+        JOIN grade_level gl ON s.grade_level_id = gl.id
+        JOIN sections sec ON s.section_id = sec.id
+        WHERE $whereClause
+    ";
+
+        if ($params) {
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            return (int) $stmt->get_result()->fetch_assoc()['total'];
+        }
+
+        return (int) $this->db->query($sql)->fetch_assoc()['total'];
+    }
+
+    public function countStudentsByStatus(string $status): int
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total
+        FROM students s
+        JOIN users u ON s.user_id = u.id
+        WHERE u.role = 'student' AND LOWER(s.status) = LOWER(?)
+    ");
+        $stmt->bind_param("s", $status);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function getAllTeachersFilteredPaginated(
+        string $search = '',
+        string $grade = '',
+        string $section = '',
+        string $status = '',
+        int $limit = 10,
+        int $offset = 0
+    ): array {
+        // Reuse the same inner query as getAllTeachersFiltered
+        $innerSQL = "
+            SELECT
+                t.id   AS teacher_id,
+                u.name,
+                u.email,
+                COUNT(DISTINCT ta.id) AS class_count,
+                MAX(ta.Status) AS status_raw,
+                GROUP_CONCAT(
+                    DISTINCT CONCAT(s.id, '~~', s.subject_name)
+                    ORDER BY s.subject_name SEPARATOR '||'
+                ) AS subjects_raw,
+                GROUP_CONCAT(
+                    DISTINCT CONCAT(gl.name, ' - ', sec.section_name)
+                    ORDER BY gl.name, sec.section_name SEPARATOR '||'
+                ) AS sections_raw,
+                GROUP_CONCAT(
+                    DISTINCT LOWER(gl.name)
+                    ORDER BY gl.name SEPARATOR '|'
+                ) AS grades_raw
+            FROM teachers t
+            JOIN  users u  ON t.user_id = u.id
+            LEFT JOIN teacher_assignments ta ON ta.teacher_id = t.id
+            LEFT JOIN subjects s             ON ta.subject_id   = s.id
+            LEFT JOIN sections sec           ON ta.section_id   = sec.id
+            LEFT JOIN grade_level gl         ON ta.grade_level_id = gl.id
+            WHERE u.role = 'teacher'
+            GROUP BY t.id, u.name, u.email
+        ";
+
+        $outerWhere = [];
+        $params = [];
+        $types = '';
+
+        if ($search !== '') {
+            $like = '%' . $search . '%';
+            $outerWhere[] = "(name LIKE ? OR email LIKE ?)";
+            $params[] = $like;
+            $params[] = $like;
+            $types .= 'ss';
+        }
+        if ($grade !== '') {
+            $outerWhere[] = "FIND_IN_SET(LOWER(?), REPLACE(LOWER(COALESCE(grades_raw,'')), '|', ',')) > 0";
+            $params[] = strtolower($grade);
+            $types .= 's';
+        }
+        if ($section !== '') {
+            $outerWhere[] = "LOWER(COALESCE(sections_raw,'')) LIKE ?";
+            $params[] = '%' . strtolower($section) . '%';
+            $types .= 's';
+        }
+
+        $outerWhereClause = $outerWhere ? 'WHERE ' . implode(' AND ', $outerWhere) : '';
+
+        // Status filter is post-query (derived), so we fetch all and filter in PHP
+        // But we still need LIMIT/OFFSET — apply after status filtering via PHP slice
+        $sql = "
+        SELECT *
+        FROM ({$innerSQL}) AS teacher_agg
+        {$outerWhereClause}
+        ORDER BY name ASC
+    ";
+
+        if ($params) {
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            $result = $stmt->get_result();
+        } else {
+            $result = $this->db->query($sql);
+        }
+
+        $all = [];
+        while ($row = $result->fetch_assoc()) {
+            $isActive = (int) $row['class_count'] > 0;
+            $row['status_label'] = $isActive ? 'Active' : 'Not Active';
+
+            if ($status !== '' && strtolower($status) !== strtolower($row['status_label'])) {
+                continue;
+            }
+
+            if (!empty($row['subjects_raw'])) {
+                $pairs = explode('||', $row['subjects_raw']);
+                $row['subjects'] = array_map(function ($pair) {
+                    $parts = explode('~~', $pair, 2);
+                    return ['id' => $parts[0] ?? '', 'name' => $parts[1] ?? '', 'join_code' => ''];
+                }, $pairs);
+            } else {
+                $row['subjects'] = [];
+            }
+
+            $row['sections'] = !empty($row['sections_raw'])
+                ? explode('||', $row['sections_raw'])
+                : [];
+
+            unset($row['subjects_raw'], $row['sections_raw'], $row['grades_raw']);
+
+            $all[] = $row;
+        }
+
+        return array_slice($all, $offset, $limit);
+    }
+
+    public function countAllTeachersFiltered(
+        string $search = '',
+        string $grade = '',
+        string $section = '',
+        string $status = ''
+    ): int {
+        // Same logic as getAllTeachersFiltered but only counts
+        $innerSQL = "
+        SELECT
+            t.id AS teacher_id,
+            u.name,
+            u.email,
+            COUNT(DISTINCT ta.id) AS class_count,
+            GROUP_CONCAT(
+                DISTINCT LOWER(gl.name)
+                ORDER BY gl.name SEPARATOR '|'
+            ) AS grades_raw,
+            GROUP_CONCAT(
+                DISTINCT CONCAT(gl.name, ' - ', sec.section_name)
+                ORDER BY gl.name, sec.section_name SEPARATOR '||'
+            ) AS sections_raw
+        FROM teachers t
+        JOIN  users u  ON t.user_id = u.id
+        LEFT JOIN teacher_assignments ta ON ta.teacher_id = t.id
+        LEFT JOIN subjects s             ON ta.subject_id   = s.id
+        LEFT JOIN sections sec           ON ta.section_id   = sec.id
+        LEFT JOIN grade_level gl         ON ta.grade_level_id = gl.id
+        WHERE u.role = 'teacher'
+        GROUP BY t.id, u.name, u.email
+    ";
+
+        $outerWhere = [];
+        $params = [];
+        $types = '';
+
+        if ($search !== '') {
+            $like = '%' . $search . '%';
+            $outerWhere[] = "(name LIKE ? OR email LIKE ?)";
+            $params[] = $like;
+            $params[] = $like;
+            $types .= 'ss';
+        }
+        if ($grade !== '') {
+            $outerWhere[] = "FIND_IN_SET(LOWER(?), REPLACE(LOWER(COALESCE(grades_raw,'')), '|', ',')) > 0";
+            $params[] = strtolower($grade);
+            $types .= 's';
+        }
+        if ($section !== '') {
+            $outerWhere[] = "LOWER(COALESCE(sections_raw,'')) LIKE ?";
+            $params[] = '%' . strtolower($section) . '%';
+            $types .= 's';
+        }
+
+        $outerWhereClause = $outerWhere ? 'WHERE ' . implode(' AND ', $outerWhere) : '';
+
+        $sql = "
+        SELECT *
+        FROM ({$innerSQL}) AS teacher_agg
+        {$outerWhereClause}
+        ORDER BY name ASC
+    ";
+
+        if ($params) {
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            $result = $stmt->get_result();
+        } else {
+            $result = $this->db->query($sql);
+        }
+
+        // Count in PHP to apply status filter (derived field)
+        $count = 0;
+        while ($row = $result->fetch_assoc()) {
+            $isActive = (int) $row['class_count'] > 0;
+            $statusLabel = $isActive ? 'Active' : 'Not Active';
+            if ($status !== '' && strtolower($status) !== strtolower($statusLabel)) {
+                continue;
+            }
+            $count++;
+        }
+        return $count;
+    }
+
+    public function bulkApproveStudents(array $studentIds): void
+    {
+        if (empty($studentIds))
+            return;
+
+        $placeholders = implode(',', array_fill(0, count($studentIds), '?'));
+        $types = str_repeat('i', count($studentIds));
+
+        $stmt = $this->db->prepare("
+        UPDATE students SET status = 'Approved' WHERE id IN ($placeholders)
+    ");
+        $stmt->bind_param($types, ...$studentIds);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    public function updateAssignmentDueDate($assignmentId, $dueDate, $dueTime)
+    {
+        $stmt = $this->db->prepare("
+        UPDATE assignments SET due_date = ?, due_time = ? WHERE id = ?
+    ");
+        $stmt->bind_param("ssi", $dueDate, $dueTime, $assignmentId);
+        return $stmt->execute();
+    }
+
+    public function getAllPendingStudentIds(): array
+    {
+        $stmt = $this->db->prepare("SELECT id FROM students WHERE status = 'Pending'");
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $ids = [];
+        while ($row = $result->fetch_assoc()) {
+            $ids[] = (int) $row['id'];
+        }
+        return $ids;
     }
 }

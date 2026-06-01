@@ -11,6 +11,51 @@ class SuperAdminController
         $this->superAdminModel = new SuperAdmin();
     }
 
+    public function super_index()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        require_once "../app/models/Admin.php";
+        $adminModel = new Admin();
+
+        $totalStudents = $adminModel->getTotalStudents();
+        $totalTeachers = $adminModel->getTotalTeachers();
+        $totalSubjects = $adminModel->getTotalSubjects();
+        $totalSections = $adminModel->getTotalSections();
+        $totalPendingApprovals = $adminModel->getTotalPendingApprovals();
+        $pendingStudents = $adminModel->getPendingStudents();
+        $recentEnrollments = $adminModel->getRecentEnrollments(5);
+        $announcements = $adminModel->getRecentAnnouncements(5);
+        $teacherWorkload = $adminModel->getTeacherWorkload();
+        $enrollmentByGrade = $adminModel->getEnrollmentByGrade();
+        $approvedCount = $adminModel->countStudentsByStatus('Approved');
+        $pendingCount = $adminModel->countStudentsByStatus('Pending');
+
+        // ── NEW: pull real activity logs from existing tables ──
+        $activityLogs = $this->superAdminModel->getActivityLogs(15);
+
+        extract([
+            'totalStudents' => $totalStudents,
+            'totalTeachers' => $totalTeachers,
+            'totalSubjects' => $totalSubjects,
+            'totalSections' => $totalSections,
+            'totalPendingApprovals' => $totalPendingApprovals,
+            'pendingStudents' => $pendingStudents,
+            'recentEnrollments' => $recentEnrollments,
+            'announcements' => $announcements,
+            'teacherWorkload' => $teacherWorkload,
+            'enrollmentByGrade' => $enrollmentByGrade,
+            'activityLogs' => $activityLogs,
+            'approvedCount' => $approvedCount,
+            'pendingCount' => $pendingCount,
+        ]);
+
+        require "../app/view/super_admin.php";
+    }
+
     public function activities()
     {
         $gradeLevels = $this->superAdminModel->getAllGradeLevels();
@@ -29,7 +74,7 @@ class SuperAdminController
     }
 
     // ============================================================
-    // SAVE INTERACTIVE MODULE (moved from TeacherController)
+    // SAVE INTERACTIVE MODULE
     // ============================================================
     public function save_interactive_module()
     {
@@ -55,7 +100,6 @@ class SuperAdminController
                 mkdir($dir, 0755, true);
         }
 
-        // ── INTERACTIVE MODULES ──
         $moduleTitles = $_POST['module_title'] ?? [];
         $moduleContents = $_POST['module_content'] ?? [];
 
@@ -67,13 +111,10 @@ class SuperAdminController
             $imModuleNumber = $existingIMCount + $modIdx + 1;
             $numberedIMTitle = 'Module ' . $imModuleNumber . ': ' . trim($modTitle);
 
-            $created_by = $_SESSION['user_id'] ?? null;
-
             $imResult = $this->superAdminModel->insertInteractiveModule(
                 $subject_id,
                 $numberedIMTitle,
                 trim($moduleContents[$modIdx] ?? '')
-                // no more $created_by — teacher_id is always NULL for super admin
             );
             $interactiveModuleId = $imResult['id'] ?? null;
             if (!$interactiveModuleId)
@@ -102,9 +143,8 @@ class SuperAdminController
                 $lessonId = $lesResult['id'] ?? null;
                 if (!$lessonId)
                     continue;
-                if ($lesResult['existed']) {
+                if ($lesResult['existed'])
                     $skipped['lessons'][] = $numberedLesTitle . ' (in ' . $numberedIMTitle . ')';
-                }
 
                 // ── VIDEOS ──
                 $videoTitles = $_POST['video_title'][$modIdx][$lesIdx] ?? [];
@@ -155,7 +195,6 @@ class SuperAdminController
                     $aTitle = $actTitles[$aIdx];
                     if (empty(trim($aTitle)))
                         continue;
-
                     $qTypes = $_POST['activity_question_type'][$modIdx][$lesIdx][$aIdx] ?? [];
                     $qTexts = $_POST['activity_question_text'][$modIdx][$lesIdx][$aIdx] ?? [];
                     $qAnswers = $_POST['activity_essay_answer'][$modIdx][$lesIdx][$aIdx] ?? [];
@@ -164,7 +203,6 @@ class SuperAdminController
                     $qChoiceC = $_POST['activity_choice_c'][$modIdx][$lesIdx][$aIdx] ?? [];
                     $qChoiceD = $_POST['activity_choice_d'][$modIdx][$lesIdx][$aIdx] ?? [];
                     $qCorrect = $_POST['activity_correct_answer'][$modIdx][$lesIdx][$aIdx] ?? [];
-
                     foreach ($qTexts as $qIdx => $qText) {
                         if (empty(trim($qText)))
                             continue;
@@ -175,18 +213,12 @@ class SuperAdminController
                             'total_points' => (int) ($actPoints[$aIdx] ?? 0),
                             'question' => trim($qText),
                             'question_type' => $qType,
-                            'model_answer' => $qType === 'essay'
-                                ? (trim($qAnswers[$qIdx] ?? '') ?: null) : null,
-                            'choice_a' => $qType === 'multiple_choice'
-                                ? (trim($qChoiceA[$qIdx] ?? '') ?: null) : null,
-                            'choice_b' => $qType === 'multiple_choice'
-                                ? (trim($qChoiceB[$qIdx] ?? '') ?: null) : null,
-                            'choice_c' => $qType === 'multiple_choice'
-                                ? (trim($qChoiceC[$qIdx] ?? '') ?: null) : null,
-                            'choice_d' => $qType === 'multiple_choice'
-                                ? (trim($qChoiceD[$qIdx] ?? '') ?: null) : null,
-                            'correct_ans' => $qType === 'multiple_choice'
-                                ? (strtolower($qCorrect[$qIdx] ?? 'a') ?: null) : null,
+                            'model_answer' => $qType === 'essay' ? (trim($qAnswers[$qIdx] ?? '') ?: null) : null,
+                            'choice_a' => $qType === 'multiple_choice' ? (trim($qChoiceA[$qIdx] ?? '') ?: null) : null,
+                            'choice_b' => $qType === 'multiple_choice' ? (trim($qChoiceB[$qIdx] ?? '') ?: null) : null,
+                            'choice_c' => $qType === 'multiple_choice' ? (trim($qChoiceC[$qIdx] ?? '') ?: null) : null,
+                            'choice_d' => $qType === 'multiple_choice' ? (trim($qChoiceD[$qIdx] ?? '') ?: null) : null,
+                            'correct_ans' => $qType === 'multiple_choice' ? (strtolower($qCorrect[$qIdx] ?? 'a') ?: null) : null,
                         ]);
                     }
                 }
@@ -195,19 +227,16 @@ class SuperAdminController
                 $quizTitles = $_POST['quiz_title'][$modIdx][$lesIdx] ?? [];
                 $quizInstruct = $_POST['quiz_instructions'][$modIdx][$lesIdx] ?? [];
                 $quizPassing = $_POST['quiz_passing_score'][$modIdx][$lesIdx] ?? [];
-
                 foreach (array_keys($quizTitles) as $qzIdx) {
                     $qzTitle = $quizTitles[$qzIdx];
                     if (empty(trim($qzTitle)))
                         continue;
-
                     $qqTexts = $_POST['question_text'][$modIdx][$lesIdx][$qzIdx] ?? [];
                     $qqChoiceA = $_POST['choice_a'][$modIdx][$lesIdx][$qzIdx] ?? [];
                     $qqChoiceB = $_POST['choice_b'][$modIdx][$lesIdx][$qzIdx] ?? [];
                     $qqChoiceC = $_POST['choice_c'][$modIdx][$lesIdx][$qzIdx] ?? [];
                     $qqChoiceD = $_POST['choice_d'][$modIdx][$lesIdx][$qzIdx] ?? [];
                     $qqCorrect = $_POST['correct_answer'][$modIdx][$lesIdx][$qzIdx] ?? [];
-
                     foreach ($qqTexts as $qqIdx => $qqText) {
                         if (empty(trim($qqText)))
                             continue;
@@ -230,7 +259,6 @@ class SuperAdminController
                 $fcFronts = $_POST['flashcard_front'][$modIdx][$lesIdx] ?? [];
                 $fcBacks = $_POST['flashcard_back'][$modIdx][$lesIdx] ?? [];
                 $fcTypes = $_POST['flashcard_type'][$modIdx][$lesIdx] ?? [];
-
                 foreach ($fcFronts as $fcIdx => $fcFront) {
                     if (empty(trim($fcFront)) || empty(trim($fcBacks[$fcIdx] ?? '')))
                         continue;
@@ -270,7 +298,6 @@ class SuperAdminController
             exit;
         }
 
-        // Handle image upload
         $imagePath = null;
         $file = $_FILES['subject_image'] ?? null;
         if ($file && $file['error'] === UPLOAD_ERR_OK && $file['size'] > 0) {
@@ -287,10 +314,8 @@ class SuperAdminController
         }
 
         if ($subjectId) {
-            // UPDATE
             $this->superAdminModel->updateSubject($subjectId, $name, $code, $description, $gradeLevelId, $imagePath);
         } else {
-            // CREATE
             $this->superAdminModel->createSubject($name, $code, $description, $gradeLevelId, $imagePath);
         }
 

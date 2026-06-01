@@ -4,16 +4,32 @@ require_once "../core/Model.php";
 
 class User extends Model
 {
-    
+
+    public function isLRNTaken($student_lrn)
+    {
+        $stmt = $this->db->prepare("SELECT id FROM students WHERE student_LRN = ?");
+        $stmt->bind_param("s", $student_lrn);
+        $stmt->execute();
+        return $stmt->get_result()->num_rows > 0;
+    }
+
+    public function isEmailTaken($email)
+    {
+        $stmt = $this->db->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        return $stmt->get_result()->num_rows > 0;
+    }
+
     public function login($email)
     {
-        // $stmt = $this->db->prepare(
-        //     "SELECT * FROM users WHERE email = ? AND status = '1'"
-        // );
-
-        $stmt = $this->db->prepare(
-            "SELECT * FROM users WHERE email = ?"
-        );
+        $stmt = $this->db->prepare("
+        SELECT u.*, s.status
+        FROM users u
+        LEFT JOIN students s ON s.user_id = u.id
+        WHERE u.email = ?
+        LIMIT 1
+    ");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
@@ -21,15 +37,15 @@ class User extends Model
 
     public function signup($student_no, $name, $email, $username, $password, $grade_level_id, $section_id)
     {
-        $sql = "INSERT INTO users (name, email, username, password, role, status) 
-            VALUES (?, ?, ?, ?, 'student', 'Pending')";
+        $sql = "INSERT INTO users (name, email, username, password, role) 
+            VALUES (?, ?, ?, ?, 'student')";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("ssss", $name, $email, $username, $password);
         $stmt->execute();
         $user_id = $this->db->insert_id;
 
-        $sql2 = "INSERT INTO students (student_no, user_id, grade_level_id, section_id) 
-             VALUES (?, ?, ?, ?)";
+        $sql2 = "INSERT INTO students (student_LRN, user_id, grade_level_id, section_id, status) 
+         VALUES (?, ?, ?, ?, 'Pending')";
         $stmt2 = $this->db->prepare($sql2);
         $stmt2->bind_param("siii", $student_no, $user_id, $grade_level_id, $section_id);
         $stmt2->execute();

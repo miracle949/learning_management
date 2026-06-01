@@ -86,6 +86,43 @@
         margin: 0;
         /* font-size: 13.5px; */
     }
+
+    .container-fluid .sidebar-logo {
+        height: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.5rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+
+    .container-fluid .sidebar-logo p {
+        font-size: 22px;
+        margin: 0;
+        font-family: "Titan", sans-serif;
+        color: var(--green);
+    }
+
+    .container-fluid .sidebar-logo p b {
+        color: #212529;
+        font-family: "Titan", sans-serif;
+    }
+
+    .container-fluid .sidebar-logo .logo-icon {
+        padding: 11px;
+        background-color: var(--green-light);
+        border-radius: 10px;
+    }
+
+    .container-fluid .sidebar-logo .logo-icon .fa-solid {
+        color: var(--green);
+        font-size: 20px;
+    }
+
+    .container-fluid .sidebar .sidebar-menu {
+        margin-top: 1rem;
+    }
 </style>
 
 <?php
@@ -103,7 +140,7 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'super_admin';
     <div class="sidebar-menu">
         <ul>
             <div class="sidebar-category">
-                <h5>Menu</h5>
+                <h5>Main</h5>
             </div>
             <li class="<?= ($current_url ?? '') === 'super_admin' ? 'active' : '' ?>">
                 <a href="/learning_management/public/?url=super_admin">
@@ -134,6 +171,24 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'super_admin';
             <div class="sidebar-category">
                 <h5>User Management</h5>
             </div>
+            <li class="<?= ($current_url ?? '') === 'super_admin_teacher_users' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=super_admin_teacher_users">
+                    <i class="fa fa-chalkboard-user"></i>
+                    <span>Teachers</span>
+                </a>
+            </li>
+            <li class="<?= ($current_url ?? '') === 'super_admin_student_users' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=super_admin_student_users">
+                    <i class="fa fa-users"></i>
+                    <span>Students</span>
+                </a>
+            </li>
+            <li class="<?= ($current_url ?? '') === 'modules' ? 'active' : '' ?>">
+                <a href="#">
+                    <i class="fa fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
             <!-- <li>
                 <a href="#">
                     <i class="fa fa-book"></i>

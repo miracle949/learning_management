@@ -53,44 +53,84 @@
                         <i class="fa fa-book-open"></i>
                     </div>
                     <h4 class="classes-empty-title">You're not enrolled in any classes yet</h4>
-                    <p class="classes-empty-hint">
+                    <!-- <p class="classes-empty-hint">
                         Click the <strong><i class="fa fa-plus"></i></strong> button in the top navigation bar and enter
                         your class code to join a class.
-                    </p>
-                    <button class="classes-join-cta" data-bs-toggle="modal" data-bs-target="#joinClassModal">
+                    </p> -->
+                    <p class="classes-empty-hint">Please wait for your teacher to enroll you in the class.</p>
+                    <!-- <button class="classes-join-cta" data-bs-toggle="modal" data-bs-target="#joinClassModal">
                         <i class="fa fa-plus me-2"></i>Join a Class
-                    </button>
+                    </button> -->
                 </div>
 
             <?php else: ?>
-                <?php foreach ($enrolledSubjects as $subject): ?>
-                    <div class="card-box-parent">
-                        <div class="card-box">
+                <div class="card-box-parent">
+                    <?php foreach ($enrolledSubjects as $subject): ?>
+                        <?php
+                        $subtext = mb_strimwidth(strip_tags($subject['subject_description']), 0, 120, '...');
 
-                            <div class="card-box-picture"></div>
+                        // Get teacher for this subject
+                        $teacher = $teacherMap[$subject['id']] ?? null;
+                        $teacherName = $teacher['name'] ?? 'Unknown Instructor';
+
+                        // Generate initials from the name
+                        $nameParts = explode(' ', $teacherName);
+                        $initials = '';
+                        foreach ($nameParts as $part) {
+                            if (!empty($part))
+                                $initials .= strtoupper($part[0]);
+                        }
+                        $initials = substr($initials, 0, 2); // max 2 characters
+                        ?>
+                        <div class="card-box">
+                            <div class="card-box-picture">
+                                <img src="/learning_management/<?= htmlspecialchars($subject['subject_image']) ?>" alt="">
+                            </div>
 
                             <div class="card-box-body">
                                 <div class="card-body-text">
                                     <p><?= htmlspecialchars($subject['subject_name']) ?></p>
                                     <span>
-                                        <?= !empty($subject['description'])
-                                            ? htmlspecialchars($subject['description'])
+                                        <?= !empty($subtext)
+                                            ? htmlspecialchars($subtext)
                                             : 'Lorem ipsum dolor sit amet consectetur, adipisicing elit.' ?>
                                     </span>
+                                </div>
+
+                                <?php
+                                $teacher = $teacherMap[$subject['id']] ?? null;
+                                $teacherName = $teacher['name'] ?? 'Unknown Instructor';
+
+                                $nameParts = explode(' ', $teacherName);
+                                $initials = '';
+                                foreach ($nameParts as $part) {
+                                    if (!empty($part))
+                                        $initials .= strtoupper($part[0]);
+                                }
+                                $initials = substr($initials, 0, 2);
+                                ?>
+
+                                <div class="prof-name">
+                                    <div class="prof-initial">
+                                        <span><?= htmlspecialchars($initials) ?></span>
+                                    </div>
+                                    <div class="prof-text">
+                                        <span>Teacher</span>
+                                        <p><?= htmlspecialchars($teacherName) ?></p>
+                                    </div>
                                 </div>
 
                                 <div class="card-body-enrolled">
                                     <a
                                         href="/learning_management/public/?url=subjects&subject=<?= urlencode($subject['subject_code']) ?>">
-                                        <span>Go to Subject</span>
+                                        <span>Enter Class Now</span>
                                         <i class="fa fa-arrow-right"></i>
                                     </a>
                                 </div>
                             </div>
-
                         </div>
-                    </div>
-                <?php endforeach; ?>
+                    <?php endforeach; ?>
+                </div>
             <?php endif; ?>
 
         </div>

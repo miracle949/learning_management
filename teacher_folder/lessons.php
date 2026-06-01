@@ -35,18 +35,18 @@
         .hero-info {
             background: #fff;
             padding: 16px 20px 0;
-            border-bottom: 1px solid #e4e7eb;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1)
         }
 
         .hero-info h2 {
             font-size: 18px;
             font-weight: 800;
             color: #00a84a;
-            margin-bottom: 4px;
+            margin-bottom: 10px;
         }
 
         .hero-meta {
-            font-size: 13px;
+            font-size: 14.5px;
             color: #6b7280;
             margin-bottom: 14px;
         }
@@ -104,6 +104,7 @@
             align-items: center;
             gap: 12px;
             margin-bottom: 1.75rem;
+            margin-top: 1.75rem;
         }
 
         .module-type-bar label {
@@ -256,7 +257,6 @@
         /* ── Classwork form ── */
         .cw-field {
             margin-bottom: 1.25rem;
-            
         }
 
         .cw-label {
@@ -387,11 +387,19 @@
 
         /* ── Announcement card accent ── */
         .ann-card-accent {
-            /* border-left: 4px solid #f59e0b; */
             background-color: #ffffff;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
             border: 1px solid #e2e8f0;
-            /* background: #fffbeb; */
+        }
+
+        #tab-classwork h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        #tab-stream h2 {
+            font-size: 18px;
+            font-weight: 600;
         }
     </style>
 </head>
@@ -435,179 +443,167 @@
             <div class="hero-info">
                 <h2><?= htmlspecialchars($classInfo['subject_name'] ?? '') ?></h2>
                 <p class="hero-meta"><?= htmlspecialchars($classInfo['section'] ?? '') ?></p>
-
-                <!-- TABS -->
-                <div class="tabs">
-                    <button class="tab-btn active" data-tab="stream">Stream</button>
-                    <button class="tab-btn" data-tab="classwork">Classwork</button>
-                </div>
             </div>
 
             <main>
+                <?php $activeTab = $_GET['tab'] ?? 'stream'; ?>
 
-                <!-- ════════════ STREAM TAB ════════════ -->
-                <div class="tab-pane active" id="tab-stream">
+                <?php if ($activeTab === 'stream'): ?>
+                    <!-- ════════════ STREAM TAB ════════════ -->
+                    <div class="tab-pane active" id="tab-stream">
 
-                    <!-- Dropdown -->
-                    <div class="module-type-bar">
-                        <!-- <label><i class="fa fa-layer-group me-1" style="color:#00C950;"></i> Module Type :</label> -->
-                        <select class="module-type-select" id="moduleTypeSelect"
-                            onchange="switchModulePanel(this.value)">
-                            <option value="classes-feed" selected> Modules</option>
-                            <!-- <option value="interactive">Activity</option> -->
-                            <option value="announcement"> Announcements</option>
-                        </select>
-                    </div>
+                        <h2>Create Modules and Announcements Contents</h2>
 
-                    <!-- ── Panel: Classes Feed ── -->
-                    <div class="stream-panel active" id="panel-classes-feed">
-                        <form action="/learning_management/public/?url=save_lessons" method="POST"
-                            enctype="multipart/form-data">
+                        <!-- Dropdown -->
+                        <div class="module-type-bar">
+                            <select class="module-type-select" id="moduleTypeSelect"
+                                onchange="switchModulePanel(this.value)">
+                                <option value="classes-feed" selected>Modules</option>
+                                <option value="announcement">Announcements</option>
+                            </select>
+                        </div>
 
-                            <input type="hidden" name="subject_id" value="<?= htmlspecialchars($subject_id ?? '') ?>">
-                            <input type="hidden" name="grade_level_id"
-                                value="<?= htmlspecialchars($grade_level_id ?? '') ?>">
-                            <input type="hidden" name="section_id" value="<?= htmlspecialchars($section_id ?? 0) ?>">
-                            <input type="hidden" name="save_type" value="classes_feed">
+                        <!-- ── Panel: Classes Feed ── -->
+                        <div class="stream-panel active" id="panel-classes-feed">
+                            <form action="/learning_management/public/?url=save_lessons" method="POST"
+                                enctype="multipart/form-data">
+                                <input type="hidden" name="subject_id" value="<?= htmlspecialchars($subject_id ?? '') ?>">
+                                <input type="hidden" name="grade_level_id"
+                                    value="<?= htmlspecialchars($grade_level_id ?? '') ?>">
+                                <input type="hidden" name="section_id" value="<?= htmlspecialchars($section_id ?? 0) ?>">
+                                <input type="hidden" name="save_type" value="classes_feed">
 
-                            <div class="card-parent-box">
+                                <div class="card-parent-box">
+                                    <div class="card-header" style="margin-bottom:0;">
+                                        <h3>Modules</h3>
+                                        <div class="buttons">
+                                            <button type="button" id="addCFModuleBtn">
+                                                <i class="fa fa-plus"></i> Add Module
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="cfModuleContainer" style="padding:1.5rem 0 0 0;">
+                                        <div class="text-content" id="cfEmpty" style="display:none;">
+                                            <i class="fa fa-inbox"></i>
+                                            <p>No modules yet — click "Add Module" to start.</p>
+                                        </div>
+                                    </div>
+                                    <div class="card-submit">
+                                        <button type="button" onclick="history.back()">Cancel</button>
+                                        <button type="submit">Save to Stream</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div><!-- /panel-classes-feed -->
+
+                        <!-- ── Panel: Interactive Module ── -->
+                        <div class="stream-panel" id="panel-interactive">
+                            <form action="/learning_management/public/?url=save_lessons" method="POST"
+                                enctype="multipart/form-data">
+                                <input type="hidden" name="subject_id" value="<?= htmlspecialchars($subject_id ?? '') ?>">
+                                <input type="hidden" name="grade_level_id"
+                                    value="<?= htmlspecialchars($grade_level_id ?? '') ?>">
+                                <input type="hidden" name="section_id" value="<?= htmlspecialchars($section_id ?? 0) ?>">
+                                <input type="hidden" name="save_type" value="interactive_module">
+
+                                <div class="card-parent-box">
+                                    <div class="card-header" style="margin-bottom:0;">
+                                        <h3>Content</h3>
+                                        <div class="buttons">
+                                            <button type="button" id="addModuleBtn">
+                                                <i class="fa fa-file"></i> Add Modules
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="contentContainer" style="padding:1.5rem 0 0 0;">
+                                        <div class="text-content" style="display:none;">
+                                            <i class="fa fa-circle-question"></i>
+                                            <p>No Content</p>
+                                        </div>
+                                    </div>
+                                    <div class="card-submit">
+                                        <button type="button" onclick="history.back()">Cancel</button>
+                                        <button type="submit">Create Module</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div><!-- /panel-interactive -->
+
+                        <!-- ── Panel: Announcements ── -->
+                        <div class="stream-panel" id="panel-announcement">
+                            <form action="/learning_management/public/?url=save_announcement" method="POST"
+                                enctype="multipart/form-data">
+                                <input type="hidden" name="subject_id" value="<?= htmlspecialchars($subject_id ?? '') ?>">
+                                <input type="hidden" name="grade_level_id"
+                                    value="<?= htmlspecialchars($grade_level_id ?? '') ?>">
+                                <input type="hidden" name="section_id" value="<?= htmlspecialchars($section_id ?? 0) ?>">
+                                <input type="hidden" name="save_type" value="announcement">
+
+                                <div class="card-parent-box">
+                                    <div class="card-header" style="margin-bottom:0;">
+                                        <h3>Announcements</h3>
+                                        <div class="buttons">
+                                            <button type="button" id="addAnnouncementBtn">
+                                                <i class="fa fa-plus"></i> Add Announcement
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="announcementContainer" style="padding:1.5rem 0 0 0;">
+                                        <div class="text-content" id="announcementEmpty" style="display:none;">
+                                            <i class="fa fa-bullhorn"></i>
+                                            <p>No announcements yet — click "Add Announcement" to start.</p>
+                                        </div>
+                                    </div>
+                                    <div class="card-submit">
+                                        <button type="button" onclick="history.back()">Cancel</button>
+                                        <button type="submit">Post Announcements</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div><!-- /panel-announcement -->
+
+                    </div><!-- /tab-stream -->
+                <?php endif; ?>
+
+
+                <?php if ($activeTab === 'classwork'): ?>
+                    <!-- ════════════ CLASSWORK TAB ════════════ -->
+                    <div class="tab-pane active" id="tab-classwork">
+
+                        <h2>Create Classwork Content</h2>
+
+                        <div class="card-parent-box">
+                            <form action="/learning_management/public/?url=save_assignment" method="POST"
+                                enctype="multipart/form-data">
+                                <input type="hidden" name="subject_id" value="<?= htmlspecialchars($subject_id ?? '') ?>">
+                                <input type="hidden" name="grade_level_id"
+                                    value="<?= htmlspecialchars($grade_level_id ?? '') ?>">
+                                <input type="hidden" name="section_id" value="<?= htmlspecialchars($section_id ?? 0) ?>">
+
                                 <div class="card-header" style="margin-bottom:0;">
-                                    <h3>Modules</h3>
+                                    <h3>Classwork</h3>
                                     <div class="buttons">
-                                        <button type="button" id="addCFModuleBtn">
-                                            <i class="fa fa-plus"></i> Add Module
+                                        <button type="button" id="addAssignmentBtn">
+                                            <i class="fa fa-plus"></i> Add Assignment
                                         </button>
                                     </div>
                                 </div>
 
-                                <div id="cfModuleContainer" style="padding:1.5rem 0 0 0;">
-                                    <div class="text-content" id="cfEmpty" style="display:flex;">
-                                        <i class="fa fa-inbox"></i>
-                                        <p>No modules yet — click "Add Module" to start.</p>
+                                <div id="cwAssignmentContainer" style="padding:1.5rem 0 0 0;">
+                                    <div class="text-content" id="cwAssignmentEmpty" style="display:none;">
+                                        <i class="fa fa-clipboard-check"></i>
+                                        <p>No assignments yet — click "Add Assignment" to start.</p>
                                     </div>
                                 </div>
 
                                 <div class="card-submit">
                                     <button type="button" onclick="history.back()">Cancel</button>
-                                    <button type="submit">Save to Stream</button>
+                                    <button type="submit">Create</button>
                                 </div>
-                            </div>
-                        </form>
-                    </div><!-- /panel-classes-feed -->
-
-                    <!-- ── Panel: Interactive Module ── -->
-                    <div class="stream-panel" id="panel-interactive">
-                        
-                        <form action="/learning_management/public/?url=save_lessons" method="POST"
-                            enctype="multipart/form-data">
-
-                            <input type="hidden" name="subject_id" value="<?= htmlspecialchars($subject_id ?? '') ?>">
-                            <input type="hidden" name="grade_level_id"
-                                value="<?= htmlspecialchars($grade_level_id ?? '') ?>">
-                            <input type="hidden" name="section_id" value="<?= htmlspecialchars($section_id ?? 0) ?>">
-                            <input type="hidden" name="save_type" value="interactive_module">
-
-                            <div class="card-parent-box">
-                                <div class="card-header" style="margin-bottom:0;">
-                                    <h3>Content</h3>
-                                    <div class="buttons">
-                                        <button type="button" id="addModuleBtn">
-                                            <i class="fa fa-file"></i>
-                                            Add Modules
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div id="contentContainer" style="padding:1.5rem 0 0 0;">
-                                    <div class="text-content">
-                                        <i class="fa fa-circle-question"></i>
-                                        <p>No Content</p>
-                                    </div>
-                                </div>
-
-                                <div class="card-submit">
-                                    <button type="button" onclick="history.back()">Cancel</button>
-                                    <button type="submit">Create Module</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div><!-- /panel-interactive -->
-
-                    <!-- ── Panel: Announcements ── -->
-                    <div class="stream-panel" id="panel-announcement">
-                        <form action="/learning_management/public/?url=save_announcement" method="POST"
-                            enctype="multipart/form-data">
-
-                            <input type="hidden" name="subject_id" value="<?= htmlspecialchars($subject_id ?? '') ?>">
-                            <input type="hidden" name="grade_level_id"
-                                value="<?= htmlspecialchars($grade_level_id ?? '') ?>">
-                            <input type="hidden" name="section_id" value="<?= htmlspecialchars($section_id ?? 0) ?>">
-                            <input type="hidden" name="save_type" value="announcement">
-
-                            <div class="card-parent-box">
-                                <div class="card-header" style="margin-bottom:0;">
-                                    <h3>Announcements</h3>
-                                    <div class="buttons">
-                                        <button type="button" id="addAnnouncementBtn">
-                                            <i class="fa fa-plus"></i> Add Announcement
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <div id="announcementContainer" style="padding:1.5rem 0 0 0;">
-                                    <div class="text-content" id="announcementEmpty" style="display:flex;">
-                                        <i class="fa fa-bullhorn"></i>
-                                        <p>No announcements yet — click "Add Announcement" to start.</p>
-                                    </div>
-                                </div>
-
-                                <div class="card-submit">
-                                    <button type="button" onclick="history.back()">Cancel</button>
-                                    <button type="submit">Post Announcements</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div><!-- /panel-announcement -->
-
-                </div><!-- /tab-stream -->
-
-
-                <!-- ════════════ CLASSWORK TAB ════════════ -->
-                <div class="tab-pane" id="tab-classwork">
-                    <div class="card-parent-box">
-
-                        <form action="/learning_management/public/?url=save_assignment" method="POST"
-                            enctype="multipart/form-data">
-
-                            <input type="hidden" name="subject_id" value="<?= htmlspecialchars($subject_id ?? '') ?>">
-                            <input type="hidden" name="grade_level_id"
-                                value="<?= htmlspecialchars($grade_level_id ?? '') ?>">
-                            <input type="hidden" name="section_id" value="<?= htmlspecialchars($section_id ?? 0) ?>">
-
-                            <div class="card-header" style="margin-bottom:0;">
-                                <h3>Classwork</h3>
-                                <div class="buttons">
-                                    <button type="button" id="addAssignmentBtn">
-                                        <i class="fa fa-plus"></i> Add Assignment
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div id="cwAssignmentContainer" style="padding:1.5rem 0 0 0;">
-                                <div class="text-content" id="cwAssignmentEmpty" style="display:flex;">
-                                    <i class="fa fa-clipboard-check"></i>
-                                    <p>No assignments yet — click "Add Assignment" to start.</p>
-                                </div>
-                            </div>
-
-                            <div class="card-submit">
-                                <button type="button" onclick="history.back()">Cancel</button>
-                                <button type="submit">Create</button>
-                            </div>
-
-                        </form>
-                    </div>
-                </div>
+                            </form>
+                        </div>
+                    </div><!-- /tab-classwork -->
+                <?php endif; ?>
 
             </main>
         </div><!-- /rightbar -->
@@ -668,17 +664,6 @@
     <script src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        /* ── Tab switching ── */
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-                btn.classList.add('active');
-                document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-            });
-        });
-
-        /* ── Stream panel switcher ── */
         function switchModulePanel(val) {
             document.querySelectorAll('.stream-panel').forEach(p => p.classList.remove('active'));
             if (val === 'classes-feed') document.getElementById('panel-classes-feed').classList.add('active');
@@ -687,23 +672,25 @@
         }
     </script>
 
-    <!-- Classes Feed Module JS -->
+    <!-- Classes Feed Module JS (auto-adds one card on load) -->
     <script>
         (function () {
             const container = document.getElementById("cfModuleContainer");
             const addBtn = document.getElementById("addCFModuleBtn");
             const emptyState = document.getElementById("cfEmpty");
 
+            if (!container || !addBtn) return;
+
             function reNumberCF() {
                 container.querySelectorAll(".cf-module-card").forEach((card, i) => {
                     card.querySelector(".cf-module-num").textContent = "Module " + (i + 1);
                 });
-                emptyState.style.display =
+                if (emptyState) emptyState.style.display =
                     container.querySelectorAll(".cf-module-card").length === 0 ? "flex" : "none";
             }
 
-            addBtn.addEventListener("click", () => {
-                emptyState.style.display = "none";
+            function addCFModuleCard() {
+                if (emptyState) emptyState.style.display = "none";
                 const idx = container.querySelectorAll(".cf-module-card").length;
                 const card = document.createElement("div");
                 card.className = "cf-module-card";
@@ -721,17 +708,17 @@
                 <div class="row">
                     <div class="col-lg-12 mt-2">
                         <label>Module Title *</label>
-                        <input type="text" name="cf_module_title[]" class="form-control mt-2" placeholder="e.g. Module 1: Week 1-2">
+                        <input type="text" name="cf_module_title[]" class="form-control mt-2" placeholder="e.g. Module 1: Week 1-2" style="font-size: 14.5px;" required>
                     </div>
                     <div class="col-lg-12 mt-3">
-                        <label>Description</label>
-                        <textarea name="cf_module_description[]" class="form-control mt-2" rows="3" placeholder="Brief description of this module"></textarea>
+                        <label>Description *</label>
+                        <textarea name="cf_module_description[]" class="form-control mt-2" rows="7" placeholder="Brief description of this module" style="font-size: 14.5px;" required></textarea>
                     </div>
                     <div class="col-lg-12 mt-3">
-                        <label>Attach PDF / Materials</label>
+                        <label>Attach PDF / Materials *</label>
                         <div class="cf-pdf-list"></div>
                         <button type="button" class="btn-cf-add-pdf mt-2"><i class="fa fa-plus"></i> Add File</button>
-                        <input type="file" name="cf_module_pdf[${idx}][]" class="cf-file-input" accept=".pdf,.ppt,.pptx,.doc,.docx" multiple style="display:none;">
+                        <input type="file" name="cf_module_pdf[${idx}][]" class="cf-file-input" accept=".pdf,.ppt,.pptx,.doc,.docx" multiple style="display:none;" required>
                     </div>
                 </div>`;
 
@@ -756,12 +743,16 @@
                     card.remove();
                     reNumberCF();
                 });
-            });
+            }
+
+            addBtn.addEventListener("click", addCFModuleCard);
+            // Auto-add one module card on page load
+            addCFModuleCard();
         })();
     </script>
 
     <!-- Interactive Modules + Assignment + Announcement JS -->
-    <script src="../teacher_folder/lesson_folder/lesson.js"></script>
+    <script src="../teacher_folder/lesson_folder/lesson.js?v=3"></script>
 
 </body>
 

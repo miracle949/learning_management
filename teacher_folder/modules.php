@@ -536,10 +536,10 @@
                                 <p><?= htmlspecialchars($subjectInfo['subject_description'] ?? 'No description available.') ?>
                                 </p>
                             </div>
-                            <a href="/learning_management/public/?url=create_module&subject_id=<?= (int) $subjectId ?>"
+                            <!-- <a href="/learning_management/public/?url=create_module&subject_id=<?= (int) $subjectId ?>"
                                 class="module-browse-btn">
                                 <i class="fa fa-plus"></i> Create Module
-                            </a>
+                            </a> -->
                         </div>
                     </div>
 

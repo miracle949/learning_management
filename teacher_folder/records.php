@@ -53,12 +53,15 @@
             background-position: center;
             position: relative;
             margin-top: 1rem;
+            position: relative;
+            z-index: 1;
         }
 
         .hero-banner::after {
             content: '';
             position: absolute;
             inset: 0;
+            pointer-events: none;
             background: rgba(0, 0, 0, .30);
         }
 
@@ -67,6 +70,8 @@
             background: #fff;
             padding: 16px 20px 0;
             border-bottom: 1px solid #e4e7eb;
+            position: relative;
+            z-index: 2;
         }
 
         .hero-info h2 {
@@ -118,7 +123,7 @@
         main {
             /* max-width: 680px; */
             /* margin: 0 auto; */
-            padding: 2rem 2rem;
+            padding: 1.5rem 2rem 2rem;
         }
 
 
@@ -137,7 +142,7 @@
         #tab-stream.active {
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1rem;
         }
 
         .stream-card {
@@ -149,6 +154,7 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
             overflow: hidden;
             transition: box-shadow .15s;
+            margin-top: 0.5rem;
         }
 
         .stream-card:hover {
@@ -347,6 +353,7 @@
             overflow: hidden;
             transition: box-shadow .15s;
             cursor: pointer;
+            margin-top: 1.5rem;
         }
 
         .assign-card:hover {
@@ -533,10 +540,12 @@
 
         /* ── CREATE DROPDOWN ── */
         .create-wrap {
-            position: fixed;
+            /* position: fixed;
             bottom: 5%;
-            right: 2%;
-            z-index: 999;
+            right: 2%; */
+            display: flex;
+            justify-content: end;
+            /* z-index: 999; */
         }
 
         .create-menu {
@@ -586,8 +595,8 @@
             color: #fff;
             border: none;
             border-radius: 50px;
-            padding: 13px 24px;
-            font-size: 15px;
+            padding: 10px 24px;
+            font-size: 14.5px;
             font-weight: 700;
             /* margin-right: 40%; */
             cursor: pointer;
@@ -712,26 +721,6 @@
         <div class="rightbar">
             <?php include("nav.php"); ?>
 
-            <!-- PDF VIEWER MODAL -->
-            <div class="pdf-modal-overlay" id="pdfModalOverlay" onclick="closePdfViewer(event)">
-                <div class="pdf-modal" onclick="event.stopPropagation()">
-                    <div class="pdf-modal-header">
-                        <div class="pdf-icon"><i class="fa fa-file-pdf"></i></div>
-                        <span class="pdf-modal-title" id="pdfModalTitle">Document</span>
-                        <div class="pdf-modal-actions">
-                            <a id="pdfDownloadBtn" href="#" target="_blank">
-                                <i class="fa fa-download"></i> Download
-                            </a>
-                            <!-- ✕ button now calls closePdfViewerBtn() -->
-                            <button class="btn-close-pdf" onclick="closePdfViewerBtn()">✕</button>
-                        </div>
-                    </div>
-                    <div class="pdf-modal-body">
-                        <iframe id="pdfModalFrame" src="" allowfullscreen></iframe>
-                    </div>
-                </div>
-            </div>
-
             <?php
             /* ── Helpers ── */
             function getInitials(string $name): string
@@ -771,8 +760,8 @@
 
             /* ── Fetch announcements, assignments, and submissions ── */
             $tid = $_SESSION['teacher_id'] ?? 0;
-            $announcements = ($subject_id && $teacherModel) ? $teacherModel->getAnnouncements($subject_id, $tid) : [];
-            $assignments = ($subject_id && $teacherModel) ? $teacherModel->getAssignments($subject_id, $tid) : [];
+            $announcements = ($subject_id && $teacherModel) ? $teacherModel->getAnnouncements($subject_id, $tid, $section_id) : [];
+            $assignments = ($subject_id && $teacherModel) ? $teacherModel->getAssignments($subject_id, $tid, $section_id) : [];
 
             // For each assignment, load student submissions
             foreach ($assignments as &$asgn) {
@@ -790,6 +779,153 @@
                     <i class="fa fa-bars"></i>
                 </div>
             </div> -->
+
+            <!-- INVITE STUDENT MODAL -->
+            <div id="inviteOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);
+     z-index:9999;align-items:center;justify-content:center;" onclick="closeInviteModal()">
+                <div style="background:var(--bs-body-bg,#fff);border-radius:14px;width:90%;max-width:480px;
+              overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.15);" onclick="event.stopPropagation()">
+
+                    <!-- Header -->
+                    <div
+                        style="padding:18px 20px 14px;border-bottom:1px solid #e4e7eb;display:flex;align-items:center;justify-content:space-between;">
+                        <div>
+                            <h5 style="font-size:16px;font-weight:700;color:#111827;margin:0;">Invite Students</h5>
+                            <p style="font-size:12px;color:#6b7280;margin:2px 0 0;">
+                                <?= htmlspecialchars($classInfo['subject_name'] ?? '') ?> &middot;
+                                <?= htmlspecialchars($classInfo['section'] ?? '') ?>
+                            </p>
+                        </div>
+                        <button onclick="closeInviteModal()" style="background:none;border:none;font-size:18px;
+              cursor:pointer;color:#9ca3af;padding:4px 8px;border-radius:8px;line-height:1;">✕</button>
+                    </div>
+
+                    <!-- Body -->
+                    <div style="padding:16px 20px;">
+                        <div style="position:relative;margin-bottom:10px;">
+                            <span
+                                style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:13px;">&#9906;</span>
+                            <input type="text" id="inviteSearch" placeholder="Search name or email…"
+                                oninput="filterInviteStudents()" style="width:100%;padding:8px 12px 8px 30px;font-size:13px;border:1px solid #e4e7eb;
+                      border-radius:50px;outline:none;background:#f9fafb;color:#111827;">
+                        </div>
+
+                        <!-- Select all -->
+                        <label
+                            style="display:flex;align-items:center;gap:8px;padding:6px 10px;margin-bottom:6px;
+                    background:#f3f4f6;border-radius:8px;font-size:12px;color:#6b7280;cursor:pointer;user-select:none;">
+                            <input type="checkbox" id="inviteSelectAll" onchange="toggleInviteAll()"
+                                style="accent-color:#00C950;width:14px;height:14px;">
+                            Select all
+                        </label>
+
+                        <!-- Student list -->
+                        <div id="inviteStudentList"
+                            style="max-height:210px;overflow-y:auto;border:1px solid #e4e7eb;border-radius:10px;">
+                            <?php foreach ($approvedStudents ?? [] as $stu):
+                                $initials = strtoupper(substr($stu['name'], 0, 1));
+                                $parts = explode(' ', trim($stu['name']));
+                                if (count($parts) > 1)
+                                    $initials .= strtoupper(substr(end($parts), 0, 1));
+
+                                // Get invitation status from enrollment_invitations
+                                $inviteStatus = 'none';
+                                if ($teacherModel) {
+                                    $inv = $teacherModel->getInvitationStatus(
+                                        $stu['email'],
+                                        (int) $subject_id,
+                                        (int) ($section_id ?? 0)
+                                    );
+                                    if ($inv)
+                                        $inviteStatus = $inv['status']; // 'pending' | 'accepted' | 'expired'
+                                }
+
+                                $isPending = ($inviteStatus === 'pending');
+                                $isAccepted = ($inviteStatus === 'accepted');
+                                $isDisabled = $isPending || $isAccepted;
+                                ?>
+                                <label class="invite-stu-row" style="display:flex;align-items:center;gap:15px;padding:15px 12px;
+               border-bottom:1px solid #f0f2f5;
+               cursor:<?= $isDisabled ? 'not-allowed' : 'pointer' ?>;
+               opacity:<?= $isDisabled ? '0.55' : '1' ?>;
+               transition:background .1s;" onmouseover="<?= !$isDisabled ? "this.style.background='#f9fafb'" : '' ?>"
+                                    onmouseout="<?= !$isDisabled ? "this.style.background=''" : '' ?>">
+
+                                    <input type="checkbox" class="invite-stu-check"
+                                        value="<?= htmlspecialchars($stu['email']) ?>"
+                                        data-name="<?= htmlspecialchars(strtolower($stu['name'])) ?>"
+                                        data-email="<?= htmlspecialchars(strtolower($stu['email'])) ?>" <?= $isDisabled ? 'disabled' : '' ?> onchange="updateInviteCount()"
+                                        style="accent-color:#00C950;width:14px;height:14px;flex-shrink:0;">
+
+                                    <div style="width:30px;height:30px;border-radius:50%;background:#e8f5ee;flex-shrink:0;
+                    display:flex;align-items:center;justify-content:center;
+                    font-size:11px;font-weight:700;color:#009e3e;">
+                                        <?= $initials ?>
+                                    </div>
+
+                                    <div style="flex:1;min-width:0;">
+                                        <div style="font-size:13px;font-weight:600;color:#111827;
+                        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                            <?= htmlspecialchars($stu['name']) ?>
+                                        </div>
+                                        <div style="font-size:11px;color:#9ca3af;
+                        white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                            <?= htmlspecialchars($stu['email']) ?>
+                                        </div>
+                                    </div>
+
+                                    <!-- Invitation status badge -->
+                                    <?php if ($isPending): ?>
+                                        <span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;
+                         background:#fef9c3;color:#ca8a04;white-space:nowrap;flex-shrink:0;
+                         border:1px solid #fde68a;">
+                                            ⏳ Pending
+                                        </span>
+                                    <?php elseif ($isAccepted): ?>
+                                        <span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;
+                         background:#dcfce7;color:#16a34a;white-space:nowrap;flex-shrink:0;
+                         border:1px solid #bbf7d0;">
+                                            ✓ Enrolled
+                                        </span>
+                                    <?php endif; ?>
+
+                                </label>
+                            <?php endforeach; ?>
+                            <?php if (empty($approvedStudents)): ?>
+                                <p style="text-align:center;padding:20px;font-size:13px;color:#9ca3af;">
+                                    No approved students found.
+                                </p>
+                            <?php endif; ?>
+                        </div>
+
+                        <p id="inviteSelectedCount"
+                            style="font-size:12px;color:#009e3e;font-weight:600;margin-top:8px;min-height:16px;"></p>
+                    </div>
+
+                    <!-- Footer -->
+                    <div
+                        style="padding:14px 20px;border-top:1px solid #e4e7eb;display:flex;justify-content:space-between;align-items:center;">
+                        <button onclick="closeInviteModal()" style="background:none;border:1px solid #e4e7eb;border-radius:50px;
+                     padding:8px 18px;font-size:13px;font-weight:600;color:#6b7280;cursor:pointer;">
+                            Cancel
+                        </button>
+                        <button id="inviteSendBtn" onclick="submitInvitations()" disabled style="background:#00C950;border:none;border-radius:50px;padding:8px 22px;
+                     font-size:13px;font-weight:700;color:#fff;cursor:pointer;
+                     display:flex;align-items:center;gap:6px;opacity:0.5;">
+                            <i class="fa fa-paper-plane"></i> Send Invitations
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOAST -->
+            <div id="inviteToast" style="display:none;position:fixed;bottom:24px;right:24px;
+     background:#111827;color:#fff;padding:12px 20px;border-radius:50px;
+     font-size:13px;font-weight:600;z-index:10000;box-shadow:0 4px 20px rgba(0,0,0,.2);">
+            </div>
+
+            <!-- TOAST NOTIFICATION -->
+            <div class="invite-toast" id="inviteToast"></div>
 
             <!-- HERO BANNER -->
             <div class="hero-banner" style="background-image:<?= $bannerBg ?>;"></div>
@@ -827,6 +963,31 @@
                     usort($feed, fn($a, $b) => $b['time'] - $a['time']);
                     ?>
 
+                    <div class="create-wrap">
+                        <div class="create-menu" id="createMenu">
+                            <!-- <a
+                                href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
+                                <i class="fa fa-layer-group"></i> Module
+                            </a>
+                            <a
+                                href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
+                                <i class="fa fa-bullhorn"></i> Announcement
+                            </a> -->
+                            <!-- <a
+                                href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
+                                <i class="fa fa-clipboard-list"></i> Assignment
+                            </a> -->
+                        </div>
+                        <!-- <button class="btn-create" onclick="toggleCreateMenu()" id="createBtn">
+                            <i class="fa fa-plus"></i> Create
+                        </button> -->
+                        <!-- Stream tab Create button -->
+                        <a class="btn-create"
+                            href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>&tab=stream">
+                            <i class="fa fa-plus"></i> Create
+                        </a>
+                    </div>
+
                     <?php if (empty($feed)): ?>
                         <div class="empty-state">
                             <i class="fa fa-layer-group"></i>
@@ -845,8 +1006,8 @@
                                     <div class="anm-avatar"><?= $initials ?></div>
                                     <div class="stream-body">
                                         <div class="stream-label">Announcement</div>
-                                        <div class="stream-anm-text">
-                                            <?= nl2br(htmlspecialchars($d['body'] ?? '')) ?>
+                                        <div class="stream-line">
+                                            <strong><?= htmlspecialchars($d['title'] ?? '') ?></strong>
                                         </div>
                                     </div>
                                     <button class="stream-menu">⋮</button>
@@ -866,11 +1027,11 @@
                                     <div class="stream-body">
                                         <div class="stream-label">New Material</div>
                                         <div class="stream-line">
-                                            <strong>Name :</strong> <?= htmlspecialchars($d['title']) ?>
+                                            <strong>Title :</strong> <?= htmlspecialchars($d['title']) ?>
                                         </div>
                                         <?php if (!empty($d['description'])): ?>
                                             <div class="stream-line">
-                                                <strong>Topic:</strong> <?= htmlspecialchars($d['description']) ?>
+                                                <strong>Description:</strong> <?= htmlspecialchars($d['description']) ?>
                                             </div>
                                         <?php endif; ?>
                                     </div>
@@ -924,12 +1085,45 @@
 
                     <?php endforeach; ?>
 
+                    <!-- CREATE DROPDOWN -->
+
+
                 </div><!-- /stream -->
 
 
                 <!-- ════════════ CLASSWORK TAB ════════════ -->
                 <!-- Shows ASSIGNMENTS and STUDENT SUBMISSIONS — not uploads -->
                 <div class="tab-pane" id="tab-classwork">
+
+                    <!-- CREATE DROPDOWN -->
+                    <div class="create-wrap">
+                        <div class="create-menu" id="createMenu2">
+                            <!-- <a
+                                href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
+                                <i class="fa fa-layer-group"></i> Module
+                            </a>
+                            <a
+                                href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
+                                <i class="fa fa-bullhorn"></i> Announcement
+                            </a> -->
+                            <!-- <a
+                                href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
+                                <i class="fa fa-clipboard-list"></i> Assignment
+                            </a> -->
+                        </div>
+                        <!-- <button class="btn-create" onclick="toggleCreateMenu2()" id="createBtn2">
+                            <i class="fa fa-plus"></i> Create
+                        </button> -->
+                        <!-- <a class="btn-create" href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>" id="createBtn">
+                            <i class="fa fa-plus"></i> Create
+                        </a> -->
+
+                        <!-- Classwork tab Create button -->
+                        <a class="btn-create"
+                            href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>&tab=classwork">
+                            <i class="fa fa-plus"></i> Create
+                        </a>
+                    </div>
 
                     <?php if (empty($assignments)): ?>
                         <div class="empty-state">
@@ -959,11 +1153,11 @@
                                             </span>
                                         </div>
                                         <div class="assign-line">
-                                            <strong>Name :</strong> <?= htmlspecialchars($asgn['title']) ?>
+                                            <strong>Title:</strong> <?= htmlspecialchars($asgn['title']) ?>
                                         </div>
                                         <?php if (!empty($asgn['description'])): ?>
                                             <div class="assign-line">
-                                                <strong>Description :</strong> <?= htmlspecialchars($asgn['description']) ?>
+                                                <strong>Description:</strong> <?= htmlspecialchars($asgn['description']) ?>
                                             </div>
                                         <?php endif; ?>
                                     </div>
@@ -987,7 +1181,7 @@
                                     ?>
                                     <div class="stream-files">
                                         <div class="stream-file"
-                                            onclick="openFileViewer('<?= htmlspecialchars($asgn['file_path']) ?>', '<?= htmlspecialchars($asgn['file_name']) ?>', '<?= $ext ?>')"
+                                            onclick="event.stopPropagation(); openFileViewer('<?= htmlspecialchars($asgn['file_path']) ?>', '<?= htmlspecialchars($asgn['file_name']) ?>', '<?= $ext ?>')"
                                             style="cursor:pointer;">
                                             <i class="fa <?= $ico ?>" style="color:<?= $icoColor ?>"></i>
                                             <span class="sf-name">
@@ -1008,8 +1202,10 @@
                                     </div>
                                 <?php endif; ?>
                                 <div class="assign-footer">
-                                    <span>Due Date :
-                                        <?= !empty($asgn['due_date']) ? date('M d', strtotime($asgn['due_date'])) : '—' ?></span>
+                                    <span>Due Date:
+                                        <?= !empty($asgn['due_date']) ? date('M d', strtotime($asgn['due_date'])) : '—' ?>
+                                        <?= !empty($asgn['due_time']) ? ' at ' . date('h:i A', strtotime($asgn['due_time'])) : '' ?>
+                                    </span>
 
                                     <div class="submit-points">
                                         <?php if ($subCount > 0): ?>
@@ -1106,14 +1302,26 @@
                             </div>
                         <?php endforeach; ?>
 
+
+
                     <?php endif; ?>
 
                 </div><!-- /classwork -->
 
                 <div class="tab-pane" id="tab-people">
                     <div class="people-header">
-                        <h4>Students</h4>
-                        <p><?= count($enrolledStudents ?? []) ?> Students</p>
+                        <div>
+                            <h4 style="font-size:16px;font-weight:800;color:#111827;margin:0;">
+                                <?= count($enrolledStudents ?? []) ?> students
+                            </h4>
+                            <!-- <p style="font-size:13px;color:#6b7280;margin:0;"><?= count($enrolledStudents ?? []) ?>
+                                Students</p> -->
+                        </div>
+                        <button onclick="openInviteModal()" style="background:#00C950;color:#fff;border:none;border-radius:50px;
+   padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;
+   display:flex;align-items:center;gap:8px;">
+                            <i class="fa fa-envelope"></i> Invite Student
+                        </button>
                     </div>
                     <div class="list-people">
                         <?php if (empty($enrolledStudents)): ?>
@@ -1143,27 +1351,6 @@
                 </div>
 
             </main>
-
-            <!-- CREATE DROPDOWN -->
-            <div class="create-wrap">
-                <div class="create-menu" id="createMenu">
-                    <a
-                        href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
-                        <i class="fa fa-layer-group"></i> Module
-                    </a>
-                    <a
-                        href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
-                        <i class="fa fa-bullhorn"></i> Announcement
-                    </a>
-                    <a
-                        href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
-                        <i class="fa fa-clipboard-list"></i> Assignment
-                    </a>
-                </div>
-                <button class="btn-create" onclick="toggleCreateMenu()" id="createBtn">
-                    <i class="fa fa-plus"></i> Create
-                </button>
-            </div>
 
             <!-- ANNOUNCEMENT MODAL -->
             <div class="modal fade" id="announceModal" tabindex="-1" aria-hidden="true">
@@ -1252,102 +1439,285 @@
             </div>
 
         </div><!-- /rightbar -->
-    </div>
 
-    <script src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Tabs
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-                btn.classList.add('active');
-                document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-            });
-        });
-
-        // Create dropdown toggle
-        function toggleCreateMenu() {
-            document.getElementById('createMenu').classList.toggle('open');
-        }
-        document.addEventListener('click', e => {
-            if (!e.target.closest('.create-wrap')) {
-                document.getElementById('createMenu')?.classList.remove('open');
-            }
-        });
-
-        // Toggle student submissions under an assignment
-        function toggleSubmissions(header) {
-            const card = header.closest('.assign-card');
-            const sub = card.querySelector('.assign-submissions');
-            if (sub) sub.classList.toggle('open');
-        }
-    </script>
-
-    <?php if (!empty($_SESSION['save_success'])): ?>
-        <?php unset($_SESSION['save_success']); ?>
-        <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-sm">
-                <div class="modal-content">
-                    <div class="modal-body text-center py-4">
-                        <div
-                            style="width:56px;height:56px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
-                            <i class="fa fa-circle-check text-success" style="font-size:28px;"></i>
+        <!-- <?php if (!empty($_SESSION['save_success'])): ?>
+            <?php unset($_SESSION['save_success']); ?>
+            <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-body text-center py-4">
+                            <div
+                                style="width:56px;height:56px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
+                                <i class="fa fa-circle-check text-success" style="font-size:28px;"></i>
+                            </div>
+                            <h6 class="fw-bold mb-1">Saved!</h6>
+                            <p class="text-muted small mb-0">Your content has been posted.</p>
                         </div>
-                        <h6 class="fw-bold mb-1">Saved!</h6>
-                        <p class="text-muted small mb-0">Your content has been posted.</p>
-                    </div>
-                    <div class="modal-footer justify-content-center border-0 pt-0">
-                        <button type="button" class="btn btn-success btn-sm px-4" data-bs-dismiss="modal">Done</button>
+                        <div class="modal-footer justify-content-center border-0 pt-0">
+                            <button type="button" class="btn btn-success btn-sm px-4" data-bs-dismiss="modal">Done</button>
+                        </div>
                     </div>
                 </div>
             </div>
+            <script>document.addEventListener("DOMContentLoaded", () => new bootstrap.Modal(document.getElementById("successModal")).show());</script>
+        <?php endif; ?> -->
+
+        <!-- PDF VIEWER MODAL -->
+        <div class="pdf-modal-overlay" id="pdfModalOverlay" onclick="closePdfViewer(event)">
+            <div class="pdf-modal" onclick="event.stopPropagation()">
+                <div class="pdf-modal-header">
+                    <div class="pdf-icon"><i class="fa fa-file-pdf"></i></div>
+                    <span class="pdf-modal-title" id="pdfModalTitle">Document</span>
+                    <div class="pdf-modal-actions">
+                        <a id="pdfDownloadBtn" href="#" target="_blank">
+                            <i class="fa fa-download"></i> Download
+                        </a>
+                        <!-- ✕ button now calls closePdfViewerBtn() -->
+                        <button class="btn-close-pdf" onclick="closePdfViewerBtn()">✕</button>
+                    </div>
+                </div>
+                <div class="pdf-modal-body">
+                    <iframe id="pdfModalFrame" src="" allowfullscreen></iframe>
+                </div>
+            </div>
         </div>
-        <script>document.addEventListener("DOMContentLoaded", () => new bootstrap.Modal(document.getElementById("successModal")).show());</script>
-    <?php endif; ?>
+
+        <!-- SAVE SUCCESS TOAST -->
+        <div id="saveToast" style="
+    display:none;
+    position:fixed;
+    bottom:28px;
+    right:28px;
+    background:#111827;
+    color:#fff;
+    padding:13px 22px;
+    border-radius:50px;
+    font-size:13px;
+    font-weight:600;
+    z-index:10001;
+    box-shadow:0 4px 20px rgba(0,0,0,.25);
+    align-items:center;
+    gap:10px;
+">
+            <span style="color:#00C950;font-size:16px;">✓</span>
+            <span id="saveToastMsg">Saved successfully!</span>
+        </div>
+
+
+    </div>
+
+    <script src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        function openFileViewer(filePath, fileName, ext) {
-            const viewable = ['pdf'];
-            if (!filePath.startsWith('/') && !filePath.startsWith('http')) {
-                filePath = '/learning_management/' + filePath;
-            }
-            if (viewable.includes(ext.toLowerCase())) {
-                document.getElementById('pdfModalTitle').textContent = fileName;
-                document.getElementById('pdfModalFrame').src = filePath;
-                document.getElementById('pdfDownloadBtn').href = filePath;
-                document.getElementById('pdfDownloadBtn').setAttribute('download', fileName);
-                document.getElementById('pdfModalOverlay').classList.add('open');
-                document.body.style.overflow = 'hidden';
-            } else {
-                const a = document.createElement('a');
-                a.href = filePath;
-                a.download = fileName;
-                a.target = '_blank';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            }
-        }
+        // ===============================
+        // INVITE MODAL
+        // ===============================
+        window.openInviteModal = function () {
+            document.getElementById('inviteOverlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        };
 
-        // Fixed — handles both: clicking backdrop AND clicking ✕ button
-        function closePdfViewer(e) {
-            // If called from backdrop click, only close if clicking the overlay itself
-            if (e && e.target !== document.getElementById('pdfModalOverlay')) return;
-            document.getElementById('pdfModalOverlay').classList.remove('open');
-            document.getElementById('pdfModalFrame').src = '';
+        window.closeInviteModal = function () {
+            document.getElementById('inviteOverlay').style.display = 'none';
             document.body.style.overflow = '';
-        }
+        };
 
-        // Separate function for the ✕ button — no event check needed
-        function closePdfViewerBtn() {
-            document.getElementById('pdfModalOverlay').classList.remove('open');
-            document.getElementById('pdfModalFrame').src = '';
-            document.body.style.overflow = '';
-        }
+        window.filterInviteStudents = function () {
+            const q = document.getElementById('inviteSearch').value.toLowerCase();
+            document.querySelectorAll('.invite-stu-row').forEach(row => {
+                const name = row.querySelector('.invite-stu-check').dataset.name;
+                const email = row.querySelector('.invite-stu-check').dataset.email;
+                row.style.display = (name.includes(q) || email.includes(q)) ? '' : 'none';
+            });
+            updateInviteCount();
+        };
 
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape') closePdfViewerBtn();
+        window.toggleInviteAll = function () {
+            const checked = document.getElementById('inviteSelectAll').checked;
+            document.querySelectorAll('.invite-stu-check').forEach(c => {
+                // Skip disabled checkboxes (pending/accepted students)
+                if (!c.disabled && c.closest('.invite-stu-row').style.display !== 'none') {
+                    c.checked = checked;
+                }
+            });
+            updateInviteCount();
+        };
+
+        window.updateInviteCount = function () {
+            const total = document.querySelectorAll('.invite-stu-check:checked').length;
+            const countEl = document.getElementById('inviteSelectedCount');
+            const btn = document.getElementById('inviteSendBtn');
+            countEl.textContent = total ? `${total} student${total > 1 ? 's' : ''} selected` : '';
+            btn.disabled = total === 0;
+            btn.style.opacity = total === 0 ? '0.5' : '1';
+        };
+
+        // ── SINGLE definition — sends one by one with X-Requested-With header ──
+        window.submitInvitations = function () {
+            const emails = [...document.querySelectorAll('.invite-stu-check:checked')].map(c => c.value);
+            if (!emails.length) return;
+
+            const btn = document.getElementById('inviteSendBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Sending…';
+
+            const promises = emails.map(email => {
+                const form = new FormData();
+                form.append('student_email', email);
+                form.append('subject_id', '<?= $subject_id ?>');
+                form.append('grade_level_id', '<?= $grade_level_id ?>');
+                form.append('section_id', '<?= $section_id ?? 0 ?>');
+
+                return fetch('/learning_management/public/?url=send_invitation', {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    body: form
+                })
+                    .then(res => res.json())
+                    .catch(() => ({ success: false }));
+            });
+
+            Promise.all(promises).then(results => {
+                const successCount = results.filter(r => r && r.success).length;
+                const toast = document.getElementById('inviteToast');
+
+                closeInviteModal();
+
+                toast.style.background = successCount > 0 ? '#111827' : '#dc2626';
+                toast.textContent = successCount > 0
+                    ? `✓ ${successCount} invitation${successCount > 1 ? 's' : ''} sent!`
+                    : `✗ Failed to send. Please try again.`;
+                toast.style.display = 'block';
+
+                // Save tab preference BEFORE reload
+                sessionStorage.setItem('activeTab', 'people');
+
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                    window.location.reload();
+                }, 1500);
+            });
+        };
+
+        // ===============================
+        // CREATE MENU
+        // ===============================
+        window.toggleCreateMenu = function () {
+            document.getElementById('createMenu')?.classList.toggle('open');
+        };
+
+        window.toggleCreateMenu2 = function () {
+            document.getElementById('createMenu2')?.classList.toggle('open');
+        };
+
+        // ===============================
+        // DOM READY
+        // ===============================
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // TABS
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+
+            function activateTab(tabName) {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabPanes.forEach(p => p.classList.remove('active'));
+                const btn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
+                const pane = document.getElementById('tab-' + tabName);
+                if (btn) btn.classList.add('active');
+                if (pane) pane.classList.add('active');
+            }
+
+            // Restore tab after reload (set by submitInvitations)
+            const savedTab = sessionStorage.getItem('activeTab');
+            if (savedTab) {
+                activateTab(savedTab);
+                sessionStorage.removeItem('activeTab');
+            }
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    activateTab(btn.dataset.tab);
+                });
+            });
+
+            // ── AUTO-TAB + TOAST on redirect back ──────────────────────
+            (function () {
+                const params = new URLSearchParams(window.location.search);
+                const saved = params.get('saved'); // 'stream' | 'classwork' | null
+                if (!saved) return;
+
+                // Activate the right tab
+                activateTab(saved === 'classwork' ? 'classwork' : 'stream');
+
+                // Show toast
+                const toast = document.getElementById('saveToast');
+                const msg = document.getElementById('saveToastMsg');
+                if (!toast) return;
+
+                msg.textContent = saved === 'classwork'
+                    ? 'Assignment created successfully!'
+                    : 'Content created successfully!';
+
+                toast.style.display = 'flex';
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transition = 'opacity .4s ease';
+                    setTimeout(() => {
+                        toast.style.display = 'none';
+                        toast.style.opacity = '1';
+                        toast.style.transition = '';
+                    }, 400);
+                }, 3000);
+
+                // Clean URL (remove ?saved= without reload)
+                const cleanUrl = window.location.href.replace(/&saved=[^&]*/, '');
+                window.history.replaceState({}, '', cleanUrl);
+            })();
+
+            // CLOSE CREATE MENU ON OUTSIDE CLICK
+            window.addEventListener('click', function (e) {
+                const btn1 = document.getElementById('createBtn');
+                const btn2 = document.getElementById('createBtn2');
+                if (btn1 && !btn1.contains(e.target)) {
+                    document.getElementById('createMenu')?.classList.remove('open');
+                }
+                if (btn2 && !btn2.contains(e.target)) {
+                    document.getElementById('createMenu2')?.classList.remove('open');
+                }
+            });
+
+            // PDF VIEWER
+            window.openFileViewer = function (filePath, fileName, ext) {
+                const viewable = ['pdf'];
+                if (!filePath.startsWith('/') && !filePath.startsWith('http')) {
+                    filePath = '/learning_management/' + filePath;
+                }
+                if (viewable.includes(ext.toLowerCase())) {
+                    document.getElementById('pdfModalTitle').textContent = fileName;
+                    document.getElementById('pdfModalFrame').src = filePath;
+                    document.getElementById('pdfDownloadBtn').href = filePath;
+                    document.getElementById('pdfModalOverlay').classList.add('open');
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    window.open(filePath, '_blank');
+                }
+            };
+
+            window.closePdfViewer = function (e) {
+                if (e && e.target !== document.getElementById('pdfModalOverlay')) return;
+                closePdfViewerBtn();
+            };
+
+            window.closePdfViewerBtn = function () {
+                document.getElementById('pdfModalOverlay').classList.remove('open');
+                document.getElementById('pdfModalFrame').src = '';
+                document.body.style.overflow = '';
+            };
+
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') closePdfViewerBtn();
+            });
         });
     </script>
 

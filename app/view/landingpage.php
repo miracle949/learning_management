@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Computer System Servicing</title>
+    <title>Landingpage</title>
     <link rel="stylesheet" href="../css_folder/landingpage.css">
 
     <!-- bootstrap link -->
@@ -324,7 +324,7 @@
                 <p>Built for students and teachers</p>
             </div>
         </footer>
-    </div>
+    </div>  
 
     <!-- bootstrap link javascript -->
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>

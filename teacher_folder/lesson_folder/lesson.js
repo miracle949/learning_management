@@ -1,3 +1,4 @@
+// lesson.js v3 — auto-add on load
 document.addEventListener("DOMContentLoaded", function () {
 
     const contentContainer = document.getElementById("contentContainer");
@@ -12,6 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function checkEmpty() {
+        if (!contentContainer) return;
         const noModules = contentContainer.querySelectorAll(".module-item").length === 0;
         const emptyEl = contentContainer.querySelector(".text-content");
         if (emptyEl) emptyEl.style.display = noModules ? "flex" : "none";
@@ -332,7 +334,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <hr>
             <div class="row">
                 <div class="col-lg-12 mt-4"><label>Module Title *</label><input type="text" name="module_title[${modIdx}]" class="form-control mt-2" placeholder="Enter module title"></div>
-                <div class="col-lg-12 mt-4"><label>Module Description</label><textarea name="module_content[${modIdx}]" class="form-control mt-2" rows="4" placeholder="Brief description of this module"></textarea></div>
+                <div class="col-lg-12 mt-4"><label>Module Description</label><textarea name="module_content[${modIdx}]" class="form-control mt-2" rows="7" placeholder="Brief description of this module"></textarea></div>
             </div>
             <div class="buttons d-flex flex-wrap mt-4">
                 <button type="button" class="btn-add-lesson-in-module"><i class="fa fa-file"></i> Add Lesson</button>
@@ -365,16 +367,20 @@ document.addEventListener("DOMContentLoaded", function () {
         return mod;
     }
 
-    addModuleBtn.addEventListener("click", () => {
-        const emptyEl = contentContainer.querySelector(".text-content");
-        if (emptyEl) emptyEl.style.display = "none";
-        const modIdx = contentContainer.querySelectorAll(".module-item").length;
-        const mod = buildModule(modIdx);
-        modCount++;
-        contentContainer.appendChild(mod);
-    });
-
-    checkEmpty();
+    // ── Interactive Modules (only runs if elements exist on this page) ──
+    if (addModuleBtn && contentContainer) {
+        function addInteractiveModule() {
+            const emptyEl = contentContainer.querySelector(".text-content");
+            if (emptyEl) emptyEl.style.display = "none";
+            const modIdx = contentContainer.querySelectorAll(".module-item").length;
+            const mod = buildModule(modIdx);
+            modCount++;
+            contentContainer.appendChild(mod);
+        }
+        addModuleBtn.addEventListener("click", addInteractiveModule);
+        // Auto-add one module on page load
+        addInteractiveModule();
+    }
 
 
     // ════════════════════════════════════════════════════════════
@@ -384,6 +390,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const cwContainer = document.getElementById("cwAssignmentContainer");
     const addCwBtn = document.getElementById("addAssignmentBtn");
 
+    // ── Guard: only run if both elements exist on this page ──
     if (cwContainer && addCwBtn) {
         function reNumberAssignments() {
             cwContainer.querySelectorAll(".cw-assignment-card").forEach((card, i) => { card.querySelector(".cw-assignment-num").textContent = "Assignment " + (i + 1); });
@@ -391,7 +398,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (emptyEl) emptyEl.style.display = cwContainer.querySelectorAll(".cw-assignment-card").length === 0 ? "flex" : "none";
         }
 
-        addCwBtn.addEventListener("click", () => {
+        function addAssignmentCard() {
             const emptyEl = document.getElementById("cwAssignmentEmpty");
             if (emptyEl) emptyEl.style.display = "none";
             const idx = cwContainer.querySelectorAll(".cw-assignment-card").length;
@@ -410,27 +417,34 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="col-lg-12 mt-2"><label class="cw-label">Title *</label><input type="text" name="assignment_title[]" class="cw-input mt-2" placeholder="Enter Title" required></div>
                 <div class="col-lg-12 mt-3"><label class="cw-label">Description</label><textarea name="assignment_description[]" class="cw-input cw-textarea mt-2" rows="3" placeholder="Enter Description"></textarea></div>
                 <div class="col-lg-12 mt-3"><label class="cw-label">Task *</label><input type="text" name="assignment_task[]" class="cw-input mt-2" placeholder="e.g. Essay, Research, Seatwork"></div>
-                <div class="col-lg-12 mt-3"><label class="cw-label">Instructions</label><textarea name="assignment_instructions[]" class="cw-input cw-textarea mt-2" rows="4" placeholder="Detailed instructions for students..."></textarea></div>
+                <div class="col-lg-12 mt-3"><label class="cw-label">Instructions *</label><textarea name="assignment_instructions[]" class="cw-input cw-textarea mt-2" rows="4" placeholder="Detailed instructions for students..."></textarea></div>
                 <div class="col-lg-6 mt-3">
-                    <label class="cw-label">Type</label>
+                    <label class="cw-label">Type *</label>
                     <div class="cw-select-wrap">
                         <select name="assignment_type[]" class="cw-select mt-2"><option value="Seatwork">Seatwork</option><option value="Homework">Homework</option><option value="Project">Project</option><option value="Quiz">Quiz</option><option value="Exam">Exam</option><option value="Performance">Performance Task</option></select>
                         <i class="fa fa-chevron-down cw-select-icon"></i>
                     </div>
                 </div>
-                <div class="col-lg-6 mt-3"><label class="cw-label">Due Date</label><input type="date" name="assignment_due_date[]" class="cw-input cw-date mt-2"></div>
-                <div class="col-lg-12 mt-3">
-                    <label class="cw-label">Points</label>
+                <div class="col-lg-6 mt-3">
+                    <label class="cw-label">Points *</label>
                     <input type="number" name="assignment_points[]" class="cw-input mt-2" placeholder="e.g. 100" min="1" value="100">
                 </div>
+                <div class="col-lg-6 mt-3">
+                    <label class="cw-label">Due Date *</label>
+                    <input type="date" name="assignment_due_date[]" class="cw-input cw-date mt-2">
+                </div>
+                <div class="col-lg-6 mt-3">
+                    <label class="cw-label">Due Time *</label>
+                    <input type="time" name="assignment_due_time[]" class="cw-input mt-2" value="23:59">
+                </div>
                 <div class="col-lg-12 mt-3">
-                    <label class="cw-label">Upload Materials</label>
+                    <label class="cw-label">Upload Materials *</label>
                     <div class="cw-upload-box cw-upload-trigger">
                         <i class="fa-solid fa-arrow-up-from-bracket"></i>
                         <p>Upload Materials</p>
                         <span>PDF, Powerpoint, Word Document (Max 50MB)</span>
                         <div style="margin-top:10px;">
-                            <input type="file" name="assignment_file[]" class="cw-file-input" accept=".pdf,.ppt,.pptx,.doc,.docx" style="display:none;">
+                            <input type="file" name="assignment_file[]" class="cw-file-input" accept=".pdf,.ppt,.pptx,.doc,.docx" style="display:none;" required>
                             <label class="cw-choose-btn" onclick="event.stopPropagation()">Choose File</label>
                             <span class="cw-file-name-label" style="font-size:12px;color:#9ca3af;margin-left:8px;">No file chosen.</span>
                         </div>
@@ -456,7 +470,11 @@ document.addEventListener("DOMContentLoaded", function () {
             removeFile.addEventListener("click", () => { fileInput.value = ""; fileNameLbl.textContent = "No file chosen."; previewItem.style.display = "none"; uploadBox.style.borderColor = ""; });
             card.querySelector(".cw-remove-btn").addEventListener("click", () => { card.remove(); reNumberAssignments(); });
             cwContainer.appendChild(card);
-        });
+        }
+
+        addCwBtn.addEventListener("click", addAssignmentCard);
+        // Auto-add one assignment on page load
+        addAssignmentCard();
     }
 
 
@@ -467,6 +485,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const annContainer = document.getElementById("announcementContainer");
     const addAnnBtn = document.getElementById("addAnnouncementBtn");
 
+    // ── Guard: only run if both elements exist on this page ──
     if (annContainer && addAnnBtn) {
 
         function reNumberAnnouncements() {
@@ -477,7 +496,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (emptyEl) emptyEl.style.display = annContainer.querySelectorAll(".ann-card").length === 0 ? "flex" : "none";
         }
 
-        addAnnBtn.addEventListener("click", () => {
+        function addAnnouncementCard() {
             const emptyEl = document.getElementById("announcementEmpty");
             if (emptyEl) emptyEl.style.display = "none";
 
@@ -503,21 +522,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     <div class="col-lg-12 mt-3">
                         <label class="cw-label">Message *</label>
                         <textarea name="announcement_message[]" class="cw-input cw-textarea mt-2" rows="4" placeholder="Write your announcement here..." required></textarea>
-                    </div>
-                    <div class="col-lg-6 mt-3">
-                        <label class="cw-label">Priority</label>
-                        <div class="cw-select-wrap">
-                            <select name="announcement_priority[]" class="cw-select mt-2">
-                                <option value="normal">🔵 Normal</option>
-                                <option value="important">🟠 Important</option>
-                                <option value="urgent">🔴 Urgent</option>
-                            </select>
-                            <i class="fa fa-chevron-down cw-select-icon"></i>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 mt-3">
-                        <label class="cw-label">Post Date</label>
-                        <input type="date" name="announcement_date[]" class="cw-input cw-date mt-2">
                     </div>
                     <div class="col-lg-12 mt-4">
                         <label class="cw-label">Attach File <span style="color:#9ca3af;font-size:12px;">(optional)</span></label>
@@ -550,7 +554,11 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             annContainer.appendChild(card);
-        });
+        }
+
+        addAnnBtn.addEventListener("click", addAnnouncementCard);
+        // Auto-add one announcement on page load
+        addAnnouncementCard();
     }
 
 });

@@ -33,16 +33,18 @@
             background: #fff;
             border: 1px solid #E2E8E5;
             border-radius: 12px;
-            padding: 1.8rem;
+            /* padding: 1.8rem; */
             box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
             margin-bottom: 1.4rem;
         }
 
         .anv-card-top {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             gap: 1.2rem;
-            margin-bottom: 1.4rem;
+            /* margin-bottom: 1.4rem; */
+            padding: 1.8rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         .anv-card-icon {
@@ -50,19 +52,21 @@
             height: 52px;
             min-width: 52px;
             border-radius: 50%;
-            background: #f0ebff;
+            background: var(--green);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #7c3aed;
+            /* color: #7c3aed; */
+            color: #ffffff;
             font-size: 22px;
         }
 
         .anv-card-label {
-            font-size: 12px;
-            color: #aaa;
+            font-size: 17px;
+            /* color: #aaa; */
+            color: #212529;
             font-weight: 700;
-            text-transform: uppercase;
+            /* text-transform: uppercase; */
             letter-spacing: .5px;
             display: block;
             margin-bottom: 4px;
@@ -107,7 +111,7 @@
 
         .anv-poster-name {
             font-size: 14px;
-            font-weight: 700;
+            font-weight: 500;
             color: #1a1a1a;
             display: block;
         }
@@ -118,11 +122,19 @@
             display: block;
         }
 
+        .anv-header-text {
+            font-size: 14.5px;
+            font-weight: 600;
+            padding: 1.8rem 1.8rem 0;
+            margin: 0;
+        }
+
         .anv-body-text {
             font-size: 14.5px;
             color: #333;
             line-height: 1.8;
             margin: 0;
+            padding: 1.4rem 1.8rem 1.8rem;
         }
 
         .anv-message-card {
@@ -208,6 +220,40 @@
             display: block;
             margin-bottom: 14px;
         }
+
+        .av-message-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 10px 16px;
+            background: #F0F0F0;
+            transition: background .2s, border-color .2s;
+        }
+
+        .av-msg-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .av-msg-text-col {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .av-msg-status-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .rightbar{
+            padding: 1.8rem 1.4rem 1.8rem 1.4rem;
+        }
     </style>
 </head>
 
@@ -255,11 +301,14 @@
                     <div class="anv-main-card">
                         <div class="anv-card-top">
                             <div class="anv-card-icon">
-                                <i class="fa fa-bullhorn"></i>
+                                <!-- <i class="fa fa-bullhorn"></i> -->
+
+                                <div class="anv-avatar"><?= $initials ?></div>
                             </div>
-                            <div>
-                                <span class="anv-card-label">Announcement</span>
-                                <h2><?= htmlspecialchars($announcement['title']) ?></h2>
+                            <div style="display: flex; flex-direction: column; gap: 0.3rem;">
+                                <span class="anv-card-label m-0">Announcement</span>
+                                <!-- <h2><?= htmlspecialchars($announcement['title']) ?></h2> -->
+                                <span class="anv-poster-name"><?= htmlspecialchars($announcement['teacher_name']) ?></span>
                                 <span class="anv-date">
                                     Date Received: <?= date('M j', strtotime($announcement['posted_at'])) ?>
                                 </span>
@@ -267,7 +316,7 @@
                         </div>
 
                         <!-- Teacher info -->
-                        <div class="anv-poster-row">
+                        <!-- <div class="anv-poster-row">
                             <div class="anv-avatar"><?= $initials ?></div>
                             <div>
                                 <span class="anv-poster-name"><?= htmlspecialchars($announcement['teacher_name']) ?></span>
@@ -275,16 +324,48 @@
                                     Date Received: <?= date('M j', strtotime($announcement['posted_at'])) ?>
                                 </span>
                             </div>
-                        </div>
+                        </div> -->
 
                         <!-- Full announcement body -->
+                        <h2 class="anv-header-text">Title:
+                            <?= htmlspecialchars($announcement['title']) ?>
+                        </h2>
                         <p class="anv-body-text">
                             <?= nl2br(htmlspecialchars($announcement['body'])) ?>
                         </p>
-                    </div>
 
-                    <!-- Reply box -->
-                    <div class="anv-message-card">
+                        <!-- Message text box -->
+                        <div style="background:#fff; border:1px solid rgba(0,0,0,0.1); border-radius:10px; 
+                padding:10px 16px; display:flex; align-items:center; gap:10px; margin: 6rem 10px 16px;">
+                            <input type="text" id="annMsgInput" placeholder="Message..."
+                                style="flex:1; border:none; outline:none; font-size:14px; color:#333; background:transparent;">
+                            <button onclick="sendAnnMessage()" title="Send" style="background:#00C950;border:none;border-radius:50%;width:36px;height:36px;
+                   display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;font-size:14px;">
+                                <i class="fa fa-paper-plane" id="annSendIcon"></i>
+                            </button>
+                        </div>
+
+                        <!-- Action icons -->
+                        <div style="display:flex;justify-content:space-between;align-items:center;
+                padding:10px 50px;border-radius:12px;border:1px solid rgba(0,0,0,0.1);background:#F0F0F0;">
+                            <button title="Attach file" onclick="document.getElementById('attachFileInput').click()"
+                                style="background:none;border:none;color: var(--green);font-size:23px;cursor:pointer;padding:0;">
+                                <i class="fa fa-paperclip"></i>
+                            </button>
+                            <button title="Image" onclick="document.getElementById('attachImageInput').click()"
+                                style="background:none;border:none;color: var(--green);font-size:23px;cursor:pointer;padding:0;">
+                                <i class="fa fa-image"></i>
+                            </button>
+                            <button title="Video" onclick="document.getElementById('attachVideoInput').click()"
+                                style="background:none;border:none;color: var(--green);font-size:23px;cursor:pointer;padding:0;">
+                                <i class="fa fa-film"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reply box -->
+                <!-- <div class="anv-message-card">
                         <h5>Reply</h5>
                         <div class="anv-message-box">
                             <input type="text" id="annMsgInput" placeholder="Message...">
@@ -296,14 +377,85 @@
                             <button title="Video"><i class="fa fa-film"></i></button>
                             <button title="Emoji"><i class="fa fa-smile"></i></button>
                         </div>
-                    </div>
+                    </div> -->
 
-                <?php endif; ?>
+            <?php endif; ?>
 
-            </div>
         </div>
     </div>
+    </div>
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let annAttachedFile = null;
+
+        document.getElementById('attachFileInput').addEventListener('change', function () {
+            if (this.files[0]) setAnnFile(this.files[0], 'file');
+        });
+        document.getElementById('attachImageInput').addEventListener('change', function () {
+            if (this.files[0]) setAnnFile(this.files[0], 'image');
+        });
+        document.getElementById('attachVideoInput').addEventListener('change', function () {
+            if (this.files[0]) setAnnFile(this.files[0], 'video');
+        });
+
+        function setAnnFile(file, type) {
+            annAttachedFile = file;
+            const msgBox = document.getElementById('msgBox');
+            const msgIcon = document.getElementById('msgIcon');
+            const msgTextCol = document.getElementById('msgTextCol');
+            const msgTitle = document.getElementById('msgTitle');
+            const msgPlaceholder = document.getElementById('msgPlaceholder');
+            const msgActionBtn = document.getElementById('msgActionBtn');
+
+            msgBox.style.background = '#f0fdf4';
+            msgBox.style.borderColor = '#bbf7d0';
+            msgPlaceholder.style.display = 'none';
+            msgIcon.style.display = 'block';
+            msgTextCol.style.display = 'flex';
+            msgTitle.textContent = file.name;
+            msgActionBtn.style.background = '#00C950';
+
+            // Show preview
+            const strip = document.getElementById('attachPreview');
+            const img = document.getElementById('previewImage');
+            const vid = document.getElementById('previewVideo');
+            img.style.display = 'none';
+            vid.style.display = 'none';
+
+            if (type === 'image') {
+                const reader = new FileReader();
+                reader.onload = e => { img.src = e.target.result; img.style.display = 'block'; };
+                reader.readAsDataURL(file);
+                strip.style.display = 'block';
+            } else if (type === 'video') {
+                vid.src = URL.createObjectURL(file);
+                vid.style.display = 'block';
+                strip.style.display = 'block';
+            } else {
+                strip.style.display = 'none';
+            }
+        }
+
+        function sendAnnMessage() {
+            const input = document.getElementById('annMsgInput');
+            const msg = input.value.trim();
+            if (!msg && !annAttachedFile) {
+                input.style.outline = '2px solid #ef4444';
+                input.placeholder = 'Please type a message first!';
+                setTimeout(() => { input.style.outline = ''; input.placeholder = 'Message...'; }, 2500);
+                return;
+            }
+            // Message sent feedback
+            input.value = '';
+            annAttachedFile = null;
+            alert('Message sent!'); // replace with your toast if needed
+        }
+
+        document.getElementById('annMsgInput').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') sendAnnMessage();
+        });
+    </script>
 </body>
 
 </html>

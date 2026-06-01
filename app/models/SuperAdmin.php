@@ -4,6 +4,28 @@ require_once "../core/Model.php";
 
 class SuperAdmin extends Model
 {
+    private function timeAgo($datetime)
+    {
+        if (!$datetime)
+            return 'just now';
+
+        $now = new DateTime('now', new DateTimeZone('Asia/Manila'));
+        $ago = new DateTime($datetime, new DateTimeZone('Asia/Manila'));
+        $diff = $now->getTimestamp() - $ago->getTimestamp();
+
+        if ($diff < 0)
+            $diff = 0;
+        if ($diff < 60)
+            return $diff . 's ago';
+        if ($diff < 3600)
+            return floor($diff / 60) . 'm ago';
+        if ($diff < 86400)
+            return floor($diff / 3600) . 'h ago';
+        if ($diff < 604800)
+            return floor($diff / 86400) . 'd ago';
+        return $ago->format('M j, Y');
+    }
+
     // ============================================================
     // SUBJECTS
     // ============================================================
@@ -92,7 +114,7 @@ class SuperAdmin extends Model
         if ($existingId)
             return ['id' => $existingId, 'existed' => true];
 
-        $teacherId = null; // super admin has no teacher record — must be NULL
+        $teacherId = null;
 
         $stmt = $this->db->prepare("
         INSERT INTO interactive_modules (subject_id, teacher_id, title, description, created_at)
@@ -231,7 +253,6 @@ class SuperAdmin extends Model
     public function updateSubject($id, $name, $code, $description, $gradeLevelId, $imagePath = null)
     {
         if ($imagePath) {
-            // Update with new image
             $stmt = $this->db->prepare("
             UPDATE subjects
             SET subject_name = ?, subject_code = ?, subject_description = ?,
@@ -240,7 +261,6 @@ class SuperAdmin extends Model
         ");
             $stmt->bind_param("sssisi", $name, $code, $description, $gradeLevelId, $imagePath, $id);
         } else {
-            // Keep existing image
             $stmt = $this->db->prepare("
             UPDATE subjects
             SET subject_name = ?, subject_code = ?, subject_description = ?,
@@ -252,4 +272,371 @@ class SuperAdmin extends Model
         $stmt->execute();
     }
 
+    public function getTotalStudents()
+    {
+        $result = $this->db->query("SELECT COUNT(*) AS total FROM students s JOIN users u ON s.user_id = u.id WHERE u.role = 'student'");
+        return (int) $result->fetch_assoc()['total'];
+    }
+
+    public function getTotalTeachers()
+    {
+        $result = $this->db->query("SELECT COUNT(*) AS total FROM teachers t JOIN users u ON t.user_id = u.id WHERE u.role = 'teacher'");
+        return (int) $result->fetch_assoc()['total'];
+    }
+
+    public function getTotalPendingApprovals()
+    {
+        $result = $this->db->query("SELECT COUNT(*) AS total FROM students WHERE status = 'Pending'");
+        return (int) $result->fetch_assoc()['total'];
+    }
+
+    public function getTotalSubjects()
+    {
+        $result = $this->db->query("SELECT COUNT(*) AS total FROM subjects");
+        return (int) $result->fetch_assoc()['total'];
+    }
+
+    public function getTotalSections()
+    {
+        $result = $this->db->query("SELECT COUNT(*) AS total FROM sections");
+        return (int) $result->fetch_assoc()['total'];
+    }
+
+    public function getPendingStudents()
+    {
+        $result = $this->db->query("
+        SELECT u.name, u.email, s.status,
+               gl.name AS grade_level, sec.section_name
+        FROM users u
+        JOIN students s ON s.user_id = u.id
+        JOIN grade_level gl ON gl.id = s.grade_level_id
+        JOIN sections sec ON sec.id = s.section_id
+        WHERE u.role = 'student' AND s.status = 'Pending'
+        ORDER BY u.id DESC
+    ");
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getRecentEnrollments($limit = 5)
+    {
+        $stmt = $this->db->prepare("
+        SELECT u.name, s.subject_name, sec.section_name,
+               gl.name AS grade_level, se.enrolled_at
+        FROM student_enrollments se
+        JOIN students st ON st.id = se.student_id
+        JOIN users u ON u.id = st.user_id
+        JOIN subjects s ON s.id = se.subject_id
+        JOIN sections sec ON sec.id = se.section_id
+        JOIN grade_level gl ON gl.id = sec.grade_level_id
+        ORDER BY se.enrolled_at DESC LIMIT ?
+    ");
+        $stmt->bind_param("i", $limit);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getRecentAnnouncements($limit = 5)
+    {
+        $stmt = $this->db->prepare("
+            SELECT n.title, n.message, n.created_at,
+                   s.subject_name, u.name AS teacher_name
+            FROM notifications n
+            JOIN subjects s ON s.id = n.subject_id
+            JOIN users u ON u.id = n.sender_id
+            WHERE n.type = 'announcement'
+            ORDER BY n.created_at DESC LIMIT ?
+        ");
+        $stmt->bind_param("i", $limit);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getTeacherWorkload()
+    {
+        $result = $this->db->query("
+            SELECT u.name AS teacher_name,
+                   COUNT(DISTINCT ta.subject_id) AS class_count
+            FROM teachers t
+            JOIN users u ON t.user_id = u.id
+            LEFT JOIN teacher_assignments ta ON ta.teacher_id = t.id
+            WHERE u.role = 'teacher'
+            GROUP BY t.id, u.name
+            ORDER BY class_count DESC
+            LIMIT 5
+        ");
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getEnrollmentByGrade()
+    {
+        $result = $this->db->query("
+            SELECT gl.name AS grade_level, COUNT(se.student_id) AS total
+            FROM student_enrollments se
+            JOIN sections sec ON sec.id = se.section_id
+            JOIN grade_level gl ON gl.id = sec.grade_level_id
+            GROUP BY gl.id, gl.name
+            ORDER BY gl.name ASC
+        ");
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function updateStudentApproval($studentId, $gradeLevelId, $sectionId, $studentLRN, $status, $reason, $approvedBy, $userId, $name, $email)
+    {
+        // Update users table
+        $stmt = $this->db->prepare("UPDATE users SET name = ?, email = ? WHERE id = ?");
+        $stmt->bind_param("ssi", $name, $email, $userId);
+        $stmt->execute();
+        $stmt->close();
+
+        // Always save approved_by — never skip it
+        $approvedBy = (int) $approvedBy;
+        $stmt2 = $this->db->prepare("
+        UPDATE students 
+        SET grade_level_id = ?, section_id = ?, student_LRN = ?,
+            status = ?, reason = ?, approved_by = ?, updated_at = NOW()
+        WHERE id = ?
+    ");
+        $stmt2->bind_param(
+            "iisssii",
+            $gradeLevelId,
+            $sectionId,
+            $studentLRN,
+            $status,
+            $reason,
+            $approvedBy,
+            $studentId
+        );
+        $stmt2->execute();
+        $stmt2->close();
+    }
+
+    // ============================================================
+    // ACTIVITY LOGS — pulls from existing tables, no new table needed
+    // ============================================================
+    public function getActivityLogs($limit = 15)
+    {
+        $sql = "
+    SELECT * FROM (
+
+        SELECT
+            'enrollment' AS action,
+            CONCAT(u.name, ' enrolled in ', s.subject_name, ' · ', sec.section_name) AS description,
+            'student' AS role,
+            u.name AS user_name,
+            se.enrolled_at AS created_at
+        FROM student_enrollments se
+        JOIN students st  ON st.id  = se.student_id
+        JOIN users u      ON u.id   = st.user_id
+        JOIN subjects s   ON s.id   = se.subject_id
+        JOIN sections sec ON sec.id = se.section_id
+
+        UNION ALL
+
+        SELECT
+            'pending' AS action,
+            CONCAT(u.name, ' registration is pending approval · ', gl.name, ' ', sec.section_name) AS description,
+            'student' AS role,
+            u.name AS user_name,
+            u.created_at AS created_at
+        FROM users u
+        JOIN students s    ON s.user_id  = u.id
+        JOIN grade_level gl ON gl.id     = s.grade_level_id
+        JOIN sections sec   ON sec.id    = s.section_id
+        WHERE s.status = 'Pending'
+
+        UNION ALL
+
+        SELECT
+            'module_created' AS action,
+            CONCAT(COALESCE(u.name, 'A teacher'), ' created module ', im.title, ' in ', s.subject_name) AS description,
+            'teacher' AS role,
+            COALESCE(u.name, 'Unknown') AS user_name,
+            im.created_at AS created_at
+        FROM interactive_modules im
+        JOIN subjects s      ON s.id = im.subject_id
+        LEFT JOIN teachers t ON t.id = im.teacher_id
+        LEFT JOIN users u    ON u.id = t.user_id
+
+        UNION ALL
+
+        SELECT
+            'activity_submitted' AS action,
+            CONCAT(u.name, ' submitted assignment ', a.title, ' in ', s.subject_name) AS description,
+            'student' AS role,
+            u.name AS user_name,
+            asub.submitted_at AS created_at
+        FROM assignment_submissions asub
+        JOIN assignments a ON a.id  = asub.assignment_id
+        JOIN subjects s    ON s.id  = a.subject_id
+        JOIN students st   ON st.id = asub.student_id
+        JOIN users u       ON u.id  = st.user_id
+
+        UNION ALL
+
+        SELECT
+            CASE WHEN qr.passed = 1 THEN 'quiz_passed' ELSE 'quiz_submitted' END AS action,
+            CONCAT(
+                u.name,
+                CASE WHEN qr.passed = 1 THEN ' passed' ELSE ' submitted' END,
+                ' quiz in ', s.subject_name,
+                ' (', qr.score, '/', qr.total, ')'
+            ) AS description,
+            'student' AS role,
+            u.name AS user_name,
+            qr.taken_at AS created_at
+        FROM quiz_results qr
+        JOIN interactive_contents ic ON ic.id = qr.content_id
+        JOIN lessons l               ON l.id  = ic.lesson_id
+        JOIN interactive_modules im  ON im.id = l.interactive_module_id
+        JOIN subjects s              ON s.id  = im.subject_id
+        JOIN students st             ON st.id = qr.student_id
+        JOIN users u                 ON u.id  = st.user_id
+
+        UNION ALL
+
+        SELECT
+            'activity_submitted' AS action,
+            CONCAT(u.name, ' submitted activity in ', s.subject_name) AS description,
+            'student' AS role,
+            u.name AS user_name,
+            act_sub.submitted_at AS created_at
+        FROM activity_submissions act_sub
+        JOIN interactive_contents ic ON ic.id = act_sub.content_id
+        JOIN lessons l               ON l.id  = ic.lesson_id
+        JOIN interactive_modules im  ON im.id = l.interactive_module_id
+        JOIN subjects s              ON s.id  = im.subject_id
+        JOIN students st             ON st.id = act_sub.student_id
+        JOIN users u                 ON u.id  = st.user_id
+
+        UNION ALL
+
+        SELECT
+            'invite_sent' AS action,
+            CONCAT(u.name, ' invited ', ei.student_email, ' to join ', s.subject_name, ' · ', sec.section_name) AS description,
+            'teacher' AS role,
+            u.name AS user_name,
+            ei.created_at AS created_at
+        FROM enrollment_invitations ei
+        JOIN teachers t   ON t.id   = ei.teacher_id
+        JOIN users u      ON u.id   = t.user_id
+        JOIN subjects s   ON s.id   = ei.subject_id
+        JOIN sections sec ON sec.id = ei.section_id
+
+        UNION ALL
+
+        SELECT
+            'invite_accepted' AS action,
+            CONCAT(u.name, ' accepted invitation to ', s.subject_name, ' · ', sec.section_name) AS description,
+            'student' AS role,
+            u.name AS user_name,
+            ei.created_at AS created_at
+        FROM enrollment_invitations ei
+        JOIN students st  ON st.id  = ei.student_id
+        JOIN users u      ON u.id   = st.user_id
+        JOIN subjects s   ON s.id   = ei.subject_id
+        JOIN sections sec ON sec.id = ei.section_id
+        WHERE ei.status = 'accepted' AND ei.student_id IS NOT NULL
+
+        UNION ALL
+
+        SELECT
+            'invite_accepted' AS action,
+            CONCAT(COALESCE(approver.name, 'Admin'), ' approved student ', stu_u.name, ' · ', gl.name, ' ', sec.section_name) AS description,
+            COALESCE(approver.role, 'superadmin') AS role,
+            COALESCE(approver.name, 'Super Admin') AS user_name,
+            stu.updated_at AS created_at
+        FROM students stu
+        JOIN users stu_u        ON stu_u.id    = stu.user_id
+        JOIN grade_level gl     ON gl.id       = stu.grade_level_id
+        JOIN sections sec       ON sec.id      = stu.section_id
+        LEFT JOIN users approver ON approver.id = stu.approved_by
+        WHERE stu.status = 'Approved'
+          AND stu.approved_by IS NOT NULL
+          AND stu.updated_at IS NOT NULL
+
+        UNION ALL
+
+        SELECT
+            'subject_created' AS action,
+            CONCAT('Subject ', s.subject_name, ' was created · ', COALESCE(gl.name, '')) AS description,
+            'superadmin' AS role,
+            'Super Admin' AS user_name,
+            s.created_at AS created_at
+        FROM subjects s
+        LEFT JOIN grade_level gl ON gl.id = s.grade_level_id
+        WHERE s.created_at IS NOT NULL
+
+        UNION ALL
+
+        SELECT
+            'subject_updated' AS action,
+            CONCAT('Subject ', s.subject_name, ' was updated · ', COALESCE(gl.name, '')) AS description,
+            'superadmin' AS role,
+            'Super Admin' AS user_name,
+            s.updated_at AS created_at
+        FROM subjects s
+        LEFT JOIN grade_level gl ON gl.id = s.grade_level_id
+        WHERE s.updated_at IS NOT NULL
+          AND s.updated_at <> s.created_at
+
+        UNION ALL
+
+        SELECT
+            'invite_sent' AS action,
+            CONCAT('Teacher account created for ', u.name, ' (', u.email, ')') AS description,
+            'superadmin' AS role,
+            'Super Admin' AS user_name,
+            u.created_at AS created_at
+        FROM users u
+        JOIN teachers t ON t.user_id = u.id
+        WHERE u.role = 'teacher'
+          AND u.created_at IS NOT NULL
+
+        UNION ALL
+
+        SELECT
+            'invite_declined' AS action,
+            CONCAT(
+                COALESCE(approver.name, 'Admin'), ' declined student ', stu_u.name,
+                CASE WHEN stu.reason IS NOT NULL AND stu.reason <> ''
+                     THEN CONCAT(' · Reason: ', LEFT(stu.reason, 60))
+                     ELSE ''
+                END
+            ) AS description,
+            COALESCE(approver.role, 'superadmin') AS role,
+            COALESCE(approver.name, 'Admin') AS user_name,
+            stu.updated_at AS created_at
+        FROM students stu
+        JOIN users stu_u ON stu_u.id = stu.user_id
+        JOIN grade_level gl ON gl.id = stu.grade_level_id
+        JOIN sections sec ON sec.id = stu.section_id
+        LEFT JOIN users approver ON approver.id = stu.approved_by
+        WHERE stu.status = 'Rejected'
+          AND stu.approved_by IS NOT NULL
+          AND stu.updated_at IS NOT NULL
+
+    ) AS combined
+    WHERE created_at IS NOT NULL
+    ORDER BY created_at DESC
+    LIMIT ?
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $limit);
+        $stmt->execute();
+        $logs = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        // Add time_ago to each log
+        foreach ($logs as &$log) {
+            $log['time_ago'] = $this->timeAgo($log['created_at']);
+        }
+
+        return $logs;
+
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $limit);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
 }

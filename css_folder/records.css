@@ -569,49 +569,49 @@ select.form-select {
 
 /* People tab */
 
-.people-header{
+.people-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 1rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1) ;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     padding: 0 0 1.5rem 0;
 }
 
-.people-header h4, 
-.people-header p{
+.people-header h4,
+.people-header p {
     margin: 0;
 }
 
-.people-header h4{
+.people-header h4 {
     font-weight: 600;
     font-size: 21px;
 }
 
-.people-header p{
+.people-header p {
     font-size: 15px;
     font-weight: 600;
 }
 
-.list-people .student{
+.list-people .student {
     padding: 1.5rem 0 1.5rem 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
-} 
+}
 
-.list-people .student .student-header{
+.list-people .student .student-header {
     display: flex;
     align-items: center;
     gap: 1.5rem;
 }
 
-.list-people .student .student-header p{
+.list-people .student .student-header p {
     font-size: 15px;
 }
 
-.list-people .student .student-header .icon{
+.list-people .student .student-header .icon {
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -624,6 +624,84 @@ select.form-select {
     font-size: 15px;
 }
 
-.list-people .student .student-section p{
+.list-people .student .student-section p {
     font-size: 15px;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.modal-box {
+    background: #fff;
+    border-radius: 14px;
+    padding: 36px 32px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.modal-box.success {
+    border-top: 5px solid #00C950;
+}
+
+.modal-box.error {
+    border-top: 5px solid #ef4444;
+}
+
+.modal-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.modal-box h3 {
+    margin: 0 0 8px;
+    font-size: 20px;
+    color: #111827;
+}
+
+.modal-box p {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.modal-box button {
+    background: #00C950;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 10px 28px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.modal-box.error button {
+    background: #ef4444;
+}
+
+#inviteOverlay.open {
+    display: flex !important;
+}
+
+#inviteStudentList {
+    max-height: 210px;
+    overflow-y: auto;
+    border: 1px solid #e4e7eb;
+    /* display: grid;
+    grid-template-columns: repeat(2, 1fr); */
+}
+
+.invite-stu-row {
+    width: 100%;
+    /* max-width: 250px; */
+    display: flex;
 }

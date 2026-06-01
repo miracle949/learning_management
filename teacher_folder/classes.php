@@ -11,16 +11,19 @@
     <style>
         /* ── CLASSES PAGE — Figma match ── */
         .tc-page-title {
-            font-size: 22px;
-            font-weight: 800;
-            color: #1a1a2e;
-            margin: 0 0 4px;
+            font-size: 21px;
+            font-weight: 600;
+            /* color: #1a1a2e; */
+            color: #212529;
+            margin: 0 0 8px;
             font-family: 'Poppins', sans-serif;
         }
 
         .tc-page-sub {
-            font-size: 14px;
-            color: #6b7280;
+            font-size: 14.5px;
+            /* color: #6b7280; */
+            color: #808080;
+            font-weight: 600;
             margin: 0 0 1.2rem;
         }
 
@@ -281,6 +284,25 @@
 </head>
 
 <body>
+    <?php if (!empty($_SESSION['invite_success'])): ?>
+        <div style="display:flex;position:fixed;inset:0;background:rgba(0,0,0,.5);
+            z-index:99999;align-items:center;justify-content:center;">
+            <div style="background:#fff;border-radius:16px;padding:36px 32px;text-align:center;
+                max-width:360px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.15);
+                border-top:5px solid #00C950;">
+                <div style="font-size:52px;margin-bottom:12px;">✅</div>
+                <h3 style="margin:0 0 8px;font-size:20px;color:#111827;">Invitation Sent!</h3>
+                <p style="color:#6b7280;font-size:14px;margin-bottom:20px;">
+                    <?= htmlspecialchars($_SESSION['invite_success']) ?>
+                </p>
+                <button onclick="this.closest('div[style]').remove()" style="background:#00C950;color:#fff;border:none;border-radius:50px;
+                       padding:10px 28px;font-size:15px;font-weight:700;cursor:pointer;">
+                    OK
+                </button>
+            </div>
+        </div>
+        <?php unset($_SESSION['invite_success']); ?>
+    <?php endif; ?>
     <div class="container-fluid p-0">
 
         <?php include("sidebar.php") ?>
@@ -323,7 +345,7 @@
                 ?>
 
                 <!-- Page header -->
-                <p class="tc-page-title">Classes</p>
+                <p class="tc-page-title">My Classes</p>
                 <p class="tc-page-sub">Manage your class and students here</p>
 
                 <!-- Filter dropdowns -->

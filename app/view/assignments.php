@@ -57,11 +57,126 @@
 
             <div class="parent-pending">
                 <div class="complete-grade">
+                    <div class="pendings">
+                        <div class="header">
+                            <h3>Pending Submissions</h3>
+
+                            <!-- <a href="#">View all</a> -->
+                        </div>
+
+                        <div class="pending-parent-card">
+                            <?php foreach ($pendingAssignments as $item):
+                                $daysLeft = '';
+                                if (!empty($item['due_date']) && strtotime($item['due_date']) < time())
+                                    continue;
+                                $daysLeft = '';
+                                if (!empty($item['due_date'])) {
+                                    $diff = (int) ceil((strtotime($item['due_date']) - time()) / 86400);
+                                    $daysLeft = $diff > 0 ? $diff . ' days left' : 'Due today';
+                                }
+                                ?>
+                                <div class="pending-card">
+                                    <h5>
+                                        <?= htmlspecialchars($item['task']) ?>
+                                    </h5>
+                                    <p>Due Date:
+                                        <?= !empty($item['due_date']) ? date('F j, Y', strtotime($item['due_date'])) : 'No due date' ?>
+                                    </p>
+                                    <?php if ($daysLeft): ?><span>
+                                            <?= htmlspecialchars($daysLeft) ?>
+                                        </span>
+                                    <?php endif; ?>
+                                    <a
+                                        href="/learning_management/public/?url=assignment_view&subject=<?= urlencode($item['subject_code']) ?>&id=<?= $item['id'] ?>">
+                                        View Task <i class="fa fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+
+                    <div class="graded">
+                        <div class="header">
+                            <h3>Graded Task</h3>
+                            <!-- <a href="#">View all</a> -->
+                        </div>
+
+                        <div class="graded-parent">
+                            <?php if (empty($gradedAssignments)): ?>
+                                <p style="color:#888; padding: 0px 10px;">No graded tasks yet.</p>
+                            <?php else: ?>
+                                <?php foreach ($gradedAssignments as $item): ?>
+                                    <div class="graded-box">
+                                        <h5><?= htmlspecialchars($item['task']) ?></h5>
+                                        <p>Graded:
+                                            <?= !empty($item['graded_at']) ? date('F j, Y', strtotime($item['graded_at'])) : 'N/A' ?>
+                                        </p>
+                                        <?php
+                                        $percent = $item['total_points'] > 0
+                                            ? ($item['points_earned'] / $item['total_points']) * 100
+                                            : 0;
+                                        $scoreColor = $percent >= 75 ? '#4CAF7D' : '#C82525';
+                                        ?>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span style="color:<?= $scoreColor ?>;">
+                                                <?= (int) $item['points_earned'] ?>
+                                            </span>
+                                            <span style="color:#aaa;"> /
+                                                <?= (int) $item['total_points'] ?>
+                                            </span>
+                                        </div>
+                                        <!-- <?php if (!empty($item['feedback'])): ?>
+                                            <p style="font-size:0.8rem; color:#555; margin-top:4px;">
+                                                "<?= htmlspecialchars($item['feedback']) ?>"
+                                            </p>
+                                        <?php endif; ?> -->
+                                        <a
+                                            href="/learning_management/public/?url=assignment_view&subject=<?= urlencode($item['subject_code']) ?>&id=<?= $item['id'] ?>">
+                                            View Task <i class="fa fa-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="pending-missing">
+                    <div class="missing">
+                        <div class="header">
+                            <h3>Missing Task</h3>
+
+                            <!-- <a href="#">View all</a> -->
+                        </div>
+                        <div class="missing-parent-card">
+                            <?php if (empty($missingAssignments)): ?>
+                                <p>No missing task</p>
+                            <?php else: ?>
+                                <?php foreach ($missingAssignments as $item):
+                                    $diff = (int) ceil((strtotime($item['due_date']) - time()) / 86400);
+                                    $daysOverdue = abs($diff);
+                                    ?>
+                                    <div class="missing-card">
+                                        <h5><?= htmlspecialchars($item['task']) ?></h5>
+                                        <p>Due Date:
+                                            <?= date('F j, Y', strtotime($item['due_date'])) ?>
+                                        </p>
+                                        <span style="color:#C82525;">
+                                            <?= $daysOverdue ?> days overdue
+                                        </span>
+                                        <a
+                                            href="/learning_management/public/?url=assignment_view&subject=<?= urlencode($item['subject_code']) ?>&id=<?= $item['id'] ?>">
+                                            View Task <i class="fa fa-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                     <div class="complete-parent">
                         <div class="header">
                             <h3>Completed Task</h3>
 
-                            <a href="#">View all</a>
+                            <!-- <a href="#">View all</a> -->
                         </div>
 
                         <div class="complete">
@@ -81,74 +196,6 @@
                         </div>
                     </div>
 
-                    <div class="graded">
-                        <div class="header">
-                            <h3>Graded Task</h3>
-                            <a href="#">View all</a>
-                        </div>
-
-                        <div class="graded-parent">
-                            <?php if (empty($gradedAssignments)): ?>
-                                <p style="color:#888; padding: 10px;">No graded tasks yet.</p>
-                            <?php else: ?>
-                                <?php foreach ($gradedAssignments as $item): ?>
-                                    <div class="graded-box">
-                                        <h5><?= htmlspecialchars($item['task']) ?></h5>
-                                        <p>Graded:
-                                            <?= !empty($item['graded_at']) ? date('F j, Y', strtotime($item['graded_at'])) : 'N/A' ?>
-                                        </p>
-                                        <?php
-                                        $percent = $item['total_points'] > 0
-                                            ? ($item['points_earned'] / $item['total_points']) * 100
-                                            : 0;
-                                        $scoreColor = $percent >= 75 ? '#4CAF7D' : '#C82525';
-                                        ?>
-                                        <span style="color: <?= $scoreColor ?>;">
-                                            <?= (int) $item['points_earned'] ?> / <?= (int) $item['total_points'] ?>
-                                        </span>
-                                        <!-- <?php if (!empty($item['feedback'])): ?>
-                                            <p style="font-size:0.8rem; color:#555; margin-top:4px;">
-                                                "<?= htmlspecialchars($item['feedback']) ?>"
-                                            </p>
-                                        <?php endif; ?> -->
-                                        <a
-                                            href="/learning_management/public/?url=assignment_view&subject=<?= urlencode($item['subject_code']) ?>&id=<?= $item['id'] ?>">
-                                            View Task <i class="fa fa-arrow-right"></i>
-                                        </a>
-                                    </div>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                </div>
-                <div class="pendings">
-                    <div class="header">
-                        <h3>Pending Submissions</h3>
-
-                        <a href="#">View all</a>
-                    </div>
-
-                    <div class="pending-parent-card">
-                        <?php foreach ($pendingAssignments as $item):
-                            $daysLeft = '';
-                            if (!empty($item['due_date'])) {
-                                $diff = (int) ceil((strtotime($item['due_date']) - time()) / 86400);
-                                $daysLeft = $diff > 0 ? $diff . ' days left' : ($diff === 0 ? 'Due today' : abs($diff) . ' days overdue');
-                            }
-                            ?>
-                            <div class="pending-card">
-                                <h5><?= htmlspecialchars($item['task']) ?></h5>
-                                <p>Due Date:
-                                    <?= !empty($item['due_date']) ? date('F j, Y', strtotime($item['due_date'])) : 'No due date' ?>
-                                </p>
-                                <?php if ($daysLeft): ?><span><?= htmlspecialchars($daysLeft) ?></span><?php endif; ?>
-                                <a
-                                    href="/learning_management/public/?url=assignment_view&subject=<?= urlencode($item['subject_code']) ?>&id=<?= $item['id'] ?>">
-                                    View Task <i class="fa fa-arrow-right"></i>
-                                </a>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
                 </div>
             </div>
         </div>

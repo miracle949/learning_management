@@ -72,6 +72,14 @@ class HomeController
         require_once "../app/view/admin.php";
     }
 
+    public function teacher_users(){
+        require_once "../admin_folder/teacher_users.php";
+    }
+
+    public function student_users(){
+        require_once "../admin_folder/student_users.php";
+    }
+
     public function teacher()
     {
         require_once "../app/view/teacher.php";

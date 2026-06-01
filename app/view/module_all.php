@@ -293,10 +293,10 @@
                         </div>
                     </div>
                     <div class="welcome-body">
-                        <div class="buttons-group">
+                        <!-- <div class="buttons-group">
                             <a href="/learning_management/public/?url=classes">Browse Courses <i
                                     class="fa fa-arrow-right"></i></a>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 
@@ -311,14 +311,14 @@
                                 </ul>
                             <?php endforeach; ?>
                         </div>
-                        <p>Grade 11</p>
+                        <!-- <p>Grade 11</p>
                         <div class="learning-module">
                             <?php foreach ($grade11Subjects as $subject): ?>
                                 <ul>
                                     <li><?= htmlspecialchars($subject['subject_name']) ?></li>
                                 </ul>
                             <?php endforeach; ?>
-                        </div>
+                        </div> -->
                     </div>
 
                     <div class="learning-module-section">
@@ -362,7 +362,7 @@
                     </div>
                     <div class="welcome-body">
                         <div class="buttons-group">
-                            <a href="/learning_management/public/?url=classes">Browse Courses <i
+                            <a href="/learning_management/public/?url=classes">Browse Classes <i
                                     class="fa fa-arrow-right"></i></a>
                         </div>
                     </div>
@@ -371,7 +371,7 @@
                 <div class="module-parent">
                     <div class="learning-catalog">
                         <h4>Learning Catalog</h4>
-                        <p>Grade 12</p>
+                        <!-- <p>Grade 12</p>
                         <div class="learning-module">
                             <?php foreach ($grade12Subjects as $subject): ?>
                                 <ul>
@@ -380,7 +380,7 @@
                                     </li>
                                 </ul>
                             <?php endforeach; ?>
-                        </div>
+                        </div> -->
                         <p>Grade 11</p>
                         <div class="learning-module">
                             <?php foreach ($grade11Subjects as $subject): ?>
@@ -423,7 +423,7 @@
                         <?php endforeach; ?>
                     </div>
                 </div>
-                
+
             <?php else: ?>
                 <div class="welcoming">
                     <h2>No grade level or section assigned. Please contact your administrator.</h2>
@@ -441,7 +441,6 @@
 
             if (!isStarted) {
                 e.preventDefault();
-
                 var fd = new FormData();
                 fd.append('slug', slug);
                 fetch('/learning_management/public/?url=mark_subject_started', {
@@ -449,17 +448,10 @@
                     body: fd
                 })
                     .then(function (res) { return res.json(); })
-                    .then(function (data) {
-                        // Show success modal then navigate
-                        var modal = new bootstrap.Modal(document.getElementById('startSuccessModal'));
-                        modal.show();
-                        setTimeout(function () {
-                            modal.hide();
-                            window.location.href = href;
-                        }, 1800);
+                    .then(function () {
+                        window.location.href = href;
                     })
-                    .catch(function (err) {
-                        console.error('AJAX error:', err);
+                    .catch(function () {
                         window.location.href = href;
                     });
             }
@@ -467,24 +459,25 @@
     </script>
 
     <!-- ── SUCCESS MODAL ── -->
-    <div class="modal fade" id="startSuccessModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content" style="border-radius:16px;border:none;box-shadow:0 8px 32px rgba(0,0,0,.12);">
-                <div class="modal-body text-center" style="padding:2rem 1.5rem;">
-                    <div
+    <!-- // <div class="modal fade" id="startSuccessModal" tabindex="-1" aria-hidden="true">
+        // <div class="modal-dialog modal-dialog-centered modal-sm">
+            // <div class="modal-content" style="border-radius:16px;border:none;box-shadow:0 8px 32px rgba(0,0,0,.12);">
+                // <div class="modal-body text-center" style="padding:2rem 1.5rem;">
+                    // <div //
                         style="width:60px;height:60px;background:#ecfdf5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;">
-                        <i class="fa fa-check" style="color:var(--green);font-size:26px;"></i>
-                    </div>
-                    <h5 style="font-family:'Titan',sans-serif;color:var(--green-dark);margin:0 0 .4rem;font-size:17px;">
-                        Start learning successfully!
-                    </h5>
-                    <p style="font-size:13.5px;color:#555;margin:0;">
-                        Starting your learning journey now...
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
+                        // <i class="fa fa-check" style="color:var(--green);font-size:26px;"></i>
+                        // </div>
+                    // <h5
+                        style="font-family:'Titan',sans-serif;color:var(--green-dark);margin:0 0 .4rem;font-size:17px;">
+                        // Start learning successfully!
+                        // </h5>
+                    // <p style="font-size:13.5px;color:#555;margin:0;">
+                        // Starting your learning journey now...
+                        // </p>
+                    // </div>
+                // </div>
+            // </div>
+        // </div> -->
 </body>
 
 </html>

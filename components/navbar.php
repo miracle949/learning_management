@@ -9,11 +9,11 @@
     <div class="nav-acc">
         <div class="nav-list">
             <!-- + button now opens Join Class modal -->
-            <button data-bs-toggle="modal" data-bs-target="#joinClassModal" title="Join a Class">
+            <!-- <button data-bs-toggle="modal" data-bs-target="#joinClassModal" title="Join a Class">
                 <div class="notification-icon">
                     <i class="fa fa-plus"></i>
                 </div>
-            </button>
+            </button> -->
             <button>
                 <div class="notification-icon">
                     <i class="fa fa-message"></i>

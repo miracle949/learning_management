@@ -72,8 +72,11 @@
     /* background-image:
         linear-gradient(rgba(0, 0, 0, 0.50)),
         url('../images/Senior-High-School.webp'); */
-    background-image:
+    /* background-image:
         linear-gradient(rgba(0, 0, 0, 0.60)),
+        url('../images/ilearnbg.png'); */
+    background-image:
+        linear-gradient(rgba(45, 106, 79, 0.85), rgba(45, 106, 79, 0.85)),
         url('../images/ilearnbg.png');
     background-position: center;
     background-repeat: no-repeat;
@@ -91,7 +94,7 @@
     gap: 1rem; */
 }
 
-.container-fluid .login-parent .image-form .image-parent{
+.container-fluid .login-parent .image-form .image-parent {
     position: absolute;
     bottom: 60px;
     left: 40px;
@@ -157,14 +160,14 @@
     line-height: 25px;
 }
 
-.container-fluid .login-parent .image-form .image-footer{
+.container-fluid .login-parent .image-form .image-footer {
     display: flex;
     align-items: center;
     gap: 2rem;
     margin-top: 2rem;
 }
 
-.container-fluid .login-parent .image-form .image-footer .footer{
+.container-fluid .login-parent .image-form .image-footer .footer {
     background: rgba(76, 175, 125, 0.25);
     border: 1px solid rgba(76, 175, 125, 0.5);
     padding: 1rem;
@@ -175,13 +178,13 @@
     max-width: 103px; */
 }
 
-.container-fluid .login-parent .image-form .image-footer .footer p{
+.container-fluid .login-parent .image-form .image-footer .footer p {
     font-size: 17px;
     font-weight: 600;
     color: var(--green);
 }
 
-.container-fluid .login-parent .image-form .image-footer .footer span{
+.container-fluid .login-parent .image-form .image-footer .footer span {
     color: #ffffff;
     font-size: 14.5px;
     font-weight: 600;
@@ -199,7 +202,9 @@
     align-items: center;
     flex-direction: column;
     width: 100%;
+    overflow-y: auto;
     background-color: #F7F9F8;
+    padding: 2rem 0;
     /* background-color: #ffffff; */
 }
 
@@ -208,8 +213,10 @@
     /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04); */
     /* border: 1px solid #e2e8f0; */
     width: 100%;
+    /* height: 100%; */
     /* max-width: 560px; */
     max-width: 540px;
+    flex-shrink: 0;
     /* background-color: #ffffff; */
     /* background-color: #ffffff; */
     /* background: transparent; */
@@ -217,10 +224,7 @@
 }
 
 .container-fluid .login-parent .form {
-    padding-top: 2.3rem;
-    padding-left: 2.3rem;
-    padding-right: 2.3rem;
-    padding-bottom: 2.3rem;
+    padding: 1.8rem 2.3rem;
     /* box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px; */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     border-radius: 20px;

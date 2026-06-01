@@ -26,11 +26,13 @@
                             <div class="row g-3">
                                 <div class="col-lg-6">
                                     <label class="form-label">Name</label>
-                                    <input type="text" name="name" class="form-control" placeholder="Enter name" required>
+                                    <input type="text" name="name" class="form-control" placeholder="Enter name"
+                                        required>
                                 </div>
                                 <div class="col-lg-6">
                                     <label class="form-label">Email</label>
-                                    <input type="text" name="email" class="form-control" placeholder="Enter email" required>
+                                    <input type="text" name="email" class="form-control" placeholder="Enter email"
+                                        required>
                                 </div>
                                 <div class="col-lg-12">
                                     <label class="form-label">Password</label>
@@ -487,7 +489,8 @@
                                                                                                     <?= htmlspecialchars($stu['name']) ?>
                                                                                                 </td>
                                                                                                 <td style="color:#777;">
-                                                                                                    <?= htmlspecialchars($stu['email']) ?></td>
+                                                                                                    <?= htmlspecialchars($stu['email']) ?>
+                                                                                                </td>
                                                                                             </tr>
                                                                                         <?php endforeach; ?>
                                                                                     </tbody>

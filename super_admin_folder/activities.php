@@ -27,7 +27,7 @@
                     </div>
                     <div>
                         <button data-bs-toggle="modal" data-bs-target="#subjectModal" id="createModuleBtn">
-                            <i class="fa fa-pencil"></i> Create Modules
+                            <i class="fa fa-pencil"></i> Create Subject
                         </button>
                     </div>
                 </div>
@@ -35,9 +35,9 @@
                 <div class="grade-filter" style="margin: 2rem 0rem;">
                     <form method="GET" action="/learning_management/public/">
                         <input type="hidden" name="url" value="activities">
-                        <select name="grade_id" class="form-select" style="max-width:220px; display:inline-block;"
+                        <select name="grade_id" class="form-select" display:inline-block;"
                             onchange="this.form.submit()">
-                            <option value="">-- All Grade Levels --</option>
+                            <option value="">All Grade Levels</option>
                             <?php foreach ($gradeLevels as $gl): ?>
                                 <option value="<?= $gl['id'] ?>" <?= (isset($selectedGrade) && $selectedGrade == $gl['id']) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($gl['name']) ?>
@@ -53,46 +53,57 @@
                     <?php else: ?>
                         <?php foreach ($subjects as $subject): ?>
                             <div class="card">
-                                <div class="card-header">
-                                    <?php if (!empty($subject['subject_image'])): ?>
-                                        <img src="/learning_management/<?= htmlspecialchars($subject['subject_image']) ?>"
-                                            alt="subject image"
-                                            style="width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0;">
-                                    <?php endif; ?>
-                                </div>
+
+                                <!-- Image — clickable -->
+                                <a
+                                    href="/learning_management/public/?url=create_activities&subject_id=<?= (int) $subject['id'] ?>">
+                                    <div class="card-header">
+                                        <?php if (!empty($subject['subject_image'])): ?>
+                                            <img src="/learning_management/<?= htmlspecialchars($subject['subject_image']) ?>"
+                                                alt="subject image"
+                                                style="width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0;">
+                                        <?php endif; ?>
+                                    </div>
+                                </a>
+
+                                <!-- Card body — NOT inside <a> -->
                                 <div class="card-body">
                                     <div class="card-text">
                                         <h4><?= htmlspecialchars($subject['subject_name']) ?></h4>
                                         <?php if (!empty($subject['grade_name'])): ?>
                                             <small
-                                                style="color:#16a34a; font-weight:600; font-size:14.5px; display:block; margin-bottom:4px;">
+                                                style="color:#16a34a;font-weight:600;font-size:14.5px;display:block;margin-bottom:4px;">
                                                 <i class="fa fa-layer-group"></i>
                                                 <?= htmlspecialchars($subject['grade_name']) ?>
                                             </small>
                                         <?php endif; ?>
-                                        <span
-                                            style="display:block;"><?= htmlspecialchars(!empty($subject['subject_description']) ? $subject['subject_description'] : 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus, inventore.') ?></span>
+                                        <span style="display:block;">
+                                            <?= htmlspecialchars(!empty($subject['subject_description']) ? $subject['subject_description'] : 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus, inventore.') ?>
+                                        </span>
                                     </div>
-                                    <div class="card-link" style="display:flex; gap:8px; align-items:center;">
-                                        <!-- Edit button -->
-                                        <button class="btn-edit-subject"
-                                            style="background:none;border:none;cursor:pointer;color:#16a34a;font-size:20px;padding:4px 8px;"
-                                            onclick="openEditModal(
-                                                <?= $subject['id'] ?>,
-                                                '<?= addslashes($subject['subject_name']) ?>',
-                                                '<?= addslashes($subject['subject_description'] ?? '') ?>',
-                                                '<?= addslashes($subject['subject_code'] ?? '') ?>',
-                                                <?= $subject['grade_level_id'] ?? 0 ?>
-                                            )" title="Edit subject">
+                                    <div class="card-link" style="display:flex;gap:8px;align-items:center;">
+
+                                        <!-- Edit button — plain button, no anchor -->
+                                        <button type="button" class="btn-edit-subject" onclick="openEditModal(
+                                <?= $subject['id'] ?>,
+                                '<?= addslashes($subject['subject_name']) ?>',
+                                '<?= addslashes($subject['subject_description'] ?? '') ?>',
+                                '<?= addslashes($subject['subject_code'] ?? '') ?>',
+                                <?= $subject['grade_level_id'] ?? 0 ?>
+                            )" title="Edit subject">
                                             <i class="fa fa-pencil"></i>
                                         </button>
+
+                                        <!-- View Module link -->
                                         <a
-                                            href="/learning_management/public/?url=create_activities&subject_id=<?= (int) $subject['id'] ?>">
-                                            <span>View module</span>
+                                            href="/learning_management/public/?url=view_modules_admin&subject_id=<?= (int) $subject['id'] ?>">
+                                            <span>View Module</span>
                                             <i class="fa fa-arrow-right"></i>
                                         </a>
+
                                     </div>
                                 </div>
+
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
@@ -100,6 +111,12 @@
             </main>
         </div>
     </div>
+
+    <!-- <a
+    href="/learning_management/public/?url=create_activities&subject_id=<?= (int) $subject['id'] ?>">
+    <span>Create Module</span>
+    <i class="fa fa-arrow-right"></i>
+        </a> -->
 
     <!-- ══════════════════════════════════════════════
          CREATE / EDIT SUBJECT MODAL
@@ -112,7 +129,8 @@
                     <input type="hidden" name="subject_id" id="modal_subject_id" value="">
 
                     <div class="modal-header" style="border-bottom:1px solid #e5e7eb;">
-                        <h5 class="modal-title" id="subjectModalLabel" style="font-weight: 600; font-size: 16px;">Create Subject</h5>
+                        <h5 class="modal-title" id="subjectModalLabel" style="font-weight: 600; font-size: 16px;">Create
+                            Subject</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
@@ -120,26 +138,29 @@
 
                         <!-- Subject Name -->
                         <div>
-                            <label style="font-size:14.5px;font-weight:600;margin-bottom:4px;display:block;">Subject Name
+                            <label style="font-size:14.5px;font-weight:500;margin-bottom:4px;display:block;">Subject
+                                Name
                                 <span>*</span></label>
-                            <input type="text" name="subject_name" id="modal_subject_name" style="font-size: 14.5px;" class="form-control"
-                                placeholder="e.g. Computer System Servicing" required>
+                            <input type="text" name="subject_name" id="modal_subject_name" style="font-size: 14.5px;"
+                                class="form-control" placeholder="e.g. Computer System Servicing" required>
                         </div>
 
                         <!-- Subject Code -->
                         <div>
-                            <label style="font-size:14.5px;font-weight:600;margin-bottom:4px;display:block;">Subject Code
+                            <label style="font-size:14.5px;font-weight:500;margin-bottom:4px;display:block;">Subject
+                                Code
                                 <span>*</span></label>
-                            <input type="text" name="subject_code" id="modal_subject_code" style="font-size: 14.5px;" class="form-control"
-                                placeholder="e.g. css_11" required>
+                            <input type="text" name="subject_code" id="modal_subject_code" style="font-size: 14.5px;"
+                                class="form-control" placeholder="e.g. css_11" required>
                         </div>
 
                         <!-- Grade Level -->
                         <div>
-                            <label style="font-size:14.5px;font-weight:600;margin-bottom:4px;display:block;">Grade Level
+                            <label style="font-size:14.5px;font-weight:500;margin-bottom:4px;display:block;">Grade Level
                                 <span>*</span></label>
-                            <select name="grade_level_id" id="modal_grade_level_id" class="form-select" style="font-size: 14.5px;" required>
-                                <option value="">-- Select Grade Level --</option>
+                            <select name="grade_level_id" id="modal_grade_level_id" class="form-select"
+                                style="font-size: 14.5px;" required>
+                                <option value="">Select grade level</option>
                                 <?php foreach ($gradeLevels as $gl): ?>
                                     <option value="<?= $gl['id'] ?>">
                                         <?= htmlspecialchars($gl['name']) ?>
@@ -151,14 +172,15 @@
                         <!-- Description -->
                         <div>
                             <label
-                                style="font-size:14.5px;font-weight:600;margin-bottom:4px;display:block;">Description</label>
+                                style="font-size:14.5px;font-weight:500;margin-bottom:4px;display:block;">Description</label>
                             <textarea name="subject_description" id="modal_subject_description" class="form-control"
-                                rows="3" placeholder="Short description about this subject..." style="font-size: 14.5px;"></textarea>
+                                rows="3" placeholder="Short description about this subject..."
+                                style="font-size: 14.5px;"></textarea>
                         </div>
 
                         <!-- Subject Image -->
                         <div>
-                            <label style="font-size:14.5px;font-weight:600;margin-bottom:4px;display:block;">Subject
+                            <label style="font-size:14.5px;font-weight:500;margin-bottom:4px;display:block;">Subject
                                 Image</label>
                             <input type="file" name="subject_image" id="modal_subject_image" class="form-control"
                                 accept="image/*" onchange="previewImage(this)" style="font-size: 14.5px;" required>
@@ -180,7 +202,7 @@
                             style="font-size:13px;">Cancel</button>
                         <button type="submit" class="btn"
                             style="background: var(--green);color:#fff;font-size:14.5px;font-weight:600;"
-                            id="modalSubmitBtn">Save Subject</button>
+                            id="modalSubmitBtn">Create Subject</button>
                     </div>
                 </form>
             </div>

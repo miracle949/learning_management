@@ -87,18 +87,30 @@
 
 
                         <div class="text-box">
+                            <?php if (!empty($error)): ?>
+                                <div class="alert alert-danger d-flex align-items-center gap-2 mb-3"
+                                    style="border-radius: 28px; padding: 10px 15px" role="alert">
+                                    <i class="fa-solid fa-circle-exclamation"></i>
+                                    <span style="font-size: 15px;"><?= htmlspecialchars($error) ?></span>
+                                </div>
+                            <?php endif; ?>
+
                             <label>Email</label>
-                            <input type="text" class="form-control mt-2" placeholder="Enter email" name="email" id=""
-                                required>
+                            <input type="text" class="form-control mt-2" placeholder="Enter email" name="email"
+                                value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
                         </div>
 
-                        <div class="text-box">
+                        <div class="text-box" style="position: relative;">
                             <div class="forgot">
                                 <label>Password</label>
                                 <a href="#">Forgot Password?</a>
                             </div>
-                            <input type="password" class="form-control mt-2" placeholder="Enter password"
-                                name="password" id="" required>
+                            <input type="password" id="login-password" class="form-control mt-2" placeholder="Enter password"
+                                name="password" style="padding-right: 40px;"  id="" required>
+                            <span onclick="toggleLoginPassword()"
+                                style="position: absolute; right: 12px; top: 71%; transform: translateY(-50%); cursor: pointer; color: #888;">
+                                <i class="fa fa-eye" id="eye-login"></i>
+                            </span>
                         </div>
 
                         <!-- <div class="forgot text-end">
@@ -111,9 +123,7 @@
                         </div>
 
                         <div class="change">
-                            <label>Don't have an account? <a href="/learning_management/public/?url=signup">Sign up here
-                                    to
-                                    create</a>
+                            <label>Don't have an account? <a href="/learning_management/public/?url=signup">Sign up</a>
                             </label>
                         </div>
 
@@ -128,6 +138,20 @@
             </div>
         </form>
     </div>
+
+    <script>
+        function toggleLoginPassword() {
+            const input = document.getElementById('login-password');
+            const icon = document.getElementById('eye-login');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+    </script>
 
     <!-- bootstrap link javascript -->
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>

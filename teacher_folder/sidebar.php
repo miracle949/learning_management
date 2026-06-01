@@ -13,13 +13,16 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'teacher';
     <div class="sidebar-menu">
         <ul>
             <div class="sidebar-category">
-                <h5>Menu</h5>
+                <h5>Main</h5>
             </div>
             <li class="<?= ($current_url ?? '') === 'teacher' ? 'active' : '' ?>">
                 <a href="/learning_management/public/?url=teacher">
                     <i class="fa fa-home"></i><span>Dashboard</span>
                 </a>
             </li>
+            <div class="sidebar-category">
+                <h5>Content</h5>
+            </div>
             <li class="<?= ($current_url ?? '') === 'classes_teacher' ? 'active' : '' ?>">
                 <a href="/learning_management/public/?url=classes_teacher">
                     <i class="fa fa-book-open"></i>
@@ -30,6 +33,28 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'teacher';
                 <a href="/learning_management/public/?url=modules_teacher">
                     <i class="fa fa-book"></i>
                     <span>Modules</span>
+                </a>
+            </li>
+
+            <li class="<?= ($current_url ?? '') === 'assignments' ? 'active' : '' ?>">
+                <a href="#">
+                    <i class="fa fa-pen"></i>
+                    <span>Assignments</span>
+                </a>
+            </li>
+            <div class="sidebar-category">
+                <h5>Evaluation</h5>
+            </div>
+            <li class="<?= ($current_url ?? '') === 'reports' ? 'active' : '' ?>">
+                <a href="#">
+                    <i class="fa fa-chart-line"></i>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <li class="<?= ($current_url ?? '') === 'settings' ? 'active' : '' ?>">
+                <a href="#">
+                    <i class="fa fa-gear"></i>
+                    <span>Settings</span>
                 </a>
             </li>
             <!-- <li>

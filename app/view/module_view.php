@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
     <style>
-        .av-desc-card{
+        .av-desc-card {
             padding: 8px 0;
         }
 
@@ -103,7 +103,7 @@
             align-items: center;
             gap: 8px;
             cursor: pointer;
-            width: 140px;
+            /* width: 140px; */
         }
 
         .mv-att-card:hover .mv-att-icon {
@@ -348,6 +348,10 @@
             border: none;
             display: block;
         }
+
+        .rightbar {
+            padding: 1.8rem 1.4rem 1.8rem 1.4rem;
+        }
     </style>
 </head>
 
@@ -486,22 +490,53 @@
             const title = document.getElementById('pdfModalTitle');
             const download = document.getElementById('pdfDownloadBtn');
 
-            title.textContent = name;
-            download.href = url;
+            // Fix: build full path just like assignment_view.php does
+            const fullPath = url.startsWith('/') ? url : '/learning_management/' + url;
 
-            // Word/PowerPoint → use Google Docs viewer
-            // PDF and others  → load directly
+            title.textContent = name;
+            download.href = fullPath;
+            download.setAttribute('download', name);
+
             if (type === 'word' || type === 'powerpoint') {
                 iframe.src = 'https://docs.google.com/gview?url='
-                    + encodeURIComponent(window.location.origin + url)
+                    + encodeURIComponent(window.location.origin + fullPath)
                     + '&embedded=true';
             } else {
-                iframe.src = url;
+                iframe.src = fullPath; // was just `url` before — that was the bug
             }
 
             overlay.classList.add('open');
-            document.body.style.overflow = 'hidden'; // prevent background scroll
+            document.body.style.overflow = 'hidden';
         }
+
+        // function openModal(url, name, type) {
+        //     const overlay = document.getElementById('pdfModalOverlay');
+        //     const iframe = document.getElementById('pdfModalIframe');
+        //     const title = document.getElementById('pdfModalTitle');
+        //     const download = document.getElementById('pdfDownloadBtn');
+        //     const icon = document.getElementById('pdfModalIcon');
+
+        //     // Build the full server path.
+        //     // If the stored path already starts with '/' treat it as absolute,
+        //     // otherwise prefix with /learning_management/
+        //     const fullPath = url.startsWith('/') ? url : '/learning_management/' + url;
+
+        //     title.textContent = name;
+        //     download.href = fullPath;
+        //     download.setAttribute('download', name);
+
+        //     icon.className = type === 'word' ? 'fa fa-file-word'
+        //         : (type === 'pdf' ? 'fa fa-file-pdf'
+        //             : 'fa fa-file');
+        //     icon.style.color = type === 'word' ? '#2b579a' : '#dc2626';
+
+        //     iframe.src = (type === 'word' || type === 'powerpoint')
+        //         ? 'https://docs.google.com/gview?url=' + encodeURIComponent(window.location.origin + fullPath) + '&embedded=true'
+        //         : fullPath;
+
+        //     overlay.classList.add('open');
+        //     document.body.style.overflow = 'hidden';
+        // }
 
         function closeModal() {
             const overlay = document.getElementById('pdfModalOverlay');

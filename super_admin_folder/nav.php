@@ -248,12 +248,12 @@
             <div class="fa fa-bars"></div>
         </button>
 
-        <div class="search-parent">
+        <!-- <div class="search-parent">
             <i class="fa fa-search"></i>
             <div class="search">
                 <input type="search" name="" id="" placeholder="Search...">
             </div>
-        </div>
+        </div> -->
     </div>
 
     <div class="nav-acc">

@@ -36,11 +36,30 @@ class StudentsController
         $studentModel = new Students();
         $result = $studentModel->deleteAssignmentSubmission($assignmentId, $studentId);
 
+
+
         if ($result) {
             echo json_encode(['success' => true]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Could not delete submission.']);
         }
+        exit;
+    }
+
+    public function get_assignment_due()
+    {
+        header('Content-Type: application/json');
+        $assignmentId = (int) ($_GET['id'] ?? 0);
+        if (!$assignmentId) {
+            echo json_encode(['due_date' => null]);
+            exit;
+        }
+        $studentModel = new Students();
+        $row = $studentModel->getAssignmentDueDate($assignmentId);
+        echo json_encode([
+            'due_date' => $row['due_date'] ?? null,
+            'due_time' => $row['due_time'] ?? null,
+        ]);
         exit;
     }
 
@@ -104,7 +123,11 @@ class StudentsController
         $result = $studentModel->saveAssignmentSubmission($assignmentId, $studentId, $filePath, $message);
 
         if ($result) {
-            echo json_encode(['success' => true]);
+            echo json_encode([
+                'success' => true,
+                'file_path' => $filePath,     // e.g. "uploads/submissions/abc123_file.pdf"
+                'file_name' => $originalName, // e.g. "ILMS CHAPTER 3 FINAL.pdf"
+            ]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Database error. Please try again.']);
         }
@@ -535,6 +558,31 @@ class StudentsController
         require_once "../app/view/module_view.php";
     }
 
+    public function dashboardView()
+    {
+        $user_id = (int) ($_SESSION['user_id'] ?? 0);
+
+        if (!$user_id) {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        $studentModel = new Students();
+        $studentId = $studentModel->getStudentIdByUserId($user_id);
+
+        if ($studentId) {
+            $_SESSION['student_id'] = $studentId;
+        }
+
+        $pendingAssignments = $studentId ? $studentModel->getPendingAssignments($studentId) : [];
+        $pendingCount = $studentId ? $studentModel->countPendingAssignments($studentId) : 0;
+        $enrolledCount = $studentId ? $studentModel->countEnrolledClasses($studentId) : 0;
+        $announcements = $studentId ? $studentModel->getDashboardAnnouncements($studentId) : [];
+        $completedCount = $studentId ? $studentModel->countCompletedAssignments($studentId) : 0; // ADD THIS
+
+        require "../app/view/dashboard.php";
+    }
+
     public function assignments_view()
     {
         // Always resolve fresh — never trust session alone
@@ -556,9 +604,11 @@ class StudentsController
         $studentModel = new Students();
         $completedAssignments = $studentId ? $studentModel->getCompletedAssignments($studentId) : [];
         $pendingAssignments = $studentId ? $studentModel->getPendingAssignments($studentId) : [];
+        $missingAssignments = $studentId ? $studentModel->getMissingAssignments($studentId) : [];
         $gradedAssignments = $studentId ? $studentModel->getGradedAssignments($studentId) : [];
         $completedCount = $studentId ? $studentModel->countCompletedAssignments($studentId) : 0;
         $pendingCount = $studentId ? $studentModel->countPendingAssignments($studentId) : 0;
+        $missingCount = $studentId ? $studentModel->countMissingAssignments($studentId) : 0;
         $gradedCount = $studentId ? $studentModel->countGradedAssignments($studentId) : 0;
 
         require "../app/view/assignments.php";
@@ -576,6 +626,7 @@ class StudentsController
     public function classes()
     {
         $subjectModel = new subjects();
+        $studentModel = new Students(); // add this
         $grade_level_id = ($_SESSION['grade_level'] == "Grade 11") ? 1 : 2;
         $user_id = $_SESSION['user_id'];
         $studentRow = $subjectModel->getStudentByUserId($user_id);
@@ -600,6 +651,14 @@ class StudentsController
 
         $subjects = $subjectModel->getSubjectsByGradeLevel($grade_level_id);
         $enrolledSubjectIds = $subjectModel->getEnrolledSubjectIds($student_id);
+
+        // Build a teacher map: subject_id => teacher data
+        $teacherMap = [];
+        foreach ($subjects as $subject) {
+            $teacher = $studentModel->getTeacherBySubjectId((int) $subject['id']);
+            $teacherMap[$subject['id']] = $teacher;
+        }
+
         require "../app/view/classes.php";
     }
 

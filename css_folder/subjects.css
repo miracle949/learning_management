@@ -28,17 +28,23 @@
     --green-text: #4a6a58;
 }
 
+::-webkit-scrollbar{
+    scrollbar-width: none;
+}
+
+
 .container-fluid .rightbar {
     /* width: calc(100% - 250px); */
     /* width: 100%; */
     width: calc(100% - 235px);
     margin-left: 235px;
-    height: calc(100vh - 68px);
-    overflow-y: auto;
+    /* height: calc(100vh - 68px); */
     border-left: 1px solid rgba(0, 0, 0, 0.1);
-    margin-top: 68px;
+    height: calc(100vh - 66px);
+    overflow-y: auto;
+    margin-top: 66px;
     /* margin-left: 250px; */
-    padding: 1.8rem 1.4rem 1.8rem 1.4rem;
+    /* padding: 1.8rem 1.4rem 1.8rem 1.4rem; */
     /* background-color: #EFF3F6; */
     /* background-color: #f4f5f7; */
     background-color: #F7F9F8;
@@ -69,12 +75,13 @@
 
 .container-fluid .rightbar .module-title h1 {
     font-size: 25px;
-    font-weight: bold;
+    /* font-weight: bold; */
 }
 
 .container-fluid .rightbar .module-title p {
     margin: 20px 0 16px 0;
     font-size: 18px;
+    /* width: 100%; */
 }
 
 .container-fluid .rightbar .your-module {
@@ -95,7 +102,11 @@
 }
 
 .container-fluid .parent {
-    margin-top: 3rem;
+    margin-top: 1.5rem;
+    padding: 0rem 1.4rem 1.8rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .container-fluid .module-parent-progress {
@@ -120,6 +131,7 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     border-radius: 10px;
     border: 1px solid #E2E8E5;
+    margin-top: 1.5rem;
 }
 
 .container-fluid .module-parent-progress .module-progress hr {
@@ -137,9 +149,15 @@
 
 .container-fluid .module-parent-progress .module-progress .module-parent {
     display: flex;
-    align-items: center;
-    gap: 2rem;
-    padding: 2rem 2rem 0 2rem;
+    /* align-items: center; */
+    gap: 1rem;
+    padding: 1rem 2rem 0 2rem;
+}
+
+.container-fluid .module-parent-progress .module-progress .module-parent .module-content{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .container-fluid .module-parent-progress .module-progress .module-parent .module-content h3,
@@ -150,22 +168,35 @@
 
 .container-fluid .module-parent-progress .module-progress .module-parent .module-content span,
 .container-fluid .module-parent-progress .module-progress .module-parent .module-content p {
-    font-size: 15.5px;
-    margin: 8px 0 8px 0px;
+    font-size: 14.5px;
+    /* margin: 8px 0 8px 0px; */
+    margin: 0;
     /* font-weight: 600; */
 }
 
+.container-fluid .module-parent-progress .module-progress .module-parent .module-content p{
+    color: #808080;
+}
+
 .container-fluid .module-parent-progress .module-progress .module-parent .module-content span {
-    margin: 8px 0 8px 0;
+    /* margin: 0px 0 8px 0; */
+    margin: 0;
     width: 500px;
 }
 
 .container-fluid .module-parent-progress .module-progress .module-parent .module-content h3 {
     font-size: 16px;
-    margin: 8px 0 0 0;
+    /* margin: 8px 0 0 0; */
+    margin: 0;
     font-weight: 600;
     width: 800px;
     line-height: 28px;
+}
+
+.container-fluid #subject-tab-classwork .module-content span{
+    color: var(--green);
+    text-transform: uppercase;
+    font-weight: 600;
 }
 
 /* .container-fluid .module-parent-progress .module-progress .module-parent .module-content{
@@ -176,12 +207,17 @@
 .container-fluid .module-parent-progress .module-progress .module-parent .module-icon {
     background-color: #F5F5F5;
     border: 1px solid #E2E8E5;
-    padding: 1rem;
+    /* padding: 0.8rem; */
+    width: 55px;
+    height: 55px;
     border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .container-fluid .module-parent-progress .module-progress .module-parent .module-icon .fa {
-    font-size: 30px;
+    font-size: 25px;
     color: var(--green);
 }
 
@@ -252,13 +288,52 @@
 .av-file-card {
     display: inline-flex;
     flex-direction: column;
-    align-items: center;
+    align-items: left;
     /* justify-content: center; */
     gap: 8px;
     /* width: 140px; */
     text-decoration: none;
     cursor: pointer;
     margin-top: 0.5rem;
+}
+
+/* ── TABS (copied from records.php) ── */
+.subject-tabs {
+    display: flex;
+    gap: 0;
+    background: #fff;
+    border-bottom: 2px solid #e4e7eb;
+    margin-bottom: 0;
+}
+
+.subject-tab-btn {
+    padding: 12px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #6b7280;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: color .15s, border-color .15s;
+}
+
+.subject-tab-btn.active {
+    color: #009e3e;
+    border-bottom-color: #00C950;
+}
+
+.subject-tab-btn:hover:not(.active) {
+    color: #111;
+}
+
+.subject-tab-pane {
+    display: none;
+}
+
+.subject-tab-pane.active {
+    display: block;
 }
 
 @keyframes slideIn {

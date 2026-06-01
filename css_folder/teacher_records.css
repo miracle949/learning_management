@@ -545,6 +545,10 @@ select.form-select {
     font-size: 14.5px;
 } */
 
+#btn-approve{
+    font-size: 14.5px;
+}
+
 .container-fluid .table-parent .teachers-parents-data .teachers-data .assign-section {
     margin-top: 0.5rem;
     width: 25%;

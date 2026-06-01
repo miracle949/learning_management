@@ -41,6 +41,7 @@
             align-items: flex-start;
             gap: 1.2rem;
             padding: 2rem 1.8rem 0rem 1.8rem;
+            width: 100%;
         }
 
         .av-header-icon {
@@ -56,6 +57,10 @@
             font-size: 22px;
         }
 
+        .av-header-info {
+            width: 100%;
+        }
+
         .av-header-info small {
             font-size: 12px;
             color: #aaa;
@@ -68,7 +73,7 @@
             font-size: 20px;
             font-weight: 800;
             color: #1a1a1a;
-            margin: 0 0 6px;
+            margin: 0 0 0px;
             line-height: 1.4;
         }
 
@@ -98,7 +103,6 @@
 
         .av-due-badge {
             display: inline-block;
-            /* background-color: #E8F5EE; */
             color: var(--green);
             font-size: 13.5px;
             font-weight: 600;
@@ -155,6 +159,7 @@
             color: #DB0001;
             transition: opacity .18s, transform .18s;
             background-color: #F0F0F0;
+            cursor: pointer;
         }
 
         .av-file-icon.word {
@@ -191,19 +196,16 @@
         .av-file-badge.pdf {
             background: #fee2e2;
             color: #dc2626;
+            overflow-x: hidden;
+            width: 140px;
         }
 
         /* ─── Submission area ─── */
         .av-message-card {
-            margin-top: 5rem;
+            margin-top: 2rem;
+            /* padding-bottom: 2rem; */
         }
 
-        /*
-         * BUTTON STATES (clearly defined):
-         *   idle      = grey paper-plane  → no file attached, click = shake warning
-         *   ready     = GREEN paper-plane → file attached, click = SUBMIT
-         *   submitted = RED X             → already submitted, click = unsubmit dialog
-         */
         .av-message-box {
             display: flex;
             align-items: center;
@@ -275,7 +277,6 @@
             color: #aaa;
         }
 
-        /* Base button */
         .av-msg-btn {
             border: none;
             border-radius: 50%;
@@ -295,17 +296,14 @@
             transform: scale(1.08);
         }
 
-        /* grey paper-plane: no file */
         .av-msg-btn.idle {
             background: #c0c0c0;
         }
 
-        /* green paper-plane: file ready to submit */
         .av-msg-btn.ready {
             background: var(--green);
         }
 
-        /* red X: already submitted → click to unsubmit */
         .av-msg-btn.danger {
             background: #ef4444;
         }
@@ -352,6 +350,34 @@
             font-size: 48px;
             display: block;
             margin-bottom: 14px;
+        }
+
+        /* ─── Submitted file preview card ─── */
+        .av-submitted-file-section {
+            margin: 0 1.8rem 1.5rem;
+        }
+
+        .av-submitted-file-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #166534;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .av-submitted-file-card {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: left;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .av-submitted-file-card:hover .av-file-icon {
+            opacity: .85;
+            transform: translateY(-2px);
         }
 
         /* ─── PDF Modal ─── */
@@ -468,6 +494,18 @@
             to {
                 opacity: 0;
                 transform: translateY(20px);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
 
@@ -667,6 +705,16 @@
         #avToast.warn {
             background: #92400e;
         }
+
+        .av-message-actions.locked #msgToggleBtn {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            color: var(--green, #4CAF7D);
+        }
+
+        .rightbar {
+            padding: 1.8rem 1.4rem 1.8rem 1.4rem;
+        }
     </style>
 </head>
 
@@ -690,6 +738,19 @@
                     </div>
 
                 <?php else: ?>
+
+                    <?php
+                    $dueDT = '';
+                    if (!empty($assignment['due_date'])) {
+                        $dueDT = $assignment['due_date'];
+                        if (!empty($assignment['due_time'])) {
+                            $dueDT .= ' ' . $assignment['due_time'];
+                        }
+                    }
+                    $isOverdue = $dueDT && strtotime($dueDT) < time();
+                    $submittedWhileOverdue = $isOverdue && $existingSubmission;
+                    $cannotResubmit = $isOverdue;
+                    ?>
 
                     <a href="/learning_management/public/?url=subjects&subject=<?= htmlspecialchars($subjectSlug) ?>"
                         class="av-back-link">
@@ -716,13 +777,37 @@
                                 </div>
                                 <div class="av-date-parent">
                                     <span class="av-points">
-                                        <?= htmlspecialchars($assignment['points']) ?> pts
+                                        <?php if ($existingSubmission && isset($existingSubmission['points_earned']) && $existingSubmission['points_earned'] !== null): ?>
+                                            <?php
+                                            $percent = $assignment['points'] > 0
+                                                ? ($existingSubmission['points_earned'] / $assignment['points']) * 100
+                                                : 0;
+                                            $scoreColor = $percent >= 75 ? '#4CAF7D' : '#C82525';
+                                            ?>
+                                            <span style="color:<?= $scoreColor ?>; font-size:15px; font-weight:600;">
+                                                <?= (int) $existingSubmission['points_earned'] ?>
+                                            </span>
+                                            <span style="color:#aaa; font-size:15px; font-weight:600;">
+                                                / <?= htmlspecialchars($assignment['points']) ?> pts
+                                            </span>
+                                        <?php else: ?>
+                                            <?= htmlspecialchars($assignment['points']) ?> pts
+                                        <?php endif; ?>
                                     </span>
                                     <div class="due-date">
                                         <?php if (!empty($assignment['due_date'])): ?>
-                                            <span class="av-due-badge">
-                                                <i class="fa fa-calendar-alt"></i>
-                                                Due Date: <?= date('M j, Y', strtotime($assignment['due_date'])) ?>
+                                            <?php
+                                            $dueDateTime = $assignment['due_date'];
+                                            if (!empty($assignment['due_time'])) {
+                                                $dueDateTime .= ' ' . $assignment['due_time'];
+                                            }
+                                            $dueTimestamp = strtotime($dueDateTime);
+                                            $isOverdue = $dueTimestamp < time();
+                                            ?>
+                                            <span class="av-due-badge"
+                                                style="color: <?= $isOverdue ? '#ef4444' : 'var(--green)' ?>;">
+                                                <i class="fa fa-<?= $isOverdue ? 'clock' : 'calendar-alt' ?>"></i>
+                                                Due: <?= date('M j, Y', $dueTimestamp) ?> at <?= date('g:i A', $dueTimestamp) ?>
                                             </span>
                                         <?php endif; ?>
                                     </div>
@@ -770,8 +855,54 @@
                             <input type="file" id="attachImageInput" accept="image/*" style="display:none">
                             <input type="file" id="attachVideoInput" accept="video/*" style="display:none">
 
-                            <?php if ($existingSubmission): ?>
+                            <?php if ($existingSubmission):
+
+                                /*
+                                 * Resolve the submitted file path.
+                                 * Try common column names: file_path, submission_file, filename
+                                 */
+                                $subRawPath = $existingSubmission['file_path']
+                                    ?? $existingSubmission['submission_file']
+                                    ?? $existingSubmission['file_name']
+                                    ?? $existingSubmission['filename']
+                                    ?? $existingSubmission['filepath']
+                                    ?? '';
+
+                                $subFileName = $subRawPath ? basename($subRawPath) : '';
+                                $subExt = strtolower(pathinfo($subFileName, PATHINFO_EXTENSION));
+                                $subType = in_array($subExt, ['doc', 'docx'])
+                                    ? 'word'
+                                    : (in_array($subExt, ['ppt', 'pptx']) ? 'powerpoint' : 'pdf');
+                                $subIcon = $subType === 'word'
+                                    ? 'fa-file-word'
+                                    : ($subType === 'powerpoint' ? 'fa-file-powerpoint' : 'fa-file-pdf');
+                                ?>
+
                                 <!-- ══ SUBMITTED STATE ══ -->
+
+                                <?php if (!empty($subRawPath)): ?>
+                                    <!-- Your submitted file card — clickable, opens in modal -->
+                                    <div class="av-submitted-file-section" id="submittedFileSection">
+                                        <p class="av-submitted-file-label">
+                                            <i class="fa fa-check-circle"></i> Your Submitted File
+                                        </p>
+                                        <div class="av-submitted-file-card" onclick="openModal(
+                                        '<?= htmlspecialchars($subRawPath) ?>',
+                                        '<?= htmlspecialchars($subFileName) ?>',
+                                        '<?= $subType ?>'
+                                    )">
+                                            <div class="av-file-icon <?= htmlspecialchars($subType) ?>">
+                                                <i class="fa <?= $subIcon ?>"></i>
+                                                <span><?= strtoupper($subType) ?></span>
+                                            </div>
+                                            <span class="av-file-badge <?= htmlspecialchars($subType) ?>">
+                                                <i class="fa <?= $subIcon ?>"></i>
+                                                <?= htmlspecialchars($subFileName) ?>
+                                            </span>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+
                                 <div class="av-message-box submitted" id="msgBox">
                                     <div class="av-msg-left">
                                         <i class="fa fa-check-circle av-msg-status-icon green"></i>
@@ -783,41 +914,80 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <button class="av-msg-btn danger" title="Unsubmit" onclick="confirmUnsubmit()">
-                                        <i class="fa fa-times"></i>
-                                    </button>
+                                    <?php if (!$isOverdue): ?>
+                                        <!-- Only allow unsubmit if NOT overdue -->
+                                        <button class="av-msg-btn danger" title="Unsubmit" onclick="confirmUnsubmit()">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    <?php else: ?>
+                                        <!-- Overdue: lock the unsubmit button -->
+                                        <button class="av-msg-btn" title="Cannot unsubmit after due date"
+                                            style="background:#d1d5db;cursor:not-allowed;" disabled>
+                                            <i class="fa fa-lock"></i>
+                                        </button>
+                                    <?php endif; ?>
                                 </div>
+
+                                <?php
+                                // TEMPORARY DEBUG — remove after fixing
+                                error_log('SUBMISSION DATA: ' . json_encode($existingSubmission));
+                                // OR show in HTML source:
+                                echo '<!-- ' . htmlspecialchars(json_encode($existingSubmission)) . ' -->';
+                                ?>
 
                             <?php else: ?>
-                                <!-- ══ NOT SUBMITTED STATE ══ -->
-                                <div id="attachPreview" style="display:none; margin:0 20px 10px; padding:10px;
-                background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px;">
-                                    <img id="previewImage"
-                                        style="display:none; max-width:100%; max-height:200px; border-radius:8px;">
-                                    <video id="previewVideo" controls
-                                        style="display:none; max-width:100%; max-height:200px; border-radius:8px;"></video>
-                                </div>
 
-                                <div class="av-message-box" id="msgBox">
-                                    <div class="av-msg-left">
-                                        <i class="fa fa-file av-msg-status-icon green" id="msgIcon" style="display:none;"></i>
-                                        <div class="av-msg-text-col" id="msgTextCol" style="display:none;">
-                                            <span class="av-msg-title" id="msgTitle"></span>
+                                <!-- ══ NOT SUBMITTED STATE ══ -->
+
+                                <?php if ($isOverdue): ?>
+                                    <!-- ══ OVERDUE — cannot submit ══ -->
+                                    <div class="av-message-box" style="background:#fff5f5; border-color:#fecaca; margin-bottom:0;">
+                                        <div class="av-msg-left">
+                                            <i class="fa fa-clock av-msg-status-icon" style="color:#ef4444;"></i>
+                                            <div class="av-msg-text-col">
+                                                <span class="av-msg-title" style="color:#dc2626;">Assignment Overdue</span>
+                                                <span class="av-msg-sub">
+                                                    Due date was <?= date('M j, Y', strtotime($dueDT)) ?> at
+                                                    <?= date('g:i A', strtotime($dueDT)) ?>
+                                                </span>
+                                            </div>
                                         </div>
-                                        <span class="av-msg-placeholder" id="msgPlaceholder">No file insert...</span>
                                     </div>
-                                    <button class="av-msg-btn idle" id="msgActionBtn" title="Attach a file first"
-                                        onclick="handleMsgBtn()">
-                                        <i class="fa fa-paper-plane" id="msgBtnIcon"></i>
-                                    </button>
-                                </div>
+
+
+                                <?php else: ?>
+                                    <!-- ══ NORMAL — can submit ══ -->
+                                    <div id="attachPreview" style="display:none; margin:0 20px 10px; padding:10px;
+                                    background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px;">
+                                        <img id="previewImage"
+                                            style="display:none; max-width:100%; max-height:200px; border-radius:8px;">
+                                        <video id="previewVideo" controls
+                                            style="display:none; max-width:100%; max-height:200px; border-radius:8px;"></video>
+                                    </div>
+
+                                    <div class="av-message-box" id="msgBox">
+                                        <div class="av-msg-left">
+                                            <i class="fa fa-file av-msg-status-icon green" id="msgIcon" style="display:none;"></i>
+                                            <div class="av-msg-text-col" id="msgTextCol" style="display:none;">
+                                                <span class="av-msg-title" id="msgTitle"></span>
+                                            </div>
+                                            <span class="av-msg-placeholder" id="msgPlaceholder">No file insert...</span>
+                                        </div>
+                                        <button class="av-msg-btn idle" id="msgActionBtn" title="Attach a file first"
+                                            onclick="handleMsgBtn()">
+                                            <i class="fa fa-paper-plane" id="msgBtnIcon"></i>
+                                        </button>
+                                    </div>
+
+                                <?php endif; ?>
+
 
                             <?php endif; ?>
 
-                            <!-- ★ MESSAGE BOX — always visible, below everything -->
-                            <div id="msgBoxWrapper" style="margin: 10px 20px 0;">
-                                <div
-                                    style="background:#fff; border:1px solid rgba(0,0,0,0.1); border-radius:10px; padding:10px 16px; display:flex; align-items:center; gap:10px;">
+                            <!-- MESSAGE BOX — always rendered, toggled by JS -->
+                            <div id="msgBoxWrapper" style="display:none; margin: 10px 20px 0;">
+                                <div style="background:#fff; border:1px solid rgba(0,0,0,0.1); border-radius:10px;
+                                    padding:10px 14px; display:flex; align-items:center; gap:10px;">
                                     <input type="text" id="msgInput" placeholder="Message ..."
                                         style="flex:1; border:none; outline:none; font-size:14px; color:#333; background:transparent;">
                                     <button class="av-msg-btn ready" title="Send message" id="msgSendBtn"
@@ -827,16 +997,33 @@
                                 </div>
                             </div>
 
-                            <div class="av-message-actions <?= $existingSubmission ? 'locked' : '' ?>" id="attachActions">
-                                <button <?= $existingSubmission ? '' : 'title="Attach file" onclick="document.getElementById(\'attachFileInput\').click()"' ?>>
-                                    <i class="fa fa-paperclip"></i>
+                            <?php $lockAttach = $existingSubmission || $isOverdue; ?>
+
+                            <div
+                                style="display:flex; margin-top:1rem; border-radius:12px; border:1px solid rgba(0,0,0,0.1); background-color:#F0F0F0; overflow:hidden;">
+
+                                <!-- Message button — ALWAYS clickable, never affected by lock -->
+                                <button id="msgToggleBtn" title="Message" onclick="toggleMessageBox()"
+                                    style="background:none; border:none; border-right:1px solid rgba(0,0,0,0.08); color:var(--green, #4CAF7D); font-size:23px; cursor:pointer; padding:10px 30px; flex-shrink:0; transition:background .15s;">
+                                    <i class=" fa fa-comment"></i>
                                 </button>
-                                <button <?= $existingSubmission ? '' : 'title="Image" onclick="document.getElementById(\'attachImageInput\').click()"' ?>>
-                                    <i class="fa fa-image"></i>
-                                </button>
-                                <button <?= $existingSubmission ? '' : 'title="Video" onclick="document.getElementById(\'attachVideoInput\').click()"' ?>>
-                                    <i class="fa fa-film"></i>
-                                </button>
+
+                                <!-- File/Image/Video buttons — disabled when submitted or overdue -->
+                                <div id="attachActions"
+                                    style="display:flex; flex:1; justify-content:space-around; align-items:center; padding:10px 20px; <?= $lockAttach ? 'opacity:.35; pointer-events:none;' : '' ?>">
+                                    <button <?= !$lockAttach ? 'title="Attach file" onclick="document.getElementById(\'attachFileInput\').click()"' : 'title="Submissions closed"' ?>
+                                        style="background:none; border:none; color:var(--green); font-size:23px; <?= $lockAttach ? 'cursor:not-allowed;' : 'cursor:pointer;' ?> padding:0;">
+                                        <i class="fa fa-paperclip"></i>
+                                    </button>
+                                    <button <?= !$lockAttach ? 'title="Image" onclick="document.getElementById(\'attachImageInput\').click()"' : 'title="Submissions closed"' ?>
+                                        style="background:none; border:none; color:var(--green); font-size:23px; <?= $lockAttach ? 'cursor:not-allowed;' : 'cursor:pointer;' ?> padding:0;">
+                                        <i class="fa fa-image"></i>
+                                    </button>
+                                    <button <?= !$lockAttach ? 'title="Video" onclick="document.getElementById(\'attachVideoInput\').click()"' : 'title="Submissions closed"' ?>
+                                        style="background:none; border:none; color:var(--green); font-size:23px; <?= $lockAttach ? 'cursor:not-allowed;' : 'cursor:pointer;' ?> padding:0;">
+                                        <i class="fa fa-film"></i>
+                                    </button>
+                                </div>
                             </div>
 
                         </div><!-- /av-message-card -->
@@ -888,7 +1075,7 @@
 
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
     <script>
-        // ── Toast ──────────────────────────────────────────────────────────────────
+        // ── Toast ─────────────────────────────────────────────────────────────────
         let _toastTimer = null;
         function showToast(msg, type = 'error') {
             const t = document.getElementById('avToast');
@@ -902,35 +1089,70 @@
             }, 3500);
         }
 
-        // ── PDF Modal ──────────────────────────────────────────────────────────────
+        // ── Toggle Message Box ────────────────────────────────────────────────────
+        let msgBoxVisible = false;
+        function toggleMessageBox() {
+            const wrapper = document.getElementById('msgBoxWrapper');
+            const btn = document.getElementById('msgToggleBtn');
+            if (!wrapper) return;
+            msgBoxVisible = !msgBoxVisible;
+            if (msgBoxVisible) {
+                wrapper.style.display = 'block';
+                wrapper.style.animation = 'fadeInDown .2s ease';
+                btn.style.color = 'var(--green)';
+                btn.style.background = 'rgba(0,201,80,0.1)';
+                btn.style.borderRadius = '8px';
+                setTimeout(() => { const i = document.getElementById('msgInput'); if (i) i.focus(); }, 50);
+            } else {
+                wrapper.style.display = 'none';
+                btn.style.color = 'var(--green, #4CAF7D)';
+                btn.style.background = '';
+            }
+        }
+
+        // ── PDF Modal ─────────────────────────────────────────────────────────────
         function openModal(url, name, type) {
             const overlay = document.getElementById('pdfModalOverlay');
             const iframe = document.getElementById('pdfModalIframe');
             const title = document.getElementById('pdfModalTitle');
             const download = document.getElementById('pdfDownloadBtn');
             const icon = document.getElementById('pdfModalIcon');
-            const fullPath = '/learning_management/' + url;
+
+            // Build the full server path.
+            // If the stored path already starts with '/' treat it as absolute,
+            // otherwise prefix with /learning_management/
+            const fullPath = url.startsWith('/') ? url : '/learning_management/' + url;
+
             title.textContent = name;
             download.href = fullPath;
-            icon.className = type === 'word' ? 'fa fa-file-word' : (type === 'pdf' ? 'fa fa-file-pdf' : 'fa fa-file');
+            download.setAttribute('download', name);
+
+            icon.className = type === 'word' ? 'fa fa-file-word'
+                : (type === 'pdf' ? 'fa fa-file-pdf'
+                    : 'fa fa-file');
             icon.style.color = type === 'word' ? '#2b579a' : '#dc2626';
+
             iframe.src = (type === 'word' || type === 'powerpoint')
                 ? 'https://docs.google.com/gview?url=' + encodeURIComponent(window.location.origin + fullPath) + '&embedded=true'
                 : fullPath;
+
             overlay.classList.add('open');
             document.body.style.overflow = 'hidden';
         }
+
         function closeModal() {
             document.getElementById('pdfModalOverlay').classList.remove('open');
             document.getElementById('pdfModalIframe').src = '';
             document.body.style.overflow = '';
         }
+
         function handleOverlayClick(e) {
             if (e.target === document.getElementById('pdfModalOverlay')) closeModal();
         }
+
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-        // ── Send Message — works in both submitted and not-submitted states ─────────
+        // ── Send Message ──────────────────────────────────────────────────────────
         function sendMessage() {
             const input = document.getElementById('msgInput');
             const icon = document.getElementById('msgSendIcon');
@@ -938,48 +1160,40 @@
 
             const text = input.value.trim();
             if (!text) {
-                // Just shake the input, no network call
                 input.style.outline = '2px solid #ef4444';
                 input.placeholder = 'Please type a message first!';
-                setTimeout(() => {
-                    input.style.outline = '';
-                    input.placeholder = 'Message ...';
-                }, 2500);
+                setTimeout(() => { input.style.outline = ''; input.placeholder = 'Message ...'; }, 2500);
                 return;
             }
 
             icon.className = 'fa fa-spinner fa-spin';
             document.getElementById('msgSendBtn').disabled = true;
 
-            const formData = new FormData();
-            formData.append('assignment_id', '<?= $assignment["id"] ?? 0 ?>');
-            formData.append('message', text);
+            const fd = new FormData();
+            fd.append('assignment_id', '<?= $assignment["id"] ?? 0 ?>');
+            fd.append('message', text);
 
-            fetch('/learning_management/public/?url=send_assignment_message', { method: 'POST', body: formData })
+            fetch('/learning_management/public/?url=send_assignment_message', { method: 'POST', body: fd })
                 .then(r => r.text())
                 .then(raw => {
                     let data;
                     try { data = JSON.parse(raw); } catch (e) { data = { success: false }; }
-                    if (data.success) {
-                        input.value = '';
-                        showToast('Message sent!', 'success');
-                    } else {
-                        showToast(data.message || 'Could not send message.', 'error');
-                    }
+                    if (data.success) { input.value = ''; showToast('Message sent!', 'success'); }
+                    else { showToast(data.message || 'Could not send message.', 'error'); }
                 })
-                .catch(() => showToast('Network error. Please check your connection.', 'error'))
+                // .catch(() => showToast('Network error. Please check your connection.', 'error'))
+                .catch(() => showToast('Submission removed. You can re-submit..', 'error'))
                 .finally(() => {
                     icon.className = 'fa fa-paper-plane';
                     document.getElementById('msgSendBtn').disabled = false;
                 });
         }
 
-        // Enter key on message input
         document.getElementById('msgInput').addEventListener('keydown', function (e) {
             if (e.key === 'Enter') sendMessage();
         });
 
-        // ── Submission logic (only when NOT yet submitted) ─────────────────────────
+        // ── Submission logic (only injected when NOT yet submitted) ───────────────
         <?php if (!$existingSubmission): ?>
 
             let attachedFile = null;
@@ -1058,10 +1272,7 @@
                     setTimeout(() => { msgBox.style.animation = 'shake .4s ease'; }, 10);
                     msgPlaceholder.textContent = 'Please attach a file first!';
                     showToast('Please attach a file before submitting.', 'warn');
-                    setTimeout(() => {
-                        msgPlaceholder.textContent = 'No file insert...';
-                        msgBox.style.border = '';
-                    }, 3000);
+                    setTimeout(() => { msgPlaceholder.textContent = 'No file insert...'; msgBox.style.border = ''; }, 3000);
                 }
             }
 
@@ -1070,13 +1281,13 @@
                 msgActionBtn.disabled = true;
                 msgBtnIcon.className = 'fa fa-spinner fa-spin';
 
-                const formData = new FormData();
-                formData.append('assignment_id', '<?= $assignment["id"] ?>');
-                formData.append('comment', '');
-                formData.append('submission_file', attachedFile);
-                formData.append('file_type', attachedType);
+                const fd = new FormData();
+                fd.append('assignment_id', '<?= $assignment["id"] ?>');
+                fd.append('comment', '');
+                fd.append('submission_file', attachedFile);
+                fd.append('file_type', attachedType);
 
-                fetch('/learning_management/public/?url=submit_assignment', { method: 'POST', body: formData })
+                fetch('/learning_management/public/?url=submit_assignment', { method: 'POST', body: fd })
                     .then(r => r.text())
                     .then(text => {
                         let data;
@@ -1089,17 +1300,24 @@
                                 month: 'short', day: 'numeric', year: 'numeric',
                                 hour: 'numeric', minute: '2-digit', hour12: true
                             });
-                            renderSubmittedState(dateStr);
+                            // Expects: data.file_path  (relative path stored in DB)
+                            //          data.file_name  (original filename)
+                            renderSubmittedState(
+                                dateStr,
+                                data.file_path || '',
+                                data.file_name || attachedFile.name,
+                                attachedType
+                            );
                             showToast('Assignment submitted successfully!', 'success');
+                            msgBoxVisible = false;
                         } else {
                             showToast(data.message || 'Submission failed. Please try again.', 'error');
                             resetToReady();
                         }
                     })
-                    .catch(() => {
-                        showToast('Network error. Please check your connection.', 'error');
-                        resetToReady();
-                    });
+                    // .catch(() => { showToast('Network error. Please check your connection.', 'error'); resetToReady(); });
+                    .catch(() => { showToast('Submission removed. You can re-submit..', 'error'); resetToReady(); });
+                // .catch(() => showToast('Unsubmitted file already successfully!.', 'error'))
             }
 
             function resetToReady() {
@@ -1110,11 +1328,51 @@
                 msgActionBtn.classList.add('ready');
             }
 
-            function renderSubmittedState(dateStr) {
+            function renderSubmittedState(dateStr, filePath, fileName, fileType) {
+                // Hide preview strip
                 const preview = document.getElementById('attachPreview');
                 if (preview) preview.style.display = 'none';
 
-                // Update submit box → submitted
+                // Remove any old submitted-file card
+                ['submittedFileSection'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.remove();
+                });
+
+                const submissionArea = document.getElementById('submissionArea');
+
+                // Insert submitted file card if we have a path
+                if (filePath && fileName) {
+                    const iconMap = { word: 'fa-file-word', powerpoint: 'fa-file-powerpoint', pdf: 'fa-file-pdf', file: 'fa-file-pdf', image: 'fa-file-image', video: 'fa-file-video' };
+                    const badgeMap = { word: 'word', powerpoint: 'powerpoint', pdf: 'pdf', file: 'pdf', image: 'pdf', video: 'pdf' };
+                    const icon = iconMap[fileType] || 'fa-file-pdf';
+                    const badge = badgeMap[fileType] || 'pdf';
+                    const label = fileType === 'word' ? 'WORD' : (fileType === 'powerpoint' ? 'PPT' : 'PDF');
+
+                    const section = document.createElement('div');
+                    section.className = 'av-submitted-file-section';
+                    section.id = 'submittedFileSection';
+                    section.innerHTML = `
+                    <p class="av-submitted-file-label">
+                        <i class="fa fa-check-circle"></i> Your Submitted File
+                    </p>
+                    <div class="av-submitted-file-card"
+                         onclick="openModal('${filePath.replace(/'/g, "\\'")}', '${fileName.replace(/'/g, "\\'")}', '${fileType}')">
+                                                                                                                                    <div class="av-file-icon ${badge}">
+                                                                                                                                        <i class="fa ${icon}"></i>
+                                                                                                                                        <span>${label}</span>
+                                                                                                                                    </div>
+                                                                                                                                    <span class="av-file-badge ${badge}">
+                                                                                                                                        <i class="fa ${icon}"></i>
+                                                                                                                                        ${fileName}
+                                                                                                                                    </span>
+                                                                                                                                </div>`;
+
+                    // Insert before the first child (above the msgBox)
+                    submissionArea.insertBefore(section, submissionArea.firstChild);
+                }
+
+                // Update status bar → submitted
                 msgBox.classList.remove('has-file');
                 msgBox.classList.add('submitted');
                 msgIcon.className = 'fa fa-check-circle av-msg-status-icon green';
@@ -1131,7 +1389,7 @@
                 sub.textContent = 'Submitted on ' + dateStr;
                 msgPlaceholder.style.display = 'none';
 
-                // Button → RED X
+                // Button → RED X (unsubmit)
                 msgActionBtn.disabled = false;
                 msgActionBtn.classList.remove('idle', 'ready');
                 msgActionBtn.classList.add('danger');
@@ -1140,32 +1398,39 @@
                 msgActionBtn.onclick = confirmUnsubmit;
                 isSubmitting = false;
 
-                // Lock attachment row
                 attachActions.classList.add('locked');
+                attachActions.style.opacity = '0.35';
+                attachActions.style.pointerEvents = 'none';
 
-                // Clear file vars
+                // Disable file inputs so they can't be triggered at all
+                ['attachFileInput', 'attachImageInput', 'attachVideoInput'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.disabled = true;
+                });
+
                 attachedFile = null;
                 attachedType = null;
             }
 
         <?php endif; ?>
 
-        // ── Unsubmit ───────────────────────────────────────────────────────────────
+        // ── Unsubmit ──────────────────────────────────────────────────────────────
         function confirmUnsubmit() {
             document.getElementById('unsubmitOverlay').classList.add('open');
         }
         function closeUnsubmitDialog() {
             document.getElementById('unsubmitOverlay').classList.remove('open');
         }
+
         function doUnsubmit() {
             const btn = document.getElementById('unsubmitConfirmBtn');
             btn.disabled = true;
             btn.textContent = 'Removing...';
 
-            const formData = new FormData();
-            formData.append('assignment_id', '<?= $assignment["id"] ?? 0 ?>');
+            const fd = new FormData();
+            fd.append('assignment_id', '<?= $assignment["id"] ?? 0 ?>');
 
-            fetch('/learning_management/public/?url=unsubmit_assignment', { method: 'POST', body: formData })
+            fetch('/learning_management/public/?url=unsubmit_assignment', { method: 'POST', body: fd })
                 .then(r => r.text())
                 .then(text => {
                     let data;
@@ -1179,7 +1444,10 @@
                     if (data.success) {
                         closeUnsubmitDialog();
                         showToast('Submission removed. You can re-submit.', 'success');
-                        renderUnsubmittedState();
+                        // Reload after short delay so toast is visible
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1200);
                     } else {
                         closeUnsubmitDialog();
                         showToast(data.message || 'Could not unsubmit. Please try again.', 'error');
@@ -1188,7 +1456,8 @@
                 })
                 .catch(() => {
                     closeUnsubmitDialog();
-                    showToast('Network error. Please check your connection.', 'error');
+                    // showToast('Network error. Please check your connection.', 'error');
+                    showToast('Submission removed. You can re-submit.', 'error');
                     btn.disabled = false; btn.textContent = 'Yes, Unsubmit';
                 });
         }
@@ -1197,55 +1466,67 @@
             const submissionArea = document.getElementById('submissionArea');
 
             submissionArea.innerHTML = `
-            <input type="file" id="attachFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx" style="display:none">
-            <input type="file" id="attachImageInput" accept="image/*" style="display:none">
-            <input type="file" id="attachVideoInput" accept="video/*" style="display:none">
+        <input type="file" id="attachFileInput" accept=".pdf,.doc,.docx,.ppt,.pptx" style="display:none">
+        <input type="file" id="attachImageInput" accept="image/*" style="display:none">
+        <input type="file" id="attachVideoInput" accept="video/*" style="display:none">
 
-            <div id="attachPreview" style="display:none; margin:0 20px 10px; padding:10px;
-                    background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px;">
-                <img id="previewImage" style="display:none; max-width:100%; max-height:200px; border-radius:8px;">
-                <video id="previewVideo" controls style="display:none; max-width:100%; max-height:200px; border-radius:8px;"></video>
-            </div>
+        <div id="attachPreview" style="display:none; margin:0 20px 10px; padding:10px;
+                background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px;">
+            <img id="previewImage" style="display:none; max-width:100%; max-height:200px; border-radius:8px;">
+            <video id="previewVideo" controls style="display:none; max-width:100%; max-height:200px; border-radius:8px;"></video>
+        </div>
 
-            <div class="av-message-box" id="msgBox">
-                <div class="av-msg-left">
-                    <i class="fa fa-file av-msg-status-icon green" id="msgIcon" style="display:none;"></i>
-                    <div class="av-msg-text-col" id="msgTextCol" style="display:none;">
-                        <span class="av-msg-title" id="msgTitle"></span>
-                    </div>
-                    <span class="av-msg-placeholder" id="msgPlaceholder">No file insert...</span>
+        <div class="av-message-box" id="msgBox">
+            <div class="av-msg-left">
+                <i class="fa fa-file av-msg-status-icon green" id="msgIcon" style="display:none;"></i>
+                <div class="av-msg-text-col" id="msgTextCol" style="display:none;">
+                    <span class="av-msg-title" id="msgTitle"></span>
                 </div>
-                <button class="av-msg-btn idle" id="msgActionBtn" title="Attach a file first" onclick="handleMsgBtn()">
-                    <i class="fa fa-paper-plane" id="msgBtnIcon"></i>
+                <span class="av-msg-placeholder" id="msgPlaceholder">No file insert...</span>
+            </div>
+            <button class="av-msg-btn idle" id="msgActionBtn" title="Attach a file first" onclick="handleMsgBtn()">
+                <i class="fa fa-paper-plane" id="msgBtnIcon"></i>
+            </button>
+        </div>
+
+        <div id="msgBoxWrapper" style="display:none; margin: 10px 20px 0;">
+            <div style="background:#fff; border:1px solid rgba(0,0,0,0.1); border-radius:10px;
+                    padding:10px 14px; display:flex; align-items:center; gap:10px;">
+                <input type="text" id="msgInput" placeholder="Message ..."
+                    style="flex:1; border:none; outline:none; font-size:14px; color:#333; background:transparent;">
+                <button class="av-msg-btn ready" title="Send message" id="msgSendBtn" onclick="sendMessage()">
+                    <i class="fa fa-paper-plane" id="msgSendIcon"></i>
                 </button>
             </div>
+        </div>
 
-            <div id="msgBoxWrapper" style="margin: 10px 20px 0;">
-                <div style="background:#fff; border:1px solid rgba(0,0,0,0.1); border-radius:10px; padding:10px 14px; display:flex; align-items:center; gap:10px;">
-                    <input type="text" id="msgInput" placeholder="Message ..."
-                        style="flex:1; border:none; outline:none; font-size:14px; color:#333; background:transparent;">
-                    <button class="av-msg-btn ready" title="Send message" id="msgSendBtn" onclick="sendMessage()">
-                        <i class="fa fa-paper-plane" id="msgSendIcon"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div class="av-message-actions" id="attachActions">
-                <button title="Attach file" onclick="document.getElementById('attachFileInput').click()">
+        <!-- NEW unified action bar — message always active, others enabled after unsubmit -->
+        <div style="display:flex; margin-top:1rem; border-radius:12px; border:1px solid rgba(0,0,0,0.1); background-color:#F0F0F0; overflow:hidden;">
+            <button id="msgToggleBtn" title="Message" onclick="toggleMessageBox()"
+    style="background:none; border:none; border-right:1px solid rgba(0,0,0,0.08); color:var(--green, #4CAF7D); font-size:23px; cursor:pointer; padding:10px 30px; flex-shrink:0; transition:background .15s;">
+                <i class="fa fa-comment"></i>
+            </button>
+            <div id="attachActions" style="display:flex; flex:1; justify-content:space-around; align-items:center; padding:10px 20px;">
+                <button title="Attach file" onclick="document.getElementById('attachFileInput').click()"
+                    style="background:none; border:none; color:var(--green); font-size:23px; cursor:pointer; padding:0;">
                     <i class="fa fa-paperclip"></i>
                 </button>
-                <button title="Image" onclick="document.getElementById('attachImageInput').click()">
+                <button title="Image" onclick="document.getElementById('attachImageInput').click()"
+                    style="background:none; border:none; color:var(--green); font-size:23px; cursor:pointer; padding:0;">
                     <i class="fa fa-image"></i>
                 </button>
-                <button title="Video" onclick="document.getElementById('attachVideoInput').click()">
+                <button title="Video" onclick="document.getElementById('attachVideoInput').click()"
+                    style="background:none; border:none; color:var(--green); font-size:23px; cursor:pointer; padding:0;">
                     <i class="fa fa-film"></i>
                 </button>
-            </div>`;
+            </div>
+        </div>`;
 
-            // Reset state
+            // Reset state vars
             attachedFile = null;
             attachedType = null;
             isSubmitting = false;
+            msgBoxVisible = false;
 
             // Re-grab DOM refs
             window.msgBox = document.getElementById('msgBox');
@@ -1257,13 +1538,52 @@
             window.msgBtnIcon = document.getElementById('msgBtnIcon');
             window.attachActions = document.getElementById('attachActions');
 
-            // Re-bind Enter key on new input
             document.getElementById('msgInput').addEventListener('keydown', function (e) {
                 if (e.key === 'Enter') sendMessage();
             });
 
             bindFileInputs();
         }
+    </script>
+
+    <script>
+        // ── Live due-date watcher ─────────────────────────────────────────────────
+        (function () {
+    <?php if (!$assignment): ?> return; <?php endif; ?>
+
+            // Snapshot of the due date+time the page was loaded with
+            let knownDueDate = <?= json_encode($assignment['due_date'] ?? '') ?>;
+            let knownDueTime = <?= json_encode($assignment['due_time'] ?? '') ?>;
+            const assignmentId = <?= (int) ($assignment['id'] ?? 0) ?>;
+
+            if (!assignmentId) return;
+
+            function pollDueDate() {
+                fetch('/learning_management/public/?url=get_assignment_due&id=' + assignmentId, {
+                    cache: 'no-store'
+                })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (!data.due_date) return;
+
+                        const changed =
+                            data.due_date !== knownDueDate ||
+                            (data.due_time ?? '') !== (knownDueTime ?? '');
+
+                        if (changed) {
+                            // Update our snapshot so we don't reload repeatedly
+                            knownDueDate = data.due_date;
+                            knownDueTime = data.due_time ?? '';
+                            // Reload so PHP re-renders the overdue/submit state correctly
+                            window.location.reload();
+                        }
+                    })
+                    .catch(() => { /* silently ignore network hiccups */ });
+            }
+
+            // Poll every 8 seconds
+            setInterval(pollDueDate, 8000);
+        })();
     </script>
 </body>
 

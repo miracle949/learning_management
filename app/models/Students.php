@@ -63,7 +63,8 @@ class Students extends Model
     public function getAssignmentSubmission($assignmentId, $studentId)
     {
         $stmt = $this->db->prepare("
-        SELECT id, submitted_at FROM assignment_submissions
+        SELECT id, submitted_at, file_path, points_earned, feedback
+        FROM assignment_submissions
         WHERE assignment_id = ? AND student_id = ? LIMIT 1
     ");
         $stmt->bind_param("ii", $assignmentId, $studentId);
@@ -99,7 +100,7 @@ class Students extends Model
     public function getAssignmentByIdAndSlug($assignmentId, $subjectSlug)
     {
         $stmt = $this->db->prepare("
-            SELECT a.id, a.title, a.description, a.task, a.instructions, a.posted_at, a.points, a.due_date, s.subject_name, s.subject_code
+            SELECT a.id, a.title, a.description, a.task, a.instructions, a.posted_at, a.points, a.due_date, a.due_time, s.subject_name, s.subject_code
             FROM assignments a JOIN subjects s ON a.subject_id = s.id
             WHERE a.id = ? AND s.subject_code = ? LIMIT 1
         ");
@@ -126,11 +127,11 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
         SELECT n.id, n.title, n.message AS body, n.created_at AS posted_at,
-               u.name AS teacher_name, s.subject_name, s.slug
+               u.name AS teacher_name, s.subject_name, s.subject_code AS slug
         FROM notifications n
         JOIN subjects s ON n.subject_id = s.id
-        JOIN users    u ON n.sender_id  = u.id
-        WHERE n.id = ? AND s.slug = ? AND n.type = 'announcement'
+        JOIN users u ON n.sender_id = u.id
+        WHERE n.id = ? AND s.subject_code = ? AND n.type = 'announcement'
         LIMIT 1
     ");
         $stmt->bind_param("is", $announcementId, $subjectSlug);
@@ -189,10 +190,23 @@ class Students extends Model
     public function getSubjectBySlug($subjectSlug)
     {
         $stmt = $this->db->prepare("
-            SELECT id, subject_name, subject_code, subject_description
+            SELECT id, subject_name, subject_image, subject_code, subject_description
             FROM subjects WHERE subject_code = ? LIMIT 1
         ");
         $stmt->bind_param("s", $subjectSlug);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function getAssignmentDueDate($assignmentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT due_date, due_time
+        FROM assignments
+        WHERE id = ?
+        LIMIT 1
+    ");
+        $stmt->bind_param("i", $assignmentId);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
     }
@@ -664,10 +678,25 @@ class Students extends Model
         return array_column($rows, 'interactive_modules_id');
     }
 
+    public function getTeacherBySubjectId($subjectId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT u.name
+        FROM teacher_assignments ta
+        JOIN teachers t ON ta.teacher_id = t.id
+        JOIN users u ON t.user_id = u.id
+        WHERE ta.subject_id = ?
+        LIMIT 1
+    ");
+        $stmt->bind_param("i", $subjectId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
     public function getCompletedAssignments($studentId)
     {
         $stmt = $this->db->prepare("
-        SELECT a.id, a.task, a.due_date, s.subject_code, sub.submitted_at
+        SELECT a.id, a.task, a.due_date, a.due_time, s.subject_code, sub.submitted_at
         FROM assignments a
         JOIN assignment_submissions sub ON sub.assignment_id = a.id
         JOIN subjects s ON a.subject_id = s.id
@@ -682,13 +711,14 @@ class Students extends Model
     public function getPendingAssignments($studentId)
     {
         $stmt = $this->db->prepare("
-        SELECT a.id, a.task, a.due_date, s.subject_code
+        SELECT a.id, a.task, a.due_date, a.due_time, s.subject_code
         FROM assignments a
         JOIN subjects s ON a.subject_id = s.id
         JOIN student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
         WHERE a.id NOT IN (
             SELECT assignment_id FROM assignment_submissions WHERE student_id = ?
         )
+        AND (a.due_date IS NULL OR a.due_date >= CURDATE())
         ORDER BY a.due_date ASC
     ");
         $stmt->bind_param("ii", $studentId, $studentId);
@@ -716,6 +746,85 @@ class Students extends Model
         WHERE a.id NOT IN (
             SELECT assignment_id FROM assignment_submissions WHERE student_id = ?
         )
+        AND (a.due_date IS NULL OR a.due_date >= CURDATE())
+    ");
+        $stmt->bind_param("ii", $studentId, $studentId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function countEnrolledClasses($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(DISTINCT se.subject_id) AS total 
+        FROM student_enrollments se
+        JOIN subjects s ON se.subject_id = s.id
+        WHERE se.student_id = ?
+    ");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function getDashboardAnnouncements($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT n.id, n.title, n.message, n.created_at,
+               s.subject_name, s.subject_code,
+               u.name AS teacher_name
+        FROM notifications n
+        JOIN subjects s ON n.subject_id = s.id
+        JOIN student_enrollments se ON se.subject_id = s.id AND se.student_id = ?
+        JOIN users u ON n.sender_id = u.id
+        WHERE n.type = 'announcement'
+        ORDER BY n.created_at DESC
+        LIMIT 5
+    ");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getStudentIdByUserId($userId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT id FROM students WHERE user_id = ? LIMIT 1
+    ");
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        return $row ? (int) $row['id'] : 0;
+    }
+
+    public function getMissingAssignments($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT a.id, a.task, a.due_date, a.due_time, s.subject_code
+        FROM assignments a
+        JOIN subjects s ON a.subject_id = s.id
+        JOIN student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+        WHERE a.id NOT IN (
+            SELECT assignment_id FROM assignment_submissions WHERE student_id = ?
+        )
+        AND a.due_date IS NOT NULL AND a.due_date < CURDATE()
+        ORDER BY a.due_date ASC
+    ");
+        $stmt->bind_param("ii", $studentId, $studentId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function countMissingAssignments($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total
+        FROM assignments a
+        JOIN subjects s ON a.subject_id = s.id
+        JOIN student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+        WHERE a.id NOT IN (
+            SELECT assignment_id FROM assignment_submissions WHERE student_id = ?
+        )
+        AND a.due_date IS NOT NULL AND a.due_date < CURDATE()
     ");
         $stmt->bind_param("ii", $studentId, $studentId);
         $stmt->execute();

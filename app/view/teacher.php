@@ -57,20 +57,24 @@
 
                     <!-- TOTAL CLASSES -->
                     <div class="card-box">
-                        <div class="card-text">
-                            <span>Total Classes</span>
-                            <p><?= (int) ($stats['total_classes'] ?? 0) ?></p>
-                        </div>
-                        <div class="card-icon">
-                            <i class="fa fa-graduation-cap"></i>
-                        </div>
+                        <a href="/learning_management/public/?url=classes_teacher">
+                            <div class="card-text">
+                                <span>Total Classes</span>
+                                <p>
+                                    <?= (int) ($stats['total_classes'] ?? 0) ?>
+                                </p>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fa fa-graduation-cap"></i>
+                            </div>
+                        </a>
                     </div>
 
                     <!-- TOTAL STUDENTS -->
                     <div class="card-box">
                         <div class="card-text">
                             <span>Total Students</span>
-                            <p><?= count($totalStudents ?? []) ?></p>
+                            <p><?= (int)($totalStudents ?? 0) ?></p>
                         </div>
                         <div class="card-icon">
                             <i class="fa fa-users"></i>
@@ -94,28 +98,39 @@
                 <div class="parent-box-classes">
                     <div class="sub-student">
                         <div class="student-assignment">
-                            <h5>Students</h5>
+                            <div class="header">
+                                <i class="fa fa-hourglass-half"></i>
+                                <p>Upcoming Deadlines</p>
+                            </div>
                             <div class="student-names">
-                                <?php if (empty($enrolledStudents)): ?>
+                                <?php if (empty($upcomingAssignments)): ?>
                                     <p style="font-size:13px;color:#9ca3af;text-align:center;padding:1rem 0;">
-                                        No enrolled students yet.
+                                        No upcoming assignments.
                                     </p>
                                 <?php else: ?>
-                                    <?php foreach ($enrolledStudents as $stu): ?>
+                                    <?php foreach ($upcomingAssignments as $asgn): ?>
                                         <div class="student-box">
                                             <p>
-                                                <?= htmlspecialchars($stu['name']) ?>
+                                                <?= htmlspecialchars($asgn['subject_name']) ?> -
+                                                (<?= htmlspecialchars($asgn['type'] ?? 'Assignment') ?>)
                                             </p>
-                                            <p>
-                                                <?= htmlspecialchars($stu['email']) ?>
-                                            </p>
+                                            <p><?= htmlspecialchars($asgn['title']) ?></p>
                                             <div class="grade-section">
-                                                <span>
-                                                    <?= htmlspecialchars($stu['grade_level']) ?>
-                                                </span>
-                                                <span>
-                                                    <?= htmlspecialchars($stu['section_name']) ?>
-                                                </span>
+                                                <!-- Show actual section name from teacher_assignments join -->
+                                                <span><?= htmlspecialchars($asgn['section_name'] ?? '') ?></span>
+
+                                                <?php if (!empty($asgn['due_date'])): ?>
+                                                    <?php
+                                                    $dueDateFormatted = date('M d, Y', strtotime($asgn['due_date']));
+                                                    $dueTimeRaw = !empty($asgn['due_time']) ? $asgn['due_time'] : '23:59:00';
+                                                    $dueTimeFormatted = date('h:i A', strtotime($dueTimeRaw));
+                                                    ?>
+                                                    <span style="color:#ef4444;font-weight:600;">
+                                                        Due: <?= $dueDateFormatted ?> at <?= $dueTimeFormatted ?>
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span style="color:#9ca3af;">No due date</span>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                     <?php endforeach; ?>
@@ -124,30 +139,35 @@
                         </div>
 
                         <div class="sub-assignment">
-                            <h5>Assignments Completed</h5>
+                            <div class="header">
+                                <i class="fa fa-question-circle"></i>
+                                <p>Announcements</p>
+                            </div>
                             <div class="assignment-complete">
-                                <?php if (empty($submittedAssignments)): ?>
+                                <?php if (empty($teacherAnnouncements)): ?>
                                     <p style="font-size:13px;color:#9ca3af;text-align:center;padding:1rem 0;">
-                                        No submissions yet.
+                                        No announcements yet.
                                     </p>
                                 <?php else: ?>
-                                    <?php foreach ($submittedAssignments as $sub): ?>
+                                    <?php foreach ($teacherAnnouncements as $ann): ?>
                                         <div class="assignment-box">
-                                            <p>
-                                                <?= htmlspecialchars($sub['student_name']) ?> ·
-                                                <?= htmlspecialchars($sub['section_name']) ?>
+                                            <!-- <p>
+                                                <?= htmlspecialchars($ann['teacher_name']) ?>
+                                            </p> -->
+                                            <p><?= htmlspecialchars($ann['subject_name']) ?>
                                             </p>
-                                            <p>
-                                                <?= htmlspecialchars($sub['assignment_title']) ?>
-                                            </p>
-                                            <span>Date Submitted:
-                                                <?= !empty($sub['submitted_at'])
-                                                    ? date('F j, Y', strtotime($sub['submitted_at']))
-                                                    : '—' ?>
-                                            </span>
-                                            <!-- <span>
-                                                <?= ucfirst(htmlspecialchars($sub['status'] ?? 'submitted')) ?>
-                                            </span> -->
+                                            <p>Title: <?= htmlspecialchars($ann['title']) ?></p>
+
+                                            <p><?= nl2br(htmlspecialchars($ann['message'])) ?></p>
+
+                                            <div class="announcement-footer">
+                                                <p>
+                                                    <?= htmlspecialchars($ann['section_name']) ?>
+                                                </p>
+                                                <span>Date Posted:
+                                                    <?= date('F j, Y', strtotime($ann['created_at'])) ?>
+                                                </span>
+                                            </div>
                                         </div>
                                     <?php endforeach; ?>
                                 <?php endif; ?>

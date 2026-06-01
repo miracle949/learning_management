@@ -290,21 +290,28 @@
     color: #ffffff;
 }
 
+.container-fluid .rightbar main .grade-filter form {
+    width: 100%;
+    display: flex;
+    justify-content: left;
+}
 
 select.form-select{
-    font-size: 15px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 13px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
     cursor: pointer;
+    border-radius: 28px;
+    padding: 10px 16px;
+    color: #374151;
+    font-weight: 600;
+    width: 100%;
+    max-width: 160px;
 }
 
 
 /* .container-fluid .rightbar main .grade-filter{
     width: 100%;
 } */
-
-.container-fluid .rightbar main .grade-filter form {
-    width: 100%;
-}
 
 .container-fluid main .card-parent-box{
     margin-top: 2rem;
@@ -356,7 +363,7 @@ select.form-select{
 
 .container-fluid main .card-parent-box .card .card-body .card-link a{
     text-decoration: none;
-    font-size: 15px;
+    font-size: 14.5px;
     background-color: var(--green);
     color: #ffffff;
     padding: 10px 20px;

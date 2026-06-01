@@ -25,6 +25,14 @@
 
         <?php include("../components/navbar.php"); ?>
 
+        <?php
+        // Fallback defaults in case controller didn't pass these
+        $enrolledCount = $enrolledCount ?? 0;
+        $pendingCount = $pendingCount ?? 0;
+        $pendingAssignments = $pendingAssignments ?? [];
+        $announcements = $announcements ?? [];
+        ?>
+
         <div class="rightbar">
 
             <?php if (!empty($_SESSION['grade_level']) && $_SESSION['grade_level'] === 'Grade 12'): ?>
@@ -37,7 +45,7 @@
                         <h2>Welcome, <?= htmlspecialchars($_SESSION["name"]) ?>! 👋</h2>
                         <div class="d-flex gap-2">
                             <span><?= htmlspecialchars($_SESSION["grade_level"]) ?></span>
-                            <span>—</span>
+                            <!-- <span>—</span> -->
                             <span><?= htmlspecialchars($_SESSION["section"]) ?></span>
                             <!-- <span>Here's what's happening with your learning today</span> -->
                         </div>
@@ -45,55 +53,49 @@
 
                     <div class="welcome-body">
                         <div class="buttons-group">
-                            <a href="#">Browse Courses <i class="fa fa-arrow-right"></i></a>
+                            <a href="/learning_management/public/?url=classes">Browse Classes <i
+                                    class="fa fa-arrow-right"></i></a>
 
-                            <a href="#">View Progress</a>
                         </div>
                     </div>
                 </div>
 
                 <div class="card-parent-box">
                     <div class="card-box">
-                        <div class="data_text">
-                            <span>Enrolled Subjects</span>
-                            <p>#</p>
-                            <span>Active this semester</span>
-                        </div>
-                        <div class="data_icon">
-                            <i class="fa fa-book-open"></i>
-                        </div>
+                        <a href="/learning_management/public/?url=classes">
+                            <div class="data_text">
+                                <span>Enrolled Classes</span>
+                                <p>
+                                    <?= $enrolledCount ?>
+                                </p>
+                            </div>
+                            <div class="data_icon">
+                                <i class="fa fa-book-open"></i>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="card-box">
+                        <a href="/learning_management/public/?url=assignments">
+                            <div class="data_text">
+                                <span>Pending Tasks</span>
+                                <p>
+                                    <?= $pendingCount ?>
+                                </p>
+                            </div>
+                            <div class="data_icon">
+                                <i class="fa fa-clock"></i>
+                            </div>
+                        </a>
                     </div>
 
                     <div class="card-box">
                         <div class="data_text">
-                            <span>Pending Task</span>
-                            <p>#</p>
-                            <span>Active this semester</span>
+                            <span>Completed Task</span>
+                            <p><?= $completedCount ?></p>
                         </div>
                         <div class="data_icon">
-                            <i class="fa fa-award"></i>
-                        </div>
-                    </div>
-
-                    <div class="card-box">
-                        <div class="data_text">
-                            <span>Study Time</span>
-                            <p>#</p>
-                            <span>Active this semester</span>
-                        </div>
-                        <div class="data_icon">
-                            <i class="fa fa-clock"></i>
-                        </div>
-                    </div>
-
-                    <div class="card-box">
-                        <div class="data_text">
-                            <span>Progress</span>
-                            <p>#</p>
-                            <span>Active this semester</span>
-                        </div>
-                        <div class="data_icon">
-                            <i class="fa fa-clock"></i>
+                            <i class="fa fa-check-circle"></i>
                         </div>
                     </div>
                 </div>
@@ -101,40 +103,148 @@
                 <div class="parent-performance">
                     <div class="update subject-performance">
                         <div class="header">
+                            <i class="fa fa-clock"></i>
                             <h3>Pending Tasks</h3>
-                            <a href="#">View all</a>
+                            <!-- <a href="#">View all</a> -->
                         </div>
                         <div class="body">
-                            <div class="update-box">
-                                <p>LOREM IPSUM LOREM IPSUM</p>
-                                <span>lorem ipsum</span>
-                                <span>lorem</span>
-                            </div>
+                            <?php if (!empty($pendingAssignments)): ?>
+                                <?php foreach ($pendingAssignments as $item):
+                                    $daysLeft = '';
+                                    if (!empty($item['due_date'])) {
+                                        $diff = (int) ceil((strtotime($item['due_date']) - time()) / 86400);
+                                        if ($diff < 0)
+                                            continue; // skip overdue
+                                        $daysLeft = $diff > 0 ? $diff . ' days left' : 'Due today';
+                                    }
+                                    ?>
+                                    <div class="update-box">
+                                        <p><?= htmlspecialchars($item['task']) ?></p>
+                                        <span>Due date:
+                                            <?= !empty($item['due_date']) ? date('F j, Y', strtotime($item['due_date'])) : 'No due date' ?></span>
+                                        <?php if ($daysLeft): ?><span><?= htmlspecialchars($daysLeft) ?></span><?php endif; ?>
+                                        <a
+                                            href="/learning_management/public/?url=assignment_view&subject=<?= urlencode($item['subject_code']) ?>&id=<?= $item['id'] ?>">
+                                            View Task <i class="fa fa-arrow-right"></i>
+                                        </a>
+                                    </div>
 
-                            <div class="update-box">
-                                <p>LOREM IPSUM LOREM IPSUM</p>
-                                <span>lorem ipsum</span>
-                                <span>lorem</span>
-                            </div>
-
-                            <!-- <div class="update-box">
-                                <p>Build a Personal Portfolio</p>
-                                <span>Due: 3/15/2026</span>
-                                <span>7 days left</span>
-                            </div> -->
-
-                            <div class="update-box">
-                                <p>LOREM IPSUM LOREM IPSUM</p>
-                                <span>lorem ipsum</span>
-                                <span>lorem</span>
-                            </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p class="text-muted m-0" style="font-size: 14.5px;">No pending tasks.</p>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="perform performance-trend">
-                        <h2>Hello</h2>
+                        <div class="header">
+                            <i class="fa fa-question-circle"></i>
+                            <h3>Announcements</h3>
+                        </div>
+                        <div class="body">
+                            <?php if (!empty($announcements)): ?>
+                                <?php foreach ($announcements as $ann): ?>
+                                    <div class="progress-box">
+                                        <h4><?= htmlspecialchars($ann['subject_name']) ?></h4>
+                                        <p style="font-size:14.5px;font-weight:500;color:#111827;margin:0;">Title:
+                                            <?= htmlspecialchars($ann['title']) ?>
+                                        </p>
+                                        <p style="font-size:14.5px;color:#212529;margin:0;">
+                                            <?= nl2br(htmlspecialchars($ann['message'])) ?>
+                                        </p>
+                                        <div class="view" style="margin-top:8px;">
+                                            <small style="color:#9ca3af;">
+                                                <?= date('F j, Y', strtotime($ann['created_at'])) ?>
+                                                · <?= htmlspecialchars($ann['teacher_name']) ?>
+                                            </small>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p class="text-muted m-0" style="font-size:14.5px;">No announcements yet.</p>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                    <div class="perform enrolled-subjects">
-                        <h2>Hello</h2>
+
+                </div>
+
+                <div class="perform enrolled-subjects">
+                    <div class="header">
+                        <i class="fa fa-book"></i>
+                        <h3>My Modules</h3>
+                    </div>
+
+                    <div class="body">
+                        <div class="progress-box">
+                            <h4>Introduction to Philosophy of Human Person</h4>
+
+                            <div class="parent-progress">
+                                <div class="progress-header">
+                                    <p>Progress</p>
+                                    <span>75%</span>
+                                </div>
+                                <div class="parent-progress-percent">
+                                    <div class="progress"></div>
+                                </div>
+                            </div>
+
+                            <div class="view">
+                                <a href="#">View Progress <i class="fa fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="progress-box">
+                            <h4>Introduction to Philosophy of Human Person</h4>
+
+                            <div class="parent-progress">
+                                <div class="progress-header">
+                                    <p>Progress</p>
+                                    <span>75%</span>
+                                </div>
+                                <div class="parent-progress-percent">
+                                    <div class="progress"></div>
+                                </div>
+                            </div>
+
+                            <div class="view">
+                                <a href="">View Progress <i class="fa fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="progress-box">
+                            <h4>Introduction to Philosophy of Human Person</h4>
+
+                            <div class="parent-progress">
+                                <div class="progress-header">
+                                    <p>Progress</p>
+                                    <span>75%</span>
+                                </div>
+                                <div class="parent-progress-percent">
+                                    <div class="progress"></div>
+                                </div>
+                            </div>
+
+                            <div class="view">
+                                <a href="">View Progress <i class="fa fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="progress-box">
+                            <h4>Introduction to Philosophy of Human Person</h4>
+
+                            <div class="parent-progress">
+                                <div class="progress-header">
+                                    <p>Progress</p>
+                                    <span>75%</span>
+                                </div>
+                                <div class="parent-progress-percent">
+                                    <div class="progress"></div>
+                                </div>
+                            </div>
+
+                            <div class="view">
+                                <a href="">View Progress <i class="fa fa-arrow-right"></i></a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -146,7 +256,7 @@
                         <h2>Welcome, <?= htmlspecialchars($_SESSION["name"]) ?>! 👋</h2>
                         <div class="d-flex gap-2">
                             <span><?= htmlspecialchars($_SESSION["grade_level"]) ?></span>
-                            <span>—</span>
+                            <!-- <span>—</span> -->
                             <span><?= htmlspecialchars($_SESSION["section"]) ?></span>
                             <!-- <span>Here's what's happening with your learning today</span> -->
                         </div>
@@ -154,90 +264,208 @@
 
                     <div class="welcome-body">
                         <div class="buttons-group">
-                            <a href="#">Browse Courses <i class="fa fa-arrow-right"></i></a>
+                            <a href="/learning_management/public/?url=classes">Browse Classes <i
+                                    class="fa fa-arrow-right"></i></a>
 
-                            <a href="#">View Progress</a>
                         </div>
                     </div>
                 </div>
 
                 <div class="card-parent-box">
                     <div class="card-box">
-                        <div class="data_text">
-                            <span>Enrolled Subjects</span>
-                            <p>4</p>
-                            <span>Active this semester</span>
-                        </div>
-                        <div class="data_icon">
-                            <i class="fa fa-book-open"></i>
-                        </div>
+                        <a href="/learning_management/public/?url=classes">
+                            <div class="data_text">
+                                <span>Enrolled Classes</span>
+                                <p>
+                                    <?= $enrolledCount ?>
+                                </p>
+                            </div>
+                            <div class="data_icon">
+                                <i class="fa fa-book-open"></i>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="card-box">
+                        <a href="/learning_management/public/?url=assignments">
+                            <div class="data_text">
+                                <span>Pending Tasks</span>
+                                <p>
+                                    <?= $pendingCount ?>
+                                </p>
+                            </div>
+                            <div class="data_icon">
+                                <i class="fa fa-clock"></i>
+                            </div>
+                        </a>
                     </div>
 
                     <div class="card-box">
                         <div class="data_text">
-                            <span>Pending Task</span>
-                            <p>8</p>
-                            <span>Active this semester</span>
+                            <span>Completed Task</span>
+                            <p><?= $completedCount ?></p>
                         </div>
                         <div class="data_icon">
-                            <i class="fa fa-award"></i>
+                            <i class="fa fa-check-circle"></i>
                         </div>
                     </div>
 
-                    <div class="card-box">
-                        <div class="data_text">
-                            <span>Study Time</span>
-                            <p>15h</p>
-                            <span>Active this semester</span>
-                        </div>
-                        <div class="data_icon">
-                            <i class="fa fa-clock"></i>
-                        </div>
-                    </div>
-
-                    <div class="card-box">
+                    <!-- <div class="card-box">
                         <div class="data_text">
                             <span>Progress</span>
-                            <p>15h</p>
-                            <span>Active this semester</span>
+                            <p>Static</p>
                         </div>
                         <div class="data_icon">
-                            <i class="fa fa-clock"></i>
+                            <i class="fa fa-chart-line"></i>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="parent-performance">
                     <div class="update subject-performance">
                         <div class="header">
-                            <h3>Upcoming Tasks</h3>
-                            <a href="#">View all</a>
+                            <i class="fa fa-clock"></i>
+                            <h3>Pending Tasks</h3>
+                            <!-- <a href="#">View all</a> -->
                         </div>
                         <div class="body">
-                            <div class="update-box">
-                                <p>Build a Personal Portfolio</p>
-                                <span>Due: 3/15/2026</span>
-                                <span>7 days left</span>
-                            </div>
+                            <?php if (!empty($pendingAssignments)): ?>
+                                <?php foreach ($pendingAssignments as $item):
+                                    $daysLeft = '';
+                                    if (!empty($item['due_date'])) {
+                                        $diff = (int) ceil((strtotime($item['due_date']) - time()) / 86400);
+                                        if ($diff < 0)
+                                            continue; // skip overdue
+                                        $daysLeft = $diff > 0 ? $diff . ' days left' : 'Due today';
+                                    }
+                                    ?>
+                                    <div class="update-box">
+                                        <p><?= htmlspecialchars($item['task']) ?></p>
+                                        <span>Due date:
+                                            <?= !empty($item['due_date']) ? date('F j, Y', strtotime($item['due_date'])) : 'No due date' ?></span>
+                                        <?php if ($daysLeft): ?><span><?= htmlspecialchars($daysLeft) ?></span><?php endif; ?>
+                                        <a
+                                            href="/learning_management/public/?url=assignment_view&subject=<?= urlencode($item['subject_code']) ?>&id=<?= $item['id'] ?>">
+                                            View Task <i class="fa fa-arrow-right"></i>
+                                        </a>
+                                    </div>
 
-                            <div class="update-box">
-                                <p>Build a Personal Portfolio</p>
-                                <span>Due: 3/15/2026</span>
-                                <span>7 days left</span>
-                            </div>
-
-                            <div class="update-box">
-                                <p>Build a Personal Portfolio</p>
-                                <span>Due: 3/15/2026</span>
-                                <span>7 days left</span>
-                            </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p class="text-muted m-0" style="font-size: 14.5px;">No pending tasks.</p>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="perform performance-trend">
-                        <h2>Hello</h2>
+                        <div class="header">
+                            <i class="fa fa-question-circle"></i>
+                            <h3>Announcements</h3>
+                        </div>
+                        <div class="body">
+                            <?php if (!empty($announcements)): ?>
+                                <?php foreach ($announcements as $ann): ?>
+                                    <div class="progress-box">
+                                        <h4><?= htmlspecialchars($ann['subject_name']) ?></h4>
+                                        <p style="font-size:14.5px;font-weight:500;color:#111827;margin:0;">Title:
+                                            <?= htmlspecialchars($ann['title']) ?>
+                                        </p>
+                                        <p style="font-size:14.5px;color:#212529;margin:0;">
+                                            <?= nl2br(htmlspecialchars($ann['message'])) ?>
+                                        </p>
+                                        <div class="view" style="margin-top:8px;">
+                                            <small style="color:#9ca3af;">
+                                                <?= date('F j, Y', strtotime($ann['created_at'])) ?>
+                                                · <?= htmlspecialchars($ann['teacher_name']) ?>
+                                            </small>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p class="text-muted m-0" style="font-size:14.5px;">No announcements yet.</p>
+                            <?php endif; ?>
+                        </div>
                     </div>
-                    <div class="perform enrolled-subjects">
-                        <h2>Hello</h2>
+
+                </div>
+
+                <div class="perform enrolled-subjects">
+                    <div class="header">
+                        <i class="fa fa-book"></i>
+                        <h3>My Modules</h3>
+                    </div>
+
+                    <div class="body">
+                        <div class="progress-box">
+                            <h4>Introduction to Philosophy of Human Person</h4>
+
+                            <div class="parent-progress">
+                                <div class="progress-header">
+                                    <p>Progress</p>
+                                    <span>75%</span>
+                                </div>
+                                <div class="parent-progress-percent">
+                                    <div class="progress"></div>
+                                </div>
+                            </div>
+
+                            <div class="view">
+                                <a href="">View Progress <i class="fa fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="progress-box">
+                            <h4>Introduction to Philosophy of Human Person</h4>
+
+                            <div class="parent-progress">
+                                <div class="progress-header">
+                                    <p>Progress</p>
+                                    <span>75%</span>
+                                </div>
+                                <div class="parent-progress-percent">
+                                    <div class="progress"></div>
+                                </div>
+                            </div>
+
+                            <div class="view">
+                                <a href="">View Progress <i class="fa fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="progress-box">
+                            <h4>Introduction to Philosophy of Human Person</h4>
+
+                            <div class="parent-progress">
+                                <div class="progress-header">
+                                    <p>Progress</p>
+                                    <span>75%</span>
+                                </div>
+                                <div class="parent-progress-percent">
+                                    <div class="progress"></div>
+                                </div>
+                            </div>
+
+                            <div class="view">
+                                <a href="">View Progress <i class="fa fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="progress-box">
+                            <h4>Introduction to Philosophy of Human Person</h4>
+
+                            <div class="parent-progress">
+                                <div class="progress-header">
+                                    <p>Progress</p>
+                                    <span>75%</span>
+                                </div>
+                                <div class="parent-progress-percent">
+                                    <div class="progress"></div>
+                                </div>
+                            </div>
+
+                            <div class="view">
+                                <a href="">View Progress <i class="fa fa-arrow-right"></i></a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

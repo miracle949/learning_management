@@ -29,9 +29,9 @@
                 <div class="grade-filter" style="margin: 2rem 0;">
                     <form method="GET" action="/learning_management/public/">
                         <input type="hidden" name="url" value="modules_teacher">
-                        <select name="grade_id" class="form-select" style="max-width:220px; display:inline-block;"
+                        <select name="grade_id" class="form-select"
                             onchange="this.form.submit()">
-                            <option value="">-- All Grade Levels --</option>
+                            <option value="">All Grade Levels</option>
                             <?php foreach ($gradeLevels as $gl): ?>
                                 <option value="<?= $gl['id'] ?>" <?= (isset($selectedGrade) && $selectedGrade == $gl['id']) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($gl['name']) ?>
@@ -72,11 +72,11 @@
                                         </span>
                                     </div>
                                     <div class="card-link">
-                                        <a class="<?= ($current_url ?? '') === 'modules_teacher' ? 'active' : '' ?>"
+                                        <!-- <a class="<?= ($current_url ?? '') === 'modules_teacher' ? 'active' : '' ?>"
                                             href="/learning_management/public/?url=create_module&subject_id=<?= (int) $subject['id'] ?>">
                                             <span>Create module</span>
                                             <i class="fa fa-arrow-right"></i>
-                                        </a>
+                                        </a> -->
                                         <a class="<?= ($current_url ?? '') === 'modules_teacher' ? 'active' : '' ?>" href="/learning_management/public/?url=view_modules_teacher&subject_id=<?= (int) $subject['id'] ?>">
                                             <span>View module</span> 
                                             <i class="fa fa-arrow-right"></i>

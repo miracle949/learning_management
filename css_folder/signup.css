@@ -66,15 +66,15 @@
     /* background-image:
         linear-gradient(rgba(0, 0, 0, 0.50)),
         url('../images/Senior-High-School.webp'); */
-    background-image:
+    /* background-image:
         linear-gradient(rgba(0, 0, 0, 0.60)),
-        url('../images/ilearnbg.png');
+        url('../images/ilearnbg.png'); */
     /* background-image: 
         linear-gradient(var(--green-dark)), 
         url('../images/ilearnbg.png'); */
-    /* background-image:
+    background-image:
         linear-gradient(rgba(45, 106, 79, 0.85), rgba(45, 106, 79, 0.85)),
-        url('../images/ilearnbg.png'); */
+        url('../images/ilearnbg.png');
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -87,6 +87,21 @@
     padding: 2rem;
     position: relative;
     /* position: fixed; */
+}
+
+/* Error border override — ensures red border shows on invalid fields */
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545 !important;
+    border-width: 1px !important;
+    /* background-color: #fff5f5 !important;  */
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.20) !important;
+}
+
+.form-control.is-invalid:focus,
+.form-select.is-invalid:focus {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.35) !important;
 }
 
 .container-fluid .login-parent .image-form .image-parent{

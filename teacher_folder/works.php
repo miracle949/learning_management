@@ -137,8 +137,9 @@
 
                                 <div class="input-grade">
                                     <p>Grade</p>
-                                    <input type="number" name="points_earned" min="0" max="<?= $points ?>"
-                                        value="<?= htmlspecialchars($savedGrade) ?>" placeholder="/<?= $points ?>">
+                                    <input type="number" name="points_earned" min="1" max="100"
+                                        value="<?= htmlspecialchars($savedGrade) ?>" placeholder="/100" oninput="if (this.value > 100) this.value = 100; if (this.value < 1 && this.value !== '') this.value = 1;
+    ">
                                 </div>
 
 

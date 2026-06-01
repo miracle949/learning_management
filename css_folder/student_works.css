@@ -393,6 +393,7 @@ body {
     flex-wrap: wrap;
     gap: 0.9rem;
     margin-top: 2rem;
+    width: 100%;
 }
 
 .container-fluid .rightbar main .rightbar-works .parent-submit-file .student-submit{
