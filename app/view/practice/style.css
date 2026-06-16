@@ -1,0 +1,24 @@
+:root {
+    --violet: #5C2D91;
+    /* rich deep violet — primary */
+    --violet-mid: #7B3FBF;
+    /* mid violet */
+    --violet-light: #A56FD8;
+    /* soft lavender accent */
+    --lilac: #E8D9F7;
+    /* pale lilac fill */
+    --cream: #FBF8F3;
+    /* warm off-white bg */
+    --cream-dark: #F2EDE5;
+    /* card bg / section alt */
+    --amber: #F0A500;
+    /* warm amber CTA */
+    --amber-light: #FFD97D;
+    /* soft gold highlight */
+    --ink: #1A1028;
+    /* near-black text */
+    --ink-mid: #4A3D5C;
+    /* muted body text */
+    --white: #FFFFFF;
+    --r: 18px;
+}
