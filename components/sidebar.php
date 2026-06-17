@@ -7,12 +7,13 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'dashboard';
         <p>Student Portal</p>
     </div> -->
     <div class="sidebar-logo">
-        <div class="logo-icon">
+        <!-- <div class="logo-icon">
             <i class="fa-solid fa-lightbulb"></i>
         </div>
         <div class="logo-text">
             <p><b>i</b>Learn</p>
-        </div>
+        </div> -->
+        <img src="../images/iLearn.png" alt="">
     </div>
     <div class="sidebar-menu">
         <ul>
@@ -59,16 +60,53 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'dashboard';
                 </a>
             </li>
 
+            <div class="sidebar-category">
+                <h5>Account</h5>
+            </div>
+
+            <li class="<?= $current_url === 'my_profile' ? 'active' : '' ?>">
+                <a href="#" class="text-decoration-none">
+                    <i class="fa fa-user"></i>
+                    <span>My Profile</span>
+                </a>
+            </li>
+
             <li class="<?= $current_url === 'settings' ? 'active' : '' ?>">
                 <a href="#" class="text-decoration-none">
                     <i class="fa fa-gear"></i>
                     <span>Settings</span>
                 </a>
             </li>
+
+            <form action="?url=logout" method="post">
+                <li>
+                    <a href="#">
+                        <i class="fa fa-sign-out"></i>
+                        <button type="submit">Logout</button>
+                    </a>
+                </li>
+            </form>
         </ul>
+
+        <div class="account">
+            <div class="initial">
+                <h5>
+                    <?php
+                    $initial = isset($_SESSION['name']) ? strtoupper(substr($_SESSION['name'], 0, 1)) : '';
+                    echo $initial;
+                    ?>
+                </h5>
+            </div>
+            <div class="first-last">
+                <p>
+                    <?= htmlspecialchars($_SESSION["name"]) ?>
+                </p>
+                <span>LRN: 123456789012</span>
+            </div>
+        </div>
     </div>
-    <div class="sidebar-footer">
+    <!-- <div class="sidebar-footer">
         <i class="fa fa-circle-question"></i>
         <p>Help & information</p>
-    </div>
+    </div> -->
 </div>

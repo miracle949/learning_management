@@ -14,27 +14,59 @@
 
 * {
     font-family: 'Poppins', sans-serif;
+    padding: 0;
+    margin: 0;
 }
 
 :root {
-    --green: #4CAF7D;
-    --green-dark: #2D6A4F;
-    --green-light: #E8F5EE;
-    --green-mid: #c8e6d6;
-    --orange: #FF8A65;
-    --orange-light: #FFF3EF;
-    --orange-dark: #bf5b3a;
-    --bg: #F9FBF9;
-    --white: #ffffff;
-    --card-border: rgba(0, 0, 0, 0.07);
-    --text: #2D6A4F;
-    --text-dark: #1a3a2a;
-    --text-muted: #7a9a8a;
-    --sidebar-bg: #ffffff;
-    --shadow: 0 2px 12px rgba(76, 175, 125, 0.08);
-    --background-icon: #2d3748;
-    --green-text: #4a6a58;
+    /* === NEW PALETTE: Circuit Green + Electric Blue + Tech Dark === */
+    --green-neon: #00FF88;
+    /* circuit board / PCB green */
+    --green-mid: #00C96B;
+    --green-dark: #00894A;
+    --green-light: #E8FBF2;
+    --blue-elec: #00CFFF;
+    /* electric/LED blue */
+    --blue-mid: #0099CC;
+    --blue-dark: #006B99;
+    --orange-warn: #FF6B00;
+    /* resistor/component orange */
+    --yellow-volt: #FFD700;
+    /* voltage / gold pin */
+    --red-led: #FF3B3B;
+    /* LED red */
+    --purple-chip: #9B5DE5;
+    /* chip / IC purple */
+
+    /* Dark tech backgrounds */
+    --bg-darkest: #050D14;
+    --bg-dark: #0A1628;
+    --bg-panel: #0F2040;
+    --bg-card: #0E1E35;
+    --bg-surface: #112244;
+
+    /* Grids and borders */
+    --border-dim: rgba(0, 255, 136, 0.12);
+    --border-glow: rgba(0, 207, 255, 0.30);
+
+    /* Text */
+    --text-white: #FFFFFF;
+    --text-bright: #E8F4FF;
+    --text-muted: rgba(200, 220, 255, 0.55);
+    --text-dark: #0A1628;
+
+    /* Light sections */
+    --light-bg: #F0F8FF;
+    --light-card: #FFFFFF;
+    --light-border: #C8E6FF;
+    --light-text: #0A2540;
+    --light-muted: #4A6080;
+
+    --border: #E5EDF5;
+    --bg-page: #F5F8FB;
+    --bg-card: #FFFFFF;
 }
+
 
 /* body{
     overflow: hidden;
@@ -44,437 +76,376 @@
     background-color: #F2F3FF;
 } */
 
-.container-fluid .login-parent {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    /* justify-content: space-between; */
-    align-items: center;
-    /* flex-direction: column; */
-    justify-content: space-between;
-    /* overflow: hidden; */
-    /* padding: 3rem; */
-    overflow-y: auto;
-    /* background: linear-gradient(
-        to bottom, 
-        var(--green) 40%,
-        #ffffff 40%
-    ); */
-    background-color: #F7F9F8;
-}
-
-.container-fluid .login-parent .image-form {
-    /* background-image: url(../images/login-bg.jpg);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover; */
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
-    /* background-image:
-        linear-gradient(rgba(0, 0, 0, 0.50)),
-        url('../images/Senior-High-School.webp'); */
-    /* background-image:
-        linear-gradient(rgba(0, 0, 0, 0.60)),
-        url('../images/ilearnbg.png'); */
-    background-image:
-        linear-gradient(rgba(45, 106, 79, 0.85), rgba(45, 106, 79, 0.85)),
-        url('../images/ilearnbg.png');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    display: flex;
-    justify-content: center;
-    align-items: left;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
-    padding: 2rem;
+.container-fluid main {
     position: relative;
-    /* position: relative; */
-    /* flex-direction: column;
-    gap: 1rem; */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.container-fluid .login-parent .image-form .image-parent {
+/* floating cards */
+.hero-card {
     position: absolute;
-    bottom: 60px;
-    left: 40px;
+    z-index: 3;
+    background: #ffffff;
+    /* background-color: #F8FAFB; */
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 180, 100, 0.25);
+    border-radius: 14px;
+    padding: 12px 16px;
+    color: var(--light-text);
+    font-size: .78rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: cardFloat 5s ease-in-out infinite;
+    white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-/* .container-fluid .login-parent .image-form .image-container{
+.hero-card .card-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green-mid);
+}
+
+.hero-card.blue-card {
+    border-color: rgba(0, 150, 200, 0.25);
+}
+
+.hero-card.blue-card .card-dot {
+    background: var(--blue-mid);
+}
+
+.hero-card.c1 {
+    top: 20%;
+    left: 3%;
+    animation-delay: 0s;
+}
+
+.hero-card.c2 {
+    top: 80%;
+    right: 3%;
+    animation-delay: -2s;
+}
+
+.hero-card.c3 {
+    bottom: 30%;
+    left: 5%;
+    animation-delay: -4s;
+}
+
+.hero-card.c4 {
+    top: 35%;
+    right: 5%;
+    animation-delay: -4s;
+}
+
+@keyframes cardFloat {
+
+    0%,
+    100% {
+        transform: translateY(0)
+    }
+
+    50% {
+        transform: translateY(-10px)
+    }
+}
+
+/* .container-fluid main::after {
+    content: '';
     position: absolute;
-    bottom: 3.5rem;
-    left: 40px;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.62);
 } */
 
-.container-fluid .login-parent .image-form .image-nav {
-    /* background-color: transparent; */
-    /* background: rgba(255, 255, 255, 0.18);
-    border: 1px solid rgba(255, 255, 255, 0.35); */
-    background: rgba(76, 175, 125, 0.25);
-    border: 1px solid rgba(76, 175, 125, 0.5);
-    width: 185px;
-    padding: 5px 15px;
-    border-radius: 28px;
+.card-logo span {
+    color: var(--green-dark);
 }
 
-.container-fluid .login-parent .image-form .image-nav .fa {
-    color: #a8f0c8;
-    font-size: 12px;
-}
-
-.container-fluid .login-parent .image-form .image-nav span {
-    color: #a8f0c8;
+.card-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    /* background: rgba(0, 150, 100, 0.08);
+    border: 1px solid rgba(0, 150, 100, 0.22);
+    color: var(--green-dark); */
+    background: rgba(0, 150, 100, 0.08);
+    border: 1px solid rgba(0, 150, 100, 0.28);
+    color: var(--green-dark);
     font-size: 13.5px;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 50px;
+    letter-spacing: .4px;
+    text-transform: uppercase;
+    /* margin: 0 0 28px; */
+    margin: 15px 0 20px;
 }
 
-
-.container-fluid .login-parent .image-form h3,
-.container-fluid .login-parent .image-form p {
-    color: #ffffff;
-    margin: 0;
+.card-badge .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--green-mid);
+    border-radius: 50%;
+    animation: pulseDot 1.5s infinite;
 }
 
-.container-fluid .login-parent .image-form h3 {
-    margin-top: 1rem;
-    /* font-weight: 600; */
-    width: 100%;
-    max-width: 580px;
-    font-size: 30px;
-    line-height: 43px;
-    font-family: "Titan", sans-serif;
-    text-transform: capitalize;
-}
-
-.container-fluid .login-parent .image-form h3 b {
-    color: var(--green);
-    font-family: "Titan", sans-serif;
-    /* font-style: italic; */
-}
-
-.container-fluid .login-parent .image-form p {
-    margin-top: 0.5rem;
-    color: #FFFFFFBF;
-    font-size: 14.5px;
-    width: 100%;
-    max-width: 450px;
-    line-height: 25px;
-}
-
-.container-fluid .login-parent .image-form .image-footer {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.container-fluid .login-parent .image-form .image-footer .footer {
-    background: rgba(76, 175, 125, 0.25);
-    border: 1px solid rgba(76, 175, 125, 0.5);
-    padding: 1rem;
-    text-align: center;
-    border-radius: 10px;
-    /* width: calc(100% / 5); */
-    /* width: 100%;
-    max-width: 103px; */
-}
-
-.container-fluid .login-parent .image-form .image-footer .footer p {
-    font-size: 17px;
-    font-weight: 600;
-    color: var(--green);
-}
-
-.container-fluid .login-parent .image-form .image-footer .footer span {
-    color: #ffffff;
-    font-size: 14.5px;
-    font-weight: 600;
-}
-
-.container-fluid .login-parent .image-container img {
-    width: 100%;
-    height: 100%;
-}
-
-.container-fluid .login-parent .field-form {
+.container-fluid main form .form-sub-parent {
+    /* padding: 10rem;
+    overflow-y: auto; */
+    /* padding-top: 10rem; */
+    overflow-y: auto;
     height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    width: 100%;
-    overflow-y: auto;
-    background-color: #F7F9F8;
     padding: 2rem 0;
-    /* background-color: #ffffff; */
 }
 
-.container-fluid .login-parent .form-extension {
-    animation: slideIn 0.4s ease both;
-    /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04); */
-    /* border: 1px solid #e2e8f0; */
-    width: 100%;
-    /* height: 100%; */
-    /* max-width: 560px; */
-    max-width: 540px;
-    flex-shrink: 0;
-    /* background-color: #ffffff; */
-    /* background-color: #ffffff; */
-    /* background: transparent; */
-    /* background-color: #ffffff; */
+.container-fluid main form .form-sub-parent::-webkit-scrollbar {
+    display: none;
 }
 
-.container-fluid .login-parent .form {
-    padding: 1.8rem 2.3rem;
-    /* box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px; */
+.container-fluid main form .form-parent .card-divider {
+    margin: 28px 0;
+    height: 1px;
+    /* background: linear-gradient(to right, transparent, rgba(0, 150, 100, 0.2), transparent); */
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.container-fluid main form .form-parent {
+    /* background-color: #ffffff;
+    border: 1px solid var(--border-dim);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04); */
+    /* box-shadow: 0 24px 80px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.9) inset; */
+    background: rgba(255, 255, 255, 0.95);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-    border-radius: 20px;
-    background-color: #ffffff;
-    /* background-color: #ffffff; */
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(0, 180, 100, 0.16);
+    border-radius: 10px;
+    /* padding: 44px 40px 40px; */
+    padding: 3rem;
+    z-index: 3;
+    position: relative;
+    /* width: 420px; */
+    width: 500px;
+    /* width: 460px; */
 }
 
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(14px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* .container-fluid .login-parent .form {
-    overflow-y: auto;
-    display: flex;
-    justify-content: center;
-    align-items: left;
-    flex-direction: column;
-} */
-
-
-.container-fluid .login-parent .form-logo {
+.container-fluid main form .form-parent .card-brand {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    /* width: 100%; */
 }
 
-/* .container-fluid .login-parent .form .form-logo .parent-logo {
+.container-fluid main form .form-parent .card-brand .form-icon {
     display: flex;
-    align-items: center;
     justify-content: center;
-    gap: 0.8rem;
-} */
+    align-items: center;
+    gap: 12px;
+}
 
-.container-fluid .login-parent .form-logo .parent-logo img {
+/* .container-fluid main form .form-parent .card-brand .form-icon img{
     width: 50px;
     height: 50px;
-}
+} */
 
-.container-fluid .login-parent .form-logo .parent-logo p {
-    font-size: 17px;
-    font-weight: bold;
-    margin: 0;
-}
-
-.container-fluid .login-parent .form-logo .parent-logo {
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    position: relative;
-    gap: 0.5rem;
-    width: 100%;
-}
-
-.container-fluid .login-parent .form-logo .parent-logo .logo-icon {
-    padding: 9px;
-    background-color: var(--green-light);
-    border-radius: 10px;
-    /* border: 1px solid rgba(0, 0, 0, 0.1); */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-}
-
-.container-fluid .login-parent .form-logo .parent-logo .logo-icon .fa-solid {
-    color: var(--green);
-    font-size: 20px;
-}
-
-.container-fluid .login-parent .form-logo .parent-logo p {
-    font-size: 22px;
+.container-fluid main form .form-parent .card-brand .form-icon p b {
     font-family: "Titan", sans-serif;
     font-weight: normal;
-    color: var(--green);
 }
 
-.container-fluid .login-parent .form-logo .parent-logo p b {
-    font-weight: normal;
-    color: #212529;
-    font-family: "Titan", sans-serif;
-}
-
-/* .container-fluid .login-parent .form .form-logo .parent-logo .logo {
-    width: 60px;
-    height: 60px;
-    background-image: url(../images/login-logo2.jpg);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    border-radius: 7px;
-    border-radius: 50%;
-    margin-top: 2.5rem;
-} */
-
-.container-fluid .login-parent .form-logo p:nth-child(3) {
-    font-size: 15px;
-    color: #808080;
+.container-fluid main form .form-parent .card-brand .form-icon p {
     margin: 0;
-}
-
-/* .container-fluid .login-parent .form:hover {
-    box-shadow: 0 8px 32px rgba(108, 63, 232, 0.13), 0 2px 8px rgba(0, 0, 0, 0.07);
-    transform: translateY(-2px);
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-} */
-
-/* .container-fluid .login-parent .form .text-box{
-    margin-top: 1.5rem;
-} */
-
-.container-fluid .login-parent .form .text-box:nth-child(2) {
-    margin-top: 1rem;
-}
-
-.container-fluid .login-parent .form .text-box input,
-.container-fluid .login-parent .form .text-box label,
-.container-fluid .login-parent .form .text-box select {
-    font-size: 15px;
-}
-
-.container-fluid .login-parent .form .text-box input {
-    margin-top: 0.3rem;
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    border-radius: 28px;
-    padding: 8px 15px;
-    font-size: 15px;
-}
-
-.container-fluid .login-parent .form .text-box select {
-    margin-top: 0.3rem;
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    border-radius: 7px;
-}
-
-/* .container-fluid .login-parent .form .text-box .input-group .input-group-text{
-    background-color: #dfdfdf;
-    color: white;
-} */
-
-.container-fluid .login-parent .form-logo h2 {
     font-size: 21px;
-    margin-top: 1rem;
+    color: var(--light-text);
     font-family: "Titan", sans-serif;
-    text-align: left;
-    width: 100%;
-    /* font-weight: 700; */
-}
-
-/* .container-fluid .login-parent .form-logo h2 b {
-    font-family: "Titan", sans-serif;
-    color: var(--green);
-} */
-
-.container-fluid .login-parent .form .forgot {
-    margin-top: 1.5rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.container-fluid .login-parent .form .forgot a {
-    font-size: 15px;
-    /* color: #212529; */
-    text-decoration: none;
-    color: var(--green);
-}
-
-.container-fluid .login-parent .form .button {
-    margin-top: 1.5rem;
-}
-
-.container-fluid .login-parent .form .button button {
-    padding: 8px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    outline: none;
-    width: 100%;
-    border-radius: 28px;
-    font-size: 15px;
-    /* background-color: #0d589f; */
-    background-color: var(--green);
-    color: white;
-    font-weight: bold;
-}
-
-.container-fluid .login-parent .form h4 {
-    margin-top: 3rem;
-    text-align: center;
-    font-size: 15px;
     font-weight: normal;
 }
 
-.container-fluid .login-parent .form .accounts {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    margin-top: 2rem;
-    gap: 1rem;
+.container-fluid main form .form-parent .card-brand .form-icon .icon {
+    width: 40px;
+    height: 40px;
+    border: 1px solid black;
+    border-radius: 10px;
 }
 
-.container-fluid .login-parent .form .accounts a {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-    color: #212529;
-    border: 1px solid #212529;
-    padding: 0.5rem 0.8rem;
-    border-radius: 7px;
-}
-
-.container-fluid .login-parent .form .accounts a p {
-    font-size: 15px;
-}
-
-.container-fluid .login-parent .form .change {
-    margin-top: 2.5rem;
-}
-
-.container-fluid .login-parent .change {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
+.container-fluid main form .form-parent h2 {
     text-align: center;
-    gap: 0.5rem;
+    font-size: 30px;
+    margin: 0 0 12px;
+    font-family: "Titan", sans-serif;
+    font-style: normal;
+    color: var(--light-text);
+}
+
+.container-fluid main form .form-parent p {
+    text-align: center;
+    color: var(--light-muted);
+    font-size: 15.5px;
+}
+
+.container-fluid main form .form-parent .form-panel {
     margin-top: 2.5rem;
+}
+
+.container-fluid main form .form-parent .form-panel label {
+    color: var(--light-text);
+    font-weight: 600;
+    /* text-transform: uppercase; */
+    font-size: 15.5px;
+}
+
+.container-fluid main form .form-parent .form-panel .input-1,
+.container-fluid main form .form-parent .form-panel .input-2 {
+    margin-top: 1.5rem;
+}
+
+.container-fluid main form .form-parent .form-panel .input-1 input,
+.container-fluid main form .form-parent .form-panel .input-2 input {
     width: 100%;
-    max-width: 550px;
+    margin-top: 0.4rem;
+    padding: 8px 20px;
+    border-radius: 10px;
+    border: none;
+    border: 1.5px solid #D8E4EF;
+    outline: none;
+    background: #FAFCFF;
+    color: var(--light-text);
+    font-size: 15.5px;
 }
 
-.container-fluid .login-parent .change label,
-.container-fluid .login-parent .change a {
-    /* color: #212529; */
-    font-size: 15px;
+.container-fluid main form .form-parent .forgot {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: end;
 }
 
-.container-fluid .login-parent .change a {
-    color: var(--green);
+.container-fluid main form .form-parent .forgot a {
+    text-decoration: none;
+    color: var(--green-dark);
+    font-weight: 600;
+    font-size: 15.5px;
 }
 
-@media only screen and (max-width: 1020px) {
+.container-fluid main form .form-parent button {
+    padding: 8px 20px;
+    width: 100%;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--green-mid), var(--green-dark));
+    /* background: linear-gradient(135deg, var(--green-neon), var(--green-mid)); */
+    color: #ffffff;
+    margin-top: 1.5rem;
+    outline: none;
+    border: none;
+    font-weight: 600;
+    border: 1.5px solid #D8E4EF;
+    font-size: 15.5px;
+}
+
+.container-fluid main form .form-parent p b {
+    color: var(--green-dark);
+    font-weight: 600;
+}
+
+/* Circuit board grid background */
+.hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+        linear-gradient(rgba(0, 180, 100, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 180, 100, 0.06) 1px, transparent 1px),
+        linear-gradient(rgba(0, 150, 220, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 150, 220, 0.04) 1px, transparent 1px);
+    background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px;
+}
+
+/* Glowing circuit traces */
+.circuit-trace {
+    position: absolute;
+    z-index: 1;
+}
+
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: .12;
+    z-index: 1;
+    animation: floatOrb 9s ease-in-out infinite;
+}
+
+.orb-1 {
+    width: 500px;
+    height: 500px;
+    background: var(--green-mid);
+    top: -150px;
+    left: -120px;
+}
+
+.orb-2 {
+    width: 400px;
+    height: 400px;
+    background: var(--blue-mid);
+    bottom: -100px;
+    right: -100px;
+    animation-delay: -3s;
+}
+
+.orb-3 {
+    width: 280px;
+    height: 280px;
+    background: var(--purple-chip);
+    top: 40%;
+    left: 50%;
+    animation: floatOrb2 7s ease-in-out infinite;
+    animation-delay: -5s;
+}
+
+@keyframes floatOrb {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1)
+    }
+
+    50% {
+        transform: translateY(-30px) scale(1.05)
+    }
+}
+
+@keyframes floatOrb2 {
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1)
+    }
+
+    50% {
+        transform: translate(-50%, -60%) scale(1.08)
+    }
+}
+
+.stars {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+}
+
+@media only screen and (min-width: 1350px) {
+    .container-fluid main form .form-sub-parent {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+/* @media only screen and (max-width: 1020px) {
     .container-fluid .login-parent .image-container {
         display: none;
     }
@@ -515,14 +486,6 @@
         height: 100dvh;
         padding: 1.5rem;
     }
-}
-
-@media only screen and (max-width: 500px) {
-    /* .container-fluid .login-parent .form {
-        padding-top: 10rem;
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
-    } */
 }
 
 @media only screen and (max-width: 415px) {
@@ -574,4 +537,4 @@
     .container-fluid .login-parent .form .button button {
         font-size: 15px;
     }
-}
+} */

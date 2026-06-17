@@ -48,12 +48,13 @@
             <div class="nav-logo">
                 <!-- <img src="../images/login-logo2.jpg" alt=""> -->
                 <!-- <img src="../images/ilearn-logo4.png" alt=""> -->
-                <div class="logo-icon">
+                <!-- <div class="logo-icon">
                     <i class="fa-solid fa-lightbulb"></i>
                 </div>
                 <div class="logo-text">
                     <p><b>i</b>Learn</p>
-                </div>
+                </div> -->
+                <img src="../images/iLearn.png" alt="">
             </div>
 
             <div class="nav-list">
@@ -71,13 +72,13 @@
                         <a href="#features">Features</a>
                     </li>
                     <li>
+                        <a href="#skills-training">Skills Training</a>
+                    </li>
+                    <li>
                         <a href="#how-it-works">How it Works</a>
                     </li>
                     <li>
-                        <a href="#simulations">Simulations</a>
-                    </li>
-                    <li>
-                        <a href="">Contacts</a>
+                        <a href="#stories">Stories</a>
                     </li>
                 </ul>
             </div>
@@ -277,7 +278,7 @@
                     <div class="student-icon">
                         Explore Our features
                     </div>
-                    <h3>Everything You Need to Succeed in CSS</h3>
+                    <h2>Everything You Need to Succeed in CSS</h2>
 
                     <p>Enhance your Computer Systems Servicing skills through interactive simulations, engaging learning
                         modules, assessments, and real-time progress tracking—all within one specialized learning
@@ -345,19 +346,81 @@
             </div>
         </section>
 
+        <section class="section4" id="skills-training">
+            <div class="ready-parents">
+                <div class="ready-icon">
+                    Training Laboratory
+                </div>
+                <h2>Hands-On CSS Skills Lab</h2>
+
+                <p>Students actively exploring computer hardware components during a CSS classroom session, learning to
+                    identify parts such as the motherboard, RAM slots, expansion cards, and peripheral connectors under
+                    teacher guidance.
+                </p>
+            </div>
+
+            <div class="ready-body">
+                <div class="ready-card">
+                    <div class="image-ready">
+                        <img src="../images/preparing-css.jpg" alt="">
+                    </div>
+                    <div class="image-text">
+                        <!-- <h5>System Unit Assembly & Disassembly</h5> -->
+
+                        <p>"Students actively participating in a CSS classroom session, exploring computer hardware
+                            components and learning the fundamentals of system unit identification. Under the guidance
+                            of their teacher, they examine each part carefully — identifying the motherboard, RAM slots,
+                            expansion cards, and peripheral connectors. This foundational activity builds the
+                            recognition skills needed before performing actual assembly and disassembly tasks in the
+                            TESDA NC II assessment."</p>
+                    </div>
+                </div>
+
+                <div class="ready-card">
+                    <div class="image-text">
+                        <!-- <h5>Network Cable Crimping (RJ45)</h5> -->
+
+                        <p>"Students practicing hands-on network cable crimping using RJ45 connectors and crimping tools
+                            — a core skill required in the TESDA NC II networking competency. Working in groups, they
+                            carefully arrange the eight copper wires following the T568B wiring standard before
+                            inserting them into the RJ45 connector and applying pressure with the crimping tool. Each
+                            finished cable is then tested using a LAN tester to verify that all wire pairs are correctly
+                            connected and the cable is ready for use in a live network setup."</p>
+                    </div>
+                    <div class="image-ready">
+                        <img src="../images/crimping-1.jpg" alt="">
+                    </div>
+                </div>
+
+                <div class="ready-card">
+                    <div class="image-ready">
+                        <img src="../images/demo-3.jpg" alt="">
+                    </div>
+                    <div class="image-text">
+                        <!-- <h5>Supervised Hardware Installation</h5> -->
+
+                        <p>"A student performs system unit assembly under close teacher supervision, practicing the
+                            correct installation of internal components including the power supply unit, motherboard,
+                            and drive connections. The activity emphasizes proper handling techniques — such as
+                            grounding yourself before touching components, using the correct screwdriver, and following
+                            the right sequence of installation. Mastering this task is essential for passing the
+                            hardware assembly portion of the TESDA CSS NC II practical examination."</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="section3" id="how-it-works">
             <div class="create-manage-parents">
                 <div class="create-text">
                     <div class="teacher-icon">
                         How it Works
                     </div>
-                    <h3>Start Learning in Simple Steps</h3>
+                    <h2>Start Learning in Simple Steps</h2>
 
                     <p>Start your learning journey in just a few simple steps. Access lessons, complete activities, and
                         develop your CSS skills through interactive learning experiences.</p>
                 </div>
-
-
             </div>
             <div class="create-body">
                 <div class="row">
@@ -372,7 +435,8 @@
                             <h5>Access Your Account</h5>
 
                             <p>Login your account using LRN number and access your assigned classes and learning
-                                materials. Make sure your LRN and password are correct. If you're a first-time user, your teacher will provide your login credentials before your first session.</p>
+                                materials. Make sure your LRN and password are correct. If you're a first-time user,
+                                your teacher will provide your login credentials before your first session.</p>
                         </div>
                     </div>
                 </div>
@@ -388,7 +452,10 @@
 
                             <h5>Learn Through Modules</h5>
 
-                            <p>Study CSS lessons, tutorials, and learning resources prepared by your teachers. Each module is structured to follow the TESDA CSS NC II curriculum — covering topics like hardware installation, OS setup, and network configuration in a clear, step-by-step format.</p>
+                            <p>Study CSS lessons, tutorials, and learning resources prepared by your teachers. Each
+                                module is structured to follow the TESDA CSS NC II curriculum — covering topics like
+                                hardware installation, OS setup, and network configuration in a clear, step-by-step
+                                format.</p>
                         </div>
                     </div>
                 </div>
@@ -404,7 +471,9 @@
 
                             <h5>Practice with Simulations</h5>
 
-                            <p>Develop practical skills through interactive CSS simulations and hands-on activities. Apply what you've learned in a virtual environment — assemble PC components, configure networks, and troubleshoot system errors without needing physical equipment.
+                            <p>Develop practical skills through interactive CSS simulations and hands-on activities.
+                                Apply what you've learned in a virtual environment — assemble PC components, configure
+                                networks, and troubleshoot system errors without needing physical equipment.
                             </p>
                         </div>
                     </div>
@@ -421,7 +490,9 @@
 
                             <h5>Complete Assessments</h5>
 
-                            <p>Take quizzes and activities to test your understanding of CSS concepts. Assessments are available after each module. You'll receive instant feedback on your answers so you can review and improve before moving on to the next topic.</p>
+                            <p>Take quizzes and activities to test your understanding of CSS concepts. Assessments are
+                                available after each module. You'll receive instant feedback on your answers so you can
+                                review and improve before moving on to the next topic.</p>
                         </div>
                     </div>
                 </div>
@@ -437,27 +508,105 @@
 
                             <h5>Track Your Progress</h5>
 
-                            <p>Monitor completed modules, assessment scores, and learning achievements. Your dashboard shows a full overview of your learning journey — see which lessons you've finished, your quiz scores, and how close you are to completing the full CSS program.</p>
+                            <p>Monitor completed modules, assessment scores, and learning achievements. Your dashboard
+                                shows a full overview of your learning journey — see which lessons you've finished, your
+                                quiz scores, and how close you are to completing the full CSS program.</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="section4">
-            <div class="ready-parents">
-                <h2>Ready to Transform Your Learning Experience?</h2>
+        <div class="section5" id="stories">
+            <div class="stories-text">
+                <div class="stories-tag">Student Stories</div>
+                <h2>What Our CSS Students Say</h2>
 
-                <p>Join thousands of students and teachers already using our platform to achieve their educational
-                    goals.</p>
+                <p>Real students who used TechVoc Hub to prepare for their TESDA assessments and land their first tech
+                    jobs.</p>
+            </div>
 
-                <div class="ready-buttons">
-                    <a href="#">Get Started Free <i class="fa fa-arrow-right"></i></a>
+            <div class="stories-body">
+                <div class="card-box">
+                    <div class="parent-stars">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                    </div>
 
-                    <a href="#">Learn More</a>
+                    <p>"The hardware assembly videos helped me so much. I used to be scared of opening a PC, but after
+                        practicing with TechVoc Hub's modules I assembled my own PC at home and passed the TESDA
+                        hardware task with no problem."</p>
+
+                    <div class="profile">
+                        <div class="profile-icon">
+
+                        </div>
+                        <div class="profile-text">
+                            <h5>Marco Santos</h5>
+                            <p>CSS Grade 12 · Cavite</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-box">
+                    <div class="parent-stars">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                    </div>
+
+                    <p>"The hardware assembly videos helped me so much. I used to be scared of opening a PC, but after
+                        practicing with TechVoc Hub's modules I assembled my own PC at home and passed the TESDA
+                        hardware task with no problem."</p>
+
+                    <div class="profile">
+                        <div class="profile-icon">
+
+                        </div>
+                        <div class="profile-text">
+                            <h5>Marco Santos</h5>
+                            <p>CSS Grade 12 · Cavite</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-box">
+                    <div class="parent-stars">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                    </div>
+
+                    <p>"The hardware assembly videos helped me so much. I used to be scared of opening a PC, but after
+                        practicing with TechVoc Hub's modules I assembled my own PC at home and passed the TESDA
+                        hardware task with no problem."</p>
+
+                    <div class="profile">
+                        <div class="profile-icon">
+
+                        </div>
+                        <div class="profile-text">
+                            <h5>Marco Santos</h5>
+                            <p>CSS Grade 12 · Cavite</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
+
+        <div class="section6" id="cta-section">
+            <h2>Are You Ready To Start Your Journey?</h2>
+            <p>Begin your path to becoming a skilled Computer System Servicing professional. Access interactive lessons, hands-on activities, and assessments designed to help you build confidence and succeed in your CSS studies.</p>
+
+            <a href="/learning_management/public/?url=login">Start Now</a>
+        </div>
 
         <footer>
             <div class="footer-logo">

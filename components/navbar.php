@@ -1,9 +1,12 @@
 <nav class="main-nav">
     <div class="nav-title">
-        <button class="menu-bar" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop"
+        <!-- <button class="menu-bar" type="button" data-bs-toggle="offcanvas" data-bs-target="#staticBackdrop"
             aria-controls="staticBackdrop">
             <div class="fa fa-bars"></div>
-        </button>
+        </button> -->
+
+        <h3>Student Dashboard</h3>
+        <p>Wednesday, June 18, 2026 · CSS Batch 2026</p>
     </div>
 
     <div class="nav-acc">
@@ -26,13 +29,21 @@
             </button>
         </div>
 
-        <div class="drop-name">
+        <!-- <div class="drop-name">
             <p><?= htmlspecialchars($_SESSION["name"]) ?></p>
             <span>Student</span>
-        </div>
+        </div> -->
 
         <div class="dropdown">
-            <a href="#" class="dropdown-parent" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a href="#" class="dropdown-parent">
+                <button>
+                    <?php
+                    $initial = isset($_SESSION['name']) ? strtoupper(substr($_SESSION['name'], 0, 1)) : '';
+                    echo $initial;
+                    ?>
+                </button>
+            </a>
+            <!-- <a href="#" class="dropdown-parent" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <button>
                     <?php
                     $initial = isset($_SESSION['name']) ? strtoupper(substr($_SESSION['name'], 0, 1)) : '';
@@ -77,7 +88,7 @@
                         </a>
                     </li>
                 </form>
-            </ul>
+            </ul> -->
         </div>
     </div>
 </nav>

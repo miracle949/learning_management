@@ -18,9 +18,75 @@
 
     <div class="container-fluid p-0">
 
-        <form action="?url=login" method="post">
+        <main>
+            <div class="hero-bg"></div>
+            <div class="stars" id="stars"></div>
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+
+            <div class="hero-card c1"><span class="card-dot"></span>🖥️ Hardware Assembly & Troubleshooting</div>
+
+            <div class="hero-card c2 blue-card"><span class="card-dot"></span>🔧 PC Repair · Networking · OS Install
+            </div>
+
+            <div class="hero-card c3"><span class="card-dot"></span>🏆 TESDA NC II Certified in 6 Months</div>
+
+            <div class="hero-card c4"><span class="card-dot"></span>🏆 TESDA NC II Certified in 6 Months</div>
+
+            <form action="?url=login" method="post">
+                <div class="form-sub-parent">
+                    <div class="form-parent">
+                        <div class="card-brand">
+                            <div class="form-icon">
+                                <a href="/learning_management/public/?url=landingpage"><img src="../images/iLearn.png" alt=""></a>
+                            </div>
+
+                            <div class="card-badge">
+                                <span class="dot"></span>
+                                CSS Learning Platform
+                            </div>
+                        </div>
+
+
+                        <h2>Student Sign In</h2>
+                        <p>Unlock a world of learning with just one click. Log in to get started and access your
+                            account.</p>
+
+                        <div class="form-panel">
+                            <div class="input-1">
+                                <label>Learner Reference Number (LRN)</label>
+                                <input type="text" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
+                                    id="" placeholder="Enter your email" required>
+                            </div>
+
+                            <div class="input-2">
+                                <label>Password</label>
+                                <input type="password" name="password" id="" placeholder="Enter password" required>
+                            </div>
+                        </div>
+
+                        <div class="forgot">
+                            <a href="#">Forgot Password</a>
+                        </div>
+
+                        <button class="submit"
+                            class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">Login</button>
+
+                        <div class="card-divider"></div>
+
+                        <p>Need help signing in? Contact your school's
+                            <br>
+                            CSS Instructor or <b>visit the Help Center</b>
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </main>
+
+        <!-- <form action="?url=login" method="post">
             <div class="login-parent">
-                <!-- <div class="form-logo">
+                <div class="form-logo">
                     <div class="parent-logo">
                         <div class="logo-icon">
                             <i class="fa-solid fa-lightbulb"></i>
@@ -31,7 +97,7 @@
                     </div>
                     <h2>Let's the learning journey begin.</h2>
                     <p>Unlock a world of learning with just one click. Log in to get started.</p>
-                </div> -->
+                </div>
                 <div class="image-form">
                     <div class="image-parent">
                         <div class="image-container">
@@ -67,8 +133,6 @@
                 </div>
                 <div class="field-form">
                     <div class="form-extension form">
-
-                        <!-- <p>Just one step away from your courses—step in and start learning.</p> -->
 
                         <div class="form-logo">
                             <div class="parent-logo">
@@ -113,9 +177,6 @@
                             </span>
                         </div>
 
-                        <!-- <div class="forgot text-end">
-                        <a href="#">Forgot Password</a>
-                    </div> -->
 
                         <div class="button">
                             <button class="submit"
@@ -136,7 +197,7 @@
                 </div>
 
             </div>
-        </form>
+        </form> -->
     </div>
 
     <script>

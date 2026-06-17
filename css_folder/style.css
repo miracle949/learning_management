@@ -47,7 +47,7 @@
 }
 
 .container-fluid .rightbar {
-    width: calc(100% - 235px);
+    width: calc(100% - 225px);
     /* height: calc(100% - 87px); */
     /* height: calc(100% - 67px); */
     /* height: calc(100% - 75px); */
@@ -56,16 +56,256 @@
     /* margin-top: 67px; */
     /* margin-top: 75px; */
     margin-top: 68px;
-    margin-left: 235px;
+    margin-left: 225px;
     /* padding: 2.5rem; */
-    padding: 1.8rem 1.4rem 1.8rem 1.4rem;
+    /* padding: 1.8rem 1.4rem 1.8rem 1.4rem; */
+    padding: 1.3rem 1.8rem 1.8rem;
     border-left: 1px solid rgba(0, 0, 0, 0.1);
     /* background-color: #FAFAFC; */
     /* background-color: #f0f2f8; */
     /* background-color: #f0f2f8; */
     /* background-color: #F5F8FF; */
-    background-color: #F7F9F8;
+    /* background-color: #F7F9F8; */
+    /* background-color: #ffffff; */
+    background-color: var(--bg-page);
+    /* background-color: #ffffff;
+    position: relative; */
 }
+
+/* Circuit board grid background */
+.hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background:
+        linear-gradient(rgba(0, 180, 100, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 180, 100, 0.06) 1px, transparent 1px),
+        linear-gradient(rgba(0, 150, 220, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 150, 220, 0.04) 1px, transparent 1px);
+    background-size: 60px 60px, 60px 60px, 12px 12px, 12px 12px;
+}
+
+.container-fluid .rightbar .main-parent {
+    display: flex;
+    /* flex-direction: column; */
+    /* justify-content: space-between; */
+    /* align-items: center; */
+    /* gap: 12px; */
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.container-fluid .rightbar .main-parent .side-dashboard {
+    width: 100%;
+}
+
+.container-fluid .rightbar .main-parent .right-dashboard {
+    width: 47%;
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    border-radius: 10px;
+    /* height: 500px; */
+}
+
+.container-fluid .rightbar .main-parent .right-dashboard h3 {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--light-text);
+    margin: 0;
+}
+
+.container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-body {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-body h4 {
+    margin: 20px 0 7px;
+    font-size: 19px;
+    font-weight: 600;
+    color: var(--light-text);
+}
+
+.container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-body p {
+    margin: 0;
+    color: var(--light-muted);
+}
+
+.container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-body .profile-icon {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--green-mid), var(--blue-mid));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-body .parent-calendar {
+    width: 100%;
+    padding: 1.5rem;
+    background-color: #F8F8F8;
+    /* width: 390px; */
+    margin-top: 2rem;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    /* background-color: #ffffff; */
+}
+
+.container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-body .parent-calendar .calendar-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-body .parent-calendar .calendar-nav .fa {
+    font-size: 15px;
+}
+
+.container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-body .parent-calendar .calendar-nav h5 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--light-text);
+}
+
+.cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.cal-day-name {
+    font-size: .62rem;
+    font-weight: 700;
+    color: #9BB0C4;
+    padding: 4px 0;
+}
+
+.cal-day {
+    font-size: .72rem;
+    font-weight: 500;
+    color: var(--light-muted);
+    padding: 5px 2px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+}
+
+.cal-day:hover {
+    background: var(--green-light);
+    color: var(--green-dark);
+}
+
+.cal-day.today {
+    background: var(--green-mid);
+    color: white;
+    font-weight: 700;
+}
+
+.cal-day.has-event {
+    position: relative;
+}
+
+.cal-day.has-event::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--orange-warn);
+}
+
+.cal-day.other-month {
+    color: #C8D8E8;
+}
+
+.container-fluid .rightbar .main-parent .right-dashboard .card-divider {
+    width: 100%;
+    height: 2px;
+    border: 1px solid var(--border);
+    margin: 40px 0;
+}
+
+/* .container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-body .parent-calendar .calendar-body {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-body .parent-calendar .calendar-body .date {
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    text-align: center;
+}
+
+.container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-body .parent-calendar .calendar-body .date:nth-child(2) {
+    background-color: #000000;
+    padding: 7px;
+    border-radius: 28px;
+}
+
+.container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-body .parent-calendar .calendar-body .date:nth-child(2) p {
+    color: #D2EDFD;
+}
+
+.container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-body .parent-calendar .calendar-body .date:nth-child(2) .circle {
+    color: #000000;
+    background-color: #FF926F;
+    padding: 5px;
+width: 30px;
+height: 30px;
+border-radius: 50%;
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+.container-fluid .rightbar .main-parent .right-dashboard .card-divider {
+    width: 100%;
+    height: 2px;
+    border: 1px solid var(--border);
+    margin: 40px 0;
+}
+
+/* .container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-body .parent-calendar .calendar-body .date .circle{
+    background-color: #ffffff;
+    color: var(--light-muted);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} */
 
 /* 
 div.rightbar{
@@ -84,7 +324,8 @@ div.rightbar{
     /* background-color: #F5F5F5; */
     /* background-color: #0d1117; */
     /* background-color: #5BCA3F; */
-    background-color: var(--green);
+    /* background-color: var(--green); */
+    background: linear-gradient(135deg, var(--green-dark) 0%, var(--blue-mid) 100%);
     width: 100%;
     /* border: 1px solid rgba(0, 0, 0, 0.2); */
     border-radius: 10px;
@@ -95,6 +336,17 @@ div.rightbar{
     position: relative;
     overflow: hidden;
     animation: slideIn 0.4s ease both;
+}
+
+.container-fluid .welcome-user::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 30px 30px;
+
 }
 
 @keyframes slideIn {
@@ -250,7 +502,7 @@ div.rightbar{
     /* gap: 1rem; */
     /* flex-wrap: wrap; */
     /* width: 100%; */
-    margin-top: 2rem;
+    /* margin-top: 2rem; */
     /* gap: 1rem; */
     /* gap: 1rem; */
     animation: slideIn 0.4s ease both;
@@ -266,11 +518,13 @@ div.rightbar{
     /* width: 100%; */
     /* width: calc(100% / 4); */
     width: 100%;
-    background-color: var(--green);
+    background-color: #ffffff;
     /* padding: 1.5rem 1.1rem 1.5rem 1.1rem; */
-    padding: 2rem 1.5rem;
+    /* padding: 1.5rem; */
+    padding: 18px 20px;
     display: flex;
     justify-content: space-between;
+    border: 1px solid var(--border);
     align-items: center;
     border-radius: 7px;
     /* border: 1px solid #e2e8f0; */
@@ -306,11 +560,12 @@ div.rightbar{
 
 .parent-performance {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     /* align-items: center; */
     /* flex-wrap: wrap; */
     gap: 1rem;
-    margin-top: 1.5rem;
+    /* margin-top: 1.5rem; */
     animation: slideIn 0.4s ease both;
 }
 
@@ -359,7 +614,7 @@ div.rightbar{
     gap: 1.5rem;
     overflow-y: auto;
     height: 100%;
-    max-height: 350px;
+    max-height: 300px;
 }
 
 .perform .body::-webkit-scrollbar {
@@ -373,22 +628,41 @@ div.rightbar{
 }
 
 .perform .body .progress-box {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-    border: 1px solid #e2e8f0;
-    background-color: #ffffff;
+    /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04); */
+    /* border: 1px solid #e2e8f0; */
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+    /* background-color: #ffffff; */
     /* background-color: #ffffff; */
     /* background-color: #efefef; */
-    padding: 1.5rem 1.5rem 1.5rem 1.5rem;
-    border-radius: 10px;
+    /* padding: 1.5rem 1.5rem 1.5rem 1.5rem; */
+    /* border-radius: 10px; */
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.3rem;
+    position: relative;
 }
 
-.perform .body .progress-box .view {
+/* .perform .body .progress-box::before{
+    content: '';
+    width: 15px;
+    height: 15px;
+    background: var(--red-led);
+    box-shadow: 0 0 6px var(--red-led);
+    border-radius: 50%;
+} */
+
+.perform .body .progress-box p,
+.perform .body .progress-box small{
+    color: var(--light-muted);
+    margin: 0;
+    font-size: 14.5px;
+}
+
+/* .perform .body .progress-box .view {
     display: flex;
     justify-content: end;
-}
+} */
 
 .perform .body .progress-box .view a {
     text-decoration: underline;
@@ -448,7 +722,7 @@ div.rightbar{
 .parent-performance .update {
     /* width: 39%; */
     width: 100%;
-    height: 450px;
+    height: 300px;
     /* border: 2px solid #6CCA55; */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     border: 1px solid #e2e8f0;
@@ -570,7 +844,8 @@ div.rightbar{
     font-size: 14.5px;
     /* color: #808080; */
     /* color: var(--text-muted); */
-    color: #ffffffbf;
+    /* color: #ffffffbf; */
+    color: var(--light-text);
     text-transform: uppercase;
     font-weight: 600;
 }
@@ -585,7 +860,8 @@ div.rightbar{
     font-size: 28px;
     font-weight: 600;
     /* color: var(--green); */
-    color: #ffffff;
+    /* color: #ffffff; */
+    color: var(--light-text);
 }
 
 .container-fluid .rightbar .card-parent-box .card-box .data_text {
