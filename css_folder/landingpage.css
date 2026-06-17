@@ -187,7 +187,7 @@ html {
     left: 0;
     position: absolute;
     bottom: 0;
-    background-color: var(--green);
+    background-color: var(--green-dark);
     height: 2px;
 }
 
@@ -196,10 +196,15 @@ html {
     transition: all .5s ease-in-out;
 }
 
-.container-fluid nav .nav-list ul li:nth-child(4):hover::before {
+.container-fluid nav .nav-list ul li a:hover {
+    color: var(--green-dark);
+    font-weight: 600;
+}
+
+/* .container-fluid nav .nav-list ul li:nth-child(4):hover::before {
     width: 0;
     background: none;
-}
+} */
 
 .container-fluid nav .nav-list ul li a {
     text-decoration: none;
@@ -1042,7 +1047,7 @@ html {
 
 /* secttion 3 */
 
-.container-fluid .section3{
+.container-fluid .section3 {
     padding: 4.5rem 2.5rem 4.5rem 2.5rem;
 }
 
@@ -1078,7 +1083,7 @@ html {
 }
 
 .container-fluid .section3 .create-manage-parents .create-text {
-    width: 600px;   
+    width: 600px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1127,7 +1132,7 @@ html {
     transform: translate(-50%, -50%);
 }
 
-.container-fluid .section3 .create-body .row{
+.container-fluid .section3 .create-body .row {
     position: relative;
 }
 
@@ -1145,7 +1150,7 @@ html {
     border-radius: 50%;
 }
 
-.container-fluid .section3 .create-body .row:nth-child(1)::before{
+.container-fluid .section3 .create-body .row:nth-child(1)::before {
     content: '1';
     display: flex;
     justify-content: center;
@@ -1154,7 +1159,7 @@ html {
     font-weight: 600;
 }
 
-.container-fluid .section3 .create-body .row:nth-child(2)::before{
+.container-fluid .section3 .create-body .row:nth-child(2)::before {
     content: '2';
     display: flex;
     justify-content: center;
@@ -1163,7 +1168,7 @@ html {
     font-weight: 600;
 }
 
-.container-fluid .section3 .create-body .row:nth-child(3)::before{
+.container-fluid .section3 .create-body .row:nth-child(3)::before {
     content: '3';
     display: flex;
     justify-content: center;
@@ -1172,7 +1177,7 @@ html {
     font-weight: 600;
 }
 
-.container-fluid .section3 .create-body .row:nth-child(4)::before{
+.container-fluid .section3 .create-body .row:nth-child(4)::before {
     content: '4';
     display: flex;
     justify-content: center;
@@ -1181,7 +1186,7 @@ html {
     font-weight: 600;
 }
 
-.container-fluid .section3 .create-body .row:nth-child(5)::before{
+.container-fluid .section3 .create-body .row:nth-child(5)::before {
     content: '5';
     display: flex;
     justify-content: center;
@@ -1221,7 +1226,7 @@ html {
     align-items: center;
 }
 
-.container-fluid .section3 .create-body .card .step-icon .fa{
+.container-fluid .section3 .create-body .card .step-icon .fa {
     font-size: 18px;
     color: #ffffff;
 }
@@ -1384,6 +1389,17 @@ html {
     .container-fluid .section3 .create-manage-parents .create-icon .fa {
         font-size: 20px;
     }
+
+    .container-fluid nav .nav-list,
+    .container-fluid nav .nav-acc {
+        display: none;
+    }
+
+    .container-fluid nav .nav-menu {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 }
 
 @media only screen and (max-width: 1090px) {
@@ -1420,10 +1436,6 @@ html {
         gap: 3.5rem;
     } */
 
-    .container-fluid nav .nav-acc {
-        display: none;
-    }
-
     /* .container-fluid main .main-image .image {
         width: 100%;
     }
@@ -1431,12 +1443,6 @@ html {
     .container-fluid main .main-image .image img {
         width: 100%;
     } */
-
-    .container-fluid nav .nav-menu {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
 
     .container-fluid main .main-text .learning-today a {
         width: 100%;
