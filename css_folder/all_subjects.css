@@ -39,12 +39,13 @@
 
 .container-fluid .rightbar {
     /* width: 100%; */
-    width: calc(100% - 235px);
-    margin-left: 235px;
+    width: calc(100% - 225px);
+    margin-left: 225px;
     /* width: calc(100% - 250px); */
-    height: calc(100vh - 66px);
+    /* height: calc(100vh - 68px); */
+    height: 100vh;
     overflow-y: auto;
-    margin-top: 66px;
+    /* margin-top: 68px; */
     /* margin-left: 250px; */
     /* padding: 3rem; */
     padding: 1.8rem 1.4rem 1.8rem 1.4rem;
@@ -69,6 +70,7 @@
     /* margin-top: 2rem; */
     animation: slideIn 0.4s ease both;
     display: flex;
+    justify-content: center;
     /* justify-content: space-between; */
     align-items: center;
     flex-wrap: wrap;

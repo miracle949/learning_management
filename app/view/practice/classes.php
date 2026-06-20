@@ -88,7 +88,9 @@
 
                             <div class="card-box-body">
                                 <div class="card-body-text">
-                                    <p><?= htmlspecialchars($subject['subject_name']) ?></p>
+                                    <p>
+                                        <?= htmlspecialchars($subject['subject_name']) ?>
+                                    </p>
                                     <span>
                                         <?= !empty($subtext)
                                             ? htmlspecialchars($subtext)
@@ -111,11 +113,15 @@
 
                                 <div class="prof-name">
                                     <div class="prof-initial">
-                                        <span><?= htmlspecialchars($initials) ?></span>
+                                        <span>
+                                            <?= htmlspecialchars($initials) ?>
+                                        </span>
                                     </div>
                                     <div class="prof-text">
                                         <span>Teacher</span>
-                                        <p><?= htmlspecialchars($teacherName) ?></p>
+                                        <p>
+                                            <?= htmlspecialchars($teacherName) ?>
+                                        </p>
                                     </div>
                                 </div>
 

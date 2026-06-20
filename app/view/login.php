@@ -19,11 +19,11 @@
     <div class="container-fluid p-0">
 
         <main>
-            <div class="hero-bg"></div>
+            <!-- <div class="hero-bg"></div>
             <div class="stars" id="stars"></div>
             <div class="orb orb-1"></div>
             <div class="orb orb-2"></div>
-            <div class="orb orb-3"></div>
+            <div class="orb orb-3"></div> -->
 
             <div class="hero-card c1"><span class="card-dot"></span>🖥️ Hardware Assembly & Troubleshooting</div>
 
@@ -39,7 +39,7 @@
                     <div class="form-parent">
                         <div class="card-brand">
                             <div class="form-icon">
-                                <a href="/learning_management/public/?url=landingpage"><img src="../images/iLearn.png" alt=""></a>
+                                <a href="/learning_management/public/?url=landingpage"><img src="../images/iLearn-7.png" alt=""></a>
                             </div>
 
                             <div class="card-badge">
@@ -71,7 +71,7 @@
                         </div>
 
                         <button class="submit"
-                            class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">Login</button>
+                            class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">Sign In</button>
 
                         <div class="card-divider"></div>
 

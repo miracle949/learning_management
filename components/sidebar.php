@@ -13,7 +13,7 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'dashboard';
         <div class="logo-text">
             <p><b>i</b>Learn</p>
         </div> -->
-        <img src="../images/iLearn.png" alt="">
+        <img src="../images/iLearn-7.png" alt="">
     </div>
     <div class="sidebar-menu">
         <ul>
@@ -28,10 +28,41 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'dashboard';
                 </a>
             </li>
 
-            <li class="<?= ($current_url === 'classes' || $current_url === 'subjects') ? 'active' : '' ?>">
+            <!-- <li class="<?= ($current_url === 'classes' || $current_url === 'subjects') ? 'active' : '' ?>">
                 <a href="/learning_management/public/?url=classes" class="text-decoration-none">
                     <i class="fa fa-book-open"></i>
-                    <span>Classes</spanz>
+                    <span>My Subject</span>
+                </a>
+            </li> -->
+            <!-- <li class="<?= ($current_url === 'classes' || $current_url === 'subjects') ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=classes" class="text-decoration-none">
+                    <i class="fa fa-book-open"></i>
+                    <span>My Subject</span>
+                </a>
+            </li>
+            <li class="<?= ($current_url === 'classes' || $current_url === 'subjects') ? 'active' : '' ?>"
+                id="mySubjectItem">
+                <a href="#" class="text-decoration-none" onclick="toggleSubjectMenu(event)">
+                    <i class="fa fa-book-open"></i>
+                    <span>My Subject</span>
+                    <i class="fa fa-chevron-down ms-auto" id="subjectChevron"
+                        style="font-size:11px; transition: transform 0.2s;"></i>
+                </a>
+                <ul class="subject-submenu" id="subjectSubmenu">
+                    <li>
+                        <a href="/learning_management/public/?url=subjects&subject=css"
+                            class="text-decoration-none <?= ($current_url === 'subjects' && ($_GET['subject'] ?? '') === 'css') ? 'active-sub' : '' ?>">
+                            <i class="fa fa-circle" style="font-size:6px;"></i>
+                            <span>Computer System Servicing</span>
+                        </a>
+                    </li>
+                </ul>
+            </li> -->
+
+            <li class="<?= ($current_url === 'classes' || $current_url === 'subjects') ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=subjects&subject=css" class="text-decoration-none">
+                    <i class="fa fa-book-open"></i>
+                    <span>My Subject</span>
                 </a>
             </li>
 
@@ -68,6 +99,13 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'dashboard';
                 <a href="#" class="text-decoration-none">
                     <i class="fa fa-user"></i>
                     <span>My Profile</span>
+                </a>
+            </li>
+
+            <li class="<?= $current_url === 'notifications' ? 'active' : '' ?>">
+                <a href="#" class="text-decoration-none">
+                    <i class="fa fa-user"></i>
+                    <span>Notifications</span>
                 </a>
             </li>
 

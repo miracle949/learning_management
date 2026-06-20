@@ -35,6 +35,12 @@
 
         <div class="rightbar">
 
+            <!-- <div class="hero-bg"></div>
+            <div class="stars" id="stars"></div>
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div> -->
+
             <?php if (!empty($_SESSION['grade_level']) && $_SESSION['grade_level'] === 'Grade 12'): ?>
 
                 <!-- <h4><?= htmlspecialchars($_SESSION["name"]) ?></h4> -->
@@ -58,53 +64,98 @@
                     </div>
                 </div> -->
 
+                <div class="welcome-banner">
+                    <div class="welcome-text">
+                        <h2>Hello, <?= htmlspecialchars($_SESSION["name"]) ?> - Good Day!</h2>
+                        <p>Hope you're having a wonderful day. Let's make the most of it!</p>
+
+                        <div class="date-batch">
+                            <div class="date">
+                                <i class="fa fa-calendar"></i>
+
+                                <?= $_SESSION['grade_level'] ?>
+                                <?= $_SESSION['section'] ?>
+                            </div>
+                            <div class="batch">
+                                <i class="fa fa-graduation-cap"></i>
+
+                                CSS Batch 2026
+                            </div>
+                        </div>
+
+                        <div class="buttons-group">
+                            <a href="#">
+                                <i class="fa fa-book-open"></i>
+                                Browse Classes <i class="fa fa-arrow-right"></i></a>
+
+                            <a href="#">Continue Learning <i class="fa fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="welcome-img">
+                        <img src="../images/image-welcome.png" alt="">
+                    </div>
+                </div>
+
                 <div class="card-parent-box">
-                    <div class="card-box">
+                    <div class="card-box" style="--accent-glow: rgba(0, 255, 136, 0.10);">
                         <a href="/learning_management/public/?url=classes">
+                            <div class="data_icon">
+                                <i class="fa fa-book-open"></i>
+                            </div>
                             <div class="data_text">
-                                <span>Enrolled Classes</span>
                                 <p>
                                     <?= $enrolledCount ?>
                                 </p>
+                                <div class="data-head">Enrolled Classes</div>
+                                <div class="stat-data"><i class="fa fa-arrow-up"></i> All active</div>
                             </div>
-                            <!-- <div class="data_icon">
-                                        <i class="fa fa-book-open"></i>
-                                    </div> -->
                         </a>
                     </div>
 
-                    <div class="card-box">
+                    <div class="card-box" style="--accent-glow:rgba(255, 59, 59, 0.10);">
                         <a href="/learning_management/public/?url=assignments">
+                            <div class="data_icon">
+                                <i class="fa fa-clock"></i>
+                            </div>
                             <div class="data_text">
-                                <span>Pending Tasks</span>
                                 <p>
                                     <?= $pendingCount ?>
                                 </p>
+                                <div class="data-head">Pending Tasks</div>
+                                <div class="stat-data">Due this week</div>
                             </div>
-                            <!-- <div class="data_icon">
-                                        <i class="fa fa-clock"></i>
-                                    </div> -->
                         </a>
                     </div>
 
-                    <div class="card-box">
-                        <div class="data_text">
-                            <span>Completed Task</span>
-                            <p>
-                                <?= $completedCount ?>
-                            </p>
-                        </div>
-                        <!-- <div class="data_icon">
-                                    <i class="fa fa-check-circle"></i>
-                                </div> -->
+                    <div class="card-box" style="--accent-glow: rgba(0, 207, 255, 0.10);">
+                        <a href="#">
+                            <div class="data_icon">
+                                <i class="fa fa-check-circle"></i>
+                            </div>
+                            <div class="data_text">
+                                <p>
+                                    <?= $completedCount ?>
+                                </p>
+                                <div class="data-head">Completed Task</div>
+                                <div class="stat-data"><i class="fa fa-arrow-up"></i> +2 this week</div>
+                            </div>
+                        </a>
                     </div>
 
-                    <div class="card-box">
+                    <div class="card-box" style="--accent-glow: rgba(155, 93, 229, 0.10);">
                         <div class="data_text">
-                            <span>Completed Task</span>
-                            <p>
-                                <?= $completedCount ?>
-                            </p>
+                            <a href="#">
+                                <div class="data_icon">
+                                    <i class="fa fa-line-chart"></i>
+                                </div>
+                                <div class="data_text">
+                                    <p>
+                                        62%
+                                    </p>
+                                    <div class="data-head">Overall Progress</div>
+                                    <div class="stat-data"><i class="fa fa-arrow-up"></i> +8 this week</div>
+                                </div>
+                            </a>
                         </div>
                         <!-- <div class="data_icon">
                                     <i class="fa fa-check-circle"></i>
@@ -115,14 +166,17 @@
                 <div class="main-parent">
                     <div class="side-dashboard">
                         <div class="parent-performance">
+
                             <div class="update subject-performance">
                                 <div class="header">
-                                    <i class="fa fa-clock"></i>
+                                    <div class="header-icon">
+                                        <i class="fa fa-clock"></i>
+                                    </div>
                                     <h3>Pending Tasks</h3>
-                                    <!-- <a href="#">View all</a> -->
                                 </div>
-                                <div class="body">
-                                    <?php if (!empty($pendingAssignments)): ?>
+                                <?php if (!empty($pendingAssignments)): ?>
+                                    <div class="body" style="height: 350px; overflow-y: auto;">
+
                                         <?php foreach ($pendingAssignments as $item):
                                             $daysLeft = '';
                                             if (!empty($item['due_date'])) {
@@ -132,44 +186,70 @@
                                                 $daysLeft = $diff > 0 ? $diff . ' days left' : 'Due today';
                                             }
                                             ?>
-                                            <div class="update-box">
-                                                <p>
-                                                    <?= htmlspecialchars($item['task']) ?>
-                                                </p>
-                                                <span>Due date:
-                                                    <?= !empty($item['due_date']) ? date('F j, Y', strtotime($item['due_date'])) : 'No due date' ?>
-                                                </span>
-                                                <?php if ($daysLeft): ?><span>
-                                                        <?= htmlspecialchars($daysLeft) ?>
-                                                    </span>
-                                                <?php endif; ?>
-                                                <a
-                                                    href="/learning_management/public/?url=assignment_view&subject=<?= urlencode($item['subject_code']) ?>&id=<?= $item['id'] ?>">
-                                                    View Task <i class="fa fa-arrow-right"></i>
-                                                </a>
-                                            </div>
+                                            <div class="parent-update">
+                                                <div class="update-icon">
+                                                    <i class="fa fa-file-pen"></i>
+                                                </div>
+                                                <div class="update-box">
+                                                    <div class="update-text">
+                                                        <p>
+                                                            <?= htmlspecialchars($item['task']) ?>
+                                                        </p>
+                                                        <span>
 
+                                                            <?= htmlspecialchars($item['subject_name']) ?>
+
+                                                            ·
+
+                                                            Due:
+                                                            <?= !empty($item['due_date']) ? date('F j, Y', strtotime($item['due_date'])) : 'No due date' ?>
+                                                        </span>
+                                                    </div>
+
+                                                    <div class="update-links">
+                                                        <?php if ($daysLeft): ?><span>
+                                                                <?= htmlspecialchars($daysLeft) ?>
+                                                            </span>
+                                                        <?php endif; ?>
+
+                                                        <a
+                                                            href="/learning_management/public/?url=assignment_view&subject=<?= urlencode($item['subject_code']) ?>&id=<?= $item['id'] ?>">
+                                                            View Task <i class="fa fa-arrow-right"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         <?php endforeach; ?>
-                                    <?php else: ?>
-                                        <p class="text-muted m-0" style="font-size: 14.5px;">No pending tasks.</p>
-                                    <?php endif; ?>
-                                </div>
+
+
+                                    </div>
+                                <?php else: ?>
+                                    <div class="body is-empty" style="height: 233px;">
+                                        <i class="fa fa-check-circle" style="font-size: 20px; color: var(--green-mid)"></i>
+                                        <p class="m-0" style="font-size: 14.5px; color: var(--light-muted);">No pending tasks.
+                                        </p>
+                                    </div>
+                                <?php endif; ?>
                             </div>
+
                             <div class="perform performance-trend">
                                 <div class="header">
-                                    <i class="fa fa-question-circle"></i>
+                                    <div class="header-icon">
+                                        <i class="fa fa-bullhorn"></i>
+                                    </div>
                                     <h3>Announcements</h3>
                                 </div>
-                                <div class="body">
-                                    <?php if (!empty($announcements)): ?>
+                                <?php if (!empty($announcements)): ?>
+                                    <div class="body" style="height: 350px; overflow-y: auto;">
+
                                         <?php foreach ($announcements as $ann): ?>
                                             <div class="progress-box">
                                                 <h4>
                                                     <?= htmlspecialchars($ann['subject_name']) ?>
                                                 </h4>
-                                                <p>
+                                                <!-- <p>
                                                     <?= htmlspecialchars($ann['title']) ?>
-                                                </p>
+                                                </p> -->
                                                 <p>
                                                     <?= nl2br(htmlspecialchars($ann['message'])) ?>
                                                 </p>
@@ -182,22 +262,102 @@
                                                 </div>
                                             </div>
                                         <?php endforeach; ?>
-                                    <?php else: ?>
+
+
+
+                                    </div>
+                                <?php else: ?>
+
+                                    <div class="body" style="height: 100%;">
                                         <p class="text-muted m-0" style="font-size:14.5px;">No announcements yet.</p>
-                                    <?php endif; ?>
-                                </div>
+                                    </div>
+                                <?php endif; ?>
                             </div>
 
                         </div>
 
                         <div class="perform enrolled-subjects">
                             <div class="header">
-                                <i class="fa fa-book"></i>
+                                <div class="header-icon">
+                                    <i class="fa fa-book"></i>
+                                </div>
                                 <h3>My Modules</h3>
                             </div>
 
-                            <div class="body">
-                                <div class="progress-box">
+                            <div class="body" style="height: 350px; overflow-y: auto;">
+
+                                <div class="module-progress">
+                                    <div class="module-header">
+                                        <h4>Module 1 - Hardware Assembly & Dissambly</h4>
+
+                                        <span>70%</span>
+                                    </div>
+
+                                    <div class="parent-progress-percent">
+                                        <div class="progress"></div>
+                                    </div>
+
+                                    <div class="module-footer">
+                                        <p>Hardware</p>
+
+                                        <a href="#">View progress <i class="fa fa-arrow-right"></i> </a>
+                                    </div>
+                                </div>
+
+                                <div class="module-progress">
+                                    <div class="module-header">
+                                        <h4>Module 2 - OS Installation & Configuration</h4>
+
+                                        <span>50%</span>
+                                    </div>
+
+                                    <div class="parent-progress-percent">
+                                        <div class="progress"></div>
+                                    </div>
+
+                                    <div class="module-footer">
+                                        <p>Software</p>
+
+                                        <a href="#">View progress <i class="fa fa-arrow-right"></i> </a>
+                                    </div>
+                                </div>
+
+                                <div class="module-progress">
+                                    <div class="module-header">
+                                        <h4>Module 3 - Network Setup & Cabling</h4>
+
+                                        <span>70%</span>
+                                    </div>
+
+                                    <div class="parent-progress-percent">
+                                        <div class="progress"></div>
+                                    </div>
+
+                                    <div class="module-footer">
+                                        <p>Networking</p>
+
+                                        <a href="#">View progress <i class="fa fa-arrow-right"></i> </a>
+                                    </div>
+                                </div>
+
+                                <div class="module-progress">
+                                    <div class="module-header">
+                                        <h4>Module 4 - Hardware Assembly & Dissambly</h4>
+
+                                        <span>70%</span>
+                                    </div>
+
+                                    <div class="parent-progress-percent">
+                                        <div class="progress"></div>
+                                    </div>
+
+                                    <div class="module-footer">
+                                        <p>Repair</p>
+
+                                        <a href="#">View progress <i class="fa fa-arrow-right"></i> </a>
+                                    </div>
+                                </div>
+                                <!-- <div class="progress-box">
                                     <h4>Introduction to Philosophy of Human Person</h4>
 
                                     <div class="parent-progress">
@@ -267,17 +427,23 @@
                                     <div class="view">
                                         <a href="">View Progress <i class="fa fa-arrow-right"></i></a>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
                     <div class="right-dashboard">
                         <div class="right-dashboard-nav">
-                            <h3>Profile</h3>
+                            <div class="nav-icon">
+                                <!-- <div class="right-nav-icon">
+                                    <i class="fa fa-user"></i>
+                                </div> -->
+                                <i class="fa fa-user"></i>
+                                <h3>Profile</h3>
+                            </div>
 
-                            <button>
+                            <!-- <button>
                                 <i class="fa fa-pencil"></i>
-                            </button>
+                            </button> -->
                         </div>
 
                         <div class="right-dashboard-body">
@@ -298,6 +464,60 @@
                                     <i class="fa fa-chevron-right" id="calNext" style="cursor:pointer;"></i>
                                 </div>
                                 <div class="cal-grid" id="calGrid"></div>
+                            </div>
+
+                            <div class="card-divider"></div>
+
+                            <div class="upcoming-parent">
+                                <div class="nav-icon">
+                                    <!-- <div class="upcoming-nav">
+                                        <i class="fa fa-clock"></i>
+                                    </div> -->
+                                    <i class="fa fa-clock"></i>
+                                    <h3>Upcoming deadlines</h3>
+                                </div>
+
+                                <div class="upcoming-parent-box">
+                                    <div class="upcoming-box">
+                                        <div class="upcoming-icon">
+                                            <i class="fa fa-calendar-days"></i>
+                                        </div>
+                                        <div class="upcoming-text">
+                                            <h5>Quiz 3 - IP Addressing</h5>
+                                            <p>Due: June 20, 2026 <b>| 08:00 PM</b></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="upcoming-box">
+                                        <div class="upcoming-icon">
+                                            <i class="fa fa-calendar-days"></i>
+                                        </div>
+                                        <div class="upcoming-text">
+                                            <h5>Quiz 3 - IP Addressing</h5>
+                                            <p>Due: June 20, 2026 <b>| 10:00 AM</b></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="upcoming-box">
+                                        <div class="upcoming-icon">
+                                            <i class="fa fa-calendar-days"></i>
+                                        </div>
+                                        <div class="upcoming-text">
+                                            <h5>Quiz 3 - IP Addressing</h5>
+                                            <p>Due: June 20, 2026 <b>| 05:00 PM</b></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="upcoming-box">
+                                        <div class="upcoming-icon">
+                                            <i class="fa fa-calendar-days"></i>
+                                        </div>
+                                        <div class="upcoming-text">
+                                            <h5>Quiz 3 - IP Addressing</h5>
+                                            <p>Due: June 20, 2026 <b>| 06:00 PM</b></p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <!-- <div class="parent-calendar">
@@ -362,11 +582,6 @@
                             </div> -->
                         </div>
 
-                        <div class="card-divider"></div>
-
-                        <div class="to-do-list-parent">
-                            <h3>Upcoming deadlines</h3>
-                        </div>
                     </div>
                 </div>
 
@@ -386,6 +601,7 @@
 
                     <div class="welcome-body">
                         <div class="buttons-group">
+                            <i class="fa fa-book-open"></i>
                             <a href="/learning_management/public/?url=classes">Browse Classes <i
                                     class="fa fa-arrow-right"></i></a>
 
@@ -446,9 +662,10 @@
                 <div class="parent-performance">
                     <div class="update subject-performance">
                         <div class="header">
-                            <i class="fa fa-clock"></i>
+                            <div class="header-icon">
+                                <i class="fa fa-clock"></i>
+                            </div>
                             <h3>Pending Tasks</h3>
-                            <!-- <a href="#">View all</a> -->
                         </div>
                         <div class="body">
                             <?php if (!empty($pendingAssignments)): ?>
@@ -517,7 +734,7 @@
                     </div>
 
                     <div class="body">
-                        <div class="progress-box">
+                        <!-- <div class="progress-box">
                             <h4>Introduction to Philosophy of Human Person</h4>
 
                             <div class="parent-progress">
@@ -587,7 +804,7 @@
                             <div class="view">
                                 <a href="">View Progress <i class="fa fa-arrow-right"></i></a>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
 

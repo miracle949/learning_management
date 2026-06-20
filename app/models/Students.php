@@ -708,10 +708,28 @@ class Students extends Model
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    // public function getPendingAssignments($studentId)
+    // {
+    //     $stmt = $this->db->prepare("
+    //     SELECT a.id, a.task, a.due_date, a.due_time, s.subject_code
+    //     FROM assignments a
+    //     JOIN subjects s ON a.subject_id = s.id
+    //     JOIN student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+    //     WHERE a.id NOT IN (
+    //         SELECT assignment_id FROM assignment_submissions WHERE student_id = ?
+    //     )
+    //     AND (a.due_date IS NULL OR a.due_date >= CURDATE())
+    //     ORDER BY a.due_date ASC
+    // ");
+    //     $stmt->bind_param("ii", $studentId, $studentId);
+    //     $stmt->execute();
+    //     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    // }
+
     public function getPendingAssignments($studentId)
     {
         $stmt = $this->db->prepare("
-        SELECT a.id, a.task, a.due_date, a.due_time, s.subject_code
+        SELECT a.id, a.task, a.due_date, a.due_time, s.subject_code, s.subject_name
         FROM assignments a
         JOIN subjects s ON a.subject_id = s.id
         JOIN student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
