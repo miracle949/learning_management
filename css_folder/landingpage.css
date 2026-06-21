@@ -81,7 +81,7 @@
 
     --border: #E5EDF5;
     --bg-page: #F5F8FB;
-    --bg-card: #FFFFFF;
+    /* --bg-card: #FFFFFF; */
 }
 
 html {
@@ -89,10 +89,10 @@ html {
 }
 
 .container-fluid nav {
-    position: sticky;
+    /* position: sticky;
     top: 0;
     left: 0;
-    right: 0;
+    right: 0; */
     z-index: 200;
     display: flex;
     justify-content: space-between;
@@ -103,15 +103,20 @@ html {
     border-bottom: 1px solid rgba(92, 45, 145, 0.08); */
     /* background: rgba(251, 248, 243, 0.88); */
     backdrop-filter: blur(14px);
-    border-bottom: 1px solid rgba(92, 45, 145, 0.08);
-    /* background: rgba(255, 255, 255, 0.7); */
+    /* border-bottom: 1px solid rgba(92, 45, 145, 0.08); */
+    border-bottom: 1px solid var(--border-dim);
+    /* background: radial-gradient(ellipse 120% 80% at 50% -10%, rgba(0, 207, 255, 0.16), transparent 60%), linear-gradient(180deg, var(--bg-darkest) 0%, var(--bg-dark) 55%, var(--bg-panel) 100%); */
+    /* background-color: var(--bg-darkest); */
     background: rgba(5, 13, 20, 0.92);
+    /* background: none; */
+    /* background: rgba(255, 255, 255, 0.7); */
+    /* background: rgba(5, 13, 20, 0.92); */
     /* background: transparent; */
     /* background-color: #000; */
     /* background: transparent;
     background: none; */
     /* backdrop-filter: blur(20px); */
-    border: none;
+    /* border: none; */
     /* border-bottom: 1px solid rgba(0, 180, 100, 0.12); */
     height: 70px;
     /* position: fixed;

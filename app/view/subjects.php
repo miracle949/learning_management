@@ -49,6 +49,12 @@
                     </style>
 
                     <!-- ── HERO BANNER — fully dynamic from DB ── -->
+
+                    <!-- <p>My Class <i class="fa fa-chevron-right"></i> <b>Computer System Servicing</b></p> -->
+
+                    <div class="bread-crambs">
+                        My Class <i class="fa fa-chevron-right"></i> <b>Computer System Servicing</b>
+                    </div>
                     <div class="header">
                         <div class="module-title">
                             <!-- <div class="module-picture">
@@ -58,6 +64,15 @@
                                 <div class="module-body-child">
                                     <div class="module-links">
                                         <div class="module-description">
+                                            <div class="module-buttons">
+                                                <!-- <a href="/learning_management/public/?url=classes">Browse Classes</a> -->
+                                                <div class="module-icon">
+                                                    <i class="fa fa-desktop"></i>
+                                                </div>
+                                                <div class="module-text">
+                                                    <p>Hardware · Software · TroubleShooting</p>
+                                                </div>
+                                            </div>
                                             <h1><?= htmlspecialchars($subjectInfo['subject_name']) ?></h1>
                                             <p><?= htmlspecialchars($subjectInfo['subject_description']) ?></p>
 
@@ -67,11 +82,6 @@
                                                 </div>
                                                 <p><?= htmlspecialchars($teacherName) ?></p>
                                             </div>
-                                        </div>
-                                        <div class="module-buttons">
-                                            <!-- <a href="/learning_management/public/?url=classes">Browse Classes</a> -->
-                                            <i class="fa fa-desktop"></i>
-                                            <p></p>
                                         </div>
                                     </div>
                                 </div>
