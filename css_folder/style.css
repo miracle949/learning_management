@@ -89,15 +89,16 @@ body {
 } */
 
 .container-fluid .rightbar {
-    width: calc(100% - 225px);
+    width: calc(100% - 235px);
     min-height: calc(100vh - 68px);
     height: auto;
     /* margin-top: 68px; */
-    margin-left: 225px;
+    margin-left: 235px;
     padding: 1.8rem 1.8rem 1.8rem;
     border-left: 1px solid rgba(0, 0, 0, 0.1);
     /* background-color: var(--bg-page); */
-    background: radial-gradient(ellipse 120% 80% at 50% -10%, rgba(0, 207, 255, 0.16), transparent 60%), linear-gradient(180deg, var(--bg-darkest) 0%, var(--bg-dark) 55%, var(--bg-panel) 100%);
+    /* background: radial-gradient(ellipse 120% 80% at 50% -10%, rgba(0, 207, 255, 0.16), transparent 60%), linear-gradient(180deg, var(--bg-darkest) 0%, var(--bg-dark) 55%, var(--bg-panel) 100%); */
+    background-color: var(--bg-page);
     position: relative;
     overflow-x: hidden;
     overflow-y: visible;
@@ -276,9 +277,9 @@ body {
 .container-fluid .rightbar .main-parent .right-dashboard {
     width: 55%;
     /* padding: 1.5rem; */
-    /* background-color: #ffffff; */
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-dim);
+    background-color: #ffffff;
+    /* background-color: var(--bg-card); */
+    border: 1px solid var(--page-border);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     border-radius: 16px;
     height: calc(100% - 951px);
@@ -288,8 +289,8 @@ body {
 .container-fluid .rightbar .main-parent .right-dashboard h3 {
     font-size: 15.5px;
     font-weight: 600;
-    /* color: var(--light-text); */
-    color: #ffffff;
+    color: var(--light-text);
+    /* color: #ffffff; */
     margin: 0;
 }
 
@@ -297,8 +298,9 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 18px 20px;
-    border-bottom: 1px solid var(--border-dim);
+    /* padding: 18px 20px; */
+    padding: 1.5rem 1.2rem;
+    border-bottom: 1px solid var(--page-border);
 }
 
 .container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-nav .nav-icon {
@@ -318,7 +320,7 @@ body {
 } */
 
 .container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-nav .nav-icon .fa {
-    color: var(--green-neon);
+    color: var(--green-dark);
     font-size: 16px;
 }
 
@@ -335,13 +337,13 @@ body {
     margin: 20px 0 7px;
     font-size: 19px;
     font-weight: 600;
-    /* color: var(--light-text); */
-    color: #ffffff;
+    color: var(--light-text);
+    /* color: #ffffff; */
 }
 
 .container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-body p {
     margin: 0;
-    color: var(--text-muted);
+    color: var(--page-text-muted);
     font-size: 14.5px;
 }
 
@@ -365,7 +367,7 @@ body {
     /* width: 390px; */
     margin-top: 2rem;
     border-radius: 20px;
-    border: 1px solid var(--border-dim);
+    border: 1px solid var(--page-border);
     /* background-color: #ffffff; */
 }
 
@@ -377,15 +379,16 @@ body {
 
 .container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-body .parent-calendar .calendar-nav .fa {
     font-size: 15px;
-    color: #ffffff;
+    /* color: #ffffff; */
+    color: var(--light-text);
 }
 
 .container-fluid .rightbar .main-parent .right-dashboard .right-dashboard-body .parent-calendar .calendar-nav h5 {
     margin: 0;
     font-size: 15px;
     font-weight: 600;
-    /* color: var(--light-text); */
-    color: #ffffff;
+    color: var(--light-text);
+    /* color: #ffffff; */
 }
 
 .cal-grid {
@@ -400,15 +403,15 @@ body {
     font-size: .62rem;
     font-weight: 700;
     /* color: #9BB0C4; */
-    color: var(--text-muted);
+    color: var(--page-text-muted);
     padding: 4px 0;
 }
 
 .cal-day {
     font-size: .72rem;
     font-weight: 600;
-    /* color: var(--light-text); */
-    color: #ffffff;
+    color: var(--light-text);
+    /* color: #ffffff; */
     padding: 5px 2px;
     border-radius: 7px;
     cursor: pointer;
@@ -444,13 +447,13 @@ body {
 
 .cal-day.other-month {
     /* color: #C8D8E8; */
-    color: var(--text-muted);
+    color: var(--page-text-muted);
 }
 
 .container-fluid .rightbar .main-parent .right-dashboard .card-divider {
     width: 100%;
     height: 2px;
-    border: 1px solid var(--border-dim);
+    border: 1px solid var(--page-border);
     margin: 40px 0;
 }
 
@@ -484,7 +487,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    height: 322px;
+    /* height: 322px; */
+    height: 355px;
     overflow-y: auto;
 }
 
@@ -494,7 +498,7 @@ body {
 }
 
 .container-fluid .rightbar .main-parent .right-dashboard .upcoming-parent .upcoming-parent-box .upcoming-box {
-    border-bottom: 1px solid var(--border-dim);
+    border-bottom: 1px solid var(--page-border);
     padding: 12px 0;
     display: flex;
     align-items: center;
@@ -515,15 +519,15 @@ body {
 .container-fluid .rightbar .main-parent .right-dashboard .upcoming-parent .upcoming-parent-box .upcoming-box .upcoming-text h5 {
     margin: 0 0 5px;
     font-size: 15.5px;
-    /* color: var(--light-text); */
-    color: #ffffff;
+    color: var(--light-text);
+    /* color: #ffffff; */
     font-weight: 600;
 }
 
 .container-fluid .rightbar .main-parent .right-dashboard .upcoming-parent .upcoming-parent-box .upcoming-box .upcoming-text p {
     margin: 0;
     font-size: 13.5px;
-    color: var(--text-muted);
+    color: var(--page-text-muted);
 }
 
 .container-fluid .rightbar .main-parent .right-dashboard .upcoming-parent .upcoming-parent-box .upcoming-box .upcoming-text p b {
@@ -908,7 +912,8 @@ div.rightbar{
     /* width: calc(100% / 4); */
     width: 100%;
     /* background-color: #ffffff; */
-    background-color: var(--bg-card);
+    /* background-color: var(--bg-card); */
+    background-color: #ffffff;
     /* padding: 1.5rem 1.1rem 1.5rem 1.1rem; */
     /* padding: 1.5rem; */
     padding: 18px 18px;
@@ -996,8 +1001,9 @@ div.rightbar{
     width: 100%;
     /* border: 2px solid #6CCA55; */
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-    border: 1px solid var(--border-dim);
-    background-color: var(--bg-card);
+    border: 1px solid var(--page-border);
+    /* background-color: var(--bg-card); */
+    background-color: #ffffff;
     /* border: 1px solid #e2e8f0; */
     /* background-color: #ffffff; */
     border-radius: 16px;
@@ -1012,7 +1018,8 @@ div.rightbar{
     /* padding: 1.5rem 1.2rem 0.5rem; */
     /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
     height: 100%;
-    color: #ffffff;
+    /* color: #ffffff; */
+    color: var(--light-text);
     /* max-height: 59px; */
 }
 
@@ -1024,7 +1031,7 @@ div.rightbar{
     gap: 0.8rem;
     /* padding: 2rem; */
     padding: 1rem 1.2rem;
-    border-bottom: 1px solid var(--border-dim);
+    border-bottom: 1px solid var(--page-border);
 }
 
 .perform .header .header-icon {
@@ -1040,7 +1047,7 @@ div.rightbar{
 }
 
 .perform .header .header-icon .fa {
-    color: var(--green-neon);
+    color: var(--green-dark);
 }
 
 .perform .body {
@@ -1060,7 +1067,8 @@ div.rightbar{
     margin: 0;
     font-weight: 600;
     /* color: var(--green-dark); */
-    color: #ffffff;
+    /* color: #ffffff; */
+    color: var(--light-text);
     /* background: var(--green-light); */
     /* border-radius: 28px;
     padding: 6px 10px; */
@@ -1101,13 +1109,13 @@ div.rightbar{
 } */
 
 .perform .body .progress-box p {
-    color: var(--text-muted);
+    color: var(--page-text-muted);
     margin: 5px 0;
     font-size: 14.5px;
 }
 
 .perform .body .progress-box small {
-    color: var(--text-muted);
+    color: var(--page-text-muted);
     margin: 5px 0;
     font-size: 13.5px;
 }
@@ -1195,19 +1203,20 @@ div.rightbar{
 
 .enrolled-subjects .body .module-progress .module-header h4 {
     font-size: 14px;
-    color: #ffffff;
+    /* color: #ffffff; */
+    color: var(--light-text);
     font-weight: 600;
 }
 
 .enrolled-subjects .body .module-progress .module-header span {
     font-size: 14px;
-    color: var(--green-neon);
+    color: var(--green-dark);
     font-weight: 600;
 }
 
 .enrolled-subjects .body .module-progress:nth-child(1) .module-header span {
     font-size: 14px;
-    color: var(--green-neon);
+    color: var(--green-dark);
     font-weight: 600;
 }
 
@@ -1217,7 +1226,8 @@ div.rightbar{
     height: 10px;
     position: relative;
     border-radius: 28px;
-    background-color: var(--bg-surface);
+    /* background-color: var(--bg-surface); */
+    background-color: var(--green-light);
     margin-top: 0.4rem;
 }
 
@@ -1227,7 +1237,7 @@ div.rightbar{
     top: 0;
     height: 10px;
     width: 70%;
-    background-color: var(--green-neon);
+    background-color: var(--green-dark);
 }
 
 .enrolled-subjects .body .module-progress:nth-child(1) .parent-progress-percent {
@@ -1236,7 +1246,8 @@ div.rightbar{
     height: 10px;
     position: relative;
     border-radius: 28px;
-    background-color: var(--bg-surface);
+    /* background-color: var(--bg-surface); */
+    background-color: var(--green-light);
     margin-top: 0.4rem;
 }
 
@@ -1246,7 +1257,7 @@ div.rightbar{
     top: 0;
     height: 10px;
     width: 70%;
-    background-color: var(--green-neon);
+    background-color: var(--green-dark);
 }
 
 .enrolled-subjects .body .module-progress .module-footer {
@@ -1259,7 +1270,7 @@ div.rightbar{
 .enrolled-subjects .body .module-progress:nth-child(1) .module-footer p {
     margin: 0;
     background-color: rgba(0, 255, 136, 0.13);
-    color: var(--green-neon);
+    color: var(--green-dark);
     padding: 3px 9px;
     border-radius: 5px;
     font-size: 11.5px;
@@ -1306,7 +1317,7 @@ div.rightbar{
 .enrolled-subjects .body .module-progress:nth-child(3) .module-footer p {
     margin: 0;
     background-color: rgba(0, 255, 136, 0.13);
-    color: var(--green-neon);
+    color: var(--green-dark);
     padding: 3px 9px;
     border-radius: 5px;
     font-size: 11.5px;
@@ -1315,7 +1326,7 @@ div.rightbar{
 
 .enrolled-subjects .body .module-progress .module-footer a {
     font-size: 11.5px;
-    color: var(--text-muted);
+    color: var(--page-text-muted);
     text-decoration: none;
 }
 
@@ -1327,7 +1338,8 @@ div.rightbar{
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     /* border: 1px solid #e2e8f0; */
     /* background-color: #ffffff; */
-    background-color: var(--bg-card);
+    /* background-color: var(--bg-card); */
+    background-color: #ffffff;
     border: 1px solid var(--border-dim);
     border-radius: 16px;
     /* padding: 1.4rem 1.5rem 1.5rem 1.5rem; */
@@ -1342,7 +1354,7 @@ div.rightbar{
     border-top-right-radius: 16px; */
     /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
     /* padding: 1.4rem 1.5rem 1rem 1.5rem; */
-    border-bottom: 1px solid var(--border-dim);
+    border-bottom: 1px solid var(--page-border);
     padding: 1rem 1.2rem;
 }
 
@@ -1364,8 +1376,8 @@ div.rightbar{
     font-size: 15.5px;
     font-weight: 600;
     margin: 0;
-    /* color: var(--light-text); */
-    color: #ffffff;
+    color: var(--light-text);
+    /* color: #ffffff; */
 }
 
 .parent-performance .update a {
@@ -1514,9 +1526,9 @@ div.rightbar{
     /* color: #808080; */
     /* color: var(--text-muted); */
     /* color: #ffffffbf; */
-    color: var(--text-muted);
+    color: var(--page-text-muted);
     /* text-transform: uppercase; */
-    font-weight: 600;
+    font-weight: 500;
     /* margin-top: 0.2rem; */
     margin-top: 4px;
 }
@@ -1524,7 +1536,7 @@ div.rightbar{
 .container-fluid .rightbar .card-parent-box .card-box .data_text .stat-data {
     font-size: 12.5px;
     margin-top: 4px;
-    color: var(--green-neon);
+    color: var(--green-dark);
     font-weight: 600;
 }
 
@@ -1538,7 +1550,8 @@ div.rightbar{
     font-size: 24px;
     font-weight: 600;
     /* color: var(--green); */
-    color: #ffffff;
+    /* color: #ffffff; */
+    color: var(--light-text);
     /* color: var(--light-text); */
 }
 
@@ -1567,7 +1580,7 @@ div.rightbar{
     /* color: var(--green); */
     /* color: #ffffff; */
     /* color: var(--green-dark); */
-    color: var(--green-neon);
+    color: var(--green-dark);
 }
 
 .container-fluid .rightbar .card-parent-box .card-box:nth-child(2) .data_icon {
@@ -1598,7 +1611,7 @@ div.rightbar{
 
 .container-fluid .rightbar .card-parent-box .card-box:nth-child(3) .data_text .stat-data {
     /* color: var(--orange-warn); */
-    color: var(--green-neon);
+    color: var(--green-dark);
 }
 
 .container-fluid .rightbar .card-parent-box .card-box:nth-child(4) .data_icon {

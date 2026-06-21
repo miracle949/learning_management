@@ -35,7 +35,7 @@
             <div class="hero-card c4"><span class="card-dot"></span>🏆 TESDA NC II Certified in 6 Months</div>
 
             <form action="?url=login" method="post">
-                <div class="form-sub-parent">
+                <!-- <div class="form-sub-parent"> -->
                     <div class="form-parent">
                         <div class="card-brand">
                             <div class="form-icon">
@@ -56,13 +56,13 @@
                         <div class="form-panel">
                             <div class="input-1">
                                 <label>Learner Reference Number (LRN)</label>
-                                <input type="text" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
+                                <input class="input-form" type="text" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
                                     id="" placeholder="Enter your email" required>
                             </div>
 
                             <div class="input-2">
                                 <label>Password</label>
-                                <input type="password" name="password" id="" placeholder="Enter password" required>
+                                <input class="input-form" type="password" name="password" id="" placeholder="Enter password" required>
                             </div>
                         </div>
 
@@ -80,7 +80,7 @@
                             CSS Instructor or <b>visit the Help Center</b>
                         </p>
                     </div>
-                </div>
+                <!-- </div> -->
             </form>
         </main>
 

@@ -56,6 +56,14 @@
     --text-muted: rgba(200, 220, 255, 0.55);
     --text-dark: #0A1628;
 
+    --bg-page-card: #FFFFFF;
+    --bg-page-surface: #EAF0F8;
+    --page-border: #D6E3F0;
+    --page-border-strong: #B8CCDF;
+    /* --page-text: #0A2540; */
+    --page-text-muted: #4A6B8A;
+    /* --page-text-hint: #7A9BB8; */
+
     /* Light sections */
     --light-bg: #F0F8FF;
     --light-card: #FFFFFF;
@@ -106,17 +114,18 @@
 }
 
 .container-fluid nav {
-    width: calc(100% - 225px);
+    width: calc(100% - 235px);
     display: flex;
     justify-content: space-between;
     align-items: center;
     /* padding: 0.8rem 2rem 0.8rem 2rem; */
     padding: 0.8rem 2rem;
-    margin-left: 225px;
+    margin-left: 235px;
     /* background-color: #ffffff; */
     /* background: transparent; */
     /* background: radial-gradient(ellipse 120% 80% at 50% -10%, rgba(0, 207, 255, 0.16), transparent 60%), linear-gradient(180deg, var(--bg-darkest) 0%, var(--bg-dark) 55%, var(--bg-panel) 100%); */
-    background-color: var(--bg-card);
+    /* background-color: var(--bg-card); */
+    background-color: var(--bg-page);
     z-index: 3;
     /* background-color: #C0D2FF; */
     /* background-color: #ffffff; */
@@ -148,13 +157,14 @@
     /* font-size: 20px; */
     font-weight: 800;
     /* color: var(--text-text); */
-    color: #ffffff;
+    /* color: #ffffff; */
+    color: var(--light-text);
     margin: 0 0 3px;
 }
 
 .container-fluid nav .nav-title p {
     font-size: 12px;
-    color: var(--text-muted);
+    color: var(--page-text-muted);
     margin: 0;
 }
 
@@ -389,7 +399,7 @@
 }
 
 .container-fluid nav .nav-acc .nav-list button .notification-icon .fa {
-    color: var(--green-neon);
+    color: var(--green-dark);
 }
 
 .container-fluid nav .nav-acc {
@@ -625,7 +635,7 @@
 color: var(--text-dark); */
 
 .container-fluid .sidebar {
-    width: 225px;
+    width: 235px;
     /* height: calc(100% - 87px); */
     height: 100%;
     /* margin-top: 87px; */
@@ -706,12 +716,12 @@ color: var(--text-dark); */
     /* background: rgba(0, 207, 255, 0.06); */
 }
 
-.container-fluid .sidebar .sidebar-menu form li:hover button{
+.container-fluid .sidebar .sidebar-menu form li:hover button {
     color: #ffffff;
     /* background: rgba(0, 207, 255, 0.06); */
 }
 
-.container-fluid .sidebar .sidebar-menu form button:hover{
+.container-fluid .sidebar .sidebar-menu form button:hover {
     color: #ffffff;
 }
 
