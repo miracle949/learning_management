@@ -52,8 +52,34 @@
 
                     <!-- <p>My Class <i class="fa fa-chevron-right"></i> <b>Computer System Servicing</b></p> -->
 
-                    <div class="bread-crambs">
-                        My Class <i class="fa fa-chevron-right"></i> <b>Computer System Servicing</b>
+                    <!-- <div class="bread-crambs">
+                        Dashboard <i class="fa fa-chevron-right"></i> <b>My Subject</b>
+                    </div> -->
+                    <div class="subject-nav">
+                        <div class="subject-text">
+                            <h2>My Subject</h2>
+                            <p>Announcements, Materials, Assignments</p>
+                        </div>
+
+                        <div class="subject-acc">
+                            <button>
+                                <div class="notification-icon">
+                                    <i class="fa fa-message"></i>
+                                </div>
+                            </button>
+                            <button>
+                                <div class="notification-icon">
+                                    <i class="fa fa-bell"></i>
+                                </div>
+                            </button>
+
+                            <button>
+                                <?php
+                                $initial = isset($_SESSION['name']) ? strtoupper(substr($_SESSION['name'], 0, 1)) : '';
+                                echo $initial;
+                                ?>
+                            </button>
+                        </div>
                     </div>
                     <div class="header">
                         <div class="module-title">
@@ -63,16 +89,16 @@
                             <div class="module-body">
                                 <div class="module-body-child">
                                     <div class="module-links">
-                                        <div class="module-description">
-                                            <div class="module-buttons">
-                                                <!-- <a href="/learning_management/public/?url=classes">Browse Classes</a> -->
-                                                <div class="module-icon">
-                                                    <i class="fa fa-desktop"></i>
-                                                </div>
-                                                <div class="module-text">
-                                                    <p>Hardware · Software · TroubleShooting</p>
-                                                </div>
+                                        <div class="module-buttons">
+                                            <!-- <a href="/learning_management/public/?url=classes">Browse Classes</a> -->
+                                            <div class="module-icon">
+                                                <i class="fa fa-desktop"></i>
                                             </div>
+                                            <div class="module-text">
+                                                <p>Hardware · Software · TroubleShooting</p>
+                                            </div>
+                                        </div>
+                                        <div class="module-description">
                                             <h1><?= htmlspecialchars($subjectInfo['subject_name']) ?></h1>
                                             <p><?= htmlspecialchars($subjectInfo['subject_description']) ?></p>
 
@@ -80,7 +106,12 @@
                                                 <div class="icon">
                                                     <?= htmlspecialchars($initials) ?>
                                                 </div>
-                                                <p><?= htmlspecialchars($teacherName) ?></p>
+                                                <div class="text">
+                                                    <p>
+                                                        <?= htmlspecialchars($teacherName) ?>
+                                                    </p>
+                                                    <span>CSS Teacher</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

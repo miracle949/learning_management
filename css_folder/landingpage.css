@@ -65,6 +65,7 @@
     /* Grids and borders */
     --border-dim: rgba(0, 255, 136, 0.12);
     --border-glow: rgba(0, 207, 255, 0.30);
+    /* --page-border: #D6E3F0; */
 
     /* Text */
     --text-white: #FFFFFF;
@@ -103,11 +104,13 @@ html {
     border-bottom: 1px solid rgba(92, 45, 145, 0.08); */
     /* background: rgba(251, 248, 243, 0.88); */
     backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--page-border);
     /* border-bottom: 1px solid rgba(92, 45, 145, 0.08); */
-    border-bottom: 1px solid var(--border-dim);
+    /* border-bottom: 1px solid var(--border-dim); */
     /* background: radial-gradient(ellipse 120% 80% at 50% -10%, rgba(0, 207, 255, 0.16), transparent 60%), linear-gradient(180deg, var(--bg-darkest) 0%, var(--bg-dark) 55%, var(--bg-panel) 100%); */
     /* background-color: var(--bg-darkest); */
-    background: rgba(5, 13, 20, 0.92);
+    /* background: rgba(5, 13, 20, 0.92); */
+    background-color: var(--bg-card);
     /* background: none; */
     /* background: rgba(255, 255, 255, 0.7); */
     /* background: rgba(5, 13, 20, 0.92); */
@@ -233,7 +236,7 @@ html {
 }
 
 .container-fluid nav .nav-acc a {
-    padding: 10px 30px;
+    padding: 9px 25px;
     border-radius: 28px;
     /* background: linear-gradient(135deg, var(--green-neon), var(--green-mid)); */
     /* background: linear-gradient(135deg, var(--green-mid), var(--green-dark));

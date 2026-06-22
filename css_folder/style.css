@@ -425,7 +425,7 @@ body {
 }
 
 .cal-day.today {
-    background: var(--green-mid);
+    background: var(--green-dark);
     color: white;
     font-weight: 700;
 }

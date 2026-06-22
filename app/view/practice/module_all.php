@@ -287,7 +287,9 @@
 
                 <div class="welcome-user">
                     <div class="welcome-text">
-                        <h2>Welcome, <?= htmlspecialchars($_SESSION["name"]) ?>! 👋</h2>
+                        <h2>Welcome,
+                            <?= htmlspecialchars($_SESSION["name"]) ?>! 👋
+                        </h2>
                         <div class="d-flex gap-2">
                             <span>Gets Ready to Learn!</span>
                         </div>
@@ -307,7 +309,9 @@
                         <div class="learning-module">
                             <?php foreach ($grade12Subjects as $subject): ?>
                                 <ul>
-                                    <li><?= htmlspecialchars($subject['subject_name']) ?></li>
+                                    <li>
+                                        <?= htmlspecialchars($subject['subject_name']) ?>
+                                    </li>
                                 </ul>
                             <?php endforeach; ?>
                         </div>
@@ -315,7 +319,9 @@
                         <div class="learning-module">
                             <?php foreach ($grade11Subjects as $subject): ?>
                                 <ul>
-                                    <li><?= htmlspecialchars($subject['subject_name']) ?></li>
+                                    <li>
+                                        <?= htmlspecialchars($subject['subject_name']) ?>
+                                    </li>
                                 </ul>
                             <?php endforeach; ?>
                         </div>
@@ -332,8 +338,11 @@
                                 <div class="module-header"></div>
                                 <div class="module-body">
                                     <div class="module-text">
-                                        <h4><?= htmlspecialchars($subject['subject_name']) ?></h4>
-                                        <p><?= !empty($subject['description']) ? htmlspecialchars($subject['description']) : 'Lorem ipsum dolor sit amet consectetur' ?>
+                                        <h4>
+                                            <?= htmlspecialchars($subject['subject_name']) ?>
+                                        </h4>
+                                        <p>
+                                            <?= !empty($subject['description']) ? htmlspecialchars($subject['description']) : 'Lorem ipsum dolor sit amet consectetur' ?>
                                         </p>
                                     </div>
                                     <div class="module-link">

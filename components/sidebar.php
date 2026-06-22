@@ -66,12 +66,20 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'dashboard';
                 </a>
             </li>
 
-            <li class="<?= $current_url === 'module_all' ? 'active' : '' ?>">
+            <!-- <li class="<?= $current_url === 'module_all' ? 'active' : '' ?>">
                 <a href="/learning_management/public/?url=module_all" class="text-decoration-none">
                     <i class="fa fa-book"></i>
                     <span>Modules</span>
                 </a>
+            </li> -->
+
+            <li class="<?= $current_url === 'module_all' || $current_url === 'modules' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=modules&subject=css" class="text-decoration-none">
+                    <i class="fa fa-book"></i>
+                    <span>Modules</span>
+                </a>
             </li>
+
 
             <div class="sidebar-category">
                 <h5>Monitoring</h5>

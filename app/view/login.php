@@ -26,26 +26,53 @@
             <div class="orb orb-3"></div> -->
 
             <div class="main-image">
+                <div class="main-icon">
+                    <a href="/learning_management/public/?url=landingpage"><img src="../images/iLearn-8.png" alt=""></a>
+                </div>
+                <div class="main-body">
+                    <h2>Welcome ready to start your <b>learning journey?</b></h2>
 
+                    <p>Track your assignments, access class materials, and stay on top of your Computer System Servicing
+                        modules — all in one place.</p>
+                </div>
+                <div class="main-footer">
+                    <div class="footer-card">
+                        <div class="card-dot"></div>
+                        <span>Hardware Assembly & Troubleshooting</span>
+                    </div>
+
+                    <div class="footer-card">
+                        <div class="card-dot"></div>
+                        <span>PC Repair · Networking · OS Install</span>
+                    </div>
+
+                    <div class="footer-card">
+                        <div class="card-dot"></div>
+                        <span>TESDA NC II Certified in 6 Months</span>
+                    </div>
+
+                    <div class="footer-card">
+                        <div class="card-dot"></div>
+                        <span>TESDA NC II Certified in 6 Months</span>
+                    </div>
+                </div>
+
+                <div class="brand-footer">© 2026 iLearn-CSS · CSS Batch 2026</div>
             </div>
             <div class="main-form">
-                <div class="hero-card c1"><span class="card-dot"></span>🖥️ Hardware Assembly & Troubleshooting</div>
+                <!-- <div class="hero-card c1"><span class="card-dot"></span>🖥️ Hardware Assembly & Troubleshooting</div>
 
                 <div class="hero-card c2 blue-card"><span class="card-dot"></span>🔧 PC Repair · Networking · OS Install
                 </div>
 
                 <div class="hero-card c3"><span class="card-dot"></span>🏆 TESDA NC II Certified in 6 Months</div>
 
-                <div class="hero-card c4"><span class="card-dot"></span>🏆 TESDA NC II Certified in 6 Months</div>
+                <div class="hero-card c4"><span class="card-dot"></span>🏆 TESDA NC II Certified in 6 Months</div> -->
 
                 <form action="?url=login" method="post">
                     <!-- <div class="form-sub-parent"> -->
                     <div class="form-parent">
                         <div class="card-brand">
-                            <div class="form-icon">
-                                <a href="/learning_management/public/?url=landingpage"><img src="../images/iLearn-7.png"
-                                        alt=""></a>
-                            </div>
 
                             <div class="card-badge">
                                 <span class="dot"></span>
@@ -54,9 +81,11 @@
                         </div>
 
 
-                        <h2>Student Sign In</h2>
-                        <p>Unlock a world of learning with just one click. Log in to get started and access your
-                            account.</p>
+                        <div class="form-panel-nav">
+                            <h2>Student Sign In</h2>
+                            <p>Unlock a world of learning with just one click. Log in to get started and access your
+                                account.</p>
+                        </div>
 
                         <div class="form-panel">
                             <div class="input-1">
@@ -82,10 +111,12 @@
 
                         <div class="card-divider"></div>
 
-                        <p>Need help signing in? Contact your school's
-                            <br>
-                            CSS Instructor or <b>visit the Help Center</b>
-                        </p>
+                        <div class="need-help">
+                            <p>Need help signing in? Contact your school's
+                                <br>
+                                CSS Instructor or <b>visit the Help Center</b>
+                            </p>
+                        </div>
                     </div>
                     <!-- </div> -->
                 </form>
