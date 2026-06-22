@@ -39,8 +39,8 @@
 
 .container-fluid .rightbar {
     /* width: 100%; */
-    width: calc(100% - 225px);
-    margin-left: 225px;
+    width: calc(100% - 248px);
+    margin-left: 248px;
     /* width: calc(100% - 250px); */
     /* height: calc(100vh - 68px); */
     height: 100vh;

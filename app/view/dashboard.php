@@ -23,8 +23,6 @@
 
         <?php include("../components/sidebar.php"); ?>
 
-        <?php include("../components/navbar.php"); ?>
-
         <?php
         // Fallback defaults in case controller didn't pass these
         $enrolledCount = $enrolledCount ?? 0;
@@ -63,6 +61,33 @@
                         </div>
                     </div>
                 </div> -->
+
+                <div class="welcome-nav">
+                    <div class="welcome-nav-text">
+                        <h2>Student Dashboard</h2>
+
+                        <p>Wednesday, June 18, 2026 · CSS Batch 2026</p>
+                    </div>
+                    <div class="welcome-nav-acc">
+                        <button>
+                            <div class="notification-icon">
+                                <i class="fa fa-message"></i>
+                            </div>
+                        </button>
+                        <button>
+                            <div class="notification-icon">
+                                <i class="fa fa-bell"></i>
+                            </div>
+                        </button>
+
+                        <button>
+                            <?php
+                            $initial = isset($_SESSION['name']) ? strtoupper(substr($_SESSION['name'], 0, 1)) : '';
+                            echo $initial;
+                            ?>
+                        </button>
+                    </div>
+                </div>
 
                 <div class="welcome-banner">
                     <div class="welcome-text">

@@ -635,7 +635,8 @@
 color: var(--text-dark); */
 
 .container-fluid .sidebar {
-    width: 235px;
+    /* width: 235px; */
+    width: 248px;
     /* height: calc(100% - 87px); */
     height: 100%;
     /* margin-top: 87px; */
@@ -648,7 +649,8 @@ color: var(--text-dark); */
     z-index: 3;
     /* background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-darkest) 100%); */
     background-color: var(--bg-card);
-    border-right: 1px solid var(--border-dim);
+    /* background-color: #ffffff; */
+    border-right: 1px solid var(--page-border);
     /* border-right: 1px solid var(--border); */
     /* border-top: 1px solid rgba(0, 0, 0, 0.1); */
     /* box-shadow: 0 4px 16px rgba(108, 63, 232, 0.10), 0 1px 4px rgba(0, 0, 0, 0.06); */
@@ -690,7 +692,7 @@ color: var(--text-dark); */
     text-transform: uppercase;
     /* color: #808080; */
     /* color: #9BB0C4; */
-    color: var(--text-muted);
+    color: var(--page-text-muted);
     letter-spacing: 1.6px;
 }
 
@@ -709,7 +711,7 @@ color: var(--text-dark); */
     outline: none;
     border: none;
     background: transparent;
-    color: var(--text-muted);
+    color: var(--page-text-muted);
     font-weight: 600;
     /* width: 100%;
     text-align: start; */

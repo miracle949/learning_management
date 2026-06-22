@@ -25,21 +25,26 @@
             <div class="orb orb-2"></div>
             <div class="orb orb-3"></div> -->
 
-            <div class="hero-card c1"><span class="card-dot"></span>🖥️ Hardware Assembly & Troubleshooting</div>
+            <div class="main-image">
 
-            <div class="hero-card c2 blue-card"><span class="card-dot"></span>🔧 PC Repair · Networking · OS Install
             </div>
+            <div class="main-form">
+                <div class="hero-card c1"><span class="card-dot"></span>🖥️ Hardware Assembly & Troubleshooting</div>
 
-            <div class="hero-card c3"><span class="card-dot"></span>🏆 TESDA NC II Certified in 6 Months</div>
+                <div class="hero-card c2 blue-card"><span class="card-dot"></span>🔧 PC Repair · Networking · OS Install
+                </div>
 
-            <div class="hero-card c4"><span class="card-dot"></span>🏆 TESDA NC II Certified in 6 Months</div>
+                <div class="hero-card c3"><span class="card-dot"></span>🏆 TESDA NC II Certified in 6 Months</div>
 
-            <form action="?url=login" method="post">
-                <!-- <div class="form-sub-parent"> -->
+                <div class="hero-card c4"><span class="card-dot"></span>🏆 TESDA NC II Certified in 6 Months</div>
+
+                <form action="?url=login" method="post">
+                    <!-- <div class="form-sub-parent"> -->
                     <div class="form-parent">
                         <div class="card-brand">
                             <div class="form-icon">
-                                <a href="/learning_management/public/?url=landingpage"><img src="../images/iLearn-7.png" alt=""></a>
+                                <a href="/learning_management/public/?url=landingpage"><img src="../images/iLearn-7.png"
+                                        alt=""></a>
                             </div>
 
                             <div class="card-badge">
@@ -56,13 +61,15 @@
                         <div class="form-panel">
                             <div class="input-1">
                                 <label>Learner Reference Number (LRN)</label>
-                                <input class="input-form" type="text" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
-                                    id="" placeholder="Enter your email" required>
+                                <input class="input-form" type="text" name="email"
+                                    value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" id=""
+                                    placeholder="Enter your email" required>
                             </div>
 
                             <div class="input-2">
                                 <label>Password</label>
-                                <input class="input-form" type="password" name="password" id="" placeholder="Enter password" required>
+                                <input class="input-form" type="password" name="password" id=""
+                                    placeholder="Enter password" required>
                             </div>
                         </div>
 
@@ -70,8 +77,8 @@
                             <a href="#">Forgot Password</a>
                         </div>
 
-                        <button class="submit"
-                            class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">Sign In</button>
+                        <button class="submit" class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">Sign
+                            In</button>
 
                         <div class="card-divider"></div>
 
@@ -80,8 +87,9 @@
                             CSS Instructor or <b>visit the Help Center</b>
                         </p>
                     </div>
-                <!-- </div> -->
-            </form>
+                    <!-- </div> -->
+                </form>
+            </div>
         </main>
 
         <!-- <form action="?url=login" method="post">

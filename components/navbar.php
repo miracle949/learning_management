@@ -5,8 +5,8 @@
             <div class="fa fa-bars"></div>
         </button> -->
 
-        <h3>Student Dashboard</h3>
-        <p>Wednesday, June 18, 2026 · CSS Batch 2026</p>
+        <!-- <h3>Student Dashboard</h3>
+        <p>Wednesday, June 18, 2026 · CSS Batch 2026</p> -->
     </div>
 
     <div class="nav-acc">

@@ -9,23 +9,59 @@
 }
 
 :root {
-    --green: #4CAF7D;
-    --green-dark: #2D6A4F;
-    --green-light: #E8F5EE;
-    --green-mid: #c8e6d6;
-    --orange: #FF8A65;
-    --orange-light: #FFF3EF;
-    --orange-dark: #bf5b3a;
-    --bg: #F9FBF9;
-    --white: #ffffff;
-    --card-border: rgba(0, 0, 0, 0.07);
-    --text: #2D6A4F;
-    --text-dark: #1a3a2a;
-    --text-muted: #7a9a8a;
-    --sidebar-bg: #ffffff;
-    --shadow: 0 2px 12px rgba(76, 175, 125, 0.08);
-    --background-icon: #2d3748;
-    --green-text: #4a6a58;
+    /* === NEW PALETTE: Circuit Green + Electric Blue + Tech Dark === */
+    --green-neon: #00FF88;
+    /* circuit board / PCB green */
+    --green-mid: #00C96B;
+    --green-dark: #00894A;
+    --green-light: #E8FBF2;
+    --blue-elec: #00CFFF;
+    /* electric/LED blue */
+    --blue-mid: #0099CC;
+    --blue-dark: #006B99;
+    --orange-warn: #FF6B00;
+    /* resistor/component orange */
+    --yellow-volt: #FFD700;
+    /* voltage / gold pin */
+    --red-led: #FF3B3B;
+    /* LED red */
+    --purple-chip: #9B5DE5;
+    /* chip / IC purple */
+
+    /* Dark tech backgrounds */
+    --bg-darkest: #050D14;
+    --bg-dark: #0A1628;
+    --bg-panel: #0F2040;
+    --bg-card: #0E1E35;
+    --bg-surface: #112244;
+
+    /* Grids and borders */
+    --border-dim: rgba(0, 255, 136, 0.12);
+    --border-glow: rgba(0, 207, 255, 0.30);
+
+    /* Text */
+    --text-white: #FFFFFF;
+    --text-bright: #E8F4FF;
+    --text-muted: rgba(200, 220, 255, 0.55);
+    --text-dark: #0A1628;
+
+    --bg-page-card: #FFFFFF;
+    --bg-page-surface: #EAF0F8;
+    --page-border: #D6E3F0;
+    --page-border-strong: #B8CCDF;
+    /* --page-text: #0A2540; */
+    --page-text-muted: #4A6B8A;
+    /* --page-text-hint: #7A9BB8; */
+
+    /* Light sections */
+    --light-bg: #F0F8FF;
+    --light-card: #FFFFFF;
+    --light-border: #C8E6FF;
+    --light-text: #0A2540;
+    --light-muted: #4A6080;
+
+    --border: #E5EDF5;
+    --bg-page: #F5F8FB;
 }
 
 ::-webkit-scrollbar {
@@ -36,8 +72,8 @@
 .container-fluid .rightbar {
     /* width: calc(100% - 250px); */
     /* width: 100%; */
-    width: calc(100% - 225px);
-    margin-left: 225px;
+    width: calc(100% - 248px);
+    margin-left: 248px;
     /* height: calc(100vh - 68px); */
     border-left: 1px solid rgba(0, 0, 0, 0.1);
     /* height: calc(100vh - 66px); */
@@ -50,7 +86,8 @@
     /* background-color: #EFF3F6; */
     /* background-color: #f4f5f7; */
     /* background-color: #F7F9F8; */
-    background: radial-gradient(ellipse 120% 80% at 50% -10%, rgba(0, 207, 255, 0.16), transparent 60%), linear-gradient(180deg, var(--bg-darkest) 0%, var(--bg-dark) 55%, var(--bg-panel) 100%);
+    /* background: radial-gradient(ellipse 120% 80% at 50% -10%, rgba(0, 207, 255, 0.16), transparent 60%), linear-gradient(180deg, var(--bg-darkest) 0%, var(--bg-dark) 55%, var(--bg-panel) 100%); */
+    background-color: var(--bg-page);
 }
 
 /* .container-fluid .rightbar .parent{
@@ -131,12 +168,13 @@
 
 .container-fluid .module-parent-progress .module-progress {
     width: 100%;
-    /* background-color: #ffffff; */
-    background-color: var(--bg-card);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    background-color: #ffffff;
+    /* background-color: var(--bg-card); */
+    /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04); */
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
     border-radius: 10px;
     /* border: 1px solid #E2E8E5; */
-    border: 1px solid var(--border-dim);
+    border: 1px solid var(--page-border);
     margin-top: 1.5rem;
 }
 
@@ -313,7 +351,12 @@
     border-bottom: 2px solid #e4e7eb; */
     /* background: radial-gradient(ellipse 60% 100% at 100% 0%, rgba(0, 207, 255, 0.16), transparent 60%), radial-gradient(ellipse 50% 80% at 0% 100%, rgba(0, 255, 136, 0.12), transparent 60%), linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darkest) 100%); */
     background-color: var(--bg-card);
-    border-bottom: 1px solid var(--border-dim);
+    /* background-color: #f8f8f8; */
+    /* background: linear-gradient(130deg, #0A1628 0%, #0F2845 60%, #0A2040 100%); */
+    /* border: 1px solid var(--page-border); */
+    /* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); */
+    /* border-bottom: 1px solid var(--page-border); */
+    border: none;
     margin-bottom: 0;
 }
 
@@ -410,9 +453,17 @@
                                                     border: 1px solid var(--border-dim); */
     /* background: radial-gradient(ellipse 60% 100% at 100% 0%, rgba(0, 207, 255, 0.16), transparent 60%), radial-gradient(ellipse 50% 80% at 0% 100%, rgba(0, 255, 136, 0.12), transparent 60%), linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darkest) 100%); */
     /* background-color: var(--bg-card); */
-    background: radial-gradient(ellipse 60% 100% at 100% 0%, rgba(0, 207, 255, 0.16), transparent 60%), radial-gradient(ellipse 50% 80% at 0% 100%, rgba(0, 255, 136, 0.12), transparent 60%), linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darkest) 100%);
+    /* background: radial-gradient(ellipse 60% 100% at 100% 0%, rgba(0, 207, 255, 0.16), transparent 60%), radial-gradient(ellipse 50% 80% at 0% 100%, rgba(0, 255, 136, 0.12), transparent 60%), linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darkest) 100%); */
+    /* background: linear-gradient(130deg, #0A1628 0%, #0F2845 60%, #0A2040 100%); */
+    /* background-color: #ffffff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--page-border); */
+    background: linear-gradient(130deg, #0A1628 0%, #0F2845 60%, #0A2040 100%);
+    /* border: 1px solid var(--page-border); */
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
     /* background: linear-gradient(135deg, var(--green-dark) 0%, var(--bg-darkest) 60%); */
-    border: 1px solid var(--border-dim);
+    /* border: 1px solid var(--page-border); */
     /* border-bottom: none; */
     outline: 0;
     /* border-radius: 10px; */
@@ -466,7 +517,7 @@
 }
 
 .container-fluid .rightbar .module-title .module-body .module-body-child .module-description .icon-parent .icon {
-    width: 45px;
+    width: 40px;
     height: 40px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--green-mid), var(--blue-mid));
@@ -481,6 +532,7 @@
 .container-fluid .rightbar .module-title .module-body .module-body-child .module-description .icon-parent p {
     margin: 0;
     color: #ffffff;
+    /* color: var(--light-text); */
     font-weight: 600;
 }
 
@@ -571,7 +623,7 @@
     font-size: 25px;
     text-transform: uppercase;
     font-family: "Titan", sans-serif;
-    /* color: var(--green-dark); */
+    /* color: var(--light-text); */
     color: #ffffff;
     /* margin-top: 0.7rem; */
     margin: 25px 0 0.7rem;
@@ -615,8 +667,8 @@
 
 .bread-crambs {
     margin: 0 0 16px;
-    color: var(--text-muted);
-    font-size: 12.5px;
+    color: var(--page-text-muted);
+    font-size: 13.5px;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -627,7 +679,8 @@
 }
 
 .bread-crambs b {
-    color: var(--green-neon);
+    /* color: var(--green-dark); */
+    color: var(--light-text);
 }
 
 /* ── Stream filter chips ── */
@@ -638,8 +691,9 @@
     /* padding: 14px 20px 0; */
     padding: 15px 10px;
     flex-wrap: wrap;
-    background-color: var(--bg-card);
-    border: 1px solid var(--border-dim);
+    /* background-color: var(--bg-card); */
+    background-color: #ffffff;
+    border: 1px solid var(--page-border);
     border-radius: 12px;
 }
 
@@ -663,7 +717,7 @@
     border: none;
     /* background: #fff; */
     /* color: #6b7280; */
-    color: var(--text-muted);
+    color: var(--page-text-muted);
     background: transparent;
     cursor: pointer;
     transition: all 0.15s;
@@ -674,7 +728,8 @@
     /* border-color: var(--green);
     color: var(--green);
     background: #e8f5ee; */
-    color: #ffffff;
+    color: var(--green-dark);
+    /* color: #ffffff; */
 }
 
 .stream-chip.active {
