@@ -178,11 +178,22 @@ class StudentsController
             }
         }
 
-        $lessonCounts = [];
         $startedModuleIds = $studentId ? $studentModel->getStartedModuleIds($studentId) : [];
+
+        $lessonCounts = [];
+        $imageCounts = [];
+        $videoCounts = [];
+        $activityCounts = [];
+        $quizCounts = [];
+
         foreach ($modules as $mod) {
             $lessonCounts[$mod['id']] = $studentModel->countIMlessons($mod['id']);
+            $imageCounts[$mod['id']] = $studentModel->countIMimages($mod['id']);
+            $videoCounts[$mod['id']] = $studentModel->countIMvideos($mod['id']);
+            $activityCounts[$mod['id']] = $studentModel->countIMactivities($mod['id']);
+            $quizCounts[$mod['id']] = $studentModel->countIMquizzes($mod['id']);
         }
+
         require "../app/view/modules.php";
     }
 

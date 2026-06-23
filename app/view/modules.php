@@ -20,22 +20,9 @@
         <div class="rightbar">
 
             <?php
-            require_once "../app/models/Students.php";
-            $studentModel = new Students();
-
             $subject = $_GET['subject'] ?? $subject ?? null;
 
             if ($subject):
-                $subjectInfo = $studentModel->getSubjectBySlug($subject);
-                $modules = $studentModel->getInteractiveModules($subject);
-                $startedModuleIds = $studentModel->getStartedModuleIds($_SESSION['student_id'] ?? 0);
-
-                // Build lesson counts per module
-                $lessonCounts = [];
-                foreach ($modules as $mod) {
-                    $lessonCounts[$mod['id']] = $studentModel->countIMlessons($mod['id']);
-                }
-
                 if ($subjectInfo):
                     ?>
 
@@ -139,28 +126,64 @@
                                 <?php foreach ($modules as $mod):
                                     $detailUrl = "/learning_management/public/?url=subject_lessons&subject=" . urlencode($subject) . "&id={$mod['id']}";
                                     $count = $lessonCounts[$mod['id']] ?? 0;
+                                    $imgCount = $imageCounts[$mod['id']] ?? 0;
+                                    $vidCount = $videoCounts[$mod['id']] ?? 0;
+                                    $actCount = $activityCounts[$mod['id']] ?? 0;
+                                    $qzCount = $quizCounts[$mod['id']] ?? 0;
                                     $isStarted = in_array($mod['id'], $startedModuleIds);
                                     $btnText = $isStarted ? 'Continue Learning' : 'Start now';
                                     $btnClass = $isStarted ? 'start-now-btn btn-continue' : 'start-now-btn';
-                                    // data-status for JS filtering: 'started' or 'not-started'
                                     $statusAttr = $isStarted ? 'in-progress' : 'not-started';
                                     ?>
                                     <div class="module-feed-card" data-status="<?= $statusAttr ?>"
                                         data-title="<?= htmlspecialchars(strtolower($mod['title'])) ?>">
+
                                         <div class="card-img">
                                             <i class="fa fa-book-open"></i>
                                         </div>
+
                                         <div class="card-body">
-                                            <span class="lesson-count">
-                                                <i class="fa fa-list-ul"></i>
-                                                <?= $count ?> lesson<?= $count !== 1 ? 's' : '' ?>
-                                            </span>
                                             <h3><?= htmlspecialchars($mod['title']) ?></h3>
                                             <p><?= htmlspecialchars(
                                                 !empty($mod['description'])
                                                 ? mb_strimwidth($mod['description'], 0, 100, '...')
                                                 : 'No description available.'
                                             ) ?></p>
+
+                                            <!-- ── CONTENT TYPE BADGES ── -->
+                                            <div class="module-content-badges">
+                                                <?php if ($count > 0): ?>
+                                                    <span class="content-badge badge--lesson">
+                                                        <i class="fa fa-book-open"></i>
+                                                        <?= $count ?> Lesson<?= $count !== 1 ? 's' : '' ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                                <?php if ($vidCount > 0): ?>
+                                                    <span class="content-badge badge--video">
+                                                        <i class="fa fa-video"></i>
+                                                        <?= $vidCount ?> Video<?= $vidCount !== 1 ? 's' : '' ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                                <?php if ($imgCount > 0): ?>
+                                                    <span class="content-badge badge--image">
+                                                        <i class="fa fa-image"></i>
+                                                        <?= $imgCount ?> Image<?= $imgCount !== 1 ? 's' : '' ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                                <?php if ($actCount > 0): ?>
+                                                    <span class="content-badge badge--activity">
+                                                        <i class="fa fa-pen-to-square"></i>
+                                                        <?= $actCount ?> Activit<?= $actCount !== 1 ? 'ies' : 'y' ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                                <?php if ($qzCount > 0): ?>
+                                                    <span class="content-badge badge--quiz">
+                                                        <i class="fa fa-circle-question"></i>
+                                                        <?= $qzCount ?> Quiz<?= $qzCount !== 1 ? 'zes' : '' ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                            </div>
+
                                             <button class="<?= $btnClass ?>" data-module-id="<?= (int) $mod['id'] ?>"
                                                 data-href="<?= htmlspecialchars($detailUrl) ?>" onclick="handleModuleStart(this)">
                                                 <?= $btnText ?> <i class="fa fa-arrow-right"></i>
@@ -200,7 +223,6 @@
     </div>
 
     <script>
-        // ── TAB FILTERING ──────────────────────────────────────────
         var currentFilter = 'all';
         var currentSearch = '';
 
@@ -223,8 +245,8 @@
             var visibleCount = 0;
 
             cards.forEach(function (card) {
-                var status = card.dataset.status;   // 'in-progress' | 'not-started' | 'completed'
-                var title = card.dataset.title;     // lowercase title
+                var status = card.dataset.status;
+                var title = card.dataset.title;
 
                 var matchesFilter = currentFilter === 'all' || status === currentFilter;
                 var matchesSearch = currentSearch === '' || title.indexOf(currentSearch) !== -1;
@@ -241,7 +263,6 @@
             document.getElementById('moduleGrid').style.display = visibleCount === 0 ? 'none' : '';
         }
 
-        // ── MODULE START ───────────────────────────────────────────
         function handleModuleStart(btn) {
             var moduleId = btn.dataset.moduleId;
             var href = btn.dataset.href;

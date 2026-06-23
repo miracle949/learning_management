@@ -807,8 +807,8 @@
     /* color: #fff; */
     /* background: linear-gradient(135deg, var(--green-mid), var(--green-neon)); */
     background-color: var(--green-mid);
-    color: var(--bg-darkest);
-    /* color: #ffffff; */
+    /* color: var(--bg-darkest); */
+    color: #ffffff;
     border: none;
 }
 

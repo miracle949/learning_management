@@ -726,6 +726,64 @@ class Students extends Model
     //     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     // }
 
+    public function countIMimages($interactiveModuleId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total
+        FROM interactive_contents ic
+        JOIN lessons l ON ic.lesson_id = l.id
+        WHERE l.interactive_module_id = ? AND ic.type = 'image'
+    ");
+        $stmt->bind_param("i", $interactiveModuleId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function countIMvideos($interactiveModuleId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total
+        FROM interactive_contents ic
+        JOIN lessons l ON ic.lesson_id = l.id
+        WHERE l.interactive_module_id = ? AND ic.type = 'video'
+    ");
+        $stmt->bind_param("i", $interactiveModuleId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function countIMactivities($interactiveModuleId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total
+        FROM interactive_contents ic
+        JOIN lessons l ON ic.lesson_id = l.id
+        WHERE l.interactive_module_id = ? AND ic.type = 'activity'
+    ");
+        $stmt->bind_param("i", $interactiveModuleId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function countIMquizzes($interactiveModuleId)
+    {
+        $sql = "
+        SELECT COUNT(DISTINCT ic.title) AS total
+        FROM interactive_contents ic
+        INNER JOIN lessons l ON l.id = ic.lesson_id
+        WHERE l.interactive_module_id = ?
+        AND ic.type = 'quiz'
+    ";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $interactiveModuleId);
+        $stmt->execute();
+
+        $row = $stmt->get_result()->fetch_assoc();
+
+        return (int) $row['total'];
+    }
+
     public function getPendingAssignments($studentId)
     {
         $stmt = $this->db->prepare("
