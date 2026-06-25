@@ -27,7 +27,10 @@
                     ?>
 
                     <!-- ── TOP NAV ── -->
-                    <div class="module-nav">
+                    <div class="bread-crambs">
+                        Dashboard <i class="fa fa-chevron-right"></i> <b>Modules</b>
+                    </div>
+                    <!-- <div class="module-nav">
                         <div class="module-text">
                             <h2>Modules</h2>
                             <p>Lessons, quizzes, activities, videos &amp; images across your subject</p>
@@ -50,7 +53,7 @@
                                 ?>
                             </button>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- ── STAT CARDS ── -->
                     <div class="card-box-parent">
@@ -139,7 +142,13 @@
                                         data-title="<?= htmlspecialchars(strtolower($mod['title'])) ?>">
 
                                         <div class="card-img">
-                                            <i class="fa fa-book-open"></i>
+                                            <div class="card-text">
+                                                <div class="module-banner-tag">CSS · Hardware</div>
+                                            </div>
+                                            <div class="card-icon">
+                                                <i class="fa fa-desktop"></i>
+                                            </div>
+                                            <!-- <i class="fa fa-book-open"></i> -->
                                         </div>
 
                                         <div class="card-body">

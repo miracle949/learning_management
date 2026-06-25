@@ -358,7 +358,6 @@
 <body>
     <div class="container-fluid p-0">
         <?php include("../components/offcanvas.php"); ?>
-        <?php include("../components/navbar.php"); ?>
         <?php include("../components/sidebar.php"); ?>
 
         <div class="rightbar">

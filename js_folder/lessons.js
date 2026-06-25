@@ -77,7 +77,7 @@ function pickMC(el) {
     var actId = parseInt(el.dataset.actId);
     var key = el.dataset.key;
 
-    el.closest('.activity-question').querySelectorAll('.mc-choice').forEach(function (c) {
+    el.closest('.question-card').querySelectorAll('.mc-choice').forEach(function (c) {
         c.classList.remove('selected');
     });
     el.classList.add('selected');
@@ -99,7 +99,7 @@ function unifiedPick(el) {
     var key = el.dataset.key;
     var qzid = parseInt(el.dataset.qzid);
 
-    el.closest('.q-choices').querySelectorAll('.q-choice').forEach(function (c) {
+    el.closest('.q-card').querySelectorAll('.q-choice').forEach(function (c) {
         c.classList.remove('selected');
     });
     el.classList.add('selected');

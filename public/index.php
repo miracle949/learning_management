@@ -158,6 +158,11 @@ switch ($url) {
         include '../app/view/subject_lessons.php';
         break;
 
+    case 'subject_activity':
+        requireAuth('student');
+        $student->subject_activity();
+        break;
+
     // ── Teacher routes ────────────────────────────────────────
     case 'teacher':
         requireAuth('teacher');

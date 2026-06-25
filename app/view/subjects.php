@@ -52,10 +52,10 @@
 
                     <!-- <p>My Class <i class="fa fa-chevron-right"></i> <b>Computer System Servicing</b></p> -->
 
-                    <!-- <div class="bread-crambs">
+                    <div class="bread-crambs">
                         Dashboard <i class="fa fa-chevron-right"></i> <b>My Subject</b>
-                    </div> -->
-                    <div class="subject-nav">
+                    </div>
+                    <!-- <div class="subject-nav">
                         <div class="subject-text">
                             <h2>My Subject</h2>
                             <p>Announcements, Materials, Assignments</p>
@@ -80,7 +80,7 @@
                                 ?>
                             </button>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="header">
                         <div class="module-title">
                             <!-- <div class="module-picture">

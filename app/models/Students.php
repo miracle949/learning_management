@@ -347,6 +347,24 @@ class Students extends Model
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function getIMActivityById($activityId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT ic.id, ic.title, ic.instructions, ic.total_points, ic.lesson_id,
+               l.title AS lesson_title, l.interactive_module_id AS module_id,
+               im.title AS module_title, s.subject_name, s.subject_code
+        FROM interactive_contents ic
+        JOIN lessons l ON ic.lesson_id = l.id
+        JOIN interactive_modules im ON l.interactive_module_id = im.id
+        JOIN subjects s ON im.subject_id = s.id
+        WHERE ic.id = ? AND ic.type = 'activity'
+        LIMIT 1
+    ");
+        $stmt->bind_param("i", $activityId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
     public function getLessonVideos($lessonId)
     {
         $stmt = $this->db->prepare("

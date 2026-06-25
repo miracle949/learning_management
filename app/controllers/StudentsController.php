@@ -223,6 +223,94 @@ class StudentsController
         exit;
     }
 
+    public function subject_activity()
+    {
+        $studentModel = new Students();
+
+        $activityId = isset($_GET['activity']) ? (int) $_GET['activity'] : 0;
+        $subject = isset($_GET['subject']) ? trim($_GET['subject']) : '';
+        $studentId = $_SESSION['student_id'] ?? 0;
+
+        if (!$studentId && !empty($_SESSION['user_id'])) {
+            $subjectModel = new subjects();
+            $studentRow = $subjectModel->getStudentByUserId($_SESSION['user_id']);
+            if ($studentRow) {
+                $studentId = (int) $studentRow['id'];
+                $_SESSION['student_id'] = $studentId;
+            }
+        }
+
+        $activity = $activityId ? $studentModel->getIMActivityById($activityId) : null;
+
+        if (!$activity) {
+            header("Location: /learning_management/public/?url=modules&subject=" . urlencode($subject));
+            exit;
+        }
+
+        $lessonId = (int) $activity['lesson_id'];
+        $moduleId = (int) $activity['module_id'];
+
+        $questions = $studentModel->getIMActivityQuestions($activityId);
+        $submission = $studentId ? $studentModel->getIMActivitySubmission($activityId, $studentId) : null;
+
+        // ── Handle answer submission ───────────────────────────
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $studentId && !$submission) {
+            $answers = [];
+            foreach ($questions as $q) {
+                $key = 'answer_' . $q['id'];
+                if (isset($_POST[$key])) {
+                    $answers[$q['id']] = trim($_POST[$key]);
+                }
+            }
+            $studentModel->saveIMActivitySubmission($activityId, $studentId, json_encode($answers));
+            $studentModel->markLessonVisited($lessonId, $studentId);
+            header("Location: /learning_management/public/?url=subject_activity&subject={$subject}&id={$moduleId}&activity={$activityId}");
+            exit;
+        }
+
+        $module = $studentModel->getInteractiveModuleById($moduleId);
+        $lessons = $module ? $studentModel->getIMLessonsWithCounts($moduleId) : [];
+        $lesson = $studentModel->getIMLessonById($lessonId);
+
+        // ── Build sidebar context: every activity/quiz across the whole module ──
+        $allModuleActivities = [];
+        $allModuleQuizzes = [];
+        foreach ($lessons as $l) {
+            foreach ($studentModel->getLessonActivities($l['id']) as $act) {
+                $allModuleActivities[$act['id']] = [
+                    'activity' => $act,
+                    'questions' => $studentModel->getIMActivityQuestions($act['id']),
+                    'submission' => $studentId ? $studentModel->getIMActivitySubmission($act['id'], $studentId) : null,
+                ];
+            }
+            foreach ($studentModel->getLessonQuizzes($l['id']) as $qz) {
+                $allModuleQuizzes[$qz['id']] = [
+                    'quiz' => $qz,
+                    'questions' => $studentModel->getIMQuizQuestions($qz['id']),
+                    'result' => $studentId ? $studentModel->getIMQuizResult($qz['id'], $studentId) : null,
+                ];
+            }
+        }
+
+        $lessonCompletion = [];
+        $totalLessons = count($lessons);
+        $completedCount = 0;
+        foreach ($lessons as $l) {
+            $done = $studentId ? $studentModel->isLessonCompleted($l['id'], $studentId) : false;
+            $lessonCompletion[$l['id']] = $done;
+            if ($done)
+                $completedCount++;
+        }
+
+        $currentActivityId = $activityId;
+        $isSubmitted = ($submission !== null);
+
+        $studentName = $_SESSION['student_name'] ?? null;
+        $studentLrn = $_SESSION['student_lrn'] ?? null;
+
+        require "../app/view/subject_lessons.php";
+    }
+
     // ── SUBJECT LESSONS ────────────────────────────────────────
     // ?url=subject_lessons&subject=philosophy&id=1&lesson=7
     public function subject_lessons()
@@ -287,7 +375,24 @@ class StudentsController
                 $completedCount++;
         }
 
-        // Always use the single shared lessons view
+        // ── ADD THESE LINES ──────────────────────────────────────
+        $currentIndex = 0;
+        $prevLessonId = null;
+        $nextLessonId = null;
+        foreach ($lessons as $i => $l) {
+            if ($l['id'] == $lessonId) {
+                $currentIndex = $i + 1;
+                $prevLessonId = $lessons[$i - 1]['id'] ?? null;
+                $nextLessonId = $lessons[$i + 1]['id'] ?? null;
+                break;
+            }
+        }
+        // ─────────────────────────────────────────────────────────
+
+        // Also get student name for sidebar display
+        $studentName = $_SESSION['student_name'] ?? null;
+        $studentLrn = $_SESSION['student_lrn'] ?? null;
+
         require "../app/view/subject_lessons.php";
     }
 
