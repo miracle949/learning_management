@@ -35,8 +35,8 @@ class SuperAdmin extends Model
         SELECT s.id, s.subject_name, s.subject_description, s.subject_code,
                s.subject_image, s.grade_level_id,
                gl.name AS grade_name
-        FROM subjects s
-        LEFT JOIN grade_level gl ON gl.id = s.grade_level_id
+        FROM tbl_subjects s
+        LEFT JOIN tbl_grade_level gl ON gl.id = s.grade_level_id
         ORDER BY gl.name ASC, s.subject_name ASC
     ");
         return $result->fetch_all(MYSQLI_ASSOC);
@@ -48,8 +48,8 @@ class SuperAdmin extends Model
         SELECT s.id, s.subject_name, s.subject_description, s.subject_code,
                s.subject_image, s.grade_level_id,
                gl.name AS grade_name
-        FROM subjects s
-        LEFT JOIN grade_level gl ON gl.id = s.grade_level_id
+        FROM tbl_subjects s
+        LEFT JOIN tbl_grade_level gl ON gl.id = s.grade_level_id
         WHERE s.grade_level_id = ?
         ORDER BY s.subject_name ASC
     ");
@@ -64,8 +64,8 @@ class SuperAdmin extends Model
         SELECT s.id, s.subject_name, s.subject_description, s.subject_code,
                s.subject_image, s.grade_level_id,
                gl.name AS grade_name
-        FROM subjects s
-        LEFT JOIN grade_level gl ON gl.id = s.grade_level_id
+        FROM tbl_subjects s
+        LEFT JOIN tbl_grade_level gl ON gl.id = s.grade_level_id
         WHERE s.id = ?
         LIMIT 1
     ");
@@ -79,7 +79,7 @@ class SuperAdmin extends Model
     // ============================================================
     public function getAllGradeLevels()
     {
-        $result = $this->db->query("SELECT id, name FROM grade_level ORDER BY name ASC");
+        $result = $this->db->query("SELECT id, name FROM tbl_grade_level ORDER BY name ASC");
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
@@ -89,7 +89,7 @@ class SuperAdmin extends Model
     public function countInteractiveModules($subjectId)
     {
         $stmt = $this->db->prepare("
-            SELECT COUNT(*) AS total FROM interactive_modules WHERE subject_id = ?
+            SELECT COUNT(*) AS total FROM tbl_interactive_modules WHERE subject_id = ?
         ");
         $stmt->bind_param("i", $subjectId);
         $stmt->execute();
@@ -99,7 +99,7 @@ class SuperAdmin extends Model
     public function getInteractiveModuleByTitle($subjectId, $title)
     {
         $stmt = $this->db->prepare("
-            SELECT id FROM interactive_modules
+            SELECT id FROM tbl_interactive_modules
             WHERE subject_id = ? AND title = ? LIMIT 1
         ");
         $stmt->bind_param("is", $subjectId, $title);
@@ -117,7 +117,7 @@ class SuperAdmin extends Model
         $teacherId = null;
 
         $stmt = $this->db->prepare("
-        INSERT INTO interactive_modules (subject_id, teacher_id, title, description, created_at)
+        INSERT INTO tbl_interactive_modules (subject_id, teacher_id, title, description, created_at)
         VALUES (?, ?, ?, ?, NOW())
     ");
         $stmt->bind_param("iiss", $subjectId, $teacherId, $title, $description);
@@ -131,7 +131,7 @@ class SuperAdmin extends Model
     public function countLessons($interactiveModuleId)
     {
         $stmt = $this->db->prepare("
-            SELECT COUNT(*) AS total FROM lessons WHERE interactive_module_id = ?
+            SELECT COUNT(*) AS total FROM tbl_lessons WHERE interactive_module_id = ?
         ");
         $stmt->bind_param("i", $interactiveModuleId);
         $stmt->execute();
@@ -141,7 +141,7 @@ class SuperAdmin extends Model
     public function getLessonByTitle($interactiveModuleId, $title)
     {
         $stmt = $this->db->prepare("
-            SELECT id FROM lessons
+            SELECT id FROM tbl_lessons
             WHERE interactive_module_id = ? AND title = ? LIMIT 1
         ");
         $stmt->bind_param("is", $interactiveModuleId, $title);
@@ -157,7 +157,7 @@ class SuperAdmin extends Model
             return ['id' => $existingId, 'existed' => true];
 
         $stmt = $this->db->prepare("
-            INSERT INTO lessons (interactive_module_id, title, topic, content)
+            INSERT INTO tbl_lessons (interactive_module_id, title, topic, content)
             VALUES (?, ?, ?, ?)
         ");
         $stmt->bind_param("isss", $interactiveModuleId, $title, $topic, $content);
@@ -190,7 +190,7 @@ class SuperAdmin extends Model
         $fileType = $data['file_type'] ?? null;
 
         $stmt = $this->db->prepare("
-            INSERT INTO interactive_contents (
+            INSERT INTO tbl_interactive_contents (
                 lesson_id, type, title, instructions,
                 question, question_type,
                 choice_a, choice_b, choice_c, choice_d,
@@ -242,7 +242,7 @@ class SuperAdmin extends Model
     public function createSubject($name, $code, $description, $gradeLevelId, $imagePath = null)
     {
         $stmt = $this->db->prepare("
-        INSERT INTO subjects (subject_name, subject_code, subject_description, grade_level_id, subject_image)
+        INSERT INTO tbl_subjects (subject_name, subject_code, subject_description, grade_level_id, subject_image)
         VALUES (?, ?, ?, ?, ?)
     ");
         $stmt->bind_param("sssis", $name, $code, $description, $gradeLevelId, $imagePath);
@@ -254,7 +254,7 @@ class SuperAdmin extends Model
     {
         if ($imagePath) {
             $stmt = $this->db->prepare("
-            UPDATE subjects
+            UPDATE tbl_subjects
             SET subject_name = ?, subject_code = ?, subject_description = ?,
                 grade_level_id = ?, subject_image = ?
             WHERE id = ?
@@ -262,7 +262,7 @@ class SuperAdmin extends Model
             $stmt->bind_param("sssisi", $name, $code, $description, $gradeLevelId, $imagePath, $id);
         } else {
             $stmt = $this->db->prepare("
-            UPDATE subjects
+            UPDATE tbl_subjects
             SET subject_name = ?, subject_code = ?, subject_description = ?,
                 grade_level_id = ?
             WHERE id = ?
@@ -274,31 +274,31 @@ class SuperAdmin extends Model
 
     public function getTotalStudents()
     {
-        $result = $this->db->query("SELECT COUNT(*) AS total FROM students s JOIN users u ON s.user_id = u.id WHERE u.role = 'student'");
+        $result = $this->db->query("SELECT COUNT(*) AS total FROM tbl_students s JOIN tbl_users u ON s.user_id = u.id WHERE u.role = 'student'");
         return (int) $result->fetch_assoc()['total'];
     }
 
     public function getTotalTeachers()
     {
-        $result = $this->db->query("SELECT COUNT(*) AS total FROM teachers t JOIN users u ON t.user_id = u.id WHERE u.role = 'teacher'");
+        $result = $this->db->query("SELECT COUNT(*) AS total FROM tbl_teachers t JOIN tbl_users u ON t.user_id = u.id WHERE u.role = 'teacher'");
         return (int) $result->fetch_assoc()['total'];
     }
 
     public function getTotalPendingApprovals()
     {
-        $result = $this->db->query("SELECT COUNT(*) AS total FROM students WHERE status = 'Pending'");
+        $result = $this->db->query("SELECT COUNT(*) AS total FROM tbl_students WHERE status = 'Pending'");
         return (int) $result->fetch_assoc()['total'];
     }
 
     public function getTotalSubjects()
     {
-        $result = $this->db->query("SELECT COUNT(*) AS total FROM subjects");
+        $result = $this->db->query("SELECT COUNT(*) AS total FROM tbl_subjects");
         return (int) $result->fetch_assoc()['total'];
     }
 
     public function getTotalSections()
     {
-        $result = $this->db->query("SELECT COUNT(*) AS total FROM sections");
+        $result = $this->db->query("SELECT COUNT(*) AS total FROM tbl_sections");
         return (int) $result->fetch_assoc()['total'];
     }
 
@@ -307,10 +307,10 @@ class SuperAdmin extends Model
         $result = $this->db->query("
         SELECT u.name, u.email, s.status,
                gl.name AS grade_level, sec.section_name
-        FROM users u
-        JOIN students s ON s.user_id = u.id
-        JOIN grade_level gl ON gl.id = s.grade_level_id
-        JOIN sections sec ON sec.id = s.section_id
+        FROM tbl_users u
+        JOIN tbl_students s ON s.user_id = u.id
+        JOIN tbl_grade_level gl ON gl.id = s.grade_level_id
+        JOIN tbl_sections sec ON sec.id = s.section_id
         WHERE u.role = 'student' AND s.status = 'Pending'
         ORDER BY u.id DESC
     ");
@@ -322,12 +322,12 @@ class SuperAdmin extends Model
         $stmt = $this->db->prepare("
         SELECT u.name, s.subject_name, sec.section_name,
                gl.name AS grade_level, se.enrolled_at
-        FROM student_enrollments se
-        JOIN students st ON st.id = se.student_id
-        JOIN users u ON u.id = st.user_id
-        JOIN subjects s ON s.id = se.subject_id
-        JOIN sections sec ON sec.id = se.section_id
-        JOIN grade_level gl ON gl.id = sec.grade_level_id
+        FROM tbl_student_enrollments se
+        JOIN tbl_students st ON st.id = se.student_id
+        JOIN tbl_users u ON u.id = st.user_id
+        JOIN tbl_subjects s ON s.id = se.subject_id
+        JOIN tbl_sections sec ON sec.id = se.section_id
+        JOIN tbl_grade_level gl ON gl.id = sec.grade_level_id
         ORDER BY se.enrolled_at DESC LIMIT ?
     ");
         $stmt->bind_param("i", $limit);
@@ -340,9 +340,9 @@ class SuperAdmin extends Model
         $stmt = $this->db->prepare("
             SELECT n.title, n.message, n.created_at,
                    s.subject_name, u.name AS teacher_name
-            FROM notifications n
-            JOIN subjects s ON s.id = n.subject_id
-            JOIN users u ON u.id = n.sender_id
+            FROM tbl_notifications n
+            JOIN tbl_subjects s ON s.id = n.subject_id
+            JOIN tbl_users u ON u.id = n.sender_id
             WHERE n.type = 'announcement'
             ORDER BY n.created_at DESC LIMIT ?
         ");
@@ -356,9 +356,9 @@ class SuperAdmin extends Model
         $result = $this->db->query("
             SELECT u.name AS teacher_name,
                    COUNT(DISTINCT ta.subject_id) AS class_count
-            FROM teachers t
-            JOIN users u ON t.user_id = u.id
-            LEFT JOIN teacher_assignments ta ON ta.teacher_id = t.id
+            FROM tbl_teachers t
+            JOIN tbl_users u ON t.user_id = u.id
+            LEFT JOIN tbl_teacher_assignments ta ON ta.teacher_id = t.id
             WHERE u.role = 'teacher'
             GROUP BY t.id, u.name
             ORDER BY class_count DESC
@@ -371,9 +371,9 @@ class SuperAdmin extends Model
     {
         $result = $this->db->query("
             SELECT gl.name AS grade_level, COUNT(se.student_id) AS total
-            FROM student_enrollments se
-            JOIN sections sec ON sec.id = se.section_id
-            JOIN grade_level gl ON gl.id = sec.grade_level_id
+            FROM tbl_student_enrollments se
+            JOIN tbl_sections sec ON sec.id = se.section_id
+            JOIN tbl_grade_level gl ON gl.id = sec.grade_level_id
             GROUP BY gl.id, gl.name
             ORDER BY gl.name ASC
         ");
@@ -382,8 +382,8 @@ class SuperAdmin extends Model
 
     public function updateStudentApproval($studentId, $gradeLevelId, $sectionId, $studentLRN, $status, $reason, $approvedBy, $userId, $name, $email)
     {
-        // Update users table
-        $stmt = $this->db->prepare("UPDATE users SET name = ?, email = ? WHERE id = ?");
+        // Update tbl_users table
+        $stmt = $this->db->prepare("UPDATE tbl_users SET name = ?, email = ? WHERE id = ?");
         $stmt->bind_param("ssi", $name, $email, $userId);
         $stmt->execute();
         $stmt->close();
@@ -391,7 +391,7 @@ class SuperAdmin extends Model
         // Always save approved_by — never skip it
         $approvedBy = (int) $approvedBy;
         $stmt2 = $this->db->prepare("
-        UPDATE students 
+        UPDATE tbl_students 
         SET grade_level_id = ?, section_id = ?, student_LRN = ?,
             status = ?, reason = ?, approved_by = ?, updated_at = NOW()
         WHERE id = ?
@@ -424,11 +424,11 @@ class SuperAdmin extends Model
             'student' AS role,
             u.name AS user_name,
             se.enrolled_at AS created_at
-        FROM student_enrollments se
-        JOIN students st  ON st.id  = se.student_id
-        JOIN users u      ON u.id   = st.user_id
-        JOIN subjects s   ON s.id   = se.subject_id
-        JOIN sections sec ON sec.id = se.section_id
+        FROM tbl_student_enrollments se
+        JOIN tbl_students st  ON st.id  = se.student_id
+        JOIN tbl_users u      ON u.id   = st.user_id
+        JOIN tbl_subjects s   ON s.id   = se.subject_id
+        JOIN tbl_sections sec ON sec.id = se.section_id
 
         UNION ALL
 
@@ -438,10 +438,10 @@ class SuperAdmin extends Model
             'student' AS role,
             u.name AS user_name,
             u.created_at AS created_at
-        FROM users u
-        JOIN students s    ON s.user_id  = u.id
-        JOIN grade_level gl ON gl.id     = s.grade_level_id
-        JOIN sections sec   ON sec.id    = s.section_id
+        FROM tbl_users u
+        JOIN tbl_students s     ON s.user_id  = u.id
+        JOIN tbl_grade_level gl ON gl.id       = s.grade_level_id
+        JOIN tbl_sections sec   ON sec.id      = s.section_id
         WHERE s.status = 'Pending'
 
         UNION ALL
@@ -452,10 +452,10 @@ class SuperAdmin extends Model
             'teacher' AS role,
             COALESCE(u.name, 'Unknown') AS user_name,
             im.created_at AS created_at
-        FROM interactive_modules im
-        JOIN subjects s      ON s.id = im.subject_id
-        LEFT JOIN teachers t ON t.id = im.teacher_id
-        LEFT JOIN users u    ON u.id = t.user_id
+        FROM tbl_interactive_modules im
+        JOIN tbl_subjects s      ON s.id = im.subject_id
+        LEFT JOIN tbl_teachers t ON t.id = im.teacher_id
+        LEFT JOIN tbl_users u    ON u.id = t.user_id
 
         UNION ALL
 
@@ -465,11 +465,11 @@ class SuperAdmin extends Model
             'student' AS role,
             u.name AS user_name,
             asub.submitted_at AS created_at
-        FROM assignment_submissions asub
-        JOIN assignments a ON a.id  = asub.assignment_id
-        JOIN subjects s    ON s.id  = a.subject_id
-        JOIN students st   ON st.id = asub.student_id
-        JOIN users u       ON u.id  = st.user_id
+        FROM tbl_assignment_submissions asub
+        JOIN tbl_assignments a ON a.id  = asub.assignment_id
+        JOIN tbl_subjects s    ON s.id  = a.subject_id
+        JOIN tbl_students st   ON st.id = asub.student_id
+        JOIN tbl_users u       ON u.id  = st.user_id
 
         UNION ALL
 
@@ -484,13 +484,13 @@ class SuperAdmin extends Model
             'student' AS role,
             u.name AS user_name,
             qr.taken_at AS created_at
-        FROM quiz_results qr
-        JOIN interactive_contents ic ON ic.id = qr.content_id
-        JOIN lessons l               ON l.id  = ic.lesson_id
-        JOIN interactive_modules im  ON im.id = l.interactive_module_id
-        JOIN subjects s              ON s.id  = im.subject_id
-        JOIN students st             ON st.id = qr.student_id
-        JOIN users u                 ON u.id  = st.user_id
+        FROM tbl_quiz_results qr
+        JOIN tbl_interactive_contents ic ON ic.id = qr.content_id
+        JOIN tbl_lessons l               ON l.id  = ic.lesson_id
+        JOIN tbl_interactive_modules im  ON im.id = l.interactive_module_id
+        JOIN tbl_subjects s              ON s.id  = im.subject_id
+        JOIN tbl_students st             ON st.id = qr.student_id
+        JOIN tbl_users u                 ON u.id  = st.user_id
 
         UNION ALL
 
@@ -500,42 +500,13 @@ class SuperAdmin extends Model
             'student' AS role,
             u.name AS user_name,
             act_sub.submitted_at AS created_at
-        FROM activity_submissions act_sub
-        JOIN interactive_contents ic ON ic.id = act_sub.content_id
-        JOIN lessons l               ON l.id  = ic.lesson_id
-        JOIN interactive_modules im  ON im.id = l.interactive_module_id
-        JOIN subjects s              ON s.id  = im.subject_id
-        JOIN students st             ON st.id = act_sub.student_id
-        JOIN users u                 ON u.id  = st.user_id
-
-        UNION ALL
-
-        SELECT
-            'invite_sent' AS action,
-            CONCAT(u.name, ' invited ', ei.student_email, ' to join ', s.subject_name, ' · ', sec.section_name) AS description,
-            'teacher' AS role,
-            u.name AS user_name,
-            ei.created_at AS created_at
-        FROM enrollment_invitations ei
-        JOIN teachers t   ON t.id   = ei.teacher_id
-        JOIN users u      ON u.id   = t.user_id
-        JOIN subjects s   ON s.id   = ei.subject_id
-        JOIN sections sec ON sec.id = ei.section_id
-
-        UNION ALL
-
-        SELECT
-            'invite_accepted' AS action,
-            CONCAT(u.name, ' accepted invitation to ', s.subject_name, ' · ', sec.section_name) AS description,
-            'student' AS role,
-            u.name AS user_name,
-            ei.created_at AS created_at
-        FROM enrollment_invitations ei
-        JOIN students st  ON st.id  = ei.student_id
-        JOIN users u      ON u.id   = st.user_id
-        JOIN subjects s   ON s.id   = ei.subject_id
-        JOIN sections sec ON sec.id = ei.section_id
-        WHERE ei.status = 'accepted' AND ei.student_id IS NOT NULL
+        FROM tbl_activity_submissions act_sub
+        JOIN tbl_interactive_contents ic ON ic.id = act_sub.content_id
+        JOIN tbl_lessons l               ON l.id  = ic.lesson_id
+        JOIN tbl_interactive_modules im  ON im.id = l.interactive_module_id
+        JOIN tbl_subjects s              ON s.id  = im.subject_id
+        JOIN tbl_students st             ON st.id = act_sub.student_id
+        JOIN tbl_users u                 ON u.id  = st.user_id
 
         UNION ALL
 
@@ -545,11 +516,11 @@ class SuperAdmin extends Model
             COALESCE(approver.role, 'superadmin') AS role,
             COALESCE(approver.name, 'Super Admin') AS user_name,
             stu.updated_at AS created_at
-        FROM students stu
-        JOIN users stu_u        ON stu_u.id    = stu.user_id
-        JOIN grade_level gl     ON gl.id       = stu.grade_level_id
-        JOIN sections sec       ON sec.id      = stu.section_id
-        LEFT JOIN users approver ON approver.id = stu.approved_by
+        FROM tbl_students stu
+        JOIN tbl_users stu_u         ON stu_u.id    = stu.user_id
+        JOIN tbl_grade_level gl      ON gl.id        = stu.grade_level_id
+        JOIN tbl_sections sec        ON sec.id       = stu.section_id
+        LEFT JOIN tbl_users approver ON approver.id  = stu.approved_by
         WHERE stu.status = 'Approved'
           AND stu.approved_by IS NOT NULL
           AND stu.updated_at IS NOT NULL
@@ -562,8 +533,8 @@ class SuperAdmin extends Model
             'superadmin' AS role,
             'Super Admin' AS user_name,
             s.created_at AS created_at
-        FROM subjects s
-        LEFT JOIN grade_level gl ON gl.id = s.grade_level_id
+        FROM tbl_subjects s
+        LEFT JOIN tbl_grade_level gl ON gl.id = s.grade_level_id
         WHERE s.created_at IS NOT NULL
 
         UNION ALL
@@ -574,8 +545,8 @@ class SuperAdmin extends Model
             'superadmin' AS role,
             'Super Admin' AS user_name,
             s.updated_at AS created_at
-        FROM subjects s
-        LEFT JOIN grade_level gl ON gl.id = s.grade_level_id
+        FROM tbl_subjects s
+        LEFT JOIN tbl_grade_level gl ON gl.id = s.grade_level_id
         WHERE s.updated_at IS NOT NULL
           AND s.updated_at <> s.created_at
 
@@ -587,8 +558,8 @@ class SuperAdmin extends Model
             'superadmin' AS role,
             'Super Admin' AS user_name,
             u.created_at AS created_at
-        FROM users u
-        JOIN teachers t ON t.user_id = u.id
+        FROM tbl_users u
+        JOIN tbl_teachers t ON t.user_id = u.id
         WHERE u.role = 'teacher'
           AND u.created_at IS NOT NULL
 
@@ -606,11 +577,11 @@ class SuperAdmin extends Model
             COALESCE(approver.role, 'superadmin') AS role,
             COALESCE(approver.name, 'Admin') AS user_name,
             stu.updated_at AS created_at
-        FROM students stu
-        JOIN users stu_u ON stu_u.id = stu.user_id
-        JOIN grade_level gl ON gl.id = stu.grade_level_id
-        JOIN sections sec ON sec.id = stu.section_id
-        LEFT JOIN users approver ON approver.id = stu.approved_by
+        FROM tbl_students stu
+        JOIN tbl_users stu_u         ON stu_u.id  = stu.user_id
+        JOIN tbl_grade_level gl      ON gl.id      = stu.grade_level_id
+        JOIN tbl_sections sec        ON sec.id     = stu.section_id
+        LEFT JOIN tbl_users approver ON approver.id = stu.approved_by
         WHERE stu.status = 'Rejected'
           AND stu.approved_by IS NOT NULL
           AND stu.updated_at IS NOT NULL
@@ -632,11 +603,5 @@ class SuperAdmin extends Model
         }
 
         return $logs;
-
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->bind_param("i", $limit);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 }

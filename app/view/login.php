@@ -115,6 +115,7 @@
                             <p>Need help signing in? Contact your school's
                                 <br>
                                 CSS Instructor or <b>visit the Help Center</b>
+                                
                             </p>
                         </div>
                     </div>

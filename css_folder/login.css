@@ -434,7 +434,8 @@ body {
     padding: 2rem;
     z-index: 3;
     position: relative;
-    width: 450px;
+    /* width: 450px; */
+    width: 500px;
 }
 
 .input-form {

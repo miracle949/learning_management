@@ -9,12 +9,12 @@ class subjects extends Model
     {
         $sql = "
         SELECT ta.section_id 
-        FROM teacher_assignments ta
-        JOIN students s ON s.section_id = ta.section_id
+        FROM tbl_teacher_assignments ta
+        JOIN tbl_students s ON s.section_id = ta.section_id
         WHERE s.id = ? 
         AND ta.subject_id = ?
         AND ta.grade_level_id = (
-            SELECT grade_level_id FROM subjects WHERE id = ?
+            SELECT grade_level_id FROM tbl_subjects WHERE id = ?
         )
         LIMIT 1
     ";
@@ -40,7 +40,7 @@ class subjects extends Model
 
     public function getStudentByUserId($userId)
     {
-        $stmt = $this->db->prepare("SELECT * FROM students WHERE user_id = ? LIMIT 1");
+        $stmt = $this->db->prepare("SELECT * FROM tbl_students WHERE user_id = ? LIMIT 1");
         $stmt->bind_param("i", $userId);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
@@ -48,7 +48,7 @@ class subjects extends Model
 
     public function getSubjectsByGradeLevel($grade_level_id)
     {
-        $sql = "SELECT * FROM subjects WHERE grade_level_id = ? ORDER BY id ASC";
+        $sql = "SELECT * FROM tbl_subjects WHERE grade_level_id = ? ORDER BY id ASC";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("i", $grade_level_id);
         $stmt->execute();
@@ -58,7 +58,7 @@ class subjects extends Model
 
     public function isEnrolled($student_id, $subject_id)
     {
-        $sql = "SELECT id FROM student_enrollments WHERE student_id = ? AND subject_id = ?";
+        $sql = "SELECT id FROM tbl_student_enrollments WHERE student_id = ? AND subject_id = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("ii", $student_id, $subject_id);
         $stmt->execute();
@@ -68,7 +68,7 @@ class subjects extends Model
 
     public function enrollStudent($student_id, $subject_id, $section_id)
     {
-        $sql = "INSERT INTO student_enrollments (student_id, subject_id, section_id, enrolled_at) VALUES (?, ?, ?, NOW())";
+        $sql = "INSERT INTO tbl_student_enrollments (student_id, subject_id, section_id, enrolled_at) VALUES (?, ?, ?, NOW())";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("iii", $student_id, $subject_id, $section_id);
         return $stmt->execute();
@@ -76,7 +76,7 @@ class subjects extends Model
 
     public function getEnrolledSubjectIds($student_id)
     {
-        $sql = "SELECT subject_id FROM student_enrollments WHERE student_id = ?";
+        $sql = "SELECT subject_id FROM tbl_student_enrollments WHERE student_id = ?";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("i", $student_id);
         $stmt->execute();
@@ -87,7 +87,7 @@ class subjects extends Model
 
     public function insertSubject($subject_name, $grade_level_id)
     {
-        $stmt = $this->db->prepare("INSERT INTO subjects (subject_name, grade_level_id) VALUES (?, ?)");
+        $stmt = $this->db->prepare("INSERT INTO tbl_subjects (subject_name, grade_level_id) VALUES (?, ?)");
         $stmt->bind_param("si", $subject_name, $grade_level_id);
         $stmt->execute();
         return $this->db->insert_id;
@@ -102,8 +102,8 @@ class subjects extends Model
         $sql = "
         SELECT s.id, s.subject_name, s.subject_code, 
                ta.section_id, ta.grade_level_id, ta.join_code
-        FROM teacher_assignments ta
-        JOIN subjects s ON s.id = ta.subject_id
+        FROM tbl_teacher_assignments ta
+        JOIN tbl_subjects s ON s.id = ta.subject_id
         WHERE ta.join_code = ?
         LIMIT 1
     ";

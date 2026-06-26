@@ -7,7 +7,7 @@ class User extends Model
 
     public function isLRNTaken($student_lrn)
     {
-        $stmt = $this->db->prepare("SELECT id FROM students WHERE student_LRN = ?");
+        $stmt = $this->db->prepare("SELECT id FROM tbl_students WHERE student_LRN = ?");
         $stmt->bind_param("s", $student_lrn);
         $stmt->execute();
         return $stmt->get_result()->num_rows > 0;
@@ -15,7 +15,7 @@ class User extends Model
 
     public function isEmailTaken($email)
     {
-        $stmt = $this->db->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt = $this->db->prepare("SELECT id FROM tbl_users WHERE email = ?");
         $stmt->bind_param("s", $email);
         $stmt->execute();
         return $stmt->get_result()->num_rows > 0;
@@ -25,8 +25,8 @@ class User extends Model
     {
         $stmt = $this->db->prepare("
         SELECT u.*, s.status
-        FROM users u
-        LEFT JOIN students s ON s.user_id = u.id
+        FROM tbl_users u
+        LEFT JOIN tbl_students s ON s.user_id = u.id
         WHERE u.email = ?
         LIMIT 1
     ");
@@ -37,14 +37,14 @@ class User extends Model
 
     public function signup($student_no, $name, $email, $username, $password, $grade_level_id, $section_id)
     {
-        $sql = "INSERT INTO users (name, email, username, password, role) 
+        $sql = "INSERT INTO tbl_users (name, email, username, password, role) 
             VALUES (?, ?, ?, ?, 'student')";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("ssss", $name, $email, $username, $password);
         $stmt->execute();
         $user_id = $this->db->insert_id;
 
-        $sql2 = "INSERT INTO students (student_LRN, user_id, grade_level_id, section_id, status) 
+        $sql2 = "INSERT INTO tbl_students (student_LRN, user_id, grade_level_id, section_id, status) 
          VALUES (?, ?, ?, ?, 'Pending')";
         $stmt2 = $this->db->prepare($sql2);
         $stmt2->bind_param("siii", $student_no, $user_id, $grade_level_id, $section_id);
@@ -53,19 +53,19 @@ class User extends Model
 
     public function getGrades()
     {
-        $result = $this->db->query("SELECT * FROM grade_level");
+        $result = $this->db->query("SELECT * FROM tbl_grade_level");
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
     public function getSections()
     {
-        $result = $this->db->query("SELECT * FROM sections");
+        $result = $this->db->query("SELECT * FROM tbl_sections");
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
     public function getName($id)
     {
-        $stmt = $this->db->prepare("SELECT name FROM users WHERE id = ?");
+        $stmt = $this->db->prepare("SELECT name FROM tbl_users WHERE id = ?");
         $stmt->bind_param("i", $id);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc()['name'] ?? null;
@@ -74,10 +74,10 @@ class User extends Model
     public function getStudentInfo($user_id)
     {
         $stmt = $this->db->prepare("
-            SELECT g.name AS grade_level, sec.section_name
-            FROM students s
-            JOIN grade_level g ON s.grade_level_id = g.id
-            JOIN sections sec ON s.section_id = sec.id
+            SELECT g.name AS tbl_grade_level, sec.section_name
+            FROM tbl_students s
+            JOIN tbl_grade_level g ON s.grade_level_id = g.id
+            JOIN tbl_sections sec ON s.section_id = sec.id
             WHERE s.user_id = ?
         ");
         $stmt->bind_param("i", $user_id);
@@ -104,10 +104,10 @@ class User extends Model
                 g.id          AS grade_level_id,
                 g.name        AS grade_name,
                 GROUP_CONCAT(DISTINCT sec.section_name ORDER BY sec.id SEPARATOR ', ') AS sections
-            FROM teacher_assignments ta
-            JOIN subjects s    ON ta.subject_id     = s.id
-            JOIN grade_level g ON ta.grade_level_id = g.id
-            JOIN sections sec  ON ta.section_id     = sec.id
+            FROM tbl_teacher_assignments ta
+            JOIN tbl_subjects s    ON ta.subject_id     = s.id
+            JOIN tbl_grade_level g ON ta.grade_level_id = g.id
+            JOIN tbl_sections sec  ON ta.section_id     = sec.id
             WHERE ta.teacher_id = ?
             GROUP BY s.id, g.id
             ORDER BY s.subject_name, g.id
@@ -125,7 +125,7 @@ class User extends Model
         $stmt = $this->db->prepare("
             SELECT
                 COUNT(DISTINCT CONCAT(ta.subject_id, '-', ta.grade_level_id)) AS total_classes
-            FROM teacher_assignments ta
+            FROM tbl_teacher_assignments ta
             WHERE ta.teacher_id = ?
         ");
         $stmt->bind_param("i", $teacher_id);
@@ -145,10 +145,10 @@ class User extends Model
                     s.subject_name,
                     g.name AS grade,
                     GROUP_CONCAT(DISTINCT sec.section_name ORDER BY sec.id SEPARATOR ', ') AS section
-                FROM subjects s
-                JOIN teacher_assignments ta ON ta.subject_id     = s.id
-                JOIN grade_level g          ON ta.grade_level_id = g.id
-                JOIN sections sec           ON ta.section_id     = sec.id
+                FROM tbl_subjects s
+                JOIN tbl_teacher_assignments ta ON ta.subject_id     = s.id
+                JOIN tbl_grade_level g          ON ta.grade_level_id = g.id
+                JOIN tbl_sections sec           ON ta.section_id     = sec.id
                 WHERE s.id = ? AND g.id = ?
                 GROUP BY s.id, g.id
             ");
@@ -159,10 +159,10 @@ class User extends Model
                     s.subject_name,
                     GROUP_CONCAT(DISTINCT g.name ORDER BY g.id SEPARATOR ', ')             AS grade,
                     GROUP_CONCAT(DISTINCT sec.section_name ORDER BY sec.id SEPARATOR ', ') AS section
-                FROM subjects s
-                LEFT JOIN teacher_assignments ta ON ta.subject_id     = s.id
-                LEFT JOIN grade_level g          ON ta.grade_level_id = g.id
-                LEFT JOIN sections sec           ON ta.section_id     = sec.id
+                FROM tbl_subjects s
+                LEFT JOIN tbl_teacher_assignments ta ON ta.subject_id     = s.id
+                LEFT JOIN tbl_grade_level g          ON ta.grade_level_id = g.id
+                LEFT JOIN tbl_sections sec           ON ta.section_id     = sec.id
                 WHERE s.id = ?
                 GROUP BY s.id
             ");
@@ -176,7 +176,7 @@ class User extends Model
     {
         $stmt = $this->db->prepare("
             SELECT id, name, email, username
-            FROM users
+            FROM tbl_users
             WHERE id = ?
         ");
         $stmt->bind_param("i", $user_id);
@@ -187,7 +187,7 @@ class User extends Model
     public function getTeacherId($user_id)
     {
         $stmt = $this->db->prepare("
-            SELECT id FROM teachers WHERE user_id = ?
+            SELECT id FROM tbl_teachers WHERE user_id = ?
         ");
         $stmt->bind_param("i", $user_id);
         $stmt->execute();

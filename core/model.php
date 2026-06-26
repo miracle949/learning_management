@@ -8,7 +8,7 @@ class Model {
             "localhost",
             "root",
             "",
-            "ilearn"
+            "ilearn_database"
         );
 
         if ($this->db->connect_error) {

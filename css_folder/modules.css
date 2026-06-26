@@ -452,7 +452,10 @@
     /* margin: 0 0 1.2rem; */
     margin: 0 0 20px;
     line-height: 1.5;
-    flex: 1;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
 }
 
 .start-now-btn {

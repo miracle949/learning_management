@@ -11,9 +11,9 @@ class Students extends Model
         SELECT a.id, a.task, a.due_date, a.points AS total_points,
                s.subject_code, sub.submitted_at, sub.graded_at,
                sub.points_earned, sub.feedback
-        FROM assignments a
-        JOIN assignment_submissions sub ON sub.assignment_id = a.id
-        JOIN subjects s ON a.subject_id = s.id
+        FROM tbl_assignments a
+        JOIN tbl_assignment_submissions sub ON sub.assignment_id = a.id
+        JOIN tbl_subjects s ON a.subject_id = s.id
         WHERE sub.student_id = ? AND sub.points_earned IS NOT NULL
         ORDER BY sub.graded_at DESC
     ");
@@ -25,7 +25,7 @@ class Students extends Model
     public function countGradedAssignments($studentId)
     {
         $stmt = $this->db->prepare("
-        SELECT COUNT(*) AS total FROM assignment_submissions
+        SELECT COUNT(*) AS total FROM tbl_assignment_submissions
         WHERE student_id = ? AND points_earned IS NOT NULL
     ");
         $stmt->bind_param("i", $studentId);
@@ -40,7 +40,7 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
             SELECT m.id, m.title, m.description, m.posted_at, s.subject_name, s.subject_code
-            FROM modules m JOIN subjects s ON m.subject_id = s.id
+            FROM tbl_modules m JOIN tbl_subjects s ON m.subject_id = s.id
             WHERE m.id = ? AND s.subject_code = ? LIMIT 1
         ");
         $stmt->bind_param("is", $moduleId, $subjectSlug);
@@ -50,7 +50,7 @@ class Students extends Model
 
     public function getModuleMaterials($moduleId)
     {
-        $stmt = $this->db->prepare("SELECT id, file_name, file_path, file_type FROM modules WHERE id = ? LIMIT 1");
+        $stmt = $this->db->prepare("SELECT id, file_name, file_path, file_type FROM tbl_modules WHERE id = ? LIMIT 1");
         $stmt->bind_param("i", $moduleId);
         $stmt->execute();
         $row = $stmt->get_result()->fetch_assoc();
@@ -64,7 +64,7 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
         SELECT id, submitted_at, file_path, points_earned, feedback
-        FROM assignment_submissions
+        FROM tbl_assignment_submissions
         WHERE assignment_id = ? AND student_id = ? LIMIT 1
     ");
         $stmt->bind_param("ii", $assignmentId, $studentId);
@@ -75,7 +75,7 @@ class Students extends Model
     public function saveAssignmentSubmission($assignmentId, $studentId, $filePath, $message)
     {
         $stmt = $this->db->prepare("
-        INSERT INTO assignment_submissions 
+        INSERT INTO tbl_assignment_submissions 
             (assignment_id, student_id, file_path, message, submitted_at, status)
         VALUES (?, ?, ?, ?, NOW(), 'submitted')
     ");
@@ -89,7 +89,7 @@ class Students extends Model
     public function deleteAssignmentSubmission($assignmentId, $studentId)
     {
         $stmt = $this->db->prepare("
-        DELETE FROM assignment_submissions
+        DELETE FROM tbl_assignment_submissions
         WHERE assignment_id = ? AND student_id = ?
         LIMIT 1
     ");
@@ -101,7 +101,7 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
             SELECT a.id, a.title, a.description, a.task, a.instructions, a.posted_at, a.points, a.due_date, a.due_time, s.subject_name, s.subject_code
-            FROM assignments a JOIN subjects s ON a.subject_id = s.id
+            FROM tbl_assignments a JOIN tbl_subjects s ON a.subject_id = s.id
             WHERE a.id = ? AND s.subject_code = ? LIMIT 1
         ");
         $stmt->bind_param("is", $assignmentId, $subjectSlug);
@@ -113,7 +113,7 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
             SELECT id, file_name, file_path, file_type
-            FROM assignments WHERE id = ?
+            FROM tbl_assignments WHERE id = ?
         ");
         $stmt->bind_param("i", $assignmentId);
         $stmt->execute();
@@ -128,9 +128,9 @@ class Students extends Model
         $stmt = $this->db->prepare("
         SELECT n.id, n.title, n.message AS body, n.created_at AS posted_at,
                u.name AS teacher_name, s.subject_name, s.subject_code AS slug
-        FROM notifications n
-        JOIN subjects s ON n.subject_id = s.id
-        JOIN users u ON n.sender_id = u.id
+        FROM tbl_notifications n
+        JOIN tbl_subjects s ON n.subject_id = s.id
+        JOIN tbl_users u ON n.sender_id = u.id
         WHERE n.id = ? AND s.subject_code = ? AND n.type = 'announcement'
         LIMIT 1
     ");
@@ -150,8 +150,8 @@ class Students extends Model
         (SELECT 'module' AS type, m.id, 'New Material' AS label,
                 m.title AS heading, m.description AS subtext, m.posted_at AS date,
                 NULL AS total_points, NULL AS points_earned
-         FROM modules m
-         JOIN subjects s ON m.subject_id = s.id
+         FROM tbl_modules m
+         JOIN tbl_subjects s ON m.subject_id = s.id
          WHERE s.subject_code = ?)
 
         UNION ALL
@@ -160,9 +160,9 @@ class Students extends Model
                 a.task, a.description, a.posted_at,
                 a.points AS total_points,
                 sub.points_earned AS points_earned
-         FROM assignments a
-         JOIN subjects s ON a.subject_id = s.id
-         LEFT JOIN assignment_submissions sub
+         FROM tbl_assignments a
+         JOIN tbl_subjects s ON a.subject_id = s.id
+         LEFT JOIN tbl_assignment_submissions sub
                 ON sub.assignment_id = a.id
                 AND sub.student_id = ?
          WHERE s.subject_code = ?)
@@ -172,8 +172,8 @@ class Students extends Model
         (SELECT 'announcement', n.id, 'Announcement',
                 n.title, n.message, n.created_at,
                 NULL AS total_points, NULL AS points_earned
-         FROM notifications n
-         JOIN subjects s ON n.subject_id = s.id
+         FROM tbl_notifications n
+         JOIN tbl_subjects s ON n.subject_id = s.id
          WHERE s.subject_code = ? AND n.type = 'announcement')
 
         ORDER BY date DESC
@@ -191,7 +191,7 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
             SELECT id, subject_name, subject_image, subject_code, subject_description
-            FROM subjects WHERE subject_code = ? LIMIT 1
+            FROM tbl_subjects WHERE subject_code = ? LIMIT 1
         ");
         $stmt->bind_param("s", $subjectSlug);
         $stmt->execute();
@@ -202,7 +202,7 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
         SELECT due_date, due_time
-        FROM assignments
+        FROM tbl_assignments
         WHERE id = ?
         LIMIT 1
     ");
@@ -215,8 +215,8 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
             SELECT im.id, im.title, im.description
-            FROM interactive_modules im
-            JOIN subjects s ON im.subject_id = s.id
+            FROM tbl_interactive_modules im
+            JOIN tbl_subjects s ON im.subject_id = s.id
             WHERE s.subject_code = ?
             ORDER BY im.id ASC
         ");
@@ -228,7 +228,7 @@ class Students extends Model
     public function countIMlessons($interactiveModuleId)
     {
         $stmt = $this->db->prepare("
-            SELECT COUNT(*) AS total FROM lessons WHERE interactive_module_id = ?
+            SELECT COUNT(*) AS total FROM tbl_lessons WHERE interactive_module_id = ?
         ");
         $stmt->bind_param("i", $interactiveModuleId);
         $stmt->execute();
@@ -239,8 +239,8 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
             SELECT im.id, im.title, im.description, s.subject_name, s.subject_code
-            FROM interactive_modules im
-            JOIN subjects s ON im.subject_id = s.id
+            FROM tbl_interactive_modules im
+            JOIN tbl_subjects s ON im.subject_id = s.id
             WHERE im.id = ? LIMIT 1
         ");
         $stmt->bind_param("i", $id);
@@ -252,7 +252,7 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
             SELECT id, title, topic
-            FROM lessons
+            FROM tbl_lessons
             WHERE interactive_module_id = ?
             ORDER BY id ASC
         ");
@@ -261,19 +261,15 @@ class Students extends Model
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
-    // ============================================================
-    // UPDATED: uses interactive_contents instead of
-    //          activities, quizzes, im_flashcards
-    // ============================================================
     public function getIMLessonsWithCounts($interactiveModuleId)
     {
         $stmt = $this->db->prepare("
             SELECT
                 l.id, l.title, l.topic,
-                (SELECT COUNT(*) FROM interactive_contents WHERE lesson_id = l.id AND type = 'activity')  AS activity_count,
-                (SELECT COUNT(*) FROM interactive_contents WHERE lesson_id = l.id AND type = 'quiz')      AS quiz_count,
-                (SELECT COUNT(*) FROM interactive_contents WHERE lesson_id = l.id AND type = 'flashcard') AS flashcard_count
-            FROM lessons l
+                (SELECT COUNT(*) FROM tbl_interactive_contents WHERE lesson_id = l.id AND type = 'activity')  AS activity_count,
+                (SELECT COUNT(*) FROM tbl_interactive_contents WHERE lesson_id = l.id AND type = 'quiz')      AS quiz_count,
+                (SELECT COUNT(*) FROM tbl_interactive_contents WHERE lesson_id = l.id AND type = 'flashcard') AS flashcard_count
+            FROM tbl_lessons l
             WHERE l.interactive_module_id = ?
             ORDER BY l.id ASC
         ");
@@ -288,9 +284,9 @@ class Students extends Model
             SELECT l.id, l.title, l.topic, l.content,
                    im.id AS module_id, im.title AS module_title,
                    s.subject_name, s.subject_code
-            FROM lessons l
-            JOIN interactive_modules im ON l.interactive_module_id = im.id
-            JOIN subjects s ON im.subject_id = s.id
+            FROM tbl_lessons l
+            JOIN tbl_interactive_modules im ON l.interactive_module_id = im.id
+            JOIN tbl_subjects s ON im.subject_id = s.id
             WHERE l.id = ? LIMIT 1
         ");
         $stmt->bind_param("i", $lessonId);
@@ -298,24 +294,10 @@ class Students extends Model
         return $stmt->get_result()->fetch_assoc();
     }
 
-    public function getIMLessonPdfs($lessonId)
-    {
-        $stmt = $this->db->prepare("
-            SELECT mm.id, mm.file_name, mm.file_path, mm.file_type
-            FROM im_lesson_pdfs lp
-            JOIN module_materials mm ON lp.module_material_id = mm.id
-            WHERE lp.lesson_id = ?
-            ORDER BY lp.id ASC
-        ");
-        $stmt->bind_param("i", $lessonId);
-        $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    }
-
     public function getAdjacentIMLessons($lessonId, $interactiveModuleId)
     {
         $stmt = $this->db->prepare("
-            SELECT id, title FROM lessons
+            SELECT id, title FROM tbl_lessons
             WHERE interactive_module_id = ?
             ORDER BY id ASC
         ");
@@ -338,7 +320,7 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
             SELECT id, file_path, file_name
-            FROM interactive_contents
+            FROM tbl_interactive_contents
             WHERE lesson_id = ? AND type = 'image'
             ORDER BY id ASC
         ");
@@ -353,10 +335,10 @@ class Students extends Model
         SELECT ic.id, ic.title, ic.instructions, ic.total_points, ic.lesson_id,
                l.title AS lesson_title, l.interactive_module_id AS module_id,
                im.title AS module_title, s.subject_name, s.subject_code
-        FROM interactive_contents ic
-        JOIN lessons l ON ic.lesson_id = l.id
-        JOIN interactive_modules im ON l.interactive_module_id = im.id
-        JOIN subjects s ON im.subject_id = s.id
+        FROM tbl_interactive_contents ic
+        JOIN tbl_lessons l ON ic.lesson_id = l.id
+        JOIN tbl_interactive_modules im ON l.interactive_module_id = im.id
+        JOIN tbl_subjects s ON im.subject_id = s.id
         WHERE ic.id = ? AND ic.type = 'activity'
         LIMIT 1
     ");
@@ -369,7 +351,7 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
             SELECT id, file_path, title
-            FROM interactive_contents
+            FROM tbl_interactive_contents
             WHERE lesson_id = ? AND type = 'video'
             ORDER BY id ASC
         ");
@@ -382,7 +364,7 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
             SELECT id, title, instructions, total_points
-            FROM interactive_contents
+            FROM tbl_interactive_contents
             WHERE lesson_id = ? AND type = 'activity'
             ORDER BY id ASC
         ");
@@ -395,7 +377,7 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
         SELECT MIN(id) AS id, title, instructions, passing_score
-        FROM interactive_contents
+        FROM tbl_interactive_contents
         WHERE lesson_id = ? AND type = 'quiz'
         GROUP BY title, instructions, passing_score
         ORDER BY MIN(id) ASC
@@ -409,7 +391,7 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
             SELECT id, card_type, card_front, card_back
-            FROM interactive_contents
+            FROM tbl_interactive_contents
             WHERE lesson_id = ? AND type = 'flashcard'
             ORDER BY id ASC
         ");
@@ -423,10 +405,9 @@ class Students extends Model
         if (!$studentId)
             return false;
 
-        // Get quiz groups (same MIN(id) logic as getLessonQuizzes)
         $stmt = $this->db->prepare("
         SELECT MIN(id) AS quiz_id
-        FROM interactive_contents
+        FROM tbl_interactive_contents
         WHERE lesson_id = ? AND type = 'quiz'
         GROUP BY title
     ");
@@ -434,25 +415,23 @@ class Students extends Model
         $stmt->execute();
         $quizGroups = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
-        // Check activity count
         $stmt = $this->db->prepare("
         SELECT COUNT(DISTINCT title) AS acount
-        FROM interactive_contents
+        FROM tbl_interactive_contents
         WHERE lesson_id = ? AND type = 'activity'
     ");
         $stmt->bind_param("i", $lessonId);
         $stmt->execute();
         $acount = (int) $stmt->get_result()->fetch_assoc()['acount'];
 
-        // No quiz and no activity — complete just by visiting
+        // No quiz and no activity — check module_progress instead
         if (empty($quizGroups) && $acount === 0) {
-            return $this->isLessonVisited($lessonId, $studentId);
+            return $this->isLessonVisitedViaProgress($lessonId, $studentId);
         }
 
-        // Check each quiz group has a saved result
         foreach ($quizGroups as $group) {
             $stmt = $this->db->prepare("
-            SELECT id FROM quiz_results
+            SELECT id FROM tbl_quiz_results
             WHERE content_id = ? AND student_id = ? LIMIT 1
         ");
             $stmt->bind_param("ii", $group['quiz_id'], $studentId);
@@ -461,11 +440,10 @@ class Students extends Model
                 return false;
         }
 
-        // Check activity submission exists (by lesson, not by specific content_id)
         if ($acount > 0) {
             $stmt = $this->db->prepare("
-            SELECT s.id FROM activity_submissions s
-            JOIN interactive_contents ic ON s.content_id = ic.id
+            SELECT s.id FROM tbl_activity_submissions s
+            JOIN tbl_interactive_contents ic ON s.content_id = ic.id
             WHERE ic.lesson_id = ? AND ic.type = 'activity'
             AND s.student_id = ? LIMIT 1
         ");
@@ -479,14 +457,50 @@ class Students extends Model
     }
 
     // ============================================================
+    // LESSON PROGRESS (uses tbl_student_progress as fallback
+    // since lesson_visits does not exist in the DB)
+    // ============================================================
+    public function isLessonVisitedViaProgress($lessonId, $studentId)
+    {
+        if (!$studentId || !$lessonId)
+            return false;
+
+        $stmt = $this->db->prepare("
+            SELECT id FROM tbl_student_progress
+            WHERE lesson_id = ? AND student_id = ? LIMIT 1
+        ");
+        $stmt->bind_param("ii", $lessonId, $studentId);
+        $stmt->execute();
+        return (bool) $stmt->get_result()->fetch_assoc();
+    }
+
+    public function markLessonVisited($lessonId, $studentId)
+    {
+        if (!$studentId || !$lessonId)
+            return false;
+
+        $stmt = $this->db->prepare("
+            INSERT IGNORE INTO tbl_student_progress (lesson_id, student_id, visited_at)
+            VALUES (?, ?, NOW())
+        ");
+        $stmt->bind_param("ii", $lessonId, $studentId);
+        return $stmt->execute();
+    }
+
+    public function isLessonVisited($lessonId, $studentId)
+    {
+        return $this->isLessonVisitedViaProgress($lessonId, $studentId);
+    }
+
+    // ============================================================
     // MODULE-LEVEL (flashcards, activity, quiz)
     // ============================================================
     public function getIMFlashcards($interactiveModuleId)
     {
         $stmt = $this->db->prepare("
             SELECT ic.id, ic.card_type, ic.card_front, ic.card_back
-            FROM interactive_contents ic
-            JOIN lessons l ON ic.lesson_id = l.id
+            FROM tbl_interactive_contents ic
+            JOIN tbl_lessons l ON ic.lesson_id = l.id
             WHERE l.interactive_module_id = ? AND ic.type = 'flashcard'
             ORDER BY ic.id ASC
         ");
@@ -499,8 +513,8 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
             SELECT ic.id, ic.title, ic.instructions, ic.total_points
-            FROM interactive_contents ic
-            JOIN lessons l ON ic.lesson_id = l.id
+            FROM tbl_interactive_contents ic
+            JOIN tbl_lessons l ON ic.lesson_id = l.id
             WHERE l.interactive_module_id = ? AND ic.type = 'activity'
             ORDER BY ic.id ASC LIMIT 1
         ");
@@ -514,7 +528,7 @@ class Students extends Model
         $stmt = $this->db->prepare("
             SELECT id, question_type, question, model_answer,
                    choice_a, choice_b, choice_c, choice_d, correct_ans, total_points AS points
-            FROM interactive_contents
+            FROM tbl_interactive_contents
             WHERE id = ? AND type = 'activity'
             LIMIT 1
         ");
@@ -527,7 +541,7 @@ class Students extends Model
     public function getIMActivitySubmission($activityId, $studentId)
     {
         $stmt = $this->db->prepare("
-            SELECT id, answers, submitted_at FROM activity_submissions
+            SELECT id, answers, submitted_at FROM tbl_activity_submissions
             WHERE content_id = ? AND student_id = ? LIMIT 1
         ");
         $stmt->bind_param("ii", $activityId, $studentId);
@@ -538,7 +552,7 @@ class Students extends Model
     public function saveIMActivitySubmission($activityId, $studentId, $answersJson)
     {
         $stmt = $this->db->prepare("
-            INSERT INTO activity_submissions (content_id, student_id, answers, submitted_at)
+            INSERT INTO tbl_activity_submissions (content_id, student_id, answers, submitted_at)
             VALUES (?, ?, ?, NOW())
         ");
         $stmt->bind_param("iis", $activityId, $studentId, $answersJson);
@@ -549,8 +563,8 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
             SELECT ic.id, ic.title, ic.instructions, ic.passing_score
-            FROM interactive_contents ic
-            JOIN lessons l ON ic.lesson_id = l.id
+            FROM tbl_interactive_contents ic
+            JOIN tbl_lessons l ON ic.lesson_id = l.id
             WHERE l.interactive_module_id = ? AND ic.type = 'quiz'
             ORDER BY ic.id ASC LIMIT 1
         ");
@@ -561,9 +575,8 @@ class Students extends Model
 
     public function getIMQuizQuestions($quizId)
     {
-        // Get the title and lesson_id of the quiz group
         $stmt = $this->db->prepare("
-        SELECT title, lesson_id FROM interactive_contents 
+        SELECT title, lesson_id FROM tbl_interactive_contents 
         WHERE id = ? AND type = 'quiz' LIMIT 1
     ");
         $stmt->bind_param("i", $quizId);
@@ -572,11 +585,10 @@ class Students extends Model
         if (!$quiz)
             return [];
 
-        // Fetch ALL questions with the same title in the same lesson
         $stmt = $this->db->prepare("
         SELECT id, question, choice_a, choice_b, choice_c, choice_d, 
                correct_ans, total_points AS points
-        FROM interactive_contents
+        FROM tbl_interactive_contents
         WHERE lesson_id = ? AND type = 'quiz' AND title = ?
         ORDER BY id ASC
     ");
@@ -588,7 +600,9 @@ class Students extends Model
     public function getIMQuizResult($quizId, $studentId)
     {
         $stmt = $this->db->prepare("
-            SELECT id, score, total, passed, answers_json, taken_at FROM quiz_results WHERE content_id = ? AND student_id = ? LIMIT 1
+            SELECT id, score, total, passed, answers_json, taken_at 
+            FROM tbl_quiz_results 
+            WHERE content_id = ? AND student_id = ? LIMIT 1
         ");
         $stmt->bind_param("ii", $quizId, $studentId);
         $stmt->execute();
@@ -599,46 +613,24 @@ class Students extends Model
     {
         $passed = ($total > 0 && (($score / $total) * 100) >= $passingScore) ? 1 : 0;
         $stmt = $this->db->prepare("
-        INSERT INTO quiz_results (content_id, student_id, score, total, passed, answers_json, taken_at)
+        INSERT INTO tbl_quiz_results (content_id, student_id, score, total, passed, answers_json, taken_at)
         VALUES (?, ?, ?, ?, ?, ?, NOW())
     ");
         $stmt->bind_param("iiiiss", $quizId, $studentId, $score, $total, $passed, $answersJson);
         return $stmt->execute();
     }
 
-    public function markLessonVisited($lessonId, $studentId)
-    {
-        if (!$studentId || !$lessonId)
-            return false;
-
-        $stmt = $this->db->prepare("
-            INSERT IGNORE INTO lesson_visits (lesson_id, student_id, visited_at)
-            VALUES (?, ?, NOW())
-        ");
-        $stmt->bind_param("ii", $lessonId, $studentId);
-        return $stmt->execute();
-    }
-
-    public function isLessonVisited($lessonId, $studentId)
-    {
-        if (!$studentId || !$lessonId)
-            return false;
-
-        $stmt = $this->db->prepare("
-            SELECT id FROM lesson_visits
-            WHERE lesson_id = ? AND student_id = ? LIMIT 1
-        ");
-        $stmt->bind_param("ii", $lessonId, $studentId);
-        $stmt->execute();
-        return (bool) $stmt->get_result()->fetch_assoc();
-    }
-
+    // ============================================================
+    // SUBJECT & MODULE PROGRESS
+    // (subject_starts and module_starts replaced with
+    //  tbl_student_progress and tbl_module_progress)
+    // ============================================================
     public function markSubjectStarted($subjectSlug, $studentId)
     {
         if (!$studentId || !$subjectSlug)
             return false;
 
-        $stmt = $this->db->prepare("SELECT id FROM subjects WHERE subject_code = ? LIMIT 1");
+        $stmt = $this->db->prepare("SELECT id FROM tbl_subjects WHERE subject_code = ? LIMIT 1");
         $stmt->bind_param("s", $subjectSlug);
         $stmt->execute();
         $row = $stmt->get_result()->fetch_assoc();
@@ -647,7 +639,7 @@ class Students extends Model
         $subjectId = (int) $row['id'];
 
         $stmt = $this->db->prepare("
-            INSERT IGNORE INTO subject_starts (subject_id, student_id, started_at)
+            INSERT IGNORE INTO tbl_student_progress (subject_id, student_id, started_at)
             VALUES (?, ?, NOW())
         ");
         $stmt->bind_param("ii", $subjectId, $studentId);
@@ -661,9 +653,10 @@ class Students extends Model
 
         $stmt = $this->db->prepare("
             SELECT s.subject_code
-            FROM subject_starts ss
-            JOIN subjects s ON ss.subject_id = s.id
-            WHERE ss.student_id = ?
+            FROM tbl_student_progress sp
+            JOIN tbl_subjects s ON sp.subject_id = s.id
+            WHERE sp.student_id = ?
+            GROUP BY s.subject_code
         ");
         $stmt->bind_param("i", $studentId);
         $stmt->execute();
@@ -671,12 +664,26 @@ class Students extends Model
         return array_column($rows, 'subject_code');
     }
 
+    public function getStudentGradeAndSection($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT gl.name, sec.section_name
+        FROM tbl_students st
+        JOIN tbl_grade_level gl ON st.grade_level_id = gl.id
+        JOIN tbl_sections sec ON st.section_id = sec.id
+        WHERE st.id = ? LIMIT 1
+    ");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
     public function markModuleStarted($moduleId, $studentId)
     {
         if (!$moduleId || !$studentId)
             return false;
         $stmt = $this->db->prepare("
-            INSERT IGNORE INTO module_starts (interactive_modules_id, student_id, started_at)
+            INSERT IGNORE INTO tbl_module_progress (interactive_modules_id, student_id, started_at)
             VALUES (?, ?, NOW())
         ");
         $stmt->bind_param("ii", $moduleId, $studentId);
@@ -688,7 +695,7 @@ class Students extends Model
         if (!$studentId)
             return [];
         $stmt = $this->db->prepare("
-            SELECT interactive_modules_id FROM module_starts WHERE student_id = ?
+            SELECT interactive_modules_id FROM tbl_module_progress WHERE student_id = ?
         ");
         $stmt->bind_param("i", $studentId);
         $stmt->execute();
@@ -700,9 +707,9 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
         SELECT u.name
-        FROM teacher_assignments ta
-        JOIN teachers t ON ta.teacher_id = t.id
-        JOIN users u ON t.user_id = u.id
+        FROM tbl_teacher_assignments ta
+        JOIN tbl_teachers t ON ta.teacher_id = t.id
+        JOIN tbl_users u ON t.user_id = u.id
         WHERE ta.subject_id = ?
         LIMIT 1
     ");
@@ -715,9 +722,9 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
         SELECT a.id, a.task, a.due_date, a.due_time, s.subject_code, sub.submitted_at
-        FROM assignments a
-        JOIN assignment_submissions sub ON sub.assignment_id = a.id
-        JOIN subjects s ON a.subject_id = s.id
+        FROM tbl_assignments a
+        JOIN tbl_assignment_submissions sub ON sub.assignment_id = a.id
+        JOIN tbl_subjects s ON a.subject_id = s.id
         WHERE sub.student_id = ?
         ORDER BY sub.submitted_at DESC
     ");
@@ -726,30 +733,12 @@ class Students extends Model
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
-    // public function getPendingAssignments($studentId)
-    // {
-    //     $stmt = $this->db->prepare("
-    //     SELECT a.id, a.task, a.due_date, a.due_time, s.subject_code
-    //     FROM assignments a
-    //     JOIN subjects s ON a.subject_id = s.id
-    //     JOIN student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
-    //     WHERE a.id NOT IN (
-    //         SELECT assignment_id FROM assignment_submissions WHERE student_id = ?
-    //     )
-    //     AND (a.due_date IS NULL OR a.due_date >= CURDATE())
-    //     ORDER BY a.due_date ASC
-    // ");
-    //     $stmt->bind_param("ii", $studentId, $studentId);
-    //     $stmt->execute();
-    //     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    // }
-
     public function countIMimages($interactiveModuleId)
     {
         $stmt = $this->db->prepare("
         SELECT COUNT(*) AS total
-        FROM interactive_contents ic
-        JOIN lessons l ON ic.lesson_id = l.id
+        FROM tbl_interactive_contents ic
+        JOIN tbl_lessons l ON ic.lesson_id = l.id
         WHERE l.interactive_module_id = ? AND ic.type = 'image'
     ");
         $stmt->bind_param("i", $interactiveModuleId);
@@ -761,8 +750,8 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
         SELECT COUNT(*) AS total
-        FROM interactive_contents ic
-        JOIN lessons l ON ic.lesson_id = l.id
+        FROM tbl_interactive_contents ic
+        JOIN tbl_lessons l ON ic.lesson_id = l.id
         WHERE l.interactive_module_id = ? AND ic.type = 'video'
     ");
         $stmt->bind_param("i", $interactiveModuleId);
@@ -774,8 +763,8 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
         SELECT COUNT(*) AS total
-        FROM interactive_contents ic
-        JOIN lessons l ON ic.lesson_id = l.id
+        FROM tbl_interactive_contents ic
+        JOIN tbl_lessons l ON ic.lesson_id = l.id
         WHERE l.interactive_module_id = ? AND ic.type = 'activity'
     ");
         $stmt->bind_param("i", $interactiveModuleId);
@@ -785,20 +774,16 @@ class Students extends Model
 
     public function countIMquizzes($interactiveModuleId)
     {
-        $sql = "
+        $stmt = $this->db->prepare("
         SELECT COUNT(DISTINCT ic.title) AS total
-        FROM interactive_contents ic
-        INNER JOIN lessons l ON l.id = ic.lesson_id
+        FROM tbl_interactive_contents ic
+        INNER JOIN tbl_lessons l ON l.id = ic.lesson_id
         WHERE l.interactive_module_id = ?
         AND ic.type = 'quiz'
-    ";
-
-        $stmt = $this->db->prepare($sql);
+    ");
         $stmt->bind_param("i", $interactiveModuleId);
         $stmt->execute();
-
         $row = $stmt->get_result()->fetch_assoc();
-
         return (int) $row['total'];
     }
 
@@ -806,11 +791,11 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
         SELECT a.id, a.task, a.due_date, a.due_time, s.subject_code, s.subject_name
-        FROM assignments a
-        JOIN subjects s ON a.subject_id = s.id
-        JOIN student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+        FROM tbl_assignments a
+        JOIN tbl_subjects s ON a.subject_id = s.id
+        JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
         WHERE a.id NOT IN (
-            SELECT assignment_id FROM assignment_submissions WHERE student_id = ?
+            SELECT assignment_id FROM tbl_assignment_submissions WHERE student_id = ?
         )
         AND (a.due_date IS NULL OR a.due_date >= CURDATE())
         ORDER BY a.due_date ASC
@@ -823,7 +808,7 @@ class Students extends Model
     public function countCompletedAssignments($studentId)
     {
         $stmt = $this->db->prepare("
-        SELECT COUNT(*) AS total FROM assignment_submissions WHERE student_id = ?
+        SELECT COUNT(*) AS total FROM tbl_assignment_submissions WHERE student_id = ?
     ");
         $stmt->bind_param("i", $studentId);
         $stmt->execute();
@@ -834,11 +819,11 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
         SELECT COUNT(*) AS total
-        FROM assignments a
-        JOIN subjects s ON a.subject_id = s.id
-        JOIN student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+        FROM tbl_assignments a
+        JOIN tbl_subjects s ON a.subject_id = s.id
+        JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
         WHERE a.id NOT IN (
-            SELECT assignment_id FROM assignment_submissions WHERE student_id = ?
+            SELECT assignment_id FROM tbl_assignment_submissions WHERE student_id = ?
         )
         AND (a.due_date IS NULL OR a.due_date >= CURDATE())
     ");
@@ -851,8 +836,8 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
         SELECT COUNT(DISTINCT se.subject_id) AS total 
-        FROM student_enrollments se
-        JOIN subjects s ON se.subject_id = s.id
+        FROM tbl_student_enrollments se
+        JOIN tbl_subjects s ON se.subject_id = s.id
         WHERE se.student_id = ?
     ");
         $stmt->bind_param("i", $studentId);
@@ -866,10 +851,10 @@ class Students extends Model
         SELECT n.id, n.title, n.message, n.created_at,
                s.subject_name, s.subject_code,
                u.name AS teacher_name
-        FROM notifications n
-        JOIN subjects s ON n.subject_id = s.id
-        JOIN student_enrollments se ON se.subject_id = s.id AND se.student_id = ?
-        JOIN users u ON n.sender_id = u.id
+        FROM tbl_notifications n
+        JOIN tbl_subjects s ON n.subject_id = s.id
+        JOIN tbl_student_enrollments se ON se.subject_id = s.id AND se.student_id = ?
+        JOIN tbl_users u ON n.sender_id = u.id
         WHERE n.type = 'announcement'
         ORDER BY n.created_at DESC
         LIMIT 5
@@ -882,7 +867,7 @@ class Students extends Model
     public function getStudentIdByUserId($userId)
     {
         $stmt = $this->db->prepare("
-        SELECT id FROM students WHERE user_id = ? LIMIT 1
+        SELECT id FROM tbl_students WHERE user_id = ? LIMIT 1
     ");
         $stmt->bind_param("i", $userId);
         $stmt->execute();
@@ -894,11 +879,11 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
         SELECT a.id, a.task, a.due_date, a.due_time, s.subject_code
-        FROM assignments a
-        JOIN subjects s ON a.subject_id = s.id
-        JOIN student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+        FROM tbl_assignments a
+        JOIN tbl_subjects s ON a.subject_id = s.id
+        JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
         WHERE a.id NOT IN (
-            SELECT assignment_id FROM assignment_submissions WHERE student_id = ?
+            SELECT assignment_id FROM tbl_assignment_submissions WHERE student_id = ?
         )
         AND a.due_date IS NOT NULL AND a.due_date < CURDATE()
         ORDER BY a.due_date ASC
@@ -912,11 +897,11 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
         SELECT COUNT(*) AS total
-        FROM assignments a
-        JOIN subjects s ON a.subject_id = s.id
-        JOIN student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+        FROM tbl_assignments a
+        JOIN tbl_subjects s ON a.subject_id = s.id
+        JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
         WHERE a.id NOT IN (
-            SELECT assignment_id FROM assignment_submissions WHERE student_id = ?
+            SELECT assignment_id FROM tbl_assignment_submissions WHERE student_id = ?
         )
         AND a.due_date IS NOT NULL AND a.due_date < CURDATE()
     ");

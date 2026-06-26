@@ -6,8 +6,8 @@ class Grade_level extends Model {
 
     public function getSectionsByGradeLevel($grade_level_id) {
         $sql = "SELECT s.*, g.name as grade_name 
-                FROM sections s 
-                JOIN grade_level g ON s.grade_level_id = g.id 
+                FROM tbl_sections s 
+                JOIN tbl_grade_level g ON s.grade_level_id = g.id 
                 WHERE s.grade_level_id = ?
                 ORDER BY s.id ASC";
         $stmt = $this->db->prepare($sql);

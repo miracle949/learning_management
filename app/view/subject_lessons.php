@@ -128,7 +128,7 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         /* grid texture */
-        .lessons-sidebar::before {
+        /* .lessons-sidebar::before {
             content: "";
             position: fixed;
             width: 252px;
@@ -142,18 +142,19 @@ function lUrl($subject, $moduleId, $lessonId)
             background-size: 32px 32px;
             opacity: 0.35;
             z-index: 0;
-        }
+        } */
 
         /* brand */
         .sb-brand {
             position: relative;
             z-index: 1;
             display: flex;
+            justify-content: center;
             align-items: center;
             gap: 12px;
             padding: 22px 18px 18px;
             border-bottom: 1px solid var(--border-dim);
-            flex-shrink: 0;
+            /* flex-shrink: 0; */
         }
 
         .sb-brand-mark {
@@ -430,6 +431,7 @@ function lUrl($subject, $moduleId, $lessonId)
             padding: 12px;
             border-top: 1px solid var(--border-dim);
             flex-shrink: 0;
+            display: none;
         }
 
         .sb-user {
@@ -739,15 +741,17 @@ function lUrl($subject, $moduleId, $lessonId)
            CONTENT WRAPPER
         ============================================= */
         .lessons-content-wrap {
-            padding: 22px 28px 60px;
+            /* padding: 22px 28px 60px; */
+            padding: 35px 28px 60px;
         }
 
         .lesson-title-row {
             display: flex;
-            align-items: center;
+            flex-direction: column;
+            align-items: start;
             gap: 14px;
             margin-bottom: 20px;
-            flex-wrap: wrap;
+            /* flex-wrap: wrap; */
         }
 
         .lesson-num-badge {
@@ -859,14 +863,13 @@ function lUrl($subject, $moduleId, $lessonId)
 
         /* Lesson text */
         .lesson-text-card {
-            background: var(--page-card);
-            border: 1px solid var(--page-border);
-            border-radius: 14px;
-            padding: 24px 26px;
             font-size: 14.5px;
             line-height: 1.85;
             color: var(--page-text);
-            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.04);
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+            max-width: 100%;
         }
 
         /* Video */
@@ -930,8 +933,9 @@ function lUrl($subject, $moduleId, $lessonId)
         /* Images */
         .img-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            /* grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); */
             gap: 14px;
+            margin-top: 1.5rem;
         }
 
         .img-item {
@@ -952,8 +956,10 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .img-item img {
             width: 100%;
-            height: 150px;
-            object-fit: cover;
+            height: 385px;
+            /* height: 100%; */
+            /* height: 150px; */
+            /* object-fit: cover; */
             display: block;
         }
 
@@ -1745,16 +1751,17 @@ function lUrl($subject, $moduleId, $lessonId)
 
             <!-- Brand -->
             <div class="sb-brand">
-                <div class="sb-brand-mark">
+                <!-- <div class="sb-brand-mark">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#050D14" stroke-width="2">
                         <path d="M9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4" stroke-linecap="round" />
                         <rect x="7" y="7" width="10" height="10" rx="1.5" />
                     </svg>
-                </div>
-                <div class="sb-brand-text">
-                    <div class="name">iLearn<span>-CSS</span></div>
-                    <div class="sub">CSS Student Portal</div>
-                </div>
+                </div> -->
+                <!-- <div class="sb-brand-text"> -->
+                <!-- <div class="name">iLearn<span>-CSS</span></div>
+                    <div class="sub">CSS Student Portal</div> -->
+                <img src="../images/iLearn-7.png" alt="">
+                <!-- </div> -->
             </div>
 
             <?php $progressPct = $totalLessons > 0 ? round(($completedCount / $totalLessons) * 100) : 0; ?>
@@ -1810,144 +1817,7 @@ function lUrl($subject, $moduleId, $lessonId)
                     </a>
                 <?php endforeach; ?>
 
-                <?php if ($lesson): ?>
 
-                    <!-- VIDEOS -->
-                    <?php if (!empty($videos)): ?>
-                        <div class="sb-nav-group-label">Videos</div>
-                        <?php foreach ($videos as $vi => $vid): ?>
-                            <a class="sb-nav-item" href="#section-videos" onclick="scrollToSection('section-videos');return false;">
-                                <div class="sb-nav-icon icon-type-video">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M23 7l-7 5 7 5V7z" />
-                                        <rect x="1" y="5" width="15" height="14" rx="2" />
-                                    </svg>
-                                </div>
-                                <div class="sb-nav-info">
-                                    <div class="sb-nav-title">
-                                        <?= !empty($vid['title']) ? htmlspecialchars($vid['title']) : 'Video ' . ($vi + 1) ?>
-                                    </div>
-                                    <div class="sb-nav-meta">Watch video</div>
-                                </div>
-                            </a>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-
-                    <!-- FLIP CARDS -->
-                    <?php if (!empty($flashcards)): ?>
-                        <div class="sb-nav-group-label">Flip Cards</div>
-                        <a class="sb-nav-item" href="#section-flashcards"
-                            onclick="scrollToSection('section-flashcards');return false;">
-                            <div class="sb-nav-icon icon-type-flash">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="2" y="5" width="20" height="14" rx="2" />
-                                    <path d="M2 10h20" />
-                                </svg>
-                            </div>
-                            <div class="sb-nav-info">
-                                <div class="sb-nav-title">Flashcards</div>
-                                <div class="sb-nav-meta"><?= count($flashcards) ?> cards</div>
-                            </div>
-                        </a>
-                    <?php endif; ?>
-
-                    <!-- REFERENCE IMAGES -->
-                    <?php if (!empty($images)): ?>
-                        <div class="sb-nav-group-label">Reference Images</div>
-                        <a class="sb-nav-item" href="#section-images" onclick="scrollToSection('section-images');return false;">
-                            <div class="sb-nav-icon icon-type-image">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="3" y="3" width="18" height="18" rx="2" />
-                                    <circle cx="8.5" cy="8.5" r="1.5" />
-                                    <path d="M21 15l-5-5L5 21" />
-                                </svg>
-                            </div>
-                            <div class="sb-nav-info">
-                                <div class="sb-nav-title">Gallery</div>
-                                <div class="sb-nav-meta"><?= count($images) ?> images</div>
-                            </div>
-                        </a>
-                    <?php endif; ?>
-
-                    <!-- ACTIVITIES -->
-                    <?php if (!empty($activityData)): ?>
-                        <div class="sb-nav-group-label">Activities</div>
-                        <?php foreach ($activityData as $actId => $data):
-                            $actDone = ($data['submission'] !== null);
-                            ?>
-                            <a class="sb-nav-item <?= $actDone ? 'sb-nav-done' : '' ?>" href="#section-activities"
-                                onclick="scrollToSection('section-activities');return false;">
-                                <div class="sb-nav-icon icon-type-activity <?= $actDone ? 'done' : '' ?>">
-                                    <?php if ($actDone): ?>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                            <path d="M20 6L9 17l-5-5" />
-                                        </svg>
-                                    <?php else: ?>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                            <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                        </svg>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="sb-nav-info">
-                                    <div class="sb-nav-title"><?= htmlspecialchars($data['activity']['title']) ?></div>
-                                    <div class="sb-nav-meta">
-                                        <?= count($data['questions']) ?> question<?= count($data['questions']) != 1 ? 's' : '' ?>
-                                        &middot; <?= $actDone ? 'Submitted ✓' : 'Needs answer' ?>
-                                    </div>
-                                </div>
-                                <?php if ($actDone): ?>
-                                    <div class="sb-nav-check sb-nav-check-done">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="10"
-                                            height="10">
-                                            <path d="M20 6L9 17l-5-5" />
-                                        </svg>
-                                    </div>
-                                <?php endif; ?>
-                            </a>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-
-                    <!-- QUIZZES & TESTS -->
-                    <?php if (!empty($quizData)): ?>
-                        <div class="sb-nav-group-label">Quizzes &amp; Tests</div>
-                        <?php foreach ($quizData as $qzId => $data):
-                            $qzDone = ($data['result'] !== null);
-                            ?>
-                            <a class="sb-nav-item <?= $qzDone ? 'sb-nav-done' : '' ?>" href="#section-quizzes"
-                                onclick="scrollToSection('section-quizzes');return false;">
-                                <div class="sb-nav-icon icon-type-quiz <?= $qzDone ? 'done' : '' ?>">
-                                    <?php if ($qzDone): ?>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                            <path d="M20 6L9 17l-5-5" />
-                                        </svg>
-                                    <?php else: ?>
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M9 11l3 3L22 4" />
-                                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-                                        </svg>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="sb-nav-info">
-                                    <div class="sb-nav-title"><?= htmlspecialchars($data['quiz']['title']) ?></div>
-                                    <div class="sb-nav-meta">
-                                        <?= count($data['questions']) ?> questions
-                                        &middot; <?= $qzDone ? 'Completed ✓' : 'Not taken' ?>
-                                    </div>
-                                </div>
-                                <?php if ($qzDone): ?>
-                                    <div class="sb-nav-check sb-nav-check-done">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="10"
-                                            height="10">
-                                            <path d="M20 6L9 17l-5-5" />
-                                        </svg>
-                                    </div>
-                                <?php endif; ?>
-                            </a>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-
-                <?php endif; /* end $lesson check for sub-sections */ ?>
 
             </div><!-- /sb-lesson-list -->
 
@@ -1988,13 +1858,8 @@ function lUrl($subject, $moduleId, $lessonId)
                         Back to Modules
                     </a>
                     <div class="topbar-breadcrumb">
-                        <span><?= htmlspecialchars($module['subject_name'] ?? 'CSS') ?></span>
                         <span class="sep">›</span>
                         <span><?= htmlspecialchars($module['title'] ?? '') ?></span>
-                        <?php if ($lesson): ?>
-                            <span class="sep">›</span>
-                            <span class="current">Lesson <?= $currentIndex ?></span>
-                        <?php endif; ?>
                     </div>
                 </div>
                 <div class="topbar-right">
@@ -2058,7 +1923,7 @@ function lUrl($subject, $moduleId, $lessonId)
             </div>
 
             <!-- MODULE HERO -->
-            <div class="module-hero">
+            <!-- <div class="module-hero">
                 <div class="module-hero-banner"></div>
                 <div class="module-hero-body">
                     <div class="module-hero-left">
@@ -2091,7 +1956,7 @@ function lUrl($subject, $moduleId, $lessonId)
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <!-- LESSON CONTENT -->
             <div class="lessons-content-wrap">
@@ -2126,13 +1991,6 @@ function lUrl($subject, $moduleId, $lessonId)
                     <?php if (!empty($lesson['content'])): ?>
                         <div class="ls-section">
                             <div class="ls-section-head">
-                                <div class="ls-section-icon icon-lesson">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                                    </svg>
-                                </div>
-                                <span class="ls-section-title">Lesson Content</span>
                                 <div class="ls-section-divider"></div>
                             </div>
                             <div class="lesson-text-card">
@@ -2181,18 +2039,6 @@ function lUrl($subject, $moduleId, $lessonId)
                     <!-- 3. IMAGES -->
                     <?php if (!empty($images)): ?>
                         <div class="ls-section" id="section-images">
-                            <div class="ls-section-head">
-                                <div class="ls-section-icon icon-image">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="3" y="3" width="18" height="18" rx="2" />
-                                        <circle cx="8.5" cy="8.5" r="1.5" />
-                                        <path d="M21 15l-5-5L5 21" />
-                                    </svg>
-                                </div>
-                                <span class="ls-section-title">Reference Images</span>
-                                <div class="ls-section-divider"></div>
-                                <span class="ls-section-count"><?= count($images) ?></span>
-                            </div>
                             <div class="img-grid">
                                 <?php foreach ($images as $img): ?>
                                     <div class="img-item" onclick="dbLightbox('<?= htmlspecialchars($img['file_path']) ?>')">

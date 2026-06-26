@@ -308,7 +308,7 @@ class StudentsController
         $studentName = $_SESSION['student_name'] ?? null;
         $studentLrn = $_SESSION['student_lrn'] ?? null;
 
-        require "../app/view/subject_lessons.php";
+        require "../app/view/subject_activity.php";
     }
 
     // ── SUBJECT LESSONS ────────────────────────────────────────
@@ -688,13 +688,20 @@ class StudentsController
 
         if ($studentId) {
             $_SESSION['student_id'] = $studentId;
+
+            // NEW: resolve grade level + section labels and store in session
+            $gradeSection = $studentModel->getStudentGradeAndSection($studentId);
+            if ($gradeSection) {
+                $_SESSION['grade_level'] = $gradeSection['name']; // e.g. "Grade 12"
+                $_SESSION['section'] = $gradeSection['section_name'];
+            }
         }
 
         $pendingAssignments = $studentId ? $studentModel->getPendingAssignments($studentId) : [];
         $pendingCount = $studentId ? $studentModel->countPendingAssignments($studentId) : 0;
         $enrolledCount = $studentId ? $studentModel->countEnrolledClasses($studentId) : 0;
         $announcements = $studentId ? $studentModel->getDashboardAnnouncements($studentId) : [];
-        $completedCount = $studentId ? $studentModel->countCompletedAssignments($studentId) : 0; // ADD THIS
+        $completedCount = $studentId ? $studentModel->countCompletedAssignments($studentId) : 0;
 
         require "../app/view/dashboard.php";
     }
