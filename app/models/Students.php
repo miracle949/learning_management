@@ -466,9 +466,10 @@ class Students extends Model
             return false;
 
         $stmt = $this->db->prepare("
-            SELECT id FROM tbl_student_progress
-            WHERE lesson_id = ? AND student_id = ? LIMIT 1
-        ");
+        SELECT id FROM tbl_student_progress
+        WHERE content_id = ? AND student_id = ? AND content_type = 'lesson'
+        LIMIT 1
+    ");
         $stmt->bind_param("ii", $lessonId, $studentId);
         $stmt->execute();
         return (bool) $stmt->get_result()->fetch_assoc();
@@ -480,12 +481,14 @@ class Students extends Model
             return false;
 
         $stmt = $this->db->prepare("
-            INSERT IGNORE INTO tbl_student_progress (lesson_id, student_id, visited_at)
-            VALUES (?, ?, NOW())
-        ");
-        $stmt->bind_param("ii", $lessonId, $studentId);
+        INSERT IGNORE INTO tbl_student_progress 
+            (student_id, content_id, content_type, status, started_at)
+        VALUES (?, ?, 'lesson', 'completed', NOW())
+    ");
+        $stmt->bind_param("ii", $studentId, $lessonId);
         return $stmt->execute();
     }
+
 
     public function isLessonVisited($lessonId, $studentId)
     {
@@ -639,10 +642,11 @@ class Students extends Model
         $subjectId = (int) $row['id'];
 
         $stmt = $this->db->prepare("
-            INSERT IGNORE INTO tbl_student_progress (subject_id, student_id, started_at)
-            VALUES (?, ?, NOW())
-        ");
-        $stmt->bind_param("ii", $subjectId, $studentId);
+        INSERT IGNORE INTO tbl_student_progress 
+            (student_id, subject_id, content_type, status, started_at)
+        VALUES (?, ?, 'lesson', 'not_started', NOW())
+    ");
+        $stmt->bind_param("ii", $studentId, $subjectId);
         return $stmt->execute();
     }
 
@@ -695,12 +699,12 @@ class Students extends Model
         if (!$studentId)
             return [];
         $stmt = $this->db->prepare("
-            SELECT interactive_modules_id FROM tbl_module_progress WHERE student_id = ?
+            SELECT interactive_module_id FROM tbl_module_progress WHERE student_id = ?
         ");
         $stmt->bind_param("i", $studentId);
         $stmt->execute();
         $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-        return array_column($rows, 'interactive_modules_id');
+        return array_column($rows, 'interactive_module_id');
     }
 
     public function getTeacherBySubjectId($subjectId)

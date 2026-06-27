@@ -499,6 +499,7 @@ class TeacherController
     //     header("Location: {$redirectBack}");
     //     exit;
     // }
+    
 
     public function send_invitation()
     {

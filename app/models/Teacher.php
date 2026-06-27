@@ -1422,6 +1422,100 @@ class Teacher extends Model
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    // Add these three methods to your Teacher class
+
+    public function hasPendingInvitation(string $email, int $subjectId, int $sectionId): bool
+    {
+        $stmt = $this->db->prepare("
+        SELECT id FROM tbl_enrollment_invitations
+        WHERE student_email = ? AND subject_id = ? AND section_id = ?
+          AND status = 'pending'
+          AND expires_at > NOW()
+        LIMIT 1
+    ");
+        $stmt->bind_param("sii", $email, $subjectId, $sectionId);
+        $stmt->execute();
+        return (bool) $stmt->get_result()->fetch_assoc();
+    }
+
+    public function createInvitation(
+        int $teacherId,
+        int $subjectId,
+        int $gradeLevelId,
+        int $sectionId,
+        string $email,
+        int $studentId
+    ): string {
+        $token = bin2hex(random_bytes(32));
+        $expires = date('Y-m-d H:i:s', strtotime('+7 days'));
+        $stmt = $this->db->prepare("
+        INSERT INTO tbl_enrollment_invitations
+            (token, teacher_id, subject_id, grade_level_id, section_id,
+             student_email, student_id, status, expires_at, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', ?, NOW())
+    ");
+        $stmt->bind_param(
+            "siiissis",
+            $token,
+            $teacherId,
+            $subjectId,
+            $gradeLevelId,
+            $sectionId,
+            $email,
+            $studentId,
+            $expires
+        );
+        $stmt->execute();
+        return $token;
+    }
+
+    public function getInvitationStatus(string $email, int $subjectId, int $sectionId): ?array
+    {
+        $stmt = $this->db->prepare("
+        SELECT status FROM tbl_enrollment_invitations
+        WHERE student_email = ? AND subject_id = ? AND section_id = ?
+        ORDER BY created_at DESC
+        LIMIT 1
+    ");
+        $stmt->bind_param("sii", $email, $subjectId, $sectionId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc() ?: null;
+    }
+
+    public function acceptInvitation(string $token): array
+    {
+        $stmt = $this->db->prepare("
+        SELECT * FROM tbl_enrollment_invitations
+        WHERE token = ? AND status = 'pending' AND expires_at > NOW()
+        LIMIT 1
+    ");
+        $stmt->bind_param("s", $token);
+        $stmt->execute();
+        $inv = $stmt->get_result()->fetch_assoc();
+
+        if (!$inv) {
+            return ['success' => false, 'message' => 'Invitation is invalid or has expired.'];
+        }
+
+        // Enroll the student
+        $stmt2 = $this->db->prepare("
+        INSERT IGNORE INTO tbl_student_enrollments
+            (student_id, subject_id, section_id, enrolled_at)
+        VALUES (?, ?, ?, NOW())
+    ");
+        $stmt2->bind_param("iii", $inv['student_id'], $inv['subject_id'], $inv['section_id']);
+        $stmt2->execute();
+
+        // Mark invitation as accepted
+        $stmt3 = $this->db->prepare("
+        UPDATE tbl_enrollment_invitations SET status = 'accepted' WHERE token = ?
+    ");
+        $stmt3->bind_param("s", $token);
+        $stmt3->execute();
+
+        return ['success' => true, 'message' => 'You have been enrolled successfully!'];
+    }
+
     public function getUpcomingAssignments($teacher_id)
     {
         $stmt = $this->db->prepare("

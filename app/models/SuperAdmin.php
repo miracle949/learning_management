@@ -522,7 +522,6 @@ class SuperAdmin extends Model
         JOIN tbl_sections sec        ON sec.id       = stu.section_id
         LEFT JOIN tbl_users approver ON approver.id  = stu.approved_by
         WHERE stu.status = 'Approved'
-          AND stu.approved_by IS NOT NULL
           AND stu.updated_at IS NOT NULL
 
         UNION ALL
