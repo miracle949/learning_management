@@ -16,10 +16,6 @@ function lUrl($subject, $moduleId, $lessonId)
     <link rel="stylesheet" href="../css_folder/components.css">
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
-        rel="stylesheet">
 
     <style>
         /* =============================================
@@ -71,7 +67,6 @@ function lUrl($subject, $moduleId, $lessonId)
         html,
         body {
             background: var(--page-bg);
-            font-family: 'Inter', sans-serif;
             color: var(--page-text);
             -webkit-font-smoothing: antialiased;
             height: 100%;
@@ -88,7 +83,6 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         button {
-            font-family: inherit;
             cursor: pointer;
             border: none;
             background: none;
@@ -127,23 +121,6 @@ function lUrl($subject, $moduleId, $lessonId)
             border-radius: 3px;
         }
 
-        /* grid texture */
-        /* .lessons-sidebar::before {
-            content: "";
-            position: fixed;
-            width: 252px;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            pointer-events: none;
-            background-image:
-                linear-gradient(var(--border-dim) 1px, transparent 1px),
-                linear-gradient(90deg, var(--border-dim) 1px, transparent 1px);
-            background-size: 32px 32px;
-            opacity: 0.35;
-            z-index: 0;
-        } */
-
         /* brand */
         .sb-brand {
             position: relative;
@@ -153,8 +130,7 @@ function lUrl($subject, $moduleId, $lessonId)
             align-items: center;
             gap: 12px;
             padding: 22px 18px 18px;
-            border-bottom: 1px solid var(--border-dim);
-            /* flex-shrink: 0; */
+            /* border-bottom: 1px solid var(--border-dim); */
         }
 
         .sb-brand-mark {
@@ -175,7 +151,6 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .sb-brand-text .name {
-            font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
             font-size: 14.5px;
             color: var(--text-white);
@@ -188,17 +163,22 @@ function lUrl($subject, $moduleId, $lessonId)
         .sb-brand-text .sub {
             font-size: 10px;
             color: var(--text-muted);
-            font-family: 'JetBrains Mono', monospace;
             margin-top: 1px;
         }
 
         /* progress */
         .sb-progress-block {
             position: relative;
-            z-index: 1;
             padding: 14px 16px;
             border-bottom: 1px solid var(--border-dim);
-            flex-shrink: 0;
+        }
+
+        .sb-progress-block h5 {
+            color: #FFFFFF;
+            font-size: 14.5px;
+            line-height: 20px;
+            font-weight: 600;
+            margin: 0 0 15px;
         }
 
         .sb-progress-label {
@@ -209,22 +189,21 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .sb-progress-label .pl-title {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+            /* font-size: 9px; */
+            font-size: 11.5px;
             letter-spacing: 1.4px;
             text-transform: uppercase;
             color: var(--text-muted);
         }
 
         .sb-progress-label .pl-pct {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 12px;
+            font-size: 11.5px;
             font-weight: 700;
             color: var(--green-neon);
         }
 
         .sb-bar-track {
-            height: 4px;
+            height: 8px;
             background: rgba(255, 255, 255, 0.07);
             border-radius: 3px;
             overflow: hidden;
@@ -258,8 +237,8 @@ function lUrl($subject, $moduleId, $lessonId)
 
         /* Group label */
         .sb-nav-group-label {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
+            /* font-size: 9px; */
+            font-size: 10.5px;
             letter-spacing: 1.6px;
             text-transform: uppercase;
             color: var(--text-muted);
@@ -290,27 +269,16 @@ function lUrl($subject, $moduleId, $lessonId)
             background: rgba(0, 255, 136, 0.09);
         }
 
-        .sb-nav-item.active::before {
-            content: "";
-            position: absolute;
-            left: -8px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 3px;
-            height: 18px;
-            background: var(--green-neon);
-            border-radius: 0 3px 3px 0;
-            box-shadow: 0 0 8px var(--green-neon);
-        }
-
         .sb-nav-item.sb-nav-done .sb-nav-title {
             color: rgba(200, 220, 255, 0.75);
         }
 
         /* Icon box */
         .sb-nav-icon {
-            width: 28px;
-            height: 28px;
+            /* width: 28px;
+            height: 28px; */
+            width: 35px;
+            height: 35px;
             flex-shrink: 0;
             border-radius: 8px;
             display: flex;
@@ -321,6 +289,10 @@ function lUrl($subject, $moduleId, $lessonId)
         .sb-nav-icon svg {
             width: 13px;
             height: 13px;
+        }
+
+        .sb-nav-icon .fa {
+            font-size: 14px;
         }
 
         .icon-type-lesson {
@@ -380,7 +352,8 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .sb-nav-title {
-            font-size: 11.5px;
+            /* font-size: 11.5px; */
+            font-size: 13px;
             font-weight: 500;
             color: var(--text-muted);
             white-space: nowrap;
@@ -395,11 +368,11 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .sb-nav-meta {
-            font-size: 9.5px;
-            font-family: 'JetBrains Mono', monospace;
+            /* font-size: 9.5px; */
+            font-size: 11.5px;
             color: var(--text-muted);
             opacity: 0.6;
-            margin-top: 2px;
+            margin-top: 3px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -407,8 +380,10 @@ function lUrl($subject, $moduleId, $lessonId)
 
         /* Completion dot */
         .sb-nav-check {
-            width: 16px;
-            height: 16px;
+            /* width: 16px;
+            height: 16px; */
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             flex-shrink: 0;
             display: flex;
@@ -421,6 +396,7 @@ function lUrl($subject, $moduleId, $lessonId)
         .sb-nav-check-done {
             background: rgba(0, 137, 74, 0.22);
             color: var(--green-neon);
+            display: none;
         }
 
         /* sidebar footer */
@@ -452,7 +428,6 @@ function lUrl($subject, $moduleId, $lessonId)
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
             font-size: 11px;
             color: var(--bg-darkest);
@@ -468,7 +443,6 @@ function lUrl($subject, $moduleId, $lessonId)
         .sb-user-id {
             font-size: 9.5px;
             color: var(--text-muted);
-            font-family: 'JetBrains Mono', monospace;
             margin-top: 1px;
         }
 
@@ -589,7 +563,6 @@ function lUrl($subject, $moduleId, $lessonId)
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
             font-size: 12.5px;
             color: var(--bg-darkest);
@@ -672,7 +645,6 @@ function lUrl($subject, $moduleId, $lessonId)
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
@@ -691,7 +663,6 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .module-hero-title {
-            font-family: 'Space Grotesk', sans-serif;
             font-size: 22px;
             font-weight: 700;
             color: var(--page-text);
@@ -741,7 +712,6 @@ function lUrl($subject, $moduleId, $lessonId)
            CONTENT WRAPPER
         ============================================= */
         .lessons-content-wrap {
-            /* padding: 22px 28px 60px; */
             padding: 35px 28px 60px;
         }
 
@@ -751,14 +721,12 @@ function lUrl($subject, $moduleId, $lessonId)
             align-items: start;
             gap: 14px;
             margin-bottom: 20px;
-            /* flex-wrap: wrap; */
         }
 
         .lesson-num-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
@@ -772,7 +740,6 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .lesson-main-title {
-            font-family: 'Space Grotesk', sans-serif;
             font-size: 20px;
             font-weight: 700;
             color: var(--page-text);
@@ -839,7 +806,6 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .ls-section-title {
-            font-family: 'Space Grotesk', sans-serif;
             font-size: 13.5px;
             font-weight: 700;
             color: var(--page-text);
@@ -852,7 +818,6 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .ls-section-count {
-            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             color: var(--page-muted);
             background: var(--page-surface);
@@ -933,7 +898,6 @@ function lUrl($subject, $moduleId, $lessonId)
         /* Images */
         .img-grid {
             display: grid;
-            /* grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); */
             gap: 14px;
             margin-top: 1.5rem;
         }
@@ -957,9 +921,6 @@ function lUrl($subject, $moduleId, $lessonId)
         .img-item img {
             width: 100%;
             height: 385px;
-            /* height: 100%; */
-            /* height: 150px; */
-            /* object-fit: cover; */
             display: block;
         }
 
@@ -967,7 +928,6 @@ function lUrl($subject, $moduleId, $lessonId)
             padding: 10px 12px;
             font-size: 12.5px;
             color: var(--page-muted);
-            font-family: 'JetBrains Mono', monospace;
             border-top: 1px solid var(--page-border);
         }
 
@@ -1061,7 +1021,6 @@ function lUrl($subject, $moduleId, $lessonId)
             color: #aaa;
             margin-top: 8px;
             display: block;
-            font-family: 'JetBrains Mono', monospace;
         }
 
         /* Callouts */
@@ -1171,7 +1130,6 @@ function lUrl($subject, $moduleId, $lessonId)
             position: relative;
             z-index: 1;
             display: inline-block;
-            font-family: 'JetBrains Mono', monospace;
             font-size: 9.5px;
             font-weight: 700;
             text-transform: uppercase;
@@ -1186,7 +1144,6 @@ function lUrl($subject, $moduleId, $lessonId)
         .act-hero-title {
             position: relative;
             z-index: 1;
-            font-family: 'Space Grotesk', sans-serif;
             font-size: 17px;
             font-weight: 700;
             color: #fff;
@@ -1215,7 +1172,6 @@ function lUrl($subject, $moduleId, $lessonId)
             font-weight: 600;
             padding: 4px 11px;
             border-radius: 99px;
-            font-family: 'JetBrains Mono', monospace;
         }
 
         .pill-white {
@@ -1296,7 +1252,6 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .q-num-label {
-            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
@@ -1348,7 +1303,6 @@ function lUrl($subject, $moduleId, $lessonId)
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
             font-size: 11.5px;
             color: var(--page-muted);
@@ -1381,7 +1335,6 @@ function lUrl($subject, $moduleId, $lessonId)
             border: 1.5px solid var(--page-border);
             border-radius: 9px;
             padding: 12px 14px;
-            font-family: 'Inter', sans-serif;
             font-size: 14px;
             resize: vertical;
             min-height: 90px;
@@ -1423,7 +1376,6 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .quiz-hero-tag {
             display: inline-block;
-            font-family: 'JetBrains Mono', monospace;
             font-size: 9.5px;
             font-weight: 700;
             text-transform: uppercase;
@@ -1436,7 +1388,6 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .quiz-hero-title {
-            font-family: 'Space Grotesk', sans-serif;
             font-size: 17px;
             font-weight: 700;
             color: #fff;
@@ -1460,7 +1411,6 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .quiz-stat .qs-val {
-            font-family: 'Space Grotesk', sans-serif;
             font-size: 20px;
             font-weight: 700;
             color: #fff;
@@ -1482,7 +1432,6 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .q-number {
-            font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
@@ -1539,7 +1488,6 @@ function lUrl($subject, $moduleId, $lessonId)
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
             font-size: 11.5px;
             color: var(--page-muted);
@@ -1563,7 +1511,6 @@ function lUrl($subject, $moduleId, $lessonId)
         .quiz-status {
             font-size: 12.5px;
             color: var(--page-muted);
-            font-family: 'JetBrains Mono', monospace;
         }
 
         .quiz-nav-btns {
@@ -1760,14 +1707,21 @@ function lUrl($subject, $moduleId, $lessonId)
                 <!-- <div class="sb-brand-text"> -->
                 <!-- <div class="name">iLearn<span>-CSS</span></div>
                     <div class="sub">CSS Student Portal</div> -->
-                <img src="../images/iLearn-7.png" alt="">
+                <!-- <img src="../images/iLearn-7.png" alt=""> -->
                 <!-- </div> -->
+                <a class="back-btn" href="/learning_management/public/?url=modules&subject=<?= urlencode($subject) ?>">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M19 12H5M11 6l-6 6 6 6" />
+                    </svg>
+                    Back to Modules
+                </a>
             </div>
 
             <?php $progressPct = $totalLessons > 0 ? round(($completedCount / $totalLessons) * 100) : 0; ?>
 
             <!-- Progress -->
             <div class="sb-progress-block">
+                <h5><?= htmlspecialchars($module['title'] ?? '') ?></h5>
                 <div class="sb-progress-label">
                     <span class="pl-title">Module Progress</span>
                     <span class="pl-pct" id="progressPercent"><?= $progressPct ?>%</span>
@@ -1792,14 +1746,16 @@ function lUrl($subject, $moduleId, $lessonId)
                     <a class="sb-nav-item <?= $itemClass ?>" href="<?= lUrl($subject, $moduleId, $l['id']) ?>">
                         <div class="sb-nav-icon icon-type-lesson <?= $dotClass ?>">
                             <?php if ($isDone): ?>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <!-- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                     <path d="M20 6L9 17l-5-5" />
-                                </svg>
+                                </svg> -->
+                                <i class="fa fa-check"></i>
                             <?php else: ?>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <!-- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
                                     <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                                </svg>
+                                </svg> -->
+                                <i class="fa fa-book-open"></i>
                             <?php endif; ?>
                         </div>
                         <div class="sb-nav-info">
@@ -1808,10 +1764,11 @@ function lUrl($subject, $moduleId, $lessonId)
                         </div>
                         <?php if ($isDone): ?>
                             <div class="sb-nav-check sb-nav-check-done">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="10"
+                                <!-- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="10"
                                     height="10">
                                     <path d="M20 6L9 17l-5-5" />
-                                </svg>
+                                </svg> -->
+                                <i class="fa fa-check"></i>
                             </div>
                         <?php endif; ?>
                     </a>
@@ -1857,10 +1814,10 @@ function lUrl($subject, $moduleId, $lessonId)
                         </svg>
                         Back to Modules
                     </a>
-                    <div class="topbar-breadcrumb">
+                    <!-- <div class="topbar-breadcrumb">
                         <span class="sep">›</span>
                         <span><?= htmlspecialchars($module['title'] ?? '') ?></span>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="topbar-right">
                     <?php if ($lesson): ?>
@@ -1899,26 +1856,26 @@ function lUrl($subject, $moduleId, $lessonId)
                                     </svg>
                                 </span>
                             <?php else: ?>
-                                <a class="topbar-nav-btn btn-next-top" href="#" id="nextBtn">
+                                <button class="topbar-nav-btn btn-next-top" id="nextBtn" type="button">
                                     Finish
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"
                                         height="14">
                                         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                                         <path d="M22 4L12 14.01l-3-3" />
                                     </svg>
-                                </a>
+                                </button>
                             <?php endif; ?>
                         <?php endif; ?>
                     <?php endif; ?>
 
-                    <div class="bell-wrap">
+                    <!-- <div class="bell-wrap">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
                             <path d="M13.7 21a2 2 0 0 1-3.4 0" />
                         </svg>
                         <span class="bell-dot"></span>
                     </div>
-                    <div class="top-avatar"><?= htmlspecialchars($initials ?? 'MA') ?></div>
+                    <div class="top-avatar"><?= htmlspecialchars($initials ?? 'MA') ?></div> -->
                 </div>
             </div>
 
@@ -2550,8 +2507,10 @@ function lUrl($subject, $moduleId, $lessonId)
         </script>
     <?php endif; ?>
 
-    <script src="../js_folder/lessons.js"></script>
+    <!-- <script src="../js_folder/lessons.js"></script> -->
+    <script src="../js_folder/lessons.js?v=<?= time() ?>"></script>
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
 </body>
+
 
 </html>

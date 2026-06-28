@@ -223,6 +223,112 @@ class StudentsController
         exit;
     }
 
+    // ── SUBJECT LESSONS — add markModuleStarted safety net ────
+    public function subject_lessons()
+    {
+        $studentModel = new Students();
+
+        $moduleId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+        $subject = isset($_GET['subject']) ? trim($_GET['subject']) : '';
+        $lessonId = isset($_GET['lesson']) ? (int) $_GET['lesson'] : 0;
+        $studentId = $_SESSION['student_id'] ?? 0;
+
+        $module = $moduleId ? $studentModel->getInteractiveModuleById($moduleId) : null;
+        $lessons = $module ? $studentModel->getIMLessonsWithCounts($moduleId) : [];
+
+        if (!$lessonId && !empty($lessons)) {
+            $lessonId = $lessons[0]['id'];
+        }
+
+        // ✅ ADD THIS — safety net: always mark started when student opens a lesson
+        if ($studentId && $moduleId) {
+            $studentModel->markModuleStarted($moduleId, $studentId);
+        }
+
+        // ... rest unchanged
+        $lesson = $lessonId ? $studentModel->getIMLessonById($lessonId) : null;
+        $images = $lessonId ? $studentModel->getLessonImages($lessonId) : [];
+        $videos = $lessonId ? $studentModel->getLessonVideos($lessonId) : [];
+        $flashcards = $lessonId ? $studentModel->getLessonFlashcards($lessonId) : [];
+        $activities = $lessonId ? $studentModel->getLessonActivities($lessonId) : [];
+        $quizzes = $lessonId ? $studentModel->getLessonQuizzes($lessonId) : [];
+
+        $activityData = [];
+        foreach ($activities as $act) {
+            $activityData[$act['id']] = [
+                'activity' => $act,
+                'questions' => $studentModel->getIMActivityQuestions($act['id']),
+                'submission' => $studentId ? $studentModel->getIMActivitySubmission($act['id'], $studentId) : null,
+            ];
+        }
+
+        $quizData = [];
+        foreach ($quizzes as $qz) {
+            $quizData[$qz['id']] = [
+                'quiz' => $qz,
+                'questions' => $studentModel->getIMQuizQuestions($qz['id']),
+                'result' => $studentId ? $studentModel->getIMQuizResult($qz['id'], $studentId) : null,
+            ];
+        }
+
+        $lessonCompletion = [];
+        $totalLessons = count($lessons);
+        $completedCount = 0;
+        foreach ($lessons as $l) {
+            $done = $studentId ? $studentModel->isLessonCompleted($l['id'], $studentId) : false;
+            $lessonCompletion[$l['id']] = $done;
+            if ($done)
+                $completedCount++;
+        }
+
+        $currentIndex = 0;
+        $prevLessonId = null;
+        $nextLessonId = null;
+        foreach ($lessons as $i => $l) {
+            if ($l['id'] == $lessonId) {
+                $currentIndex = $i + 1;
+                $prevLessonId = $lessons[$i - 1]['id'] ?? null;
+                $nextLessonId = $lessons[$i + 1]['id'] ?? null;
+                break;
+            }
+        }
+
+        $studentName = $_SESSION['student_name'] ?? null;
+        $studentLrn = $_SESSION['student_lrn'] ?? null;
+
+        require "../app/view/subject_lessons.php";
+    }
+
+    // ✅ ADD THIS NEW METHOD — called when student clicks Finish
+    public function finish_module()
+    {
+        header('Content-Type: application/json');
+
+        $studentId = $_SESSION['student_id'] ?? 0;
+        if (!$studentId && !empty($_SESSION['user_id'])) {
+            $subjectModel = new subjects();
+            $studentRow = $subjectModel->getStudentByUserId($_SESSION['user_id']);
+            if ($studentRow) {
+                $studentId = (int) $studentRow['id'];
+                $_SESSION['student_id'] = $studentId;
+            }
+        }
+
+        $moduleId = (int) ($_POST['module_id'] ?? 0);
+
+        if (!$studentId || !$moduleId) {
+            echo json_encode(['ok' => false, 'msg' => 'Missing student or module']);
+            exit;
+        }
+
+        $studentModel = new Students();
+        $studentModel->finishModule($moduleId, $studentId);
+
+        echo json_encode(['ok' => true]);
+        exit;
+    }
+
+
     public function subject_activity()
     {
         $studentModel = new Students();
@@ -264,6 +370,7 @@ class StudentsController
             }
             $studentModel->saveIMActivitySubmission($activityId, $studentId, json_encode($answers));
             $studentModel->markLessonVisited($lessonId, $studentId);
+            $studentModel->updateModuleProgress($moduleId, $studentId);
             header("Location: /learning_management/public/?url=subject_activity&subject={$subject}&id={$moduleId}&activity={$activityId}");
             exit;
         }
@@ -313,88 +420,88 @@ class StudentsController
 
     // ── SUBJECT LESSONS ────────────────────────────────────────
     // ?url=subject_lessons&subject=philosophy&id=1&lesson=7
-    public function subject_lessons()
-    {
-        $studentModel = new Students();
+    // public function subject_lessons()
+    // {
+    //     $studentModel = new Students();
 
-        $moduleId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
-        $subject = isset($_GET['subject']) ? trim($_GET['subject']) : '';
-        $lessonId = isset($_GET['lesson']) ? (int) $_GET['lesson'] : 0;
-        $studentId = $_SESSION['student_id'] ?? 0;
+    //     $moduleId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+    //     $subject = isset($_GET['subject']) ? trim($_GET['subject']) : '';
+    //     $lessonId = isset($_GET['lesson']) ? (int) $_GET['lesson'] : 0;
+    //     $studentId = $_SESSION['student_id'] ?? 0;
 
-        // Module + all lessons with counts
-        $module = $moduleId ? $studentModel->getInteractiveModuleById($moduleId) : null;
-        $lessons = $module ? $studentModel->getIMLessonsWithCounts($moduleId) : [];
+    //     // Module + all lessons with counts
+    //     $module = $moduleId ? $studentModel->getInteractiveModuleById($moduleId) : null;
+    //     $lessons = $module ? $studentModel->getIMLessonsWithCounts($moduleId) : [];
 
-        // Default to first lesson
-        if (!$lessonId && !empty($lessons)) {
-            $lessonId = $lessons[0]['id'];
-        }
+    //     // Default to first lesson
+    //     if (!$lessonId && !empty($lessons)) {
+    //         $lessonId = $lessons[0]['id'];
+    //     }
 
-        // Active lesson content
-        $lesson = $lessonId ? $studentModel->getIMLessonById($lessonId) : null;
-        $images = $lessonId ? $studentModel->getLessonImages($lessonId) : [];
-        $videos = $lessonId ? $studentModel->getLessonVideos($lessonId) : [];
-        $flashcards = $lessonId ? $studentModel->getLessonFlashcards($lessonId) : [];
-        $activities = $lessonId ? $studentModel->getLessonActivities($lessonId) : [];
-        $quizzes = $lessonId ? $studentModel->getLessonQuizzes($lessonId) : [];
+    //     // Active lesson content
+    //     $lesson = $lessonId ? $studentModel->getIMLessonById($lessonId) : null;
+    //     $images = $lessonId ? $studentModel->getLessonImages($lessonId) : [];
+    //     $videos = $lessonId ? $studentModel->getLessonVideos($lessonId) : [];
+    //     $flashcards = $lessonId ? $studentModel->getLessonFlashcards($lessonId) : [];
+    //     $activities = $lessonId ? $studentModel->getLessonActivities($lessonId) : [];
+    //     $quizzes = $lessonId ? $studentModel->getLessonQuizzes($lessonId) : [];
 
-        // Per-activity: questions + submission
-        $activityData = [];
-        foreach ($activities as $act) {
-            $activityData[$act['id']] = [
-                'activity' => $act,
-                'questions' => $studentModel->getIMActivityQuestions($act['id']),
-                'submission' => $studentId
-                    ? $studentModel->getIMActivitySubmission($act['id'], $studentId)
-                    : null,
-            ];
-        }
+    //     // Per-activity: questions + submission
+    //     $activityData = [];
+    //     foreach ($activities as $act) {
+    //         $activityData[$act['id']] = [
+    //             'activity' => $act,
+    //             'questions' => $studentModel->getIMActivityQuestions($act['id']),
+    //             'submission' => $studentId
+    //                 ? $studentModel->getIMActivitySubmission($act['id'], $studentId)
+    //                 : null,
+    //         ];
+    //     }
 
-        // Per-quiz: questions + result
-        $quizData = [];
-        foreach ($quizzes as $qz) {
-            $quizData[$qz['id']] = [
-                'quiz' => $qz,
-                'questions' => $studentModel->getIMQuizQuestions($qz['id']),
-                'result' => $studentId
-                    ? $studentModel->getIMQuizResult($qz['id'], $studentId)
-                    : null,
-            ];
-        }
+    //     // Per-quiz: questions + result
+    //     $quizData = [];
+    //     foreach ($quizzes as $qz) {
+    //         $quizData[$qz['id']] = [
+    //             'quiz' => $qz,
+    //             'questions' => $studentModel->getIMQuizQuestions($qz['id']),
+    //             'result' => $studentId
+    //                 ? $studentModel->getIMQuizResult($qz['id'], $studentId)
+    //                 : null,
+    //         ];
+    //     }
 
-        // Completion status per lesson for sidebar checkmarks
-        $lessonCompletion = [];
-        $totalLessons = count($lessons);
-        $completedCount = 0;
+    //     // Completion status per lesson for sidebar checkmarks
+    //     $lessonCompletion = [];
+    //     $totalLessons = count($lessons);
+    //     $completedCount = 0;
 
-        foreach ($lessons as $l) {
-            $done = $studentId ? $studentModel->isLessonCompleted($l['id'], $studentId) : false;
-            $lessonCompletion[$l['id']] = $done;
-            if ($done)
-                $completedCount++;
-        }
+    //     foreach ($lessons as $l) {
+    //         $done = $studentId ? $studentModel->isLessonCompleted($l['id'], $studentId) : false;
+    //         $lessonCompletion[$l['id']] = $done;
+    //         if ($done)
+    //             $completedCount++;
+    //     }
 
-        // ── ADD THESE LINES ──────────────────────────────────────
-        $currentIndex = 0;
-        $prevLessonId = null;
-        $nextLessonId = null;
-        foreach ($lessons as $i => $l) {
-            if ($l['id'] == $lessonId) {
-                $currentIndex = $i + 1;
-                $prevLessonId = $lessons[$i - 1]['id'] ?? null;
-                $nextLessonId = $lessons[$i + 1]['id'] ?? null;
-                break;
-            }
-        }
-        // ─────────────────────────────────────────────────────────
+    //     // ── ADD THESE LINES ──────────────────────────────────────
+    //     $currentIndex = 0;
+    //     $prevLessonId = null;
+    //     $nextLessonId = null;
+    //     foreach ($lessons as $i => $l) {
+    //         if ($l['id'] == $lessonId) {
+    //             $currentIndex = $i + 1;
+    //             $prevLessonId = $lessons[$i - 1]['id'] ?? null;
+    //             $nextLessonId = $lessons[$i + 1]['id'] ?? null;
+    //             break;
+    //         }
+    //     }
+    //     // ─────────────────────────────────────────────────────────
 
-        // Also get student name for sidebar display
-        $studentName = $_SESSION['student_name'] ?? null;
-        $studentLrn = $_SESSION['student_lrn'] ?? null;
+    //     // Also get student name for sidebar display
+    //     $studentName = $_SESSION['student_name'] ?? null;
+    //     $studentLrn = $_SESSION['student_lrn'] ?? null;
 
-        require "../app/view/subject_lessons.php";
-    }
+    //     require "../app/view/subject_lessons.php";
+    // }
 
     // ── SAVE LESSON ANSWERS (AJAX — called on Next/Finish) ────
     // Saves activity answers + quiz results for a lesson from POST data
@@ -448,15 +555,93 @@ class StudentsController
                         if ($submitted === $correct)
                             $score++;
                     }
-                    // Save with the representative quiz ID (MIN id of the group)
                     $studentModel->saveIMQuizResult($qzId, $studentId, $score, $total, $passingScore, json_encode($answers));
                 }
             }
         }
 
         // ── Mark lesson as visited ─────────────────────────────
-        if (!empty($data['lesson_id'])) {
-            $studentModel->markLessonVisited((int) $data['lesson_id'], $studentId);
+        $lessonId = (int) ($data['lesson_id'] ?? 0);
+        if ($lessonId) {
+            $studentModel->markLessonVisited($lessonId, $studentId);
+        }
+
+        // ✅ ADD THIS — keep tbl_module_progress in sync immediately,
+// not just when the student clicks Finish on the last lesson
+        $moduleId = 0;
+        if ($lessonId) {
+            $lessonRow = $studentModel->getIMLessonById($lessonId);
+            if ($lessonRow) {
+                $moduleId = (int) $lessonRow['module_id'];
+                $studentModel->updateModuleProgress($moduleId, $studentId);
+            }
+        }
+
+        // ── Return updated progress counts ────────────────────
+        $completedCount = 0;
+        $totalLessons = 0;
+        if ($lessonId) {
+            // Get module_id from the lesson
+            $lesson = $studentModel->getIMLessonById($lessonId);
+            if ($lesson) {
+                $moduleId = (int) $lesson['module_id'];
+                $allLessons = $studentModel->getIMLessons($moduleId);
+                $totalLessons = count($allLessons);
+                foreach ($allLessons as $l) {
+                    if ($studentModel->isLessonCompleted($l['id'], $studentId)) {
+                        $completedCount++;
+                    }
+                }
+            }
+        }
+
+        echo json_encode([
+            'ok' => true,
+            'completed_count' => $completedCount,
+            'total_lessons' => $totalLessons,
+        ]);
+        exit;
+    }
+
+    public function submit_activity()
+    {
+        header('Content-Type: application/json');
+
+        $studentId = $_SESSION['student_id'] ?? 0;
+        if (!$studentId && !empty($_SESSION['user_id'])) {
+            $subjectModel = new subjects();
+            $studentRow = $subjectModel->getStudentByUserId($_SESSION['user_id']);
+            if ($studentRow) {
+                $studentId = (int) $studentRow['id'];
+                $_SESSION['student_id'] = $studentId;
+            }
+        }
+
+        if (!$studentId) {
+            echo json_encode(['ok' => false, 'msg' => 'not logged in']);
+            exit;
+        }
+
+        $activityId = (int) ($_POST['activity_id'] ?? 0);
+        $lessonId = (int) ($_POST['lesson_id'] ?? 0);
+
+        if (!$activityId) {
+            echo json_encode(['ok' => false, 'msg' => 'no activity_id']);
+            exit;
+        }
+
+        $studentModel = new Students();
+
+        // Only save if not already submitted
+        $existing = $studentModel->getIMActivitySubmission($activityId, $studentId);
+        if (!$existing) {
+            // answers posted as answers[qid] = value
+            $answers = $_POST['answers'] ?? [];
+            $studentModel->saveIMActivitySubmission(
+                $activityId,
+                $studentId,
+                json_encode($answers)
+            );
         }
 
         echo json_encode(['ok' => true]);

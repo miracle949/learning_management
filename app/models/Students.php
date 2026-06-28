@@ -682,25 +682,175 @@ class Students extends Model
         return $stmt->get_result()->fetch_assoc();
     }
 
+    // public function markModuleStarted($moduleId, $studentId)
+    // {
+    //     if (!$moduleId || !$studentId)
+    //         return false;
+    //     $stmt = $this->db->prepare("
+    //         INSERT IGNORE INTO tbl_module_progress (interactive_modules_id, student_id, started_at)
+    //         VALUES (?, ?, NOW())
+    //     ");
+    //     $stmt->bind_param("ii", $moduleId, $studentId);
+    //     return $stmt->execute();
+    // }
+
     public function markModuleStarted($moduleId, $studentId)
     {
         if (!$moduleId || !$studentId)
             return false;
+
+        // Get subject_id from the module
         $stmt = $this->db->prepare("
-            INSERT IGNORE INTO tbl_module_progress (interactive_modules_id, student_id, started_at)
-            VALUES (?, ?, NOW())
-        ");
-        $stmt->bind_param("ii", $moduleId, $studentId);
-        return $stmt->execute();
+        SELECT subject_id FROM tbl_interactive_modules WHERE id = ? LIMIT 1
+    ");
+        $stmt->bind_param("i", $moduleId);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        $subjectId = $row['subject_id'] ?? null;
+
+        // Count total lessons
+        $stmt2 = $this->db->prepare("
+        SELECT COUNT(*) AS total FROM tbl_lessons WHERE interactive_module_id = ?
+    ");
+        $stmt2->bind_param("i", $moduleId);
+        $stmt2->execute();
+        $totalLessons = (int) $stmt2->get_result()->fetch_assoc()['total'];
+
+        // Insert or update on duplicate
+        $stmt3 = $this->db->prepare("
+        INSERT INTO tbl_module_progress 
+            (student_id, interactive_module_id, subject_id, status,
+             completion_percentage, total_lessons, completed_lessons,
+             is_finished, started_at, last_accessed_at, created_at)
+        VALUES (?, ?, ?, 'in_progress', 0, ?, 0, 0, NOW(), NOW(), NOW())
+        ON DUPLICATE KEY UPDATE last_accessed_at = NOW()
+    ");
+        $stmt3->bind_param("iiii", $studentId, $moduleId, $subjectId, $totalLessons);
+        return $stmt3->execute();
+    }
+
+    public function finishModule($moduleId, $studentId)
+    {
+        if (!$moduleId || !$studentId)
+            return false;
+
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total FROM tbl_lessons WHERE interactive_module_id = ?
+    ");
+        $stmt->bind_param("i", $moduleId);
+        $stmt->execute();
+        $totalLessons = (int) $stmt->get_result()->fetch_assoc()['total'];
+
+        $completedLessons = $this->countCompletedLessonsInModule($moduleId, $studentId);
+
+        $percentage = $totalLessons > 0
+            ? round(($completedLessons / $totalLessons) * 100)
+            : 100;
+
+        $stmt3 = $this->db->prepare("
+        INSERT INTO tbl_module_progress 
+            (student_id, interactive_module_id, subject_id, status,
+             completion_percentage, total_lessons, completed_lessons,
+             is_finished, started_at, last_accessed_at, created_at)
+        SELECT ?, ?, subject_id, 'completed',
+               ?, ?, ?,
+               1, NOW(), NOW(), NOW()
+        FROM tbl_interactive_modules WHERE id = ?
+        ON DUPLICATE KEY UPDATE
+            status                = 'completed',
+            completion_percentage = ?,
+            completed_lessons     = ?,
+            is_finished           = 1,
+            last_accessed_at      = NOW(),
+            completed_at          = NOW()
+    ");
+        if (!$stmt3) {
+            error_log('[finishModule] prepare failed: ' . $this->db->error);
+            return false;
+        }
+
+        // 8 values, 8 'i' characters — this is the count that was wrong before.
+        $stmt3->bind_param(
+            "iiiiiiii",
+            $studentId,
+            $moduleId,
+            $percentage,
+            $totalLessons,
+            $completedLessons,
+            $moduleId,
+            $percentage,
+            $completedLessons
+        );
+
+        $ok = $stmt3->execute();
+        if (!$ok) {
+            error_log('[finishModule] execute failed: ' . $stmt3->error);
+        }
+        return $ok;
+    }
+
+    public function countCompletedLessonsInModule($moduleId, $studentId)
+    {
+        $lessons = $this->getIMLessons($moduleId);
+        $completed = 0;
+        foreach ($lessons as $l) {
+            if ($this->isLessonCompleted($l['id'], $studentId)) {
+                $completed++;
+            }
+        }
+        return $completed;
+    }
+
+    public function updateModuleProgress($moduleId, $studentId)
+    {
+        if (!$moduleId || !$studentId)
+            return false;
+
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total FROM tbl_lessons WHERE interactive_module_id = ?
+    ");
+        $stmt->bind_param("i", $moduleId);
+        $stmt->execute();
+        $totalLessons = (int) $stmt->get_result()->fetch_assoc()['total'];
+
+        $completedLessons = $this->countCompletedLessonsInModule($moduleId, $studentId);
+
+        $percentage = $totalLessons > 0
+            ? round(($completedLessons / $totalLessons) * 100)
+            : 0;
+
+        // Deliberately does NOT touch status / is_finished / completed_at —
+        // those stay reserved for finishModule(), so an in-progress update
+        // here can never accidentally downgrade a module that's already
+        // marked completed.
+        $stmt2 = $this->db->prepare("
+        UPDATE tbl_module_progress
+        SET completion_percentage = ?,
+            total_lessons         = ?,
+            completed_lessons     = ?,
+            last_accessed_at      = NOW()
+        WHERE interactive_module_id = ? AND student_id = ?
+    ");
+        if (!$stmt2) {
+            error_log('[updateModuleProgress] prepare failed: ' . $this->db->error);
+            return false;
+        }
+        $stmt2->bind_param("diiii", $percentage, $totalLessons, $completedLessons, $moduleId, $studentId);
+        $ok = $stmt2->execute();
+        if (!$ok) {
+            error_log('[updateModuleProgress] execute failed: ' . $stmt2->error);
+        }
+        return $ok;
     }
 
     public function getStartedModuleIds($studentId)
     {
         if (!$studentId)
             return [];
+
         $stmt = $this->db->prepare("
-            SELECT interactive_module_id FROM tbl_module_progress WHERE student_id = ?
-        ");
+        SELECT interactive_module_id FROM tbl_module_progress WHERE student_id = ?
+    ");
         $stmt->bind_param("i", $studentId);
         $stmt->execute();
         $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);

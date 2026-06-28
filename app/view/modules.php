@@ -55,9 +55,28 @@
                         </div>
                     </div> -->
 
+                    <div class="progress-banner">
+                        <div class="progress-text">
+                            <div class="progress-nav">Your next lesson is waiting.</div>
+                            <h2>This is your progress continue Where you <b>left off!</b></h2>
+                            <p>Keep learning to unlock more lessons and quizzes, You've completed <b>6 out of 9 modules.</b></p>
+                        </div>
+
+                        <div class="parent-sub-progress">
+
+                            <div class="box-progress">
+                                <div class="parent-progress">
+                                    <div class="progress"></div>
+                                </div>
+                            </div>
+
+                            <div class="progress-percent">60% / 100%</div>
+                        </div>
+                    </div>
+
                     <!-- ── STAT CARDS ── -->
                     <div class="card-box-parent">
-                        <div class="card-box">
+                        <div class="card-box" style="--accent-glow: rgba(0, 255, 136, 0.10);">
                             <div class="card-icon card-icon--modules">
                                 <i class="fa fa-layer-group"></i>
                             </div>
@@ -69,18 +88,18 @@
                             </div>
                         </div>
 
-                        <div class="card-box">
+                        <div class="card-box" style="--accent-glow:rgba(255, 59, 59, 0.10);">
                             <div class="card-icon card-icon--quiz">
                                 <i class="fa fa-pen-to-square"></i>
                             </div>
                             <div class="card-text">
                                 <p>14</p>
-                                <div class="data-head">Quizzes &amp; Activities</div>
+                                <div class="data-head">Quizzes</div>
                                 <span class="card-badge card-badge--blue">11 Completed</span>
                             </div>
                         </div>
 
-                        <div class="card-box">
+                        <div class="card-box" style="--accent-glow: rgba(0, 207, 255, 0.10);">
                             <div class="card-icon card-icon--progress">
                                 <i class="fa fa-spinner"></i>
                             </div>
@@ -91,13 +110,13 @@
                             </div>
                         </div>
 
-                        <div class="card-box">
+                        <div class="card-box" style="--accent-glow: rgba(155, 93, 229, 0.10);">
                             <div class="card-icon card-icon--percent">
                                 <i class="fa fa-chart-line"></i>
                             </div>
                             <div class="card-text">
-                                <p>81%</p>
-                                <div class="data-head">Module progress</div>
+                                <p>4</p>
+                                <div class="data-head">Activities</div>
                                 <span class="card-badge card-badge--green"><i class="fa fa-arrow-up"></i> +6% this week</span>
                             </div>
                         </div>
@@ -106,10 +125,18 @@
                     <!-- ── FILTER TABS + SEARCH ── -->
                     <div class="module-filter-bar">
                         <div class="module-tabs">
-                            <button class="tab-btn active" data-filter="all">All Modules</button>
-                            <button class="tab-btn" data-filter="in-progress">In Progress</button>
-                            <button class="tab-btn" data-filter="not-started">Not Started</button>
-                            <button class="tab-btn" data-filter="completed">Completed</button>
+                            <button class="tab-btn active" data-filter="all">
+                                <i class="fa fa-book-open"></i>
+                                All Modules</button>
+                            <button class="tab-btn" data-filter="in-progress">
+                                <i class="fa fa-hourglass-half"></i>
+                                In Progress</button>
+                            <button class="tab-btn" data-filter="not-started">
+                                <i class="fa fa-pause"></i>
+                                Not Started</button>
+                            <button class="tab-btn" data-filter="completed">
+                                <i class="fa fa-circle-check"></i>
+                                Completed</button>
                         </div>
                         <div class="module-search">
                             <i class="fa fa-search"></i>
@@ -272,6 +299,7 @@
             document.getElementById('moduleGrid').style.display = visibleCount === 0 ? 'none' : '';
         }
 
+        // ✅ This is the function called by onclick="handleModuleStart(this)"
         function handleModuleStart(btn) {
             var moduleId = btn.dataset.moduleId;
             var href = btn.dataset.href;
@@ -282,6 +310,10 @@
                 return;
             }
 
+            // Disable button while request is in-flight
+            btn.disabled = true;
+            btn.innerHTML = 'Starting... <i class="fa fa-spinner fa-spin"></i>';
+
             var fd = new FormData();
             fd.append('module_id', moduleId);
             fetch('/learning_management/public/?url=mark_module_started', {
@@ -289,8 +321,13 @@
                 body: fd
             })
                 .then(function (res) { return res.json(); })
-                .then(function () { window.location.href = href; })
-                .catch(function () { window.location.href = href; });
+                .then(function () {
+                    // Navigate AFTER server confirms the write
+                    window.location.href = href;
+                })
+                .catch(function () {
+                    window.location.href = href;
+                });
         }
     </script>
 

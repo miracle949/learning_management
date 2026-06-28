@@ -99,6 +99,7 @@
                                             </div>
                                         </div>
                                         <div class="module-description">
+                                            <div class="module-nav"></div>
                                             <h1><?= htmlspecialchars($subjectInfo['subject_name']) ?></h1>
                                             <p><?= htmlspecialchars($subjectInfo['subject_description']) ?></p>
 

@@ -277,11 +277,11 @@ body {
 .container-fluid .rightbar .main-parent .right-dashboard {
     width: 55%;
     /* padding: 1.5rem; */
-    background-color: #ffffff;
+    background-color: var(--light-card);
     /* background-color: var(--bg-card); */
     border: 1px solid var(--page-border);
     /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04); */
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    /* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); */
     border-radius: 16px;
     height: calc(100% - 951px);
     /* height: 500px; */
@@ -835,7 +835,7 @@ div.rightbar{
     /* background: radial-gradient(ellipse 60% 100% at 100% 0%, rgba(0, 207, 255, 0.16), transparent 60%), radial-gradient(ellipse 50% 80% at 0% 100%, rgba(0, 255, 136, 0.12), transparent 60%), linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darkest) 100%); */
     background: linear-gradient(130deg, #0A1628 0%, #0F2845 60%, #0A2040 100%);
     border: 1px solid var(--page-border);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    /* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); */
     /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04); */
     border-radius: 16px;
     display: flex;
@@ -851,14 +851,14 @@ div.rightbar{
     font-weight: 300;
     color: #ffffff;
     /* font-size: 32px; */
-    font-size: 24px;
+    font-size: 30px;
 }
 
 .container-fluid .rightbar .welcome-banner .welcome-text p {
     margin: 0;
     /* color: #ffffff; */
     color: var(--text-muted);
-    font-size: 13.5px;
+    font-size: 14.5px;
 }
 
 .container-fluid .rightbar .welcome-banner .welcome-text .date-batch {
@@ -966,19 +966,20 @@ div.rightbar{
     width: 100%;
     /* background-color: #ffffff; */
     /* background-color: var(--bg-card); */
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
+    border: 1px solid var(--page-border);
+    background-color: var(--light-card);
     /* padding: 1.5rem 1.1rem 1.5rem 1.1rem; */
     /* padding: 1.5rem; */
     padding: 18px 18px;
     display: flex;
     justify-content: space-between;
-    border: 1px solid var(--page-border);
     align-items: center;
     border-radius: 16px;
     /* border: 1px solid #e2e8f0; */
     /* box-shadow: 0 4px 16px rgba(108, 63, 232, 0.10), 0 1px 4px rgba(0, 0, 0, 0.06); */
     /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04); */
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    /* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); */
     z-index: 3;
     position: relative;
     overflow: hidden;
@@ -1055,10 +1056,10 @@ div.rightbar{
     width: 100%;
     /* border: 2px solid #6CCA55; */
     /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04); */
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    /* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); */
     border: 1px solid var(--page-border);
     /* background-color: var(--bg-card); */
-    background-color: #ffffff;
+    background-color: var(--light-card);
     /* border: 1px solid #e2e8f0; */
     /* background-color: #ffffff; */
     border-radius: 16px;
@@ -1394,10 +1395,11 @@ div.rightbar{
     /* border: 1px solid #e2e8f0; */
     /* background-color: #ffffff; */
     /* background-color: var(--bg-card); */
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
     /* border: 1px solid var(--border-dim); */
     border: 1px solid var(--page-border);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    background-color: var(--light-card);
+    /* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); */
     border-radius: 16px;
     /* padding: 1.4rem 1.5rem 1.5rem 1.5rem; */
 }
