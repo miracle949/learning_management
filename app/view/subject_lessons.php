@@ -222,7 +222,8 @@ function lUrl($subject, $moduleId, $lessonId)
             position: relative;
             z-index: 1;
             flex: 1;
-            padding: 4px 8px 20px;
+            /* padding: 4px 8px 20px; */
+            padding: 4px 16px 20px;
             overflow-y: auto;
         }
 
@@ -719,7 +720,8 @@ function lUrl($subject, $moduleId, $lessonId)
             display: flex;
             flex-direction: column;
             align-items: start;
-            gap: 14px;
+            /* gap: 14px; */
+            gap: 18px;
             margin-bottom: 20px;
         }
 
@@ -727,7 +729,7 @@ function lUrl($subject, $moduleId, $lessonId)
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-size: 10px;
+            font-size: 11.5px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .06em;
