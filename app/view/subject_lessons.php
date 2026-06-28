@@ -126,10 +126,11 @@ function lUrl($subject, $moduleId, $lessonId)
             position: relative;
             z-index: 1;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: start;
+            align-items: start;
             gap: 12px;
-            padding: 22px 18px 18px;
+            /* padding: 22px 18px 18px; */
+            padding: 20px 16px 20px;
             /* border-bottom: 1px solid var(--border-dim); */
         }
 
@@ -169,7 +170,8 @@ function lUrl($subject, $moduleId, $lessonId)
         /* progress */
         .sb-progress-block {
             position: relative;
-            padding: 14px 16px;
+            /* padding: 14px 16px; */
+            padding: 0px 16px 14px;
             border-bottom: 1px solid var(--border-dim);
         }
 
@@ -486,16 +488,21 @@ function lUrl($subject, $moduleId, $lessonId)
             gap: 7px;
             font-size: 13px;
             font-weight: 600;
-            color: var(--green-dark);
-            padding: 7px 14px;
+            /* color: var(--green-dark); */
+            /* padding: 7px 14px; */
+            color: var(--text-muted);
             border-radius: 8px;
-            background: rgba(0, 137, 74, 0.08);
-            border: 1px solid rgba(0, 137, 74, 0.2);
+            /* background: rgba(0, 137, 74, 0.08); */
+            /* border: 1px solid rgba(0, 137, 74, 0.2); */
             transition: background .15s, transform .15s;
         }
 
+        .back-btn .fa{
+            font-size: 10px;
+        }
+
         .back-btn:hover {
-            background: rgba(0, 137, 74, 0.14);
+            /* background: rgba(0, 137, 74, 0.14); */
             transform: translateX(-2px);
         }
 
@@ -522,7 +529,9 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .topbar-right {
+            /* width: 100%; */
             display: flex;
+            /* justify-content: space-between; */
             align-items: center;
             gap: 12px;
         }
@@ -1712,9 +1721,11 @@ function lUrl($subject, $moduleId, $lessonId)
                 <!-- <img src="../images/iLearn-7.png" alt=""> -->
                 <!-- </div> -->
                 <a class="back-btn" href="/learning_management/public/?url=modules&subject=<?= urlencode($subject) ?>">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <!-- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <path d="M19 12H5M11 6l-6 6 6 6" />
-                    </svg>
+                    </svg> -->
+                    <i class="fa fa-chevron-left"></i>
+
                     Back to Modules
                 </a>
             </div>
@@ -1809,13 +1820,13 @@ function lUrl($subject, $moduleId, $lessonId)
             <!-- TOP NAV BAR -->
             <div class="lessons-topbar">
                 <div class="topbar-left">
-                    <a class="back-btn"
+                    <!-- <a class="back-btn"
                         href="/learning_management/public/?url=modules&subject=<?= urlencode($subject) ?>">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <path d="M19 12H5M11 6l-6 6 6 6" />
                         </svg>
                         Back to Modules
-                    </a>
+                    </a> -->
                     <!-- <div class="topbar-breadcrumb">
                         <span class="sep">›</span>
                         <span><?= htmlspecialchars($module['title'] ?? '') ?></span>
