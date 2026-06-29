@@ -93,25 +93,7 @@
             </div>
         </nav>
 
-        <main>
-            <!-- <div class="hero-bg"></div>
-            <div class="stars" id="stars"></div>
-            <div class="orb orb-1"></div>
-            <div class="orb orb-2"></div>
-            <div class="orb orb-3"></div> -->
-            <!-- <div class="hero-bg"></div>
-            <div class="stars" id="stars"></div>
-            <div class="orb orb-1"></div>
-            <div class="orb orb-2"></div>
-            <div class="orb orb-3"></div> -->
-            <!-- <div class="hero-blob"></div>
-            <svg class="hero-geo" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="350" cy="350" r="200" />
-                <circle cx="350" cy="350" r="280" />
-                <circle cx="350" cy="350" r="340" />
-                <rect x="170" y="170" width="360" height="360" rx="80" transform="rotate(15 350 350)" />
-                <rect x="220" y="220" width="260" height="260" rx="60" transform="rotate(30 350 350)" />
-            </svg> -->
+        <!-- <main>
 
             <div class="hero-card c1"><span class="card-dot"></span>🖥️ Hardware Assembly & Troubleshooting</div>
 
@@ -128,7 +110,7 @@
                     <i class="fa fa-shield"></i>
                     <p>Built for Senior High School Students</p>
                 </div>
-                <!-- <h2>Transform
+                <h2>Transform
                     <span class="word-wrap">
                         <span>Education</span>
                         <span>Learning</span>
@@ -137,8 +119,8 @@
                         <span>Teaching</span>
                     </span>
                     with Moderm LMS
-                </h2> -->
-                <!-- <h2>Study smarter, not <b>harder.</b></h2> -->
+                </h2>
+                <h2>Study smarter, not <b>harder.</b></h2>
                 <h2>
                     Study smart, play your part,
 
@@ -150,28 +132,68 @@
                 <div class="learning-today">
                     <a href="#">
                         <span>Explore Courses</span>
-                        <!-- <i class="fa fa-arrow-right"></i> -->
                     </a>
 
                     <a href="#">
                         <span>See how it works</span>
-                        <!-- <i class="fa fa-arrow-right"></i> -->
                     </a>
                 </div>
 
             </div>
 
-            <!-- <div class="main-image">
+            <div class="main-image">
                 <div class="border"></div>
-            </div> -->
+            </div>
 
-            <!-- <div style="position:absolute;bottom:0;left:0;right:0;z-index:3;line-height:0; border: none;">
+            <div style="position:absolute;bottom:0;left:0;right:0;z-index:3;line-height:0; border: none;">
                 <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
                     style="width:100%;height:80px;display:block; border: none;">
                     <path d="M0,40 C360,90 1080,0 1440,50 L1440,80 L0,80 Z" fill="#FBF8F3" />
                 </svg>
-            </div> -->
-        </main>
+            </div>
+        </main> -->
+
+
+        <div class="hero">
+            <div class="hero-img-fallback"></div>
+            <div class="hero-overlay"></div>
+
+            <div class="hero-content">
+                <div class="hero-eyebrow">TVL Track · Technical-Vocational Livelihood</div>
+                <h1 class="hero-title">
+                    <div class="line1">Computer Systems</div>
+                    <div class="line2">Servicing</div>
+                </h1>
+                <p class="hero-sub">
+                    Build. Diagnose. Repair. Maintain. The CSS strand trains you to master the hardware and software
+                    that
+                    powers the modern world.
+                </p>
+                <div class="hero-cta-row">
+                    <a href="#about" class="btn-primary">Explore the Strand</a>
+                    <a href="#modules" class="btn-secondary">View Modules</a>
+                </div>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">NC II</div>
+                    <div class="stat-label">Tesda Certification</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">160+</div>
+                    <div class="stat-label">Training Hours</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">1,000+</div>
+                    <div class="stat-label">Job Openings/Year</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">Core Competencies</div>
+                </div>
+            </div>
+        </div>
 
         <section class="section1" id="about">
 
