@@ -168,7 +168,6 @@ class StudentsController
         $modules = $subject ? $studentModel->getInteractiveModules($subject) : [];
         $studentId = $_SESSION['student_id'] ?? 0;
 
-        // Ensure student_id is set
         if (!$studentId && !empty($_SESSION['user_id'])) {
             $subjectModel = new subjects();
             $studentRow = $subjectModel->getStudentByUserId($_SESSION['user_id']);
@@ -179,6 +178,10 @@ class StudentsController
         }
 
         $startedModuleIds = $studentId ? $studentModel->getStartedModuleIds($studentId) : [];
+
+        // ✅ ADD THIS — gives the view what it needs to show "Completed"
+        // instead of "Continue Learning" and to power the filter tabs
+        $moduleProgress = $studentId ? $studentModel->getModuleProgressMap($studentId) : [];
 
         $lessonCounts = [];
         $imageCounts = [];

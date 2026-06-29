@@ -93,7 +93,8 @@ function lUrl($subject, $moduleId, $lessonId)
         ============================================= */
         .lessons-shell {
             display: grid;
-            grid-template-columns: 252px 1fr;
+            /* grid-template-columns: 252px 1fr; */
+            grid-template-columns: 260px 1fr;
             height: 100vh;
             overflow: hidden;
         }
@@ -130,7 +131,7 @@ function lUrl($subject, $moduleId, $lessonId)
             align-items: start;
             gap: 12px;
             /* padding: 22px 18px 18px; */
-            padding: 20px 16px 20px;
+            padding: 20px 16px 15px;
             /* border-bottom: 1px solid var(--border-dim); */
         }
 
@@ -225,7 +226,7 @@ function lUrl($subject, $moduleId, $lessonId)
             z-index: 1;
             flex: 1;
             /* padding: 4px 8px 20px; */
-            padding: 4px 16px 20px;
+            padding: 4px 12px 20px;
             overflow-y: auto;
         }
 
@@ -722,7 +723,10 @@ function lUrl($subject, $moduleId, $lessonId)
            CONTENT WRAPPER
         ============================================= */
         .lessons-content-wrap {
-            padding: 35px 28px 60px;
+            /* padding: 35px 28px 60px; */
+            padding: 35px 28px 35px;
+            height: 100vh;
+            overflow-y: auto;
         }
 
         .lesson-title-row {
@@ -730,7 +734,7 @@ function lUrl($subject, $moduleId, $lessonId)
             flex-direction: column;
             align-items: start;
             /* gap: 14px; */
-            gap: 18px;
+            gap: 20px;
             margin-bottom: 20px;
         }
 
@@ -738,7 +742,7 @@ function lUrl($subject, $moduleId, $lessonId)
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-size: 11.5px;
+            font-size: 10.5px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .06em;
@@ -751,7 +755,7 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .lesson-main-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 700;
             color: var(--page-text);
             line-height: 1.3;
@@ -764,11 +768,18 @@ function lUrl($subject, $moduleId, $lessonId)
             margin-bottom: 28px;
         }
 
+        .ls-section h4{
+            font-size: 20px;
+            font-weight: 600;
+            /* margin: 15px 0 8px; */
+        }
+
         .ls-section-head {
             display: flex;
             align-items: center;
             gap: 9px;
-            margin-bottom: 16px;
+            /* margin-bottom: 16px; */
+            margin-bottom: 25px;
         }
 
         .ls-section-icon {
@@ -914,6 +925,8 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .img-item {
+            width: 100%;
+            aspect-ratio: 16 / 7;
             border-radius: 12px;
             overflow: hidden;
             background: var(--page-card);
@@ -1724,7 +1737,7 @@ function lUrl($subject, $moduleId, $lessonId)
                     <!-- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                         <path d="M19 12H5M11 6l-6 6 6 6" />
                     </svg> -->
-                    <i class="fa fa-chevron-left"></i>
+                    <i class="fa fa-arrow-left"></i>
 
                     Back to Modules
                 </a>
@@ -1963,6 +1976,7 @@ function lUrl($subject, $moduleId, $lessonId)
                             <div class="ls-section-head">
                                 <div class="ls-section-divider"></div>
                             </div>
+                            <h4><?= htmlspecialchars($lesson['topic']) ?></h4>
                             <div class="lesson-text-card">
                                 <?= nl2br(htmlspecialchars($lesson['content'])) ?>
                             </div>

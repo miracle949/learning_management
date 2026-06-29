@@ -104,7 +104,8 @@ html {
     border-bottom: 1px solid rgba(92, 45, 145, 0.08); */
     /* background: rgba(251, 248, 243, 0.88); */
     backdrop-filter: blur(14px);
-    border-bottom: 1px solid var(--page-border);
+    border-bottom: 1px solid var(--border-dim);
+    /* border-bottom: 1px solid var(--page-border); */
     /* border-bottom: 1px solid rgba(92, 45, 145, 0.08); */
     /* border-bottom: 1px solid var(--border-dim); */
     /* background: radial-gradient(ellipse 120% 80% at 50% -10%, rgba(0, 207, 255, 0.16), transparent 60%), linear-gradient(180deg, var(--bg-darkest) 0%, var(--bg-dark) 55%, var(--bg-panel) 100%); */
@@ -121,7 +122,7 @@ html {
     /* backdrop-filter: blur(20px); */
     /* border: none; */
     /* border-bottom: 1px solid rgba(0, 180, 100, 0.12); */
-    height: 70px;
+    height: 80px;
     /* position: fixed;
     top: 0;
     width: 100%;
@@ -656,7 +657,8 @@ html {
     color: #ffffff;
     /* width: 568px; */
     /* width: 650px; */
-    width: 650px;
+    /* width: 650px; */
+    width: 700px;
     /* width: 800px; */
     text-align: center;
     line-height: 1.12;

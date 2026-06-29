@@ -21,6 +21,7 @@
 
             <?php
             $subject = $_GET['subject'] ?? $subject ?? null;
+            $moduleProgress = $moduleProgress ?? [];
 
             if ($subject):
                 if ($subjectInfo):
@@ -30,30 +31,6 @@
                     <div class="bread-crambs">
                         Dashboard <i class="fa fa-chevron-right"></i> <b>Modules</b>
                     </div>
-                    <!-- <div class="module-nav">
-                        <div class="module-text">
-                            <h2>Modules</h2>
-                            <p>Lessons, quizzes, activities, videos &amp; images across your subject</p>
-                        </div>
-                        <div class="module-acc">
-                            <button>
-                                <div class="notification-icon">
-                                    <i class="fa fa-message"></i>
-                                </div>
-                            </button>
-                            <button>
-                                <div class="notification-icon">
-                                    <i class="fa fa-bell"></i>
-                                </div>
-                            </button>
-                            <button>
-                                <?php
-                                $initial = isset($_SESSION['name']) ? strtoupper(substr($_SESSION['name'], 0, 1)) : '';
-                                echo $initial;
-                                ?>
-                            </button>
-                        </div>
-                    </div> -->
 
                     <div class="progress-banner">
                         <div class="progress-text">
@@ -160,22 +137,44 @@
                                     $vidCount = $videoCounts[$mod['id']] ?? 0;
                                     $actCount = $activityCounts[$mod['id']] ?? 0;
                                     $qzCount = $quizCounts[$mod['id']] ?? 0;
+
+                                    // ✅ Progress-aware status: completed > in-progress > not-started
+                                    $prog = $moduleProgress[$mod['id']] ?? null;
+                                    $isFinished = $prog && (int) $prog['is_finished'] === 1;
                                     $isStarted = in_array($mod['id'], $startedModuleIds);
-                                    $btnText = $isStarted ? 'Continue Learning' : 'Start now';
-                                    $btnClass = $isStarted ? 'start-now-btn btn-continue' : 'start-now-btn';
-                                    $statusAttr = $isStarted ? 'in-progress' : 'not-started';
+                                    $pct = $prog ? (float) $prog['completion_percentage'] : 0;
+                                    $pct = max(0, min(100, $pct)); // clamp for safety
+                    
+                                    if ($isFinished) {
+                                        $statusAttr = 'completed';
+                                        $btnText = 'Review Module';
+                                        $btnClass = 'start-now-btn btn-completed';
+                                    } elseif ($isStarted) {
+                                        $statusAttr = 'in-progress';
+                                        $btnText = 'Continue Learning';
+                                        $btnClass = 'start-now-btn btn-continue';
+                                    } else {
+                                        $statusAttr = 'not-started';
+                                        $btnText = 'Start now';
+                                        $btnClass = 'start-now-btn';
+                                    }
                                     ?>
                                     <div class="module-feed-card" data-status="<?= $statusAttr ?>"
                                         data-title="<?= htmlspecialchars(strtolower($mod['title'])) ?>">
 
-                                        <div class="card-img">
+                                        <div class="card-img" style="position:relative;">
                                             <div class="card-text">
                                                 <div class="module-banner-tag">CSS · Hardware</div>
                                             </div>
                                             <div class="card-icon">
                                                 <i class="fa fa-desktop"></i>
                                             </div>
-                                            <!-- <i class="fa fa-book-open"></i> -->
+                                            <?php if ($isFinished): ?>
+                                                <span class="card-badge card-badge--green"
+                                                    style="position:absolute; top:10px; right:10px; z-index:2;">
+                                                    <i class="fa fa-circle-check"></i> Completed
+                                                </span>
+                                            <?php endif; ?>
                                         </div>
 
                                         <div class="card-body">
@@ -219,6 +218,28 @@
                                                     </span>
                                                 <?php endif; ?>
                                             </div>
+
+                                            <!-- ── PER-MODULE PROGRESS BAR ── -->
+                                            <?php if ($prog): ?>
+                                                <div style="margin:4px 0 14px;">
+                                                    <div
+                                                        style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
+                                                        <span
+                                                            style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:#4A6B8A;">
+                                                            Progress
+                                                        </span>
+                                                        <span
+                                                            style="font-size:12.5px; font-weight:700; color:<?= $isFinished ? '#00894A' : '#0A2540' ?>;">
+                                                            <?= (int) round($pct) ?>%
+                                                        </span>
+                                                    </div>
+                                                    <div style="height:7px; background:#EAF0F8; border-radius:99px; overflow:hidden;">
+                                                        <div
+                                                            style="height:100%; width:<?= (int) round($pct) ?>%; border-radius:99px; background:<?= $isFinished ? 'linear-gradient(90deg,#00894A,#00C96B)' : 'linear-gradient(90deg,#0099CC,#00CFFF)' ?>;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <?php endif; ?>
 
                                             <button class="<?= $btnClass ?>" data-module-id="<?= (int) $mod['id'] ?>"
                                                 data-href="<?= htmlspecialchars($detailUrl) ?>" onclick="handleModuleStart(this)">
@@ -303,7 +324,9 @@
         function handleModuleStart(btn) {
             var moduleId = btn.dataset.moduleId;
             var href = btn.dataset.href;
-            var isStarted = btn.classList.contains('btn-continue');
+            // Completed modules behave like "continue" — just navigate,
+            // no need to re-mark as started.
+            var isStarted = btn.classList.contains('btn-continue') || btn.classList.contains('btn-completed');
 
             if (isStarted) {
                 window.location.href = href;

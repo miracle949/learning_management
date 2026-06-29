@@ -819,15 +819,23 @@ class Students extends Model
             ? round(($completedLessons / $totalLessons) * 100)
             : 0;
 
-        // Deliberately does NOT touch status / is_finished / completed_at —
-        // those stay reserved for finishModule(), so an in-progress update
-        // here can never accidentally downgrade a module that's already
-        // marked completed.
+        // ✅ Self-healing: don't depend on the separate "Finish" button's
+        // AJAX call to set is_finished. The moment every lesson in the
+        // module is done, mark it finished right here — in the exact same
+        // request that completed the last lesson. If finish_module() also
+        // fires afterward, fine, it's just redundant; if it fails or never
+        // fires, the module is still correctly marked finished.
+        $isFinished = ($totalLessons > 0 && $completedLessons >= $totalLessons) ? 1 : 0;
+        $status = $isFinished ? 'completed' : 'in_progress';
+
         $stmt2 = $this->db->prepare("
         UPDATE tbl_module_progress
         SET completion_percentage = ?,
             total_lessons         = ?,
             completed_lessons     = ?,
+            status                = ?,
+            is_finished           = ?,
+            completed_at          = CASE WHEN ? = 1 AND completed_at IS NULL THEN NOW() ELSE completed_at END,
             last_accessed_at      = NOW()
         WHERE interactive_module_id = ? AND student_id = ?
     ");
@@ -835,12 +843,50 @@ class Students extends Model
             error_log('[updateModuleProgress] prepare failed: ' . $this->db->error);
             return false;
         }
-        $stmt2->bind_param("diiii", $percentage, $totalLessons, $completedLessons, $moduleId, $studentId);
+
+        // 8 placeholders: d i i s i i i i
+        $stmt2->bind_param(
+            "diisiiii",
+            $percentage,
+            $totalLessons,
+            $completedLessons,
+            $status,
+            $isFinished,
+            $isFinished,
+            $moduleId,
+            $studentId
+        );
+
         $ok = $stmt2->execute();
         if (!$ok) {
             error_log('[updateModuleProgress] execute failed: ' . $stmt2->error);
         }
         return $ok;
+    }
+
+    public function getModuleProgressMap($studentId)
+    {
+        if (!$studentId)
+            return [];
+
+        $stmt = $this->db->prepare("
+        SELECT interactive_module_id, status, completion_percentage, is_finished
+        FROM tbl_module_progress
+        WHERE student_id = ?
+    ");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $map = [];
+        foreach ($rows as $r) {
+            $map[(int) $r['interactive_module_id']] = [
+                'status' => $r['status'],
+                'completion_percentage' => (float) $r['completion_percentage'],
+                'is_finished' => (int) $r['is_finished'],
+            ];
+        }
+        return $map;
     }
 
     public function getStartedModuleIds($studentId)
