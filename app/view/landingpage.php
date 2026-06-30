@@ -154,45 +154,102 @@
         </main> -->
 
 
-        <div class="hero">
-            <div class="hero-img-fallback"></div>
-            <div class="hero-overlay"></div>
+        <div class="main-hero">
+            <div class="hero">
+                <div class="hero-text">
+                    <div class="hero-content">
+                        <div class="hero-eyebrow">Academic & Career Pathways</div>
+                        <h1 class="hero-title">
+                            <!-- <div class="line1">Choose the Path That,</div>
+                            <div class="line2">Matches Your Passion</div> -->
+                            <!-- <div class="line1">Choose the Path That, <div class="line2">Matches Your Passion</div></div> -->
+                            Choose the Path That, <b>Matches Your Passion</b>
+                        </h1>
+                        <p class="hero-sub">
+                            Every great journey starts with the right direction. Discover the strand that best fits your
+                            passion, talents, and career aspirations. Explore opportunities that will develop your
+                            skills,
+                            unlock your potential, and prepare you for a successful future.
+                        </p>
+                        <div class="hero-cta-row">
+                            <a href="#about" class="btn-primary">Explore the Strand</a>
+                            <a href="#modules" class="btn-secondary">View Modules</a>
+                        </div>
+                    </div>
 
-            <div class="hero-content">
-                <div class="hero-eyebrow">TVL Track · Technical-Vocational Livelihood</div>
-                <h1 class="hero-title">
-                    <div class="line1">Computer Systems</div>
-                    <div class="line2">Servicing</div>
-                </h1>
-                <p class="hero-sub">
-                    Build. Diagnose. Repair. Maintain. The CSS strand trains you to master the hardware and software
-                    that
-                    powers the modern world.
-                </p>
-                <div class="hero-cta-row">
-                    <a href="#about" class="btn-primary">Explore the Strand</a>
-                    <a href="#modules" class="btn-secondary">View Modules</a>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-number">NC II</div>
+                            <div class="stat-label">Tesda Certification</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">160+</div>
+                            <div class="stat-label">Training Hours</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">1,000+</div>
+                            <div class="stat-label">Job Openings/Year</div>
+                        </div>
+                        <!-- <div class="stat-item">
+                            <div class="stat-number">4</div>
+                            <div class="stat-label">Core Competencies</div>
+                        </div> -->
+                    </div>
+                </div>
+                <div class="hero-img">
+                    <img src="../images/5.png" alt="">
+                    <img src="../images/6.png" alt="">
+                    <img src="../images/7.png" alt="">
+                    <img src="../images/8.png" alt="">
+                    <img src="../images/9.png" alt="">
                 </div>
             </div>
+        </div>
 
-            <div class="hero-stats">
-                <div class="stat-item">
-                    <div class="stat-number">NC II</div>
-                    <div class="stat-label">Tesda Certification</div>
+        <!-- FLOATING STRAND CARDS -->
+        <div class="strands-float-wrap">
+            <div class="strands-grid">
+                <div class="strand-card accent-blue">
+                    <img class="strand-card-img"
+                        src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&q=80" alt="ICT Strand">
+                    <div class="strand-card-body">
+                        <div class="strand-card-eyebrow">TVL · ICT</div>
+                        <div class="strand-card-title">Information & Communications Technology</div>
+                        <div class="strand-card-desc">Pairs naturally with CSS — where CSS builds and repairs the
+                            machine,
+                            ICT focuses on the programs and systems that run on it.</div>
+                        <a href="#" class="strand-card-btn">View Strand →</a>
+                    </div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-number">160+</div>
-                    <div class="stat-label">Training Hours</div>
+
+                <div class="strand-card accent-gold">
+                    <img class="strand-card-img"
+                        src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&q=80"
+                        alt="Electronics Strand">
+                    <div class="strand-card-body">
+                        <div class="strand-card-eyebrow">TVL · Electronics</div>
+                        <div class="strand-card-title">Electrical & Electronics Technology</div>
+                        <div class="strand-card-desc">Shares core competencies with CSS in circuitry, soldering, and
+                            component-level troubleshooting.</div>
+                        <a href="#" class="strand-card-btn">View Strand →</a>
+                    </div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-number">1,000+</div>
-                    <div class="stat-label">Job Openings/Year</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">4</div>
-                    <div class="stat-label">Core Competencies</div>
+
+                <div class="strand-card accent-purple">
+                    <img class="strand-card-img"
+                        src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&q=80"
+                        alt="Industrial Arts Strand">
+                    <div class="strand-card-body">
+                        <div class="strand-card-eyebrow">TVL · Industrial Arts</div>
+                        <div class="strand-card-title">Industrial Arts & Technical Drafting</div>
+                        <div class="strand-card-desc">Teaches the technical drawing and fabrication skills CSS students
+                            use
+                            when documenting layouts and server room setups.</div>
+                        <a href="#" class="strand-card-btn">View Strand →</a>
+                    </div>
                 </div>
             </div>
+            <div class="strands-spacer"></div>
         </div>
 
         <section class="section1" id="about">
@@ -200,15 +257,32 @@
             <div class="about-parent">
                 <div class="about-text reveal">
                     <div class="section-icon">
-                        What is CSS?
+                        Why it matters
                     </div>
 
-                    <h2>Computer System Servicing (CSS) - Learn, Practice and Troubleshoot</h2>
-                    <p>Computer Systems Servicing (CSS) is a TESDA-accredited technical-vocational program that trains
+                    <h2>Your Strand Shapes <b>Your Next Step</b></h2>
+                    <!-- <p>Computer Systems Servicing (CSS) is a TESDA-accredited technical-vocational program that trains
                         students in the installation, configuration, maintenance, and repair of computer hardware and
                         software systems. CSS graduates are in high demand across every industry that uses computers —
                         which
-                        is basically everywhere.</p>
+                        is basically everywhere.</p> -->
+
+                    <p>Choosing a Senior High School strand is one of the biggest decisions before college or work.
+                        Every track — Academic, Technical-Vocational-Livelihood, Sports, and Arts & Design — leads to a
+                        different mix of subjects, skills, and opportunities after graduation. <br> <br>
+
+                        This page brings every option together so you can compare what each strand teaches, the tools
+                        and equipment you'll actually use, and the careers or college courses each one prepares you for
+                        — before you have to choose.</p>
+
+                    <div class="tag-row">
+                        <div class="tag tag-cyan">Academic Track</div>
+                        <div class="tag tag-cyan">TVL Track</div>
+                        <div class="tag tag-purple">Sports Track</div>
+                        <div class="tag tag-purple">Arts & Design</div>
+                        <div class="tag tag-gold">Deped K-12</div>
+                        <div class="tag tag-gold">Career Guidance</div>
+                    </div>
 
                     <div class="inside-parent">
                         <div class="inside">
@@ -256,9 +330,14 @@
                 </div>
 
                 <div class="about-image reveal reveal-delay-2">
-                    <iframe width="530" height="320" style="border-radius: 10px;"
+                    <!-- <iframe width="530" height="320" style="border-radius: 10px;"
                         src="https://www.youtube.com/embed/L8-2Rjgdgu0?si=yNirZMF6JJSYmqUV" title="YouTube video player"
                         frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe> -->
+
+                    <iframe width="560" height="380" src="https://www.youtube.com/embed/ML_hMpuXTHk?si=fdMLQ3Ms6_0x2CCv"
+                        title="YouTube video player" frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
