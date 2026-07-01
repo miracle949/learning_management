@@ -54,7 +54,8 @@
                 <div class="logo-text">
                     <p><b>i</b>Learn</p>
                 </div> -->
-                <img src="../images/iLearn-7.png" alt="">
+                <!-- <img src="../images/iLearn-7.png" alt=""> -->
+                <h3>SHS Strand</h3>
             </div>
 
             <div class="nav-list">
@@ -214,7 +215,7 @@
                         src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&q=80" alt="ICT Strand">
                     <div class="strand-card-body">
                         <div class="strand-card-eyebrow">TVL · ICT</div>
-                        <div class="strand-card-title">Information & Communications Technology</div>
+                        <div class="strand-card-title">Electrical & Electronics Technology</div>
                         <div class="strand-card-desc">Pairs naturally with CSS — where CSS builds and repairs the
                             machine,
                             ICT focuses on the programs and systems that run on it.</div>
@@ -367,9 +368,9 @@
                 </div> -->
                 <div class="learn-text reveal">
                     <div class="student-icon">
-                        Explore Our features
+                        Core Modules
                     </div>
-                    <h2>Everything You Need to Succeed in CSS</h2>
+                    <h2>What You Will Learn</h2>
 
                     <p>Enhance your Computer Systems Servicing skills through interactive simulations, engaging learning
                         modules, assessments, and real-time progress tracking—all within one specialized learning
@@ -378,60 +379,119 @@
 
                 <div class="learn-body">
                     <div class="card-features reveal reveal-delay-1">
-                        <div class="icon-features">
+                        <!-- <div class="icon-features">
                             <i class="fa fa-desktop"></i>
+                        </div> -->
+                        <div class="card-features-header">
+
                         </div>
+                        <div class="card-features-body">
+                            <h5>Interactive Simulations</h5>
 
-                        <h5>Interactive Simulations</h5>
-
-                        <p>Practice hardware assembly, troubleshooting, and networking tasks through engaging
-                            simulations.</p>
+                            <p>Practice hardware assembly, troubleshooting, and networking tasks through engaging
+                                simulations.</p>
 
 
-                        <span>Experience hands-on virtual labs that mimic real-world CSS scenarios — from building a PC
-                            from scratch to diagnosing network failures.</span>
+                            <span>Experience hands-on virtual labs that mimic real-world CSS scenarios — from building a
+                                PC
+                                from scratch to diagnosing network failures.</span>
+                        </div>
                     </div>
 
                     <div class="card-features reveal reveal-delay-2">
-                        <div class="icon-features">
-                            <i class="fa fa-book-open"></i>
+                        <!-- <div class="icon-features">
+                            <i class="fa fa-clipboard-check"></i>
+                        </div> -->
+                        <div class="card-features-header">
+
                         </div>
 
-                        <h5>Learning Modules</h5>
+                        <div class="card-features-body">
+                            <h5>Assessments & Quizzes</h5>
 
-                        <p>Access lessons, activities, and resources anytime and anywhere.</p>
+                            <p>Test your knowledge and receive instant feedback.</p>
 
 
-                        <span>Structured learning paths aligned with the TESDA CSS NC II competency standards — covering
-                            OS installation, LAN setup, and system maintenance at your own pace.</span>
+                            <span>Challenge yourself with topic-based quizzes, timed assessments, and mock TESDA-style
+                                exams. Instant scoring and detailed explanations help you build exam confidence.</span>
+                        </div>
                     </div>
 
                     <div class="card-features reveal reveal-delay-3">
-                        <div class="icon-features">
+                        <!-- <div class="icon-features">
                             <i class="fa fa-chart-line"></i>
+                        </div> -->
+                        <div class="card-features-header">
+
                         </div>
 
-                        <h5>Progress Tracking</h5>
+                        <div class="card-features-body">
+                            <h5>Progress Tracking</h5>
 
-                        <p>Monitor your achievements, completed activities, and learning progress.</p>
+                            <p>Monitor your achievements, completed activities, and learning progress.</p>
 
 
-                        <span>Get a clear visual overview of your performance across all modules. Spot areas that need
-                            improvement and stay motivated with milestone badges and completion rates.</span>
+                            <span>Get a clear visual overview of your performance across all modules. Spot areas that
+                                need
+                                improvement and stay motivated with milestone badges and completion rates.</span>
+                        </div>
                     </div>
 
                     <div class="card-features reveal reveal-delay-4">
-                        <div class="icon-features">
+                        <!-- <div class="icon-features">
                             <i class="fa fa-clipboard-check"></i>
+                        </div> -->
+                        <div class="card-features-header">
+
                         </div>
 
-                        <h5>Assessments & Quizzes</h5>
+                        <div class="card-features-body">
+                            <h5>Assessments & Quizzes</h5>
 
-                        <p>Test your knowledge and receive instant feedback.</p>
+                            <p>Test your knowledge and receive instant feedback.</p>
 
 
-                        <span>Challenge yourself with topic-based quizzes, timed assessments, and mock TESDA-style
-                            exams. Instant scoring and detailed explanations help you build exam confidence.</span>
+                            <span>Challenge yourself with topic-based quizzes, timed assessments, and mock TESDA-style
+                                exams. Instant scoring and detailed explanations help you build exam confidence.</span>
+                        </div>
+                    </div>
+
+                    <div class="card-features reveal reveal-delay-4">
+                        <!-- <div class="icon-features">
+                            <i class="fa fa-clipboard-check"></i>
+                        </div> -->
+                        <div class="card-features-header">
+
+                        </div>
+
+                        <div class="card-features-body">
+                            <h5>Assessments & Quizzes</h5>
+
+                            <p>Test your knowledge and receive instant feedback.</p>
+
+
+                            <span>Challenge yourself with topic-based quizzes, timed assessments, and mock TESDA-style
+                                exams. Instant scoring and detailed explanations help you build exam confidence.</span>
+                        </div>
+                    </div>
+
+                    <div class="card-features reveal reveal-delay-4">
+                        <!-- <div class="icon-features">
+                            <i class="fa fa-clipboard-check"></i>
+                        </div> -->
+                        <div class="card-features-header">
+
+                        </div>
+
+                        <div class="card-features-body">
+                            <h5>Assessments & Quizzes</h5>
+
+                            <p>Test your knowledge and receive instant feedback.</p>
+
+
+                            <span>Challenge yourself with topic-based quizzes, timed assessments, and mock TESDA-style
+                                exams. Instant scoring and detailed explanations help you build exam confidence.</span>
+                        </div>
                     </div>
                 </div>
             </div>
