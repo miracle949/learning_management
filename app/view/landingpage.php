@@ -70,10 +70,10 @@
                         <a href="#about">About</a>
                     </li>
                     <li>
-                        <a href="#features">Features</a>
+                        <a href="#features">Strands</a>
                     </li>
                     <li>
-                        <a href="#skills-training">Skills Training</a>
+                        <a href="#skills-training">Tracks</a>
                     </li>
                     <li>
                         <a href="#how-it-works">How it Works</a>
@@ -94,76 +94,12 @@
             </div>
         </nav>
 
-        <!-- <main>
-
-            <div class="hero-card c1"><span class="card-dot"></span>🖥️ Hardware Assembly & Troubleshooting</div>
-
-            <div class="hero-card c2 blue-card"><span class="card-dot"></span>🔧 PC Repair · Networking · OS Install
-            </div>
-
-            <div class="hero-card c3"><span class="card-dot"></span>🏆 TESDA NC II Certified in 6 Months</div>
-
-            <div class="hero-card c4"><span class="card-dot"></span>🏆 TESDA NC II Certified in 6 Months</div>
-
-
-            <div class="main-text">
-                <div class="main-icon">
-                    <i class="fa fa-shield"></i>
-                    <p>Built for Senior High School Students</p>
-                </div>
-                <h2>Transform
-                    <span class="word-wrap">
-                        <span>Education</span>
-                        <span>Learning</span>
-                        <span>Mastery</span>
-                        <span>Knowledge</span>
-                        <span>Teaching</span>
-                    </span>
-                    with Moderm LMS
-                </h2>
-                <h2>Study smarter, not <b>harder.</b></h2>
-                <h2>
-                    Study smart, play your part,
-
-                    <div class="highlight">learning here is just the start.</div>
-                </h2>
-                <p>Study smart, play your part, and discover endless opportunities to learn. iLearn combines engaging
-                    lessons, interactive activities, and realistic Computer System Servicing simulations to help
-                    students build knowledge, gain practical experience, and achieve their full potential.</p>
-                <div class="learning-today">
-                    <a href="#">
-                        <span>Explore Courses</span>
-                    </a>
-
-                    <a href="#">
-                        <span>See how it works</span>
-                    </a>
-                </div>
-
-            </div>
-
-            <div class="main-image">
-                <div class="border"></div>
-            </div>
-
-            <div style="position:absolute;bottom:0;left:0;right:0;z-index:3;line-height:0; border: none;">
-                <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"
-                    style="width:100%;height:80px;display:block; border: none;">
-                    <path d="M0,40 C360,90 1080,0 1440,50 L1440,80 L0,80 Z" fill="#FBF8F3" />
-                </svg>
-            </div>
-        </main> -->
-
-
         <div class="main-hero">
             <div class="hero">
                 <div class="hero-text">
                     <div class="hero-content">
                         <div class="hero-eyebrow">Academic & Career Pathways</div>
                         <h1 class="hero-title">
-                            <!-- <div class="line1">Choose the Path That,</div>
-                            <div class="line2">Matches Your Passion</div> -->
-                            <!-- <div class="line1">Choose the Path That, <div class="line2">Matches Your Passion</div></div> -->
                             Choose the Path That, <b>Matches Your Passion</b>
                         </h1>
                         <p class="hero-sub">
@@ -191,10 +127,6 @@
                             <div class="stat-number">1,000+</div>
                             <div class="stat-label">Job Openings/Year</div>
                         </div>
-                        <!-- <div class="stat-item">
-                            <div class="stat-number">4</div>
-                            <div class="stat-label">Core Competencies</div>
-                        </div> -->
                     </div>
                 </div>
                 <div class="hero-img">
@@ -203,6 +135,19 @@
                     <img src="../images/7.png" alt="">
                     <img src="../images/8.png" alt="">
                     <img src="../images/9.png" alt="">
+
+                    <div class="hero-badge hero-badge-top">
+                        <div class="hero-badge-icon"><i class="fa fa-star"></i></div>
+                        <div class="hero-badge-text">
+                            <div class="hero-badge-title">NC II Ready</div>
+                            <div class="hero-badge-sub">TESDA Certified Track</div>
+                        </div>
+                    </div>
+
+                    <div class="hero-badge hero-badge-bottom">
+                        <div class="hero-badge-num">98%</div>
+                        <div class="hero-badge-label">Pass Rate</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -262,11 +207,6 @@
                     </div>
 
                     <h2>Your Strand Shapes <b>Your Next Step</b></h2>
-                    <!-- <p>Computer Systems Servicing (CSS) is a TESDA-accredited technical-vocational program that trains
-                        students in the installation, configuration, maintenance, and repair of computer hardware and
-                        software systems. CSS graduates are in high demand across every industry that uses computers —
-                        which
-                        is basically everywhere.</p> -->
 
                     <p>Choosing a Senior High School strand is one of the biggest decisions before college or work.
                         Every track — Academic, Technical-Vocational-Livelihood, Sports, and Arts & Design — leads to a
@@ -331,12 +271,6 @@
                 </div>
 
                 <div class="about-image reveal reveal-delay-2">
-                    <!-- <iframe width="530" height="320" style="border-radius: 10px;"
-                        src="https://www.youtube.com/embed/L8-2Rjgdgu0?si=yNirZMF6JJSYmqUV" title="YouTube video player"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe> -->
-
                     <iframe width="560" height="380" src="https://www.youtube.com/embed/ML_hMpuXTHk?si=fdMLQ3Ms6_0x2CCv"
                         title="YouTube video player" frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -361,143 +295,130 @@
         <section class="section2" id="features">
             <div class="learn-own-parents">
 
-                <!-- <div class="learn-image-parents">
-                    <div class="learn-image">
-                        <img src="../images/learn-photo.jpg" alt="">
-                    </div>
-                </div> -->
                 <div class="learn-text reveal">
                     <div class="student-icon">
-                        Core Modules
+                        All Strands
                     </div>
-                    <h2>What You Will Learn</h2>
+                    <h2>Explore Every Strand</h2>
 
-                    <p>Enhance your Computer Systems Servicing skills through interactive simulations, engaging learning
-                        modules, assessments, and real-time progress tracking—all within one specialized learning
-                        platform.</p>
+                    <p>A quick look at the strands offered under each Senior High School track, so you can see the full
+                        picture before narrowing things down..</p>
                 </div>
 
                 <div class="learn-body">
                     <div class="card-features reveal reveal-delay-1">
-                        <!-- <div class="icon-features">
-                            <i class="fa fa-desktop"></i>
-                        </div> -->
                         <div class="card-features-header">
-
+                            <img class="module-img" src="../images/css.jpg" alt="">
                         </div>
                         <div class="card-features-body">
-                            <h5>Interactive Simulations</h5>
+                            <div class="module-id">TVL Track</div>
 
-                            <p>Practice hardware assembly, troubleshooting, and networking tasks through engaging
-                                simulations.</p>
+                            <h5>CSS - Computer System Servicing</h5>
 
+                            <p>Hands-on training in PC assembly, OS installation, networking, and hardware repair,
+                                leading to a TESDA NC II certificate.</p>
 
-                            <span>Experience hands-on virtual labs that mimic real-world CSS scenarios — from building a
-                                PC
-                                from scratch to diagnosing network failures.</span>
+                        </div>
+                    </div>
+
+                    <div class="card-features reveal reveal-delay-1">
+                        <div class="card-features-header">
+                            <img class="module-img" src="../images/stem.jpg" alt="">
+                        </div>
+                        <div class="card-features-body">
+                            <div class="module-id">Academic Track</div>
+
+                            <h5>STEM - Science, Tech, Engineering & Math</h5>
+
+                            <p>Heavy on math and lab sciences. Built for students aiming at engineering, medicine, IT,
+                                or pure science degrees.</p>
+
                         </div>
                     </div>
 
                     <div class="card-features reveal reveal-delay-2">
-                        <!-- <div class="icon-features">
-                            <i class="fa fa-clipboard-check"></i>
-                        </div> -->
                         <div class="card-features-header">
-
+                            <img class="module-img" src="../images/abm.jpg" alt="">
                         </div>
 
                         <div class="card-features-body">
-                            <h5>Assessments & Quizzes</h5>
+                            <div class="module-id">Academic Track</div>
 
-                            <p>Test your knowledge and receive instant feedback.</p>
+                            <h5>ABM — Accountancy, Business & Management</h5>
 
-
-                            <span>Challenge yourself with topic-based quizzes, timed assessments, and mock TESDA-style
-                                exams. Instant scoring and detailed explanations help you build exam confidence.</span>
+                            <p>Covers finance, marketing, and entrepreneurship — a direct path into business,
+                                accountancy, or management degrees.</p>
                         </div>
                     </div>
 
                     <div class="card-features reveal reveal-delay-3">
-                        <!-- <div class="icon-features">
-                            <i class="fa fa-chart-line"></i>
-                        </div> -->
                         <div class="card-features-header">
-
+                            <img class="module-img" src="../images/humms.jpg" alt="">
                         </div>
 
                         <div class="card-features-body">
-                            <h5>Progress Tracking</h5>
+                            <div class="module-id">Academic Track</div>
 
-                            <p>Monitor your achievements, completed activities, and learning progress.</p>
+                            <h5>HUMSS — Humanities & Social Sciences</h5>
 
+                            <p>Focuses on communication, law, and social issues — ideal for future lawyers, teachers,
+                                writers, and public servants.</p>
 
-                            <span>Get a clear visual overview of your performance across all modules. Spot areas that
-                                need
-                                improvement and stay motivated with milestone badges and completion rates.</span>
                         </div>
                     </div>
 
                     <div class="card-features reveal reveal-delay-4">
-                        <!-- <div class="icon-features">
-                            <i class="fa fa-clipboard-check"></i>
-                        </div> -->
                         <div class="card-features-header">
-
+                            <img class="module-img" src="../images/cookery.jpg" alt="">
                         </div>
 
                         <div class="card-features-body">
-                            <h5>Assessments & Quizzes</h5>
+                            <div class="module-id">TVL Track</div>
 
-                            <p>Test your knowledge and receive instant feedback.</p>
+                            <h5>CBF - Cookery Bread & Pastries Food & Beverage Services</h5>
 
+                            <p>Develop skills in cooking, baking, and food service, preparing students for careers in
+                                restaurants, hotels, and the hospitality industry.</p>
 
-                            <span>Challenge yourself with topic-based quizzes, timed assessments, and mock TESDA-style
-                                exams. Instant scoring and detailed explanations help you build exam confidence.</span>
                         </div>
                     </div>
 
                     <div class="card-features reveal reveal-delay-4">
-                        <!-- <div class="icon-features">
-                            <i class="fa fa-clipboard-check"></i>
-                        </div> -->
                         <div class="card-features-header">
-
+                            <img class="module-img" src="../images/beauty.avif" alt="">
                         </div>
 
                         <div class="card-features-body">
-                            <h5>Assessments & Quizzes</h5>
+                            <div class="module-id">TVL Track</div>
 
-                            <p>Test your knowledge and receive instant feedback.</p>
+                            <h5>BHW - Beauty Care Hair Dressing Wellness Massage</h5>
 
+                            <p>Learn beauty care, hairstyling, and wellness massage, leading to careers in salons, spas,
+                                and the beauty industry.</p>
 
-                            <span>Challenge yourself with topic-based quizzes, timed assessments, and mock TESDA-style
-                                exams. Instant scoring and detailed explanations help you build exam confidence.</span>
                         </div>
                     </div>
 
                     <div class="card-features reveal reveal-delay-4">
-                        <!-- <div class="icon-features">
-                            <i class="fa fa-clipboard-check"></i>
-                        </div> -->
                         <div class="card-features-header">
-
+                            <img class="module-img" src="../images/epas.avif" alt="">
                         </div>
 
                         <div class="card-features-body">
-                            <h5>Assessments & Quizzes</h5>
+                            <div class="module-id">TVL Track</div>
 
-                            <p>Test your knowledge and receive instant feedback.</p>
+                            <h5>EPAS - Electronic Products Assembly & Servicing</h5>
 
+                            <p>Gain hands-on experience in assembling, testing, and repairing electronic devices for
+                                careers in electronics and technical servicing.</p>
 
-                            <span>Challenge yourself with topic-based quizzes, timed assessments, and mock TESDA-style
-                                exams. Instant scoring and detailed explanations help you build exam confidence.</span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="section4" id="skills-training">
+        <!-- <section class="section4" id="skills-training">
             <div class="skills-training-parent">
                 <div class="ready-parents reveal">
                     <div class="ready-icon">
@@ -571,6 +492,142 @@
                     </div>
                 </div>
             </div>
+        </section> -->
+
+
+        <!-- TRACKS COMPARISON -->
+        <section id="components">
+            <div class="components-parent">
+                <div class="components-header">
+                    <div class="section-label">Compare Tracks</div>
+                    <div class="section-title">What Each Track Focuses On</div>
+                    <p class="section-desc">Every strand belongs to one of four major tracks. Here's what sets each
+                        track
+                        apart
+                        — the subjects, skills, and overall focus.</p>
+                </div>
+
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="switchTab('hardware', this)">Academic Track</button>
+                    <button class="tab-btn" onclick="switchTab('software', this)">TVL Track</button>
+                    <button class="tab-btn" onclick="switchTab('network', this)">Sports &amp; Arts Tracks</button>
+                </div>
+
+                <!-- ACADEMIC TAB -->
+                <div class="tab-pane active" id="tab-hardware">
+                    <div class="parts-grid">
+                        <div class="part-card">
+                            <img class="part-img"
+                                src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=400&q=80"
+                                alt="Laboratory equipment">
+                            <div class="part-name">STEM</div>
+                            <div class="part-desc">Advanced math, physics, chemistry, and biology for students aiming at
+                                engineering or medical degrees.</div>
+                        </div>
+                        <div class="part-card">
+                            <img class="part-img"
+                                src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=80"
+                                alt="Business charts">
+                            <div class="part-name">ABM</div>
+                            <div class="part-desc">Business math, financial statements, and entrepreneurship for future
+                                managers and accountants.</div>
+                        </div>
+                        <div class="part-card">
+                            <img class="part-img"
+                                src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=400&q=80"
+                                alt="Group discussion">
+                            <div class="part-name">HUMSS</div>
+                            <div class="part-desc">Philosophy, social science, and creative writing for future lawyers,
+                                teachers, and writers.</div>
+                        </div>
+                        <div class="part-card">
+                            <img class="part-img"
+                                src="https://images.unsplash.com/photo-1551836022-d5f88ed5a5f9?w=400&q=80"
+                                alt="General academic studies">
+                            <div class="part-name">General Academic Strand</div>
+                            <div class="part-desc">A flexible mix of subjects for students who aren't sure which
+                                specific
+                                path to commit to yet.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TVL TAB -->
+                <div class="tab-pane" id="tab-software">
+                    <div class="parts-grid">
+                        <div class="part-card">
+                            <img class="part-img"
+                                src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&q=80"
+                                alt="Computer networking">
+                            <div class="part-name">Computer Systems Servicing</div>
+                            <div class="part-desc">PC assembly, OS installation, and basic networking — a path into IT
+                                support.</div>
+                        </div>
+                        <div class="part-card">
+                            <img class="part-img"
+                                src="https://images.unsplash.com/photo-1551218808-94e220e084d2?w=400&q=80"
+                                alt="Cooking class">
+                            <div class="part-name">Cookery &amp; Food Service</div>
+                            <div class="part-desc">Food prep, kitchen safety, and service skills for the hospitality
+                                industry.</div>
+                        </div>
+                        <div class="part-card">
+                            <img class="part-img"
+                                src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&q=80"
+                                alt="Electrical wiring">
+                            <div class="part-name">Electrical Installation</div>
+                            <div class="part-desc">Wiring, circuits, and electrical maintenance leading to a trade
+                                certification.</div>
+                        </div>
+                        <div class="part-card">
+                            <img class="part-img"
+                                src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=400&q=80"
+                                alt="Farming">
+                            <div class="part-name">Agri-Fishery Arts</div>
+                            <div class="part-desc">Crop and livestock production, plus aquaculture, for agribusiness
+                                careers.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SPORTS & ARTS TAB -->
+                <div class="tab-pane" id="tab-network">
+                    <div class="parts-grid">
+                        <div class="part-card">
+                            <img class="part-img"
+                                src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400&q=80"
+                                alt="Athletes training">
+                            <div class="part-name">Sports Science</div>
+                            <div class="part-desc">Fitness training, sports officiating, and coaching fundamentals.
+                            </div>
+                        </div>
+                        <div class="part-card">
+                            <img class="part-img"
+                                src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&q=80"
+                                alt="Visual arts studio">
+                            <div class="part-name">Visual Arts</div>
+                            <div class="part-desc">Drawing, design fundamentals, and digital art tools for media and
+                                design careers.</div>
+                        </div>
+                        <div class="part-card">
+                            <img class="part-img"
+                                src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&q=80"
+                                alt="Performing arts">
+                            <div class="part-name">Performing Arts</div>
+                            <div class="part-desc">Music, theater, and dance for students pursuing the performing arts.
+                            </div>
+                        </div>
+                        <div class="part-card">
+                            <img class="part-img"
+                                src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&q=80"
+                                alt="Film and media production">
+                            <div class="part-name">Media Arts</div>
+                            <div class="part-desc">Photography, film, and digital storytelling for media production
+                                careers.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <section class="section3" id="how-it-works">
@@ -591,8 +648,6 @@
                     <div class="row">
                         <div class="col-lg-4 col-md-12">
                             <div class="card reveal reveal-delay-1">
-                                <!-- <span>STEP 01</span> -->
-
                                 <div class="step-icon">
                                     <i class="fa fa-user"></i>
                                 </div>
@@ -609,8 +664,6 @@
                     <div class="row d-flex justify-content-end">
                         <div class="col-lg-4 col-md-12 d-flex justify-content-end">
                             <div class="card reveal reveal-delay-2">
-                                <!-- <span>STEP 02</span> -->
-
                                 <div class="step-icon">
                                     <i class="fa fa-book-open"></i>
                                 </div>
@@ -628,8 +681,6 @@
                     <div class="row">
                         <div class="col-lg-4 col-md-12">
                             <div class="card reveal reveal-delay-3">
-                                <!-- <span>STEP 03</span> -->
-
                                 <div class="step-icon">
                                     <i class="fa fa-desktop"></i>
                                 </div>
@@ -648,8 +699,6 @@
                     <div class="row d-flex justify-content-end">
                         <div class="col-lg-4 col-md-12 d-flex justify-content-end">
                             <div class="card reveal reveal-delay-4">
-                                <!-- <span>STEP 04</span> -->
-
                                 <div class="step-icon">
                                     <i class="fa fa-clipboard-check"></i>
                                 </div>
@@ -668,8 +717,6 @@
                     <div class="row">
                         <div class="col-lg-4 col-md-12">
                             <div class="card reveal reveal-delay-1">
-                                <!-- <span>STEP 05</span> -->
-
                                 <div class="step-icon">
                                     <i class="fa fa-line-chart"></i>
                                 </div>
@@ -779,7 +826,6 @@
         </div>
 
         <div class="section6" id="cta-section">
-            <!-- <div class="pulse-grid"></div> -->
             <h2 class="reveal">Are You Ready To Start Your Journey?</h2>
             <p class="reveal reveal-delay-1">Begin your path to becoming a skilled Computer System Servicing
                 professional. Access interactive lessons,
@@ -828,34 +874,12 @@
         </footer>
 
         <div class="back-top" id="backTop">
-            <!-- <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#050D14" stroke-width="3">
-                <path d="M12 19V5M5 12l7-7 7 7" />
-            </svg> -->
             <i class="fa fa-arrow-up"></i>
         </div>
     </div>
 
     <!-- bootstrap link javascript -->
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const wrap = document.querySelector('.main-text h2 .word-wrap');
-            const spans = wrap.querySelectorAll('span');
-
-            // Set initial width to first word
-            wrap.style.width = spans[0].offsetWidth + 'px';
-
-            setInterval(() => {
-                spans.forEach(span => {
-                    const opacity = parseFloat(getComputedStyle(span).opacity);
-                    if (opacity > 0.5) {
-                        wrap.style.width = span.offsetWidth + 'px';
-                    }
-                });
-            }, 100);
-        });
-    </script>
 
     <script>
         // Scroll reveal
@@ -871,6 +895,52 @@
             backTop.classList.toggle('show', window.scrollY > 600);
         });
         backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    </script>
+
+    <script>
+        // ── TAB SWITCHER ──
+        function switchTab(id, btn) {
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + id).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // ── VIDEO SWITCHER ──
+        function changeVideo(src) {
+            document.getElementById('mainVideo').src = src;
+        }
+
+        // ── SCROLL REVEAL ──
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.08 });
+
+        document.querySelectorAll('.module-card, .part-card, .career-card, .panel, .about-grid').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(24px)';
+            el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(el);
+        });
+
+        // ── HERO TITLE FLICKER ──
+        const line2 = document.querySelector('.hero-title .line2');
+        setTimeout(() => {
+            let flickers = 0;
+            const flicker = setInterval(() => {
+                line2.style.opacity = line2.style.opacity === '0' ? '1' : '0';
+                flickers++;
+                if (flickers >= 6) {
+                    clearInterval(flicker);
+                    line2.style.opacity = '1';
+                }
+            }, 80);
+        }, 800);
     </script>
 </body>
 
