@@ -122,7 +122,7 @@
                 </div>
 
                 <div class="card-parent-box">
-                    <div class="card-box" style="--accent-glow: rgba(0, 255, 136, 0.10);">
+                    <div class="card-box">
                         <a href="/learning_management/public/?url=classes">
                             <div class="data_icon">
                                 <i class="fa fa-book-open"></i>
@@ -137,7 +137,7 @@
                         </a>
                     </div>
 
-                    <div class="card-box" style="--accent-glow:rgba(255, 59, 59, 0.10);">
+                    <div class="card-box">
                         <a href="/learning_management/public/?url=assignments">
                             <div class="data_icon">
                                 <i class="fa fa-clock"></i>
@@ -152,7 +152,7 @@
                         </a>
                     </div>
 
-                    <div class="card-box" style="--accent-glow: rgba(0, 207, 255, 0.10);">
+                    <div class="card-box">
                         <a href="#">
                             <div class="data_icon">
                                 <i class="fa fa-check-circle"></i>
@@ -167,7 +167,7 @@
                         </a>
                     </div>
 
-                    <div class="card-box" style="--accent-glow: rgba(155, 93, 229, 0.10);">
+                    <div class="card-box">
                         <div class="data_text">
                             <a href="#">
                                 <div class="data_icon">
@@ -250,8 +250,8 @@
                                     </div>
                                 <?php else: ?>
                                     <div class="body is-empty" style="height: 233px;">
-                                        <i class="fa fa-check-circle" style="font-size: 20px; color: var(--green-mid)"></i>
-                                        <p class="m-0" style="font-size: 14.5px; color: var(--light-muted);">No pending tasks.
+                                        <i class="fa fa-check-circle" style="font-size: 20px; color: var(--text-dim)"></i>
+                                        <p class="m-0" style="font-size: 14.5px; color: var(--text-dim);">No pending tasks.
                                         </p>
                                     </div>
                                 <?php endif; ?>

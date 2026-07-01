@@ -19,58 +19,49 @@
     <div class="container-fluid p-0">
 
         <main>
-            <!-- <div class="hero-bg"></div>
-            <div class="stars" id="stars"></div>
-            <div class="orb orb-1"></div>
-            <div class="orb orb-2"></div>
-            <div class="orb orb-3"></div> -->
+            <!-- <div class="main-image">
+                <div class="main-parent">
+                    <div class="main-icon">
+                        <a href="/learning_management/public/?url=landingpage">
+                            <img src="../images/logo1.png" alt="">
+                            <h3>SHS Strand</h3>
+                        </a>
+                    </div>
+                    <div class="main-body">
+                        <h2>Ready to Start Your <b>Learning Journey?</b></h2>
 
-            <div class="main-image">
-                <div class="main-icon">
-                    <a href="/learning_management/public/?url=landingpage"><img src="../images/iLearn-8.png" alt=""></a>
+                        <p>Track your assignments, access class materials, and stay on top of your Computer System
+                            Servicing
+                            modules — all in one place.</p>
+                    </div>
+                    <div class="main-footer">
+                        <div class="footer-card">
+                            <div class="card-dot"></div>
+                            <span>Hardware Assembly & Troubleshooting</span>
+                        </div>
+
+                        <div class="footer-card">
+                            <div class="card-dot"></div>
+                            <span>PC Repair · Networking · OS Install</span>
+                        </div>
+
+                        <div class="footer-card">
+                            <div class="card-dot"></div>
+                            <span>TESDA NC II Certified in 6 Months</span>
+                        </div>
+
+                        <div class="footer-card">
+                            <div class="card-dot"></div>
+                            <span>TESDA NC II Certified in 6 Months</span>
+                        </div>
+                    </div>
+
+                    <div class="brand-footer">© 2026 iLearn-CSS · CSS Batch 2026</div>
                 </div>
-                <div class="main-body">
-                    <h2>Welcome ready to start your <b>learning journey?</b></h2>
-
-                    <p>Track your assignments, access class materials, and stay on top of your Computer System Servicing
-                        modules — all in one place.</p>
-                </div>
-                <div class="main-footer">
-                    <div class="footer-card">
-                        <div class="card-dot"></div>
-                        <span>Hardware Assembly & Troubleshooting</span>
-                    </div>
-
-                    <div class="footer-card">
-                        <div class="card-dot"></div>
-                        <span>PC Repair · Networking · OS Install</span>
-                    </div>
-
-                    <div class="footer-card">
-                        <div class="card-dot"></div>
-                        <span>TESDA NC II Certified in 6 Months</span>
-                    </div>
-
-                    <div class="footer-card">
-                        <div class="card-dot"></div>
-                        <span>TESDA NC II Certified in 6 Months</span>
-                    </div>
-                </div>
-
-                <div class="brand-footer">© 2026 iLearn-CSS · CSS Batch 2026</div>
             </div>
             <div class="main-form">
-                <!-- <div class="hero-card c1"><span class="card-dot"></span>🖥️ Hardware Assembly & Troubleshooting</div>
-
-                <div class="hero-card c2 blue-card"><span class="card-dot"></span>🔧 PC Repair · Networking · OS Install
-                </div>
-
-                <div class="hero-card c3"><span class="card-dot"></span>🏆 TESDA NC II Certified in 6 Months</div>
-
-                <div class="hero-card c4"><span class="card-dot"></span>🏆 TESDA NC II Certified in 6 Months</div> -->
 
                 <form action="?url=login" method="post">
-                    <!-- <div class="form-sub-parent"> -->
                     <div class="form-parent">
                         <div class="card-brand">
 
@@ -115,12 +106,72 @@
                             <p>Need help signing in? Contact your school's
                                 <br>
                                 CSS Instructor or <b>visit the Help Center</b>
-                                
+
                             </p>
                         </div>
                     </div>
-                    <!-- </div> -->
                 </form>
+            </div> -->
+
+            <div class="main-sub-form-parent">
+                <div class="main-image-form">
+                    <div class="carousel-slide slide-1">
+                        <img src="../images/login2.jpg" alt="">
+                    </div>
+
+                    <div class="carousel-slide slide-2">
+                        <img src="../images/login4.jpg" alt="">
+                    </div>
+
+                    <div class="carousel-slide slide-3">
+                        <img src="../images/login6.jpg" alt="">
+                    </div>
+                </div>
+
+                <div class="main-parent-form">
+                    <!-- <div class="card-badge">
+                        Students Learning Platform
+                    </div> -->
+                    <form action="?url=login" method="post">
+                        <div class="card-logo">
+                            <a href="/learning_management/public/?url=landingpage">
+                                <img src="../images/logo1.png" alt="">
+                                <h3>SHS Strand</h3>
+                            </a>
+                        </div>
+
+                        <h2>Hi, Welcome Back!</h2>
+
+                        <p>Unlock a world of learning with just one click. Log in to get started and access your
+                            account.
+                        </p>
+
+                        <div class="form-input form-input1">
+                            <label>Learner Reference Number (LRN)</label>
+                            <input type="text" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" id=""
+                                placeholder="Enter your email">
+                        </div>
+
+                        <div class="form-input form-input2">
+                            <label>Password</label>
+                            <input type="password" name="password" id="" placeholder="Enter your password">
+                        </div>
+
+                        <div class="form-forgot">
+                            <a href="#">Forgot Password</a>
+                        </div>
+
+                        <button class="submit" class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">Sign
+                            In</button>
+
+                        <div class="need-help">
+                            <p>Need help signing in? Contact your school's
+                                <br>
+                                CSS Instructor or <b>visit the Help Center</b>
+                            </p>
+                        </div>
+                    </form>
+                </div>
             </div>
         </main>
 

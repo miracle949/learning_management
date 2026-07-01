@@ -55,6 +55,8 @@
                     <p><b>i</b>Learn</p>
                 </div> -->
                 <!-- <img src="../images/iLearn-7.png" alt=""> -->
+                <!-- <div class="img-border"></div> -->
+                <img src="../images/logo1.png" alt="">
                 <h3>SHS Strand</h3>
             </div>
 
@@ -133,8 +135,6 @@
                     <img src="../images/5.png" alt="">
                     <img src="../images/6.png" alt="">
                     <img src="../images/7.png" alt="">
-                    <img src="../images/8.png" alt="">
-                    <img src="../images/9.png" alt="">
 
                     <div class="hero-badge hero-badge-top">
                         <div class="hero-badge-icon"><i class="fa fa-star"></i></div>
@@ -630,6 +630,65 @@
             </div>
         </section>
 
+        <!-- VIDEO SECTION -->
+        <div class="video">
+            <div class="video-section">
+                <div class="inner">
+                    <div class="video-header">
+                        <div class="section-label">Watch &amp; Learn</div>
+                        <div class="section-title">Strands in Action</div>
+                        <p class="section-desc">See what day-to-day life actually
+                            looks like across different strands — straight from real classrooms and labs.</p>
+                    </div>
+
+                    <div class="video-grid">
+                        <div class="video-embed">
+                            <iframe id="mainVideo" src="https://www.youtube.com/watch?v=oFEFKl_Xiug"
+                                title="Choosing a Senior High Strand"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+
+                        <div class="video-list">
+                            <div class="video-thumb"
+                                onclick="changeVideo('https://www.youtube.com/watch?v=w7BsTdmprjk')">
+                                <img src="https://img.youtube.com/vi/tK2N9dO5mZY/mqdefault.jpg" alt="Choosing a strand">
+                                <div>
+                                    <div class="video-thumb-title">How to Choose the Right Strand</div>
+                                    <div class="video-thumb-meta">Guidance · 14 min</div>
+                                </div>
+                            </div>
+                            <div class="video-thumb"
+                                onclick="changeVideo('https://www.youtube.com/watch?v=swapSSDN8g')">
+                                <img src="https://img.youtube.com/vi/swapSSDN8g/mqdefault.jpg" alt="STEM classroom">
+                                <div>
+                                    <div class="video-thumb-title">A Day in STEM Class</div>
+                                    <div class="video-thumb-meta">Academic Track · 11 min</div>
+                                </div>
+                            </div>
+                            <div class="video-thumb"
+                                onclick="changeVideo('https://www.youtube.com/watch?v=Sfxqq5A8cJE')">
+                                <img src="https://img.youtube.com/vi/Sfxqq5A8cJE/mqdefault.jpg" alt="TVL workshop">
+                                <div>
+                                    <div class="video-thumb-title">Inside a TVL Workshop</div>
+                                    <div class="video-thumb-meta">TVL Track · 16 min</div>
+                                </div>
+                            </div>
+                            <div class="video-thumb"
+                                onclick="changeVideo('https://www.youtube.com/watch?v=bS0JgBKFodc')">
+                                <img src="https://img.youtube.com/vi/bS0JgBKFodc/mqdefault.jpg" alt="Arts and sports">
+                                <div>
+                                    <div class="video-thumb-title">Sports &amp; Arts Track Highlights</div>
+                                    <div class="video-thumb-meta">Sports &amp; Arts · 13 min</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <section class="section3" id="how-it-works">
             <div class="how-it-works-parent">
                 <div class="create-manage-parents reveal">
@@ -838,7 +897,8 @@
         <footer>
             <div class="footer-parent">
                 <div class="footer-logo">
-                    <img src="../images/iLearn-8.png" alt="">
+                    <!-- <img src="../images/iLearn-8.png" alt=""> -->
+                    <h3>SHS Strand</h3>
 
                     <p>An interactive Computer System Servicing learning platform built to help senior high school
                         students

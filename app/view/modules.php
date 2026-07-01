@@ -35,7 +35,7 @@
                     <div class="progress-banner">
                         <div class="progress-text">
                             <div class="progress-nav">Your next lesson is waiting.</div>
-                            <h2>This is your progress continue Where you <b>left off!</b></h2>
+                            <h2>This is your progress continue <b>Where you left off!</b></h2>
                             <p>Keep learning to unlock more lessons and quizzes, You've completed <b>6 out of 9 modules.</b></p>
                         </div>
 
@@ -53,7 +53,7 @@
 
                     <!-- ── STAT CARDS ── -->
                     <div class="card-box-parent">
-                        <div class="card-box" style="--accent-glow: rgba(0, 255, 136, 0.10);">
+                        <div class="card-box">
                             <div class="card-icon card-icon--modules">
                                 <i class="fa fa-layer-group"></i>
                             </div>
@@ -65,7 +65,7 @@
                             </div>
                         </div>
 
-                        <div class="card-box" style="--accent-glow:rgba(255, 59, 59, 0.10);">
+                        <div class="card-box">
                             <div class="card-icon card-icon--quiz">
                                 <i class="fa fa-pen-to-square"></i>
                             </div>
@@ -76,7 +76,7 @@
                             </div>
                         </div>
 
-                        <div class="card-box" style="--accent-glow: rgba(0, 207, 255, 0.10);">
+                        <div class="card-box">
                             <div class="card-icon card-icon--progress">
                                 <i class="fa fa-spinner"></i>
                             </div>
@@ -87,7 +87,7 @@
                             </div>
                         </div>
 
-                        <div class="card-box" style="--accent-glow: rgba(155, 93, 229, 0.10);">
+                        <div class="card-box">
                             <div class="card-icon card-icon--percent">
                                 <i class="fa fa-chart-line"></i>
                             </div>
@@ -233,7 +233,7 @@
                                                             <?= (int) round($pct) ?>%
                                                         </span>
                                                     </div>
-                                                    <div style="height:7px; background:#EAF0F8; border-radius:99px; overflow:hidden;">
+                                                    <div style="height:15px; background:#EAF0F8; border-radius:99px; overflow:hidden;">
                                                         <div
                                                             style="height:100%; width:<?= (int) round($pct) ?>%; border-radius:99px; background:<?= $isFinished ? 'linear-gradient(90deg,#00894A,#00C96B)' : 'linear-gradient(90deg,#0099CC,#00CFFF)' ?>;">
                                                         </div>

@@ -54,6 +54,12 @@ html {
     gap: 0.8rem;
 }
 
+.container-fluid nav .nav-logo .img-border {
+    width: 50px;
+    height: 50px;
+    border: 1px solid black;
+}
+
 .container-fluid nav .nav-logo h3 {
     margin: 0;
     font-size: 22px;
@@ -120,7 +126,7 @@ html {
     left: 0;
     position: absolute;
     bottom: 0;
-    background-color: var(--green-dark);
+    background-color: var(--neon-cyan);
     height: 2px;
 }
 
@@ -130,7 +136,8 @@ html {
 }
 
 .container-fluid nav .nav-list ul li a:hover {
-    color: #ffffff;
+    /* color: #ffffff; */
+    color: var(--neon-cyan);
     font-weight: 500;
 }
 
@@ -379,7 +386,6 @@ html {
     height: 550px;
 }
 
-/* soft gradient blob sitting behind the rotating photos */
 .main-hero .hero .hero-img::before {
     content: '';
     position: absolute;
@@ -394,7 +400,86 @@ html {
     box-shadow: 0 30px 60px -20px rgba(0, 85, 170, 0.4);
 }
 
-/* thin dashed orbit ring around the blob */
+.main-hero .hero .hero-img::after {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    width: 462px;
+    height: 462px;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    border: 1.5px dashed rgba(0, 119, 204, 0.32);
+}
+
+.main-hero .hero .hero-img img {
+    width: 500px;
+    height: 550px;
+    object-fit: contain;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    opacity: 0;
+    animation: heroFade 6s infinite;
+}
+
+.main-hero .hero .hero-img img:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.main-hero .hero .hero-img img:nth-child(2) {
+    animation-delay: 2s;
+}
+
+.main-hero .hero .hero-img img:nth-child(3) {
+    animation-delay: 4s;
+}
+
+@keyframes heroFade {
+    0% {
+        opacity: 0;
+    }
+
+    7% {
+        opacity: 1;
+    }
+
+    30% {
+        opacity: 1;
+    }
+
+    37% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+
+/* .main-hero .hero .hero-img {
+    position: relative;
+    width: 500px;
+    height: 550px;
+}
+
+.main-hero .hero .hero-img::before {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    width: 400px;
+    height: 400px;
+    top: 45px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 44% 56% 62% 38% / 45% 40% 60% 55%;
+    background: linear-gradient(150deg, var(--neon-cyan) 0%, var(--neon-blue) 65%, #001a4d 100%);
+    box-shadow: 0 30px 60px -20px rgba(0, 85, 170, 0.4);
+}
+
 .main-hero .hero .hero-img::after {
     content: '';
     position: absolute;
@@ -445,22 +530,22 @@ html {
         opacity: 0;
     }
 
-    4% {
+    5% {
         opacity: 1;
     }
 
-    18% {
+    28% {
         opacity: 1;
     }
 
-    22% {
+    33% {
         opacity: 0;
     }
 
     100% {
         opacity: 0;
     }
-}
+}  */
 
 /* floating credential badges -- stay fixed on top of every rotating photo */
 .hero-badge {
@@ -1153,7 +1238,7 @@ html {
 
 .container-fluid .section1 .about-text h2 b {
     font-family: "Orbitron", sans-serif;
-    color: var(--neon-cyan);
+    /* color: var(--neon-cyan); */
 }
 
 .container-fluid .section1 .about-text .inside-parent {
@@ -1403,7 +1488,9 @@ html {
 }
 
 .container-fluid .section2 .learn-own-parents .learn-body .card-features {
-    background-color: var(--light-card);
+    /* background-color: var(--light-card); */
+    border: 1px solid var(--panel-border);
+    background: var(--panel-bg);
     border: 1px solid var(--panel-border);
     box-shadow: 0 2px 12px rgba(0, 80, 180, 0.05);
 }
@@ -1422,7 +1509,7 @@ html {
 .container-fluid .section2 .learn-own-parents .learn-body .card-features .card-features-header {
     width: 100%;
     height: 180px;
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
 }
 
 .container-fluid .section2 .learn-own-parents .learn-body .card-features .card-features-header img {
@@ -1475,7 +1562,7 @@ html {
     padding: 7rem 2.5rem;
 }
 
-#components .components-parent .section-label{
+#components .components-parent .section-label {
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 2px;
@@ -1487,26 +1574,149 @@ html {
     margin: 0 0 12px;
 }
 
-#components .components-parent .section-label::before{
+#components .components-parent .section-label::before {
     content: '';
     width: 20px;
     height: 1px;
     background-color: var(--neon-blue);
 }
 
-#components .components-parent .components-header{
+#components .components-parent .components-header {
     width: 700px;
 }
 
-#components .components-parent .section-title{
+#components .components-parent .section-title {
     font-size: 40px;
     font-family: "Orbitron", sans-serif;
     margin: 0 0 16px;
 }
 
-#components .components-parent p{
+#components .components-parent p {
     margin: 0 0 25px;
     color: var(--text-dim);
+}
+
+/* video */
+
+.video {
+    padding: 7rem 2.5rem;
+    background: var(--bg-section-alt);
+}
+
+/* ── VIDEO SECTION ── */
+/* .video-section {
+    background: var(--panel-bg-alt);
+    border-top: 1px solid var(--panel-border);
+    border-bottom: 1px solid var(--panel-border);
+} */
+
+/* .video-section>.inner {
+    max-width: 1200px;
+    margin: 0 auto;
+} */
+
+.video .video-section .inner .section-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--neon-blue);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 12px;
+}
+
+.video .video-section .inner .section-label::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background-color: var(--neon-blue);
+}
+
+.video .video-section .inner .section-title {
+    font-size: 40px;
+    font-family: "Orbitron", sans-serif;
+    margin: 0 0 16px;
+}
+
+.video .video-section .inner p {
+    margin: 0 0 25px;
+    color: var(--text-dim);
+}
+
+.video .video-section .inner .video-header {
+    width: 700px;
+}
+
+.video-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 24px;
+}
+
+.video-embed {
+    position: relative;
+    /* border: 1px solid var(--panel-border); */
+    overflow: hidden;
+}
+
+.video-embed::before {
+    content: '';
+    display: block;
+    padding-top: 56.25%;
+}
+
+.video-embed iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.video-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.video-thumb {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    padding: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.video-thumb:hover {
+    border-color: var(--neon-blue);
+}
+
+.video-thumb img {
+    width: 96px;
+    height: 60px;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.video-thumb-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 4px;
+    color: var(--text-bright);
+}
+
+.video-thumb-meta {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    letter-spacing: 1px;
 }
 
 /* ── TRACK TABS ── */
@@ -1599,6 +1809,7 @@ html {
 .container-fluid .section3 {
     padding: 7rem 2.5rem;
     background-color: var(--bg-page);
+    border-bottom: 1px solid var(--panel-border);
 }
 
 .container-fluid .section3 .create-manage-parents {
@@ -1616,8 +1827,8 @@ html {
 }
 
 .container-fluid .section3 .create-manage-parents .create-text .teacher-icon {
-    color: var(--green-dark);
-    font-size: 13px;
+    color: var(--neon-cyan);
+    font-size: 12px;
     letter-spacing: .2em;
     text-transform: uppercase;
     font-weight: 600;
@@ -1640,7 +1851,7 @@ html {
     content: '';
     width: 20px;
     height: 1px;
-    background-color: var(--green-dark);
+    background-color: var(--neon-cyan);
 }
 
 .container-fluid .section3 .create-manage-parents .create-text .teacher-icon span {
@@ -1648,14 +1859,15 @@ html {
 }
 
 .container-fluid .section3 .create-text h2 {
-    font-size: 32px;
-    font-family: "Titan", sans-serif;
+    font-size: 40px;
+    /* font-family: "Titan", sans-serif; */
+    font-family: "Orbitron", sans-serif;
     text-align: center;
-    color: var(--light-text);
+    color: var(--text-bright);
 }
 
 .container-fluid .section3 .create-text p {
-    color: var(--light-muted);
+    color: var(--text-dim);
     margin: 0 0 16px;
     text-align: center;
     line-height: 30px;
@@ -1670,7 +1882,7 @@ html {
     content: "";
     width: 2px;
     height: 100%;
-    background: linear-gradient(to bottom, var(--green-mid), transparent);
+    background: linear-gradient(to bottom, var(--neon-cyan), transparent);
     position: absolute;
     left: 50%;
     top: 50%;
@@ -1686,8 +1898,9 @@ html {
     position: absolute;
     width: 52px;
     height: 52px;
-    background: linear-gradient(135deg, var(--green-mid), var(--blue-mid));
-    box-shadow: 0 6px 20px rgba(0, 201, 107, .3);
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue));
+    /* box-shadow: 0 6px 20px rgba(0, 201, 107, .3); */
+    text-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
@@ -1741,9 +1954,11 @@ html {
 
 .container-fluid .section3 .create-body .card {
     padding: 2rem 1.5rem;
-    border: 1px solid var(--border);
+    /* border: 1px solid var(--border); */
     border-radius: 10px;
-    background-color: var(--light-card);
+    /* background-color: var(--light-card); */
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
     width: 400px;
     display: flex;
     flex-direction: column;
@@ -1759,10 +1974,10 @@ html {
 }
 
 .container-fluid .section3 .create-body .card .step-icon {
-    width: 45px;
-    height: 45px;
-    margin: 0px 0 25px;
-    background: linear-gradient(135deg, var(--green-neon), var(--green-mid));
+    width: 50px;
+    height: 50px;
+    margin: 0px 0 20px;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue));
     border-radius: 10px;
     display: flex;
     justify-content: center;
@@ -1770,22 +1985,23 @@ html {
 }
 
 .container-fluid .section3 .create-body .card .step-icon .fa {
-    font-size: 18px;
+    font-size: 21px;
     color: #ffffff;
 }
 
 .container-fluid .section3 .create-body .card h5 {
-    margin: 0 0 16px;
-    font-size: 18px;
-    color: var(--light-text);
+    margin: 0 0 12px;
+    font-size: 22px;
+    color: var(--text-bright);
     font-weight: 600;
+    font-family: "Orbitron", sans-serif;
 }
 
 .container-fluid .section3 .create-body .card p {
     margin: 0 0 16px;
-    font-size: 15.5px;
+    font-size: 16px;
     text-align: start;
-    color: var(--light-muted);
+    color: var(--text-dim);
     line-height: 28px;
 }
 
@@ -1918,13 +2134,13 @@ html {
 
 .container-fluid .section5 {
     padding: 7rem 2.5rem;
-    background-color: var(--light-bg);
+    /* background-color: var(--bg-section-alt); */
 }
 
 .container-fluid .section5 .stories-text .stories-tag {
     font-size: 13px;
     text-transform: uppercase;
-    color: var(--green-dark);
+    color: var(--neon-cyan);
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -1937,7 +2153,7 @@ html {
     content: '';
     width: 20px;
     height: 1px;
-    background-color: var(--green-dark);
+    background-color: var(--neon-cyan);
 }
 
 .container-fluid .section5 .stories-text {
@@ -1945,14 +2161,15 @@ html {
 }
 
 .container-fluid .section5 .stories-text h2 {
-    font-size: 32px;
+    font-size: 40px;
     color: var(--light-text);
-    font-family: "Titan", sans-serif;
+    /* font-family: "Titan", sans-serif; */
+    font-family: "Orbitron", sans-serif;
     margin: 0 0 16px;
 }
 
 .container-fluid .section5 .stories-text p {
-    color: var(--light-muted);
+    color: var(--text-dim);
 }
 
 .container-fluid .section5 .stories-body {
@@ -1964,9 +2181,11 @@ html {
 }
 
 .container-fluid .section5 .stories-body .card-box {
-    background-color: var(--light-card);
+    /* background-color: var(--light-card); */
     padding: 2rem 1.5rem;
-    border: 1px solid var(--border);
+    /* border: 1px solid var(--border); */
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
     border-radius: 10px;
 }
 
@@ -2005,20 +2224,21 @@ html {
 .container-fluid .section5 .stories-body .card-box .profile p {
     all: unset;
     font-size: 14.5px;
-    color: var(--light-muted);
+    color: var(--text-bright);
 }
 
 .container-fluid .section5 .stories-body .card-box .profile .profile-icon {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    border: 1px solid var(--green-neon);
+    border: 1px solid var(--neon-cyan);
 }
 
 .container-fluid .section6 {
     padding: 7rem 2.5rem;
-    background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(0, 207, 255, 0.18), transparent 60%),
-        linear-gradient(135deg, var(--bg-darkest), var(--bg-panel));
+    /* background: radial-gradient(ellipse 80% 100% at 50% 0%, rgba(0, 207, 255, 0.18), transparent 60%),
+        linear-gradient(135deg, var(--neon-cyan), var(--neon-blue)); */
+    background-color: var(--bg-section-alt);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -2037,12 +2257,14 @@ html {
     font-size: 32px;
     text-align: center;
     margin: 0 0 12px;
-    font-family: "Titan", sans-serif;
-    color: #ffffff;
+    /* font-family: "Titan", sans-serif; */
+    font-family: "Orbitron", sans-serif;
+    /* color: #ffffff; */
+    color: var(--text-bright)
 }
 
 .container-fluid .section6 p {
-    color: var(--text-muted);
+    color: var(--text-dim);
     text-align: center;
     width: 700px;
     margin: 0 0 25px;
@@ -2051,16 +2273,30 @@ html {
 .container-fluid .section6 a {
     padding: 10px 30px;
     text-decoration: none;
-    border-radius: 28px;
-    background: linear-gradient(135deg, var(--green-mid), var(--green-neon));
-    color: var(--bg-darkest);
+    /* border-radius: 28px; */
+    /* background: linear-gradient(135deg, var(--green-mid), var(--green-neon)); */
+    background-color: var(--neon-cyan);
+    /* color: var(--bg-darkest); */
+    color: var(--deep-navy);
+    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
+    font-size: 12.5px;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 3px;
 }
 
 .container-fluid footer .footer-logo {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+.container-fluid footer .footer-logo h3 {
+    color: var(--neon-cyan);
+    font-size: 22px;
+    font-weight: 600;
+    font-family: "Orbitron", sans-serif;
+    text-transform: uppercase;
 }
 
 .container-fluid footer .footer-logo .logo-text p {
@@ -2091,7 +2327,7 @@ html {
 .container-fluid footer .footer-bottom {
     margin: 24px 0 0;
     color: var(--text-muted);
-    font-size: 14.5px;
+    font-size: 16px;
 }
 
 .container-fluid footer .footer-parent {
@@ -2113,9 +2349,9 @@ html {
 
 .container-fluid footer .footer-parent .footer-logo p {
     width: 350px;
-    margin: 7px 0 0;
+    /* margin: 7px 0 0; */
     color: var(--text-muted);
-    font-size: 14.5px;
+    font-size: 16px;
     line-height: 30px;
 }
 
@@ -2160,6 +2396,18 @@ html {
 
 @media only screen and (min-width: 1350px) {
 
+    .video {
+        padding: 7rem 2.5rem;
+        background: var(--bg-section-alt);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .video .video-section {
+        width: 1250px;
+    }
+
     #components {
         padding: 7rem 2.5rem;
         display: flex;
@@ -2169,7 +2417,7 @@ html {
 
     #components .components-parent {
         justify-content: space-evenly;
-        width: 1450px;
+        width: 1250px;
     }
 
     .main-hero {
@@ -2204,7 +2452,7 @@ html {
 
     .container-fluid .section2 .learn-own-parents {
         justify-content: space-evenly;
-        width: 1450px;
+        width: 1250px;
     }
 
     .container-fluid .section4 {
@@ -2214,7 +2462,7 @@ html {
     }
 
     .container-fluid .section4 .skills-training-parent {
-        width: 1450px;
+        width: 1250px;
     }
 
     .container-fluid .section3 {
@@ -2224,7 +2472,7 @@ html {
     }
 
     .container-fluid .section3 .how-it-works-parent {
-        width: 1450px;
+        width: 1250px;
     }
 
     .container-fluid .section5 {
@@ -2234,7 +2482,7 @@ html {
     }
 
     .container-fluid .section5 .stories-parent {
-        width: 1450px;
+        width: 1250px;
     }
 }
 

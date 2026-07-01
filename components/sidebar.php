@@ -13,7 +13,8 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'dashboard';
         <div class="logo-text">
             <p><b>i</b>Learn</p>
         </div> -->
-        <img src="../images/iLearn-7.png" alt="">
+        <img src="../images/logo1.png" alt="">
+        <h3>SHS Strand</h3>
     </div>
     <div class="sidebar-menu">
         <ul>
