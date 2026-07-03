@@ -120,11 +120,11 @@
                     </div>
 
                     <div class="carousel-slide slide-2">
-                        <img src="../images/login4.jpg" alt="">
+                        <img src="../images/login5.jpg" alt="">
                     </div>
 
                     <div class="carousel-slide slide-3">
-                        <img src="../images/login6.jpg" alt="">
+                        <img src="../images/login9.jpg" alt="">
                     </div>
                 </div>
 
