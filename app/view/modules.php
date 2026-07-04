@@ -229,13 +229,13 @@
                                                             Progress
                                                         </span>
                                                         <span
-                                                            style="font-size:12.5px; font-weight:700; color:<?= $isFinished ? '#00894A' : '#0A2540' ?>;">
+                                                            style="font-size:12.5px; font-weight:700; color:<?= $isFinished ? 'var(--neon-cyan)' : '#0A2540' ?>;">
                                                             <?= (int) round($pct) ?>%
                                                         </span>
                                                     </div>
                                                     <div style="height:15px; background:#EAF0F8; border-radius:99px; overflow:hidden;">
                                                         <div
-                                                            style="height:100%; width:<?= (int) round($pct) ?>%; border-radius:99px; background:<?= $isFinished ? 'linear-gradient(90deg,#00894A,#00C96B)' : 'linear-gradient(90deg,#0099CC,#00CFFF)' ?>;">
+                                                            style="height:100%; width:<?= (int) round($pct) ?>%; border-radius:99px; background:<?= $isFinished ? 'var(--neon-cyan)' : 'linear-gradient(90deg,#0099CC,#00CFFF)' ?>;">
                                                         </div>
                                                     </div>
                                                 </div>

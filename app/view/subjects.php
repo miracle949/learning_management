@@ -92,7 +92,8 @@
                                         <div class="module-buttons">
                                             <!-- <a href="/learning_management/public/?url=classes">Browse Classes</a> -->
                                             <div class="module-icon">
-                                                <i class="fa fa-desktop"></i>
+                                                <!-- <i class="fa fa-desktop"></i> -->
+                                                <i class="fa fa-book-open"></i>
                                             </div>
                                             <div class="module-text">
                                                 <p>Hardware · Software · TroubleShooting</p>

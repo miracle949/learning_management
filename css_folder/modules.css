@@ -4,7 +4,8 @@
     height: 100vh;
     overflow-y: auto;
     padding: 1.8rem;
-    background-color: var(--bg-section-alt);
+    /* background-color: var(--bg-section-alt); */
+    background-color: var(--bg-main);
 }
 
 /* ══════════════════════════════════════
@@ -62,12 +63,26 @@
 .progress-banner {
     padding: 2rem;
     /* background: linear-gradient(130deg, #0A1628 0%, #0F2845 60%, #0A2040 100%); */
-    background-color: var(--bg-main);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    background-color: var(--panel-bg);
     /* border: 1px solid var(--border-glow);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); */
     border: 1px solid var(--panel-border);
     /* background-color: var(--light-card); */
-    /* border-radius: 16px; */
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-banner::before{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 5px;
+    background-color: var(--neon-cyan);
 }
 
 .progress-banner .progress-text {
@@ -170,10 +185,11 @@
 .card-box-parent .card-box {
     width: 100%;
     padding: 18px 20px;
-    /* border-radius: 16px; */
+    border-radius: 10px;
     /* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06); */
     border: 1px solid var(--panel-border);
-    background-color: var(--bg-main);
+    background-color: var(--panel-bg);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     display: flex;
     gap: 14px;
     align-items: flex-start;
@@ -242,7 +258,7 @@
     margin: 0;
     font-size: 24px;
     color: var(--text-bright);
-    font-family: "Orbitron", sans-serif;
+    /* font-family: "Orbitron", sans-serif; */
     font-weight: 700;
     line-height: 1;
 }
@@ -318,10 +334,10 @@
     /* font-size: 0.78rem; */
     font-size: 13px;
     font-weight: 600;
-    color: var(--light-muted);
+    color: var(--text-dim);
     /* border: 1.5px solid var(--border); */
     border: 1px solid var(--panel-border);
-    background-color: var(--bg-main);
+    background-color: var(--panel-bg);
     /* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); */
     /* background: var(--light-card); */
     cursor: pointer;
@@ -485,10 +501,11 @@
 }
 
 .module-feed-card {
-    /* border-radius: 12px; */
+    border-radius: 10px;
     /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06); */
     border: 1px solid var(--panel-border);
     background-color: var(--bg-main);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -568,6 +585,7 @@
     flex: 1;
     display: flex;
     flex-direction: column;
+    background-color: var(--panel-bg);
 }
 
 .module-feed-card .card-body .lesson-count {
@@ -608,11 +626,11 @@
     gap: 7px;
     /* background: linear-gradient(135deg, var(--green-mid), var(--green-neon)); */
     /* background-color: var(--bg-page-surface); */
-    background-color: var(--green-mid);
+    background-color: var(--neon-cyan);
     /* color: var(--bg-darkest); */
     /* border: 1px solid var(--page-border-strong); */
     /* color: var(--light-text); */
-    color: var(--light-card);
+    color: var(--deep-navy);
     padding: 9px 20px;
     width: 100%;
     /* border-radius: 28px; */

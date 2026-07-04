@@ -293,8 +293,9 @@
                                     </div>
                                 <?php else: ?>
 
-                                    <div class="body" style="height: 100%;">
-                                        <p class="text-muted m-0" style="font-size:14.5px;">No announcements yet.</p>
+                                    <div class="body is-empty" style="height: 233px;">
+                                        <i class="fa fa-check-circle" style="font-size: 20px; color: var(--text-dim)"></i>
+                                        <p class="m-0" style="font-size:14.5px;">No announcements yet.</p>
                                     </div>
                                 <?php endif; ?>
                             </div>
