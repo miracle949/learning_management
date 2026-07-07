@@ -889,6 +889,42 @@ class Students extends Model
         return $map;
     }
 
+    public function getOverallModuleProgress($studentId, $totalModules)
+    {
+        if (!$studentId || !$totalModules) {
+            return ['percentage' => 0, 'completed' => 0, 'total' => (int) $totalModules];
+        }
+
+        $stmt = $this->db->prepare("
+        SELECT completion_percentage, is_finished
+        FROM tbl_module_progress
+        WHERE student_id = ?
+    ");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $sumPercentage = 0;
+        $completed = 0;
+
+        foreach ($rows as $r) {
+            $sumPercentage += (float) $r['completion_percentage'];
+            if ((int) $r['is_finished'] === 1) {
+                $completed++;
+            }
+        }
+
+        // Modules never started count as 0%, so we divide by the TOTAL
+        // module count, not just the ones with a progress row.
+        $percentage = $totalModules > 0 ? round($sumPercentage / $totalModules) : 0;
+
+        return [
+            'percentage' => (int) $percentage,
+            'completed' => $completed,
+            'total' => (int) $totalModules,
+        ];
+    }
+
     public function getStartedModuleIds($studentId)
     {
         if (!$studentId)

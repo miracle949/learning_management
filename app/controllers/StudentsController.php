@@ -178,10 +178,10 @@ class StudentsController
         }
 
         $startedModuleIds = $studentId ? $studentModel->getStartedModuleIds($studentId) : [];
-
-        // ✅ ADD THIS — gives the view what it needs to show "Completed"
-        // instead of "Continue Learning" and to power the filter tabs
         $moduleProgress = $studentId ? $studentModel->getModuleProgressMap($studentId) : [];
+
+        // ✅ NEW — real overall progress across ALL modules in this subject
+        $overallProgress = $studentModel->getOverallModuleProgress($studentId, count($modules));
 
         $lessonCounts = [];
         $imageCounts = [];

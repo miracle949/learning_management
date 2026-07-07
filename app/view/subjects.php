@@ -89,16 +89,6 @@
                             <div class="module-body">
                                 <div class="module-body-child">
                                     <div class="module-links">
-                                        <div class="module-buttons">
-                                            <!-- <a href="/learning_management/public/?url=classes">Browse Classes</a> -->
-                                            <div class="module-icon">
-                                                <!-- <i class="fa fa-desktop"></i> -->
-                                                <i class="fa fa-book-open"></i>
-                                            </div>
-                                            <div class="module-text">
-                                                <p>Hardware · Software · TroubleShooting</p>
-                                            </div>
-                                        </div>
                                         <div class="module-description">
                                             <div class="module-nav"></div>
                                             <h1><?= htmlspecialchars($subjectInfo['subject_name']) ?></h1>
@@ -115,6 +105,19 @@
                                                     <span>CSS Teacher</span>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="module-buttons">
+                                            <!-- <div class="module-icon">
+                                                <i class="fa fa-book-open"></i>
+                                            </div>
+                                            <div class="module-text">
+                                                <p>Hardware · Software · TroubleShooting</p>
+                                            </div> -->
+                                            <div class="speech-bubble">
+                                                <strong>BonBon</strong>
+                                                <p id="bonbonMessage"></p>
+                                            </div>
+                                            <img src="../images/robot-ai7.png" alt="">
                                         </div>
                                     </div>
                                 </div>
@@ -294,6 +297,35 @@
 
         </div>
     </div>
+
+    <script>
+        (function typewriter() {
+            const el = document.getElementById('bonbonMessage');
+            if (!el) return;
+
+            const message = "You're viewing <?= htmlspecialchars(addslashes($subjectInfo['subject_name'])) ?>, and access all your assignments, materials and announcements.";
+            const speed = 20; // ms per character — lower = faster
+            let i = 0;
+
+            // cursor span that blinks while typing
+            const cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+            el.appendChild(cursor);
+
+            function type() {
+                if (i < message.length) {
+                    cursor.insertAdjacentText('beforebegin', message.charAt(i));
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    // remove cursor once finished (optional)
+                    setTimeout(() => cursor.remove(), 1200);
+                }
+            }
+
+            type();
+        })();
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {

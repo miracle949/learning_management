@@ -34,20 +34,55 @@
 
                     <div class="progress-banner">
                         <div class="progress-text">
-                            <div class="progress-nav">Your next lesson is waiting.</div>
-                            <h2>This is your progress continue <b>Where you left off!</b></h2>
-                            <p>Keep learning to unlock more lessons and quizzes, You've completed <b>6 out of 9 modules.</b></p>
-                        </div>
+                            <!-- <div class="progress-nav">
+                                <span class="pulse-dot"></span>Pick up right where you left off.
+                            </div> -->
+                            <h2>You're doing great — keep the momentum going.</h2>
+                            <p>Keep learning to unlock more lessons and quizzes. You've completed
+                                <b><?= $overallProgress['completed'] ?> of <?= $overallProgress['total'] ?> modules</b> - stay
+                                consistent and you'll finish the rest in no time.
+                            </p>
 
-                        <div class="parent-sub-progress">
-
-                            <div class="box-progress">
-                                <div class="parent-progress">
-                                    <div class="progress"></div>
-                                </div>
+                            <div class="continue-learning">
+                                <a href="#">Continue Learning <i class="fa fa-arrow-right"></i></a>
                             </div>
 
-                            <div class="progress-percent">60% / 100%</div>
+                        </div>
+
+                        <?php
+                        $ringRadius = 52;
+                        $circumference = 2 * M_PI * $ringRadius;
+                        $ringOffset = $circumference - ($circumference * $overallProgress['percentage'] / 100);
+                        ?>
+                        <div class="progress-side">
+                            <div class="speech-bubble">
+                                <strong>BonBon</strong>
+
+                                <p id="bonbonMessage"></p>
+
+                            </div>
+                            <img src="../images/robot-ai8.png" alt="">
+                            <div class="progress-parent">
+                                <div class="progress-ring-wrap">
+                                    <svg class="progress-ring" viewBox="0 0 120 120">
+                                        <defs>
+                                            <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                <stop offset="0%" stop-color="#EAF0F8" />
+                                                <stop offset="100%" stop-color="#FFFFFF" />
+                                            </linearGradient>
+                                        </defs>
+                                        <circle class="ring-bg" cx="60" cy="60" r="<?= $ringRadius ?>" />
+                                        <circle class="ring-fill" cx="60" cy="60" r="<?= $ringRadius ?>"
+                                            style="stroke-dasharray: <?= $circumference ?>; stroke-dashoffset: <?= $ringOffset ?>;" />
+                                    </svg>
+                                    <div class="ring-label">
+                                        <div class="ring-pct">
+                                            <?= $overallProgress['percentage'] ?>%
+                                        </div>
+                                        <div class="ring-sub">Overall Progress</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -220,7 +255,12 @@
                                             </div>
 
                                             <!-- ── PER-MODULE PROGRESS BAR ── -->
-                                            <?php if ($prog): ?>
+                                            <!-- ── PER-MODULE PROGRESS BAR (segmented/dash style) ── -->
+                                            <?php if ($prog):
+                                                $totalSegments = 5;
+                                                $filledSegments = (int) round(($pct / 100) * $totalSegments);
+                                                $segmentClass = $isFinished ? ' completed' : '';
+                                                ?>
                                                 <div style="margin:4px 0 14px;">
                                                     <div
                                                         style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
@@ -233,10 +273,11 @@
                                                             <?= (int) round($pct) ?>%
                                                         </span>
                                                     </div>
-                                                    <div style="height:15px; background:#EAF0F8; border-radius:99px; overflow:hidden;">
-                                                        <div
-                                                            style="height:100%; width:<?= (int) round($pct) ?>%; border-radius:99px; background:<?= $isFinished ? 'var(--neon-cyan)' : 'linear-gradient(90deg,#0099CC,#00CFFF)' ?>;">
-                                                        </div>
+                                                    <div class="segmented-progress">
+                                                        <?php for ($i = 1; $i <= $totalSegments; $i++): ?>
+                                                            <div class="segment<?= $i <= $filledSegments ? ' filled' . $segmentClass : '' ?>">
+                                                            </div>
+                                                        <?php endfor; ?>
                                                     </div>
                                                 </div>
                                             <?php endif; ?>
@@ -278,6 +319,36 @@
 
         </div>
     </div>
+
+
+    <script>
+        (function typewriter() {
+            const el = document.getElementById('bonbonMessage');
+            if (!el) return;
+
+            const message = "This is your overall progress — you're doing better than you think! Keep completing modules and you'll reach 100%.";
+            const speed = 28; // ms per character — lower = faster
+            let i = 0;
+
+            // cursor span that blinks while typing
+            const cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+            el.appendChild(cursor);
+
+            function type() {
+                if (i < message.length) {
+                    cursor.insertAdjacentText('beforebegin', message.charAt(i));
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    // remove cursor once finished (optional)
+                    setTimeout(() => cursor.remove(), 1200);
+                }
+            }
+
+            type();
+        })();
+    </script>
 
     <script>
         var currentFilter = 'all';

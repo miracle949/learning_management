@@ -113,11 +113,15 @@
                                 <i class="fa fa-book-open"></i>
                                 Browse Classes <i class="fa fa-arrow-right"></i></a>
 
-                            <a href="#">Continue Learning <i class="fa fa-arrow-right"></i></a>
+                            <a href="#">Continue Learning</a>
                         </div>
                     </div>
                     <div class="welcome-img">
-                        <img src="../images/image-welcome.png" alt="">
+                        <div class="speech-bubble">
+                            <strong>I'm, BonBon</strong>
+                            <p id="bonbonMessage"></p>
+                        </div>
+                        <img src="../images/robot-ai6.png" alt="">
                     </div>
                 </div>
 
@@ -200,15 +204,34 @@
                                     <h3>Pending Tasks</h3>
                                 </div>
                                 <?php if (!empty($pendingAssignments)): ?>
-                                    <div class="body" style="height: 350px; overflow-y: auto;">
+                                    <div class="body" style="height: 313px; overflow-y: auto;">
 
                                         <?php foreach ($pendingAssignments as $item):
                                             $daysLeft = '';
                                             if (!empty($item['due_date'])) {
-                                                $diff = (int) ceil((strtotime($item['due_date']) - time()) / 86400);
-                                                if ($diff < 0)
+                                                $now = new DateTime('today');
+                                                $due = new DateTime($item['due_date']);
+
+                                                if ($due < $now) {
                                                     continue; // skip overdue
-                                                $daysLeft = $diff > 0 ? $diff . ' days left' : 'Due today';
+                                                }
+
+                                                $interval = $now->diff($due);
+
+                                                if ($interval->days == 0) {
+                                                    $daysLeft = 'Due today';
+                                                } elseif ($interval->y == 0 && $interval->m == 0) {
+                                                    // Less than a month away — show in days
+                                                    $daysLeft = $interval->d . ' day' . ($interval->d > 1 ? 's' : '') . ' left';
+                                                } else {
+                                                    // A month or more away — show in months
+                                                    $months = ($interval->y * 12) + $interval->m;
+                                                    // round up if there are extra days left over (e.g. 1 month 20 days -> "2 months left")
+                                                    if ($interval->d >= 15) {
+                                                        $months++;
+                                                    }
+                                                    $daysLeft = $months . ' month' . ($months > 1 ? 's' : '') . ' left';
+                                                }
                                             }
                                             ?>
                                             <div class="parent-update">
@@ -265,25 +288,31 @@
                                     <h3>Announcements</h3>
                                 </div>
                                 <?php if (!empty($announcements)): ?>
-                                    <div class="body" style="height: 350px; overflow-y: auto;">
+                                    <div class="body" style="height: 323px; overflow-y: auto;">
 
                                         <?php foreach ($announcements as $ann): ?>
                                             <div class="progress-box">
-                                                <h4>
-                                                    <?= htmlspecialchars($ann['subject_name']) ?>
-                                                </h4>
-                                                <!-- <p>
-                                                    <?= htmlspecialchars($ann['title']) ?>
-                                                </p> -->
-                                                <p>
-                                                    <?= nl2br(htmlspecialchars($ann['message'])) ?>
-                                                </p>
-                                                <div class="view">
-                                                    <small>
-                                                        <?= date('F j, Y', strtotime($ann['created_at'])) ?>
-                                                        ·
-                                                        <?= htmlspecialchars($ann['teacher_name']) ?>
-                                                    </small>
+                                                <div class="announcement-icon">
+                                                    <i class="fa fa-bell"></i>
+                                                </div>
+                                                <div class="announcement-box">
+                                                    <div class="title-announce">
+                                                        <h4>
+                                                            <?= htmlspecialchars($ann['title']) ?>
+                                                        </h4>
+                                                        <p>
+                                                            <?= nl2br(htmlspecialchars($ann['message'])) ?>
+                                                        </p>
+                                                        <span>
+                                                            <?= htmlspecialchars($ann['subject_name']) ?>
+                                                        </span>
+                                                    </div>
+                                                    <div class="view">
+                                                        <small>
+                                                            <?= date('F j, Y', strtotime($ann['created_at'])) ?>
+
+                                                        </small>
+                                                    </div>
                                                 </div>
                                             </div>
                                         <?php endforeach; ?>
@@ -310,7 +339,7 @@
                                 <h3>My Modules</h3>
                             </div>
 
-                            <div class="body" style="height: 350px; overflow-y: auto;">
+                            <div class="body" style="height: 320px; overflow-y: auto;">
 
                                 <div class="module-progress">
                                     <div class="module-header">
@@ -543,6 +572,26 @@
                                             <p>Due: June 20, 2026 <b>| 06:00 PM</b></p>
                                         </div>
                                     </div>
+
+                                    <div class="upcoming-box">
+                                        <div class="upcoming-icon">
+                                            <i class="fa fa-calendar-days"></i>
+                                        </div>
+                                        <div class="upcoming-text">
+                                            <h5>Quiz 3 - IP Addressing</h5>
+                                            <p>Due: June 20, 2026 <b>| 06:00 PM</b></p>
+                                        </div>
+                                    </div>
+
+                                    <div class="upcoming-box">
+                                        <div class="upcoming-icon">
+                                            <i class="fa fa-calendar-days"></i>
+                                        </div>
+                                        <div class="upcoming-text">
+                                            <h5>Quiz 3 - IP Addressing</h5>
+                                            <p>Due: June 20, 2026 <b>| 06:00 PM</b></p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -698,10 +747,29 @@
                                 <?php foreach ($pendingAssignments as $item):
                                     $daysLeft = '';
                                     if (!empty($item['due_date'])) {
-                                        $diff = (int) ceil((strtotime($item['due_date']) - time()) / 86400);
-                                        if ($diff < 0)
+                                        $now = new DateTime('today');
+                                        $due = new DateTime($item['due_date']);
+
+                                        if ($due < $now) {
                                             continue; // skip overdue
-                                        $daysLeft = $diff > 0 ? $diff . ' days left' : 'Due today';
+                                        }
+
+                                        $interval = $now->diff($due);
+
+                                        if ($interval->days == 0) {
+                                            $daysLeft = 'Due today';
+                                        } elseif ($interval->y == 0 && $interval->m == 0) {
+                                            // Less than a month away — show in days
+                                            $daysLeft = $interval->d . ' day' . ($interval->d > 1 ? 's' : '') . ' left';
+                                        } else {
+                                            // A month or more away — show in months
+                                            $months = ($interval->y * 12) + $interval->m;
+                                            // round up if there are extra days left over (e.g. 1 month 20 days -> "2 months left")
+                                            if ($interval->d >= 15) {
+                                                $months++;
+                                            }
+                                            $daysLeft = $months . ' month' . ($months > 1 ? 's' : '') . ' left';
+                                        }
                                     }
                                     ?>
                                     <div class="update-box">
@@ -740,9 +808,10 @@
                                         <div class="view" style="margin-top:8px;">
                                             <small style="color:#9ca3af;">
                                                 <?= date('F j, Y', strtotime($ann['created_at'])) ?>
-                                                · <?= htmlspecialchars($ann['teacher_name']) ?>
+
                                             </small>
                                         </div>
+
                                     </div>
                                 <?php endforeach; ?>
                             <?php else: ?>
@@ -847,6 +916,35 @@
 
     <!-- bootstrap link javascript -->
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        (function typewriter() {
+            const el = document.getElementById('bonbonMessage');
+            if (!el) return;
+
+            const message = "Welcome! I'm your learning assistant, ready to guide you through your journey!";
+            const speed = 28; // ms per character — lower = faster
+            let i = 0;
+
+            // cursor span that blinks while typing
+            const cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+            el.appendChild(cursor);
+
+            function type() {
+                if (i < message.length) {
+                    cursor.insertAdjacentText('beforebegin', message.charAt(i));
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    // remove cursor once finished (optional)
+                    setTimeout(() => cursor.remove(), 1200);
+                }
+            }
+
+            type();
+        })();
+    </script>
 
     <script>
 
