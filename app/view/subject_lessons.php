@@ -22,38 +22,20 @@ function lUrl($subject, $moduleId, $lessonId)
            ILEARN-CSS DESIGN TOKENS
         ============================================= */
         :root {
-            --green-neon: #00FF88;
-            --green-mid: #00C96B;
-            --green-dark: #00894A;
-            --green-light: #E8FBF2;
-            --blue-elec: #00CFFF;
-            --blue-mid: #0099CC;
-            --blue-dark: #006B99;
-            --orange-warn: #FF6B00;
-            --yellow-volt: #FFD700;
-            --red-led: #FF3B3B;
-            --purple-chip: #9B5DE5;
-
-            --bg-darkest: #050D14;
-            --bg-dark: #0A1628;
-            --bg-panel: #0F2040;
-            --bg-card: #0E1E35;
-            --bg-surface: #112244;
-
-            --border-dim: rgba(0, 255, 136, 0.12);
-            --border-glow: rgba(0, 207, 255, 0.30);
-
-            --text-white: #FFFFFF;
-            --text-bright: #E8F4FF;
-            --text-muted: rgba(200, 220, 255, 0.55);
-
-            --page-bg: #F5F8FB;
-            --page-card: #FFFFFF;
-            --page-surface: #EAF0F8;
-            --page-border: #D6E3F0;
-            --page-border2: #B8CCDF;
-            --page-muted: #4A6B8A;
-            --page-text: #0A2540;
+            --neon-cyan: #0077cc;
+            --neon-blue: #0055aa;
+            --electric-purple: #5533cc;
+            --deep-navy: #ffffff;
+            --panel-dark: #f4f7fb;
+            --panel-mid: #e8eef8;
+            --panel-border: rgba(0, 100, 200, 0.15);
+            --text-bright: #0a1a2e;
+            --text-dim: #4a6080;
+            --accent-gold: #cc7700;
+            --danger-red: #cc2244;
+            --bg-main: #ffffff;
+            --bg-section-alt: #f0f5fc;
+            --panel-bg: #f5f7fb;
         }
 
         *,
@@ -66,9 +48,10 @@ function lUrl($subject, $moduleId, $lessonId)
 
         html,
         body {
-            background: var(--page-bg);
+            /* background: var(--page-bg); */
+            background-image: radial-gradient(circle at 15% 0%, rgba(0, 119, 204, 0.06), transparent 45%), radial-gradient(circle at 100% 30%, rgba(85, 51, 204, 0.06), transparent 40%), repeating-linear-gradient(0deg, rgba(0, 100, 200, 0.035) 0px, rgba(0, 100, 200, 0.035) 1px, transparent 1px, transparent 42px), repeating-linear-gradient(90deg, rgba(0, 100, 200, 0.035) 0px, rgba(0, 100, 200, 0.035) 1px, transparent 1px, transparent 42px);
             color: var(--page-text);
-            -webkit-font-smoothing: antialiased;
+            /* -webkit-font-smoothing: antialiased; */
             height: 100%;
             overflow: hidden;
         }
@@ -105,7 +88,8 @@ function lUrl($subject, $moduleId, $lessonId)
         .lessons-sidebar {
             height: 100vh;
             overflow-y: auto;
-            background: var(--bg-card);
+            /* background: var(--bg-card); */
+            background-color: #FFFFFF;
             border-right: 1px solid var(--border-dim);
             display: flex;
             flex-direction: column;
@@ -173,11 +157,12 @@ function lUrl($subject, $moduleId, $lessonId)
             position: relative;
             /* padding: 14px 16px; */
             padding: 0px 16px 14px;
-            border-bottom: 1px solid var(--border-dim);
+            border-bottom: 1px solid var(--border);
         }
 
         .sb-progress-block h5 {
-            color: #FFFFFF;
+            /* color: #FFFFFF; */
+            color: var(--text-bright);
             font-size: 14.5px;
             line-height: 20px;
             font-weight: 600;
@@ -270,7 +255,8 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .sb-nav-item.active {
-            background: rgba(0, 255, 136, 0.09);
+            /* background: rgba(0, 255, 136, 0.09); */
+            background: rgba(0, 119, 204, 0.08);
         }
 
         .sb-nav-item.sb-nav-done .sb-nav-title {
@@ -300,18 +286,22 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .icon-type-lesson {
-            background: rgba(0, 137, 74, 0.14);
-            color: var(--green-mid);
+            /* background: rgba(0, 137, 74, 0.14); */
+            background: rgba(0, 119, 204, 0.08);
+            color: var(--neon-cyan);
         }
 
         .icon-type-lesson.done {
-            background: rgba(0, 137, 74, 0.22);
-            color: var(--green-neon);
+            /* background: rgba(0, 137, 74, 0.22); */
+            background-color: var(--neon-cyan);
+            color: var(--deep-navy);
         }
 
         .icon-type-lesson.active-dot {
-            background: rgba(0, 255, 136, 0.15);
-            color: var(--green-neon);
+            /* background: rgba(0, 255, 136, 0.15);
+            color: var(--green-neon); */
+            background-color: var(--neon-cyan);
+            color: var(--deep-navy);
         }
 
         .icon-type-video {
@@ -359,7 +349,7 @@ function lUrl($subject, $moduleId, $lessonId)
             /* font-size: 11.5px; */
             font-size: 13px;
             font-weight: 500;
-            color: var(--text-muted);
+            color: var(--text-dim);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -367,7 +357,7 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .sb-nav-item.active .sb-nav-title {
-            color: var(--green-neon);
+            color: var(--text-bright);
             font-weight: 600;
         }
 
@@ -498,7 +488,7 @@ function lUrl($subject, $moduleId, $lessonId)
             transition: background .15s, transform .15s;
         }
 
-        .back-btn .fa{
+        .back-btn .fa {
             font-size: 10px;
         }
 
@@ -768,7 +758,7 @@ function lUrl($subject, $moduleId, $lessonId)
             margin-bottom: 28px;
         }
 
-        .ls-section h4{
+        .ls-section h4 {
             font-size: 20px;
             font-weight: 600;
             /* margin: 15px 0 8px; */
