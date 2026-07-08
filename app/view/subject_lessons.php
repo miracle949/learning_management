@@ -72,6 +72,333 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         /* =============================================
+           WELCOME / MODULE SPLASH SCREEN
+        ============================================= */
+        .module-splash {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* background: radial-gradient(circle at 30% 20%, rgba(0, 119, 204, 0.10), transparent 55%),
+                radial-gradient(circle at 80% 80%, rgba(85, 51, 204, 0.08), transparent 50%),
+                #f4f8fd; */
+            background-color: var(--neon-cyan);
+            animation: splashFadeIn .5s ease both;
+        }
+
+        .module-splash::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 26px);
+            pointer-events: none;
+        }
+
+        @keyframes splashFadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .module-splash.splash-exit {
+            animation: splashFadeOut .45s ease forwards;
+            pointer-events: none;
+        }
+
+        @keyframes splashFadeOut {
+            to {
+                opacity: 0;
+                transform: scale(1.04);
+            }
+        }
+
+        .speech-bubble {
+            position: absolute;
+            /* left: 155px; */
+            left: -300px;
+            /* left: -315px; */
+            /* right: -185px; */
+            /* right: -510px; */
+            /* top: 2px; */
+            top: 20px;
+            /* top: -50px; */
+            /* width: 148px; */
+            /* width: 175px; */
+            width: 300px;
+            /* background: #fff; */
+            background-color: var(--bg-main);
+            color: var(--text-bright);
+            font-family: var(--font-body);
+            line-height: 1.4;
+            padding: 16px 19px;
+            border-radius: 14px;
+            /* display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; */
+            /* box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18); */
+            /* display: none; */
+            /* animation: bubblePop 4s ease-in-out infinite; */
+        }
+
+        .speech-bubble strong {
+            display: block;
+            color: var(--neon-cyan);
+            font-family: "Orbitron", sans-serif;
+            font-weight: 700;
+            margin-bottom: 2px;
+            font-size: 14.5px;
+        }
+
+        .speech-bubble p {
+            margin: 0;
+            font-size: 13.5px;
+            color: var(--text-dim);
+            line-height: 22px;
+        }
+
+        .speech-bubble p .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 14px;
+            background: var(--neon-cyan);
+            margin-left: 2px;
+            vertical-align: middle;
+            animation: cursorBlink 0.8s step-end infinite;
+        }
+
+        @keyframes cursorBlink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50px;
+            /* top: 60px; */
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            transform: rotate(45deg);
+        }
+
+        @keyframes bubblePop {
+
+            0%,
+            8% {
+                opacity: 0;
+                transform: translateY(6px) scale(.92);
+            }
+
+            16%,
+            84% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+            92%,
+            100% {
+                opacity: 0;
+                transform: translateY(6px) scale(.92);
+            }
+        }
+
+        .splash-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            max-width: 420px;
+            /* padding: 0 24px; */
+            animation: splashCardUp .55s cubic-bezier(.2, .8, .2, 1) both .1s;
+            margin-left: 10rem;
+        }
+
+        @keyframes splashCardUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* .splash-bot-icon {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-blue), var(--electric-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 0 6px rgba(0, 85, 170, 0.10), 0 12px 30px rgba(0, 85, 170, 0.25);
+            margin-bottom: 18px;
+            animation: splashBotFloat 2.6s ease-in-out infinite;
+        } */
+
+        .splash-card img {
+            /* margin-bottom: 18px; */
+            animation: splashBotFloat 2.6s ease-in-out infinite;
+        }
+
+        @keyframes splashBotFloat {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        .splash-bot-icon i {
+            font-size: 30px;
+            color: #fff;
+        }
+
+        .splash-greet {
+            font-size: 21px;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 16px;
+        }
+
+        .splash-greet span {
+            color: var(--neon-cyan);
+        }
+
+        .splash-bubble {
+            background: #fff;
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 16px 20px;
+            box-shadow: 0 8px 24px rgba(0, 50, 100, 0.08);
+            margin-bottom: 26px;
+        }
+
+        .splash-bubble p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-dim);
+        }
+
+        .splash-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            background-color: var(--neon-cyan);
+            color: #fff;
+            font-size: 13.5px;
+            font-weight: 700;
+            padding: 7px 26px;
+            border-radius: 99px;
+            box-shadow: 0 10px 24px rgba(0, 119, 204, 0.3);
+            transition: transform .18s ease, box-shadow .18s ease;
+            margin: 0.8rem 0 0;
+        }
+
+        .splash-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(0, 119, 204, 0.38);
+        }
+
+        .splash-btn i {
+            font-size: 12px;
+            transition: transform .18s ease;
+        }
+
+        .splash-btn:hover i {
+            transform: translateX(3px);
+        }
+
+        /* Hide the shell until the splash is dismissed, then reveal it */
+        .lessons-shell {
+            opacity: 0;
+        }
+
+        .lessons-shell.shell-visible {
+            opacity: 1;
+            transition: opacity .4s ease;
+        }
+
+        .lessons-shell.shell-visible .lessons-sidebar {
+            animation: sidebarSlideIn .55s cubic-bezier(.2, .8, .2, 1) both;
+        }
+
+        .lessons-shell.shell-visible .lessons-main {
+            animation: mainFadeUp .55s cubic-bezier(.2, .8, .2, 1) both .12s;
+        }
+
+        @keyframes sidebarSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-26px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes mainFadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* If JS is disabled, don't leave the page blank */
+        .no-js .module-splash {
+            display: none;
+        }
+
+        .no-js .lessons-shell {
+            opacity: 1;
+        }
+
+        /* =============================================
+           SKIP-SPLASH STATE
+           Added so that once a user has dismissed the
+           BonBon splash for a given module (tracked via
+           sessionStorage), reloading the page or moving
+           between lessons (Prev/Next full-page links)
+           does NOT show the splash again.
+        ============================================= */
+        .skip-splash .module-splash {
+            display: none !important;
+        }
+
+        .skip-splash .lessons-shell {
+            opacity: 1 !important;
+        }
+
+        /* =============================================
            LAYOUT SHELL
         ============================================= */
         .lessons-shell {
@@ -90,7 +417,7 @@ function lUrl($subject, $moduleId, $lessonId)
             overflow-y: auto;
             /* background: var(--bg-card); */
             background-color: #FFFFFF;
-            border-right: 1px solid var(--border-dim);
+            border-right: 1px solid var(--panel-border);
             display: flex;
             flex-direction: column;
             z-index: 10;
@@ -191,15 +518,17 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .sb-bar-track {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.07);
+            height: 15px;
+            /* background: rgba(255, 255, 255, 0.07); */
+            background: rgba(0, 119, 204, 0.08);
             border-radius: 3px;
             overflow: hidden;
         }
 
         .sb-bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--green-dark), var(--green-neon));
+            /* background: linear-gradient(90deg, var(--neon-blue), var(--neon-cyan)); */
+            background-color: var(--neon-cyan);
             border-radius: 3px;
             box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
             transition: width .6s ease;
@@ -267,8 +596,8 @@ function lUrl($subject, $moduleId, $lessonId)
         .sb-nav-icon {
             /* width: 28px;
             height: 28px; */
-            width: 35px;
-            height: 35px;
+            width: 32px;
+            height: 32px;
             flex-shrink: 0;
             border-radius: 8px;
             display: flex;
@@ -282,7 +611,7 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .sb-nav-icon .fa {
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .icon-type-lesson {
@@ -301,6 +630,7 @@ function lUrl($subject, $moduleId, $lessonId)
             /* background: rgba(0, 255, 136, 0.15);
             color: var(--green-neon); */
             background-color: var(--neon-cyan);
+            /* background: rgba(0, 119, 204, 0.08); */
             color: var(--deep-navy);
         }
 
@@ -460,11 +790,11 @@ function lUrl($subject, $moduleId, $lessonId)
             display: flex;
             align-items: center;
             justify-content: space-between;
-            position: sticky;
-            top: 0;
+            /* position: sticky;
+            top: 0; */
             z-index: 5;
             box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
-            flex-shrink: 0;
+            /* flex-shrink: 0; */
         }
 
         .topbar-left {
@@ -584,8 +914,8 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .btn-prev-top {
             background: var(--page-surface);
-            border: 1.5px solid var(--page-border);
-            color: var(--page-text);
+            border: 1.5px solid var(--panel-border);
+            color: var(--text-dim);
         }
 
         .btn-prev-top:hover {
@@ -593,7 +923,8 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .btn-next-top {
-            background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+            /* background: linear-gradient(135deg, var(--green-dark), var(--green-mid)); */
+            background-color: var(--neon-cyan);
             border: none;
             color: #fff;
         }
@@ -732,15 +1063,17 @@ function lUrl($subject, $moduleId, $lessonId)
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-size: 10.5px;
+            font-size: 11.5px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .06em;
             padding: 5px 12px;
             border-radius: 99px;
-            background: rgba(0, 137, 74, 0.09);
-            border: 1px solid rgba(0, 137, 74, 0.22);
-            color: var(--green-dark);
+            /* background: rgba(0, 137, 74, 0.09); */
+            /* border: 1px solid rgba(0, 137, 74, 0.22); */
+            background: rgba(0, 119, 204, 0.08);
+            border: 1px solid var(--panel-border);
+            color: var(--neon-cyan);
             white-space: nowrap;
         }
 
@@ -826,7 +1159,7 @@ function lUrl($subject, $moduleId, $lessonId)
         .ls-section-divider {
             flex: 1;
             height: 1px;
-            background: var(--page-border);
+            background: var(--border);
         }
 
         .ls-section-count {
@@ -1696,12 +2029,114 @@ function lUrl($subject, $moduleId, $lessonId)
             .img-grid {
                 grid-template-columns: 1fr 1fr;
             }
+
+            .splash-card {
+                max-width: 320px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="lessons-shell">
+
+    <!-- =============================================
+         SKIP-SPLASH CHECK
+         Runs immediately on every load. If this module's
+         splash has already been dismissed this session
+         (see sessionStorage flag set below), add the
+         skip-splash class to <html> BEFORE the splash
+         markup paints, so the robot screen never flashes
+         on Prev/Next navigation or on page reload.
+    ============================================= -->
+    <script>
+        (function () {
+            var moduleId = <?= (int) ($moduleId ?? 0) ?>;
+            var storageKey = 'splash_dismissed_module_' + moduleId;
+            var dismissed = sessionStorage.getItem(storageKey);
+
+            // Figure out HOW this page was loaded: a reload of the same
+            // page, or a fresh navigation (clicking a link).
+            var navType = 'navigate';
+            try {
+                var navEntries = performance.getEntriesByType('navigation');
+                if (navEntries && navEntries.length) {
+                    navType = navEntries[0].type; // "navigate" | "reload" | "back_forward" | "prerender"
+                } else if (performance.navigation) {
+                    // Fallback for older browsers
+                    navType = performance.navigation.type === 1 ? 'reload' : 'navigate';
+                }
+            } catch (e) { /* ignore, default to 'navigate' */ }
+
+            // Did we arrive here by clicking Prev/Next from ANOTHER lesson
+            // page (internal navigation), as opposed to coming from
+            // modules.php or typing the URL directly?
+            var cameFromWithinLessons = document.referrer.indexOf('url=subject_lessons') !== -1;
+
+            // Only skip the splash if it was already dismissed this session
+            // AND we either reloaded the exact same page, or moved between
+            // lessons via Prev/Next inside the module.
+            var shouldSkip = dismissed && (navType === 'reload' || navType === 'back_forward' || cameFromWithinLessons);
+
+            if (shouldSkip) {
+                document.documentElement.classList.add('skip-splash');
+            } else {
+                // Fresh entry (e.g. clicked "Continue Learning" on
+                // modules.php) — clear any stale flag so the splash
+                // always plays again when arriving from the modules list.
+                sessionStorage.removeItem(storageKey);
+            }
+        })();
+    </script>
+
+    <?php
+    /* ------------------------------------------------------------------
+       Compute module progress + splash-screen state BEFORE the shell.
+       start   -> module not started yet   -> "Start Now"
+       continue-> module partially done    -> "Continue Learning"
+       review  -> module fully completed   -> "Module Review"
+    ------------------------------------------------------------------- */
+    $progressPct = $totalLessons > 0 ? round(($completedCount / $totalLessons) * 100) : 0;
+
+    if ($progressPct <= 0) {
+        $moduleState = 'start';
+        $splashBtnLabel = 'Start Now';
+        $splashMsg = "You haven't started this module yet. Let's dive in!";
+    } elseif ($progressPct >= 100) {
+        $moduleState = 'review';
+        $splashBtnLabel = 'Module Review';
+        $splashMsg = "You've completed this module. Feel free to review any lesson, anytime.";
+    } else {
+        $moduleState = 'continue';
+        $splashBtnLabel = 'Continue Learning';
+        $splashMsg = "You're {$progressPct}% through this module — keep up the the great progress.";
+    }
+
+    $splashFirstName = 'Student';
+    if (!empty($studentName)) {
+        $nameParts = explode(' ', trim($studentName));
+        $splashFirstName = $nameParts[0];
+    }
+    ?>
+
+    <!-- =============================================
+         WELCOME / MODULE SPLASH SCREEN
+    ============================================= -->
+    <div class="module-splash" id="moduleSplash">
+        <div class="splash-card">
+            <div class="splash-bot-icon">
+                <!-- <i class="fa fa-robot"></i> -->
+                <img src="../images/robot-lesson1.png" alt="">
+            </div>
+            <div class="speech-bubble">
+                <strong>BonBon</strong>
+
+                <p id="bonbonMessage"></p>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="lessons-shell" id="lessonsShell">
 
         <?php include("../components/offcanvas.php"); ?>
 
@@ -1732,8 +2167,6 @@ function lUrl($subject, $moduleId, $lessonId)
                     Back to Modules
                 </a>
             </div>
-
-            <?php $progressPct = $totalLessons > 0 ? round(($completedCount / $totalLessons) * 100) : 0; ?>
 
             <!-- Progress -->
             <div class="sb-progress-block">
@@ -2425,6 +2858,70 @@ function lUrl($subject, $moduleId, $lessonId)
         <img id="dbLightboxImg" src="" alt="">
     </div>
 
+    <!-- Fallback if JavaScript is disabled: show the shell right away -->
+    <noscript>
+        <style>
+            .module-splash {
+                display: none;
+            }
+
+            .lessons-shell {
+                opacity: 1;
+            }
+        </style>
+    </noscript>
+
+    <!-- <div class="splash-greet">Welcome back, <span><?= htmlspecialchars($splashFirstName) ?></span>!</div>
+    <div class="splash-bubble">
+        <p id="splashMsg"><?= htmlspecialchars($splashMsg) ?></p>
+    </div> -->
+
+    <script>
+        (function () {
+
+            const el = document.getElementById("bonbonMessage");
+
+            const message = <?= json_encode("Welcome back, $splashFirstName! $splashMsg") ?>;
+
+            let i = 0;
+            const speed = 30;
+
+            function type() {
+
+                if (i < message.length) {
+
+                    el.textContent += message.charAt(i);
+                    i++;
+
+                    setTimeout(type, speed);
+
+                } else {
+
+                    // Append button after typing finishes
+                    el.insertAdjacentHTML("beforeend", `
+                
+
+                <button type="button"
+                        class="splash-btn"
+                        id="splashContinueBtn"
+                        data-state="<?= htmlspecialchars($moduleState) ?>">
+                    <span><?= htmlspecialchars($splashBtnLabel) ?></span>
+                    <i class="fa fa-arrow-right"></i>
+                </button>
+            `);
+
+                }
+
+            }
+
+            // Skip the typewriter entirely if we're already skipping the splash
+            if (!document.documentElement.classList.contains('skip-splash')) {
+                type();
+            }
+
+        })();
+    </script>
+
     <!-- PHP data for lessons.js -->
     <script>
         var LESSON_DATA = {
@@ -2474,6 +2971,36 @@ function lUrl($subject, $moduleId, $lessonId)
                 el.scrollIntoView({ behavior: 'smooth' });
             }
         }
+    </script>
+
+    <!-- =============================================
+         SPLASH SCREEN -> LESSON SHELL REVEAL LOGIC
+    ============================================= -->
+    <script>
+        (function () {
+            var splash = document.getElementById('moduleSplash');
+            var shell = document.getElementById('lessonsShell');
+
+            if (!splash || !shell) return;
+
+            // Delegate: listen on the splash container instead of the button,
+            // since the button is added later by the typing script.
+            splash.addEventListener('click', function (e) {
+                var btn = e.target.closest('#splashContinueBtn');
+                if (!btn) return;
+
+                // Remember that this module's splash has been dismissed,
+                // so Prev/Next navigation and page reloads skip it from now on
+                // (cleared automatically when the browser tab/session ends).
+                sessionStorage.setItem('splash_dismissed_module_<?= (int) $moduleId ?>', '1');
+
+                splash.classList.add('splash-exit');
+                setTimeout(function () {
+                    splash.style.display = 'none';
+                    shell.classList.add('shell-visible');
+                }, 460);
+            });
+        })();
     </script>
 
     <?php $hasActiveQuiz = !empty($quizData) && isset($firstQzDone) && !$firstQzDone; ?>
