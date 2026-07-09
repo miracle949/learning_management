@@ -81,6 +81,7 @@ function lUrl($subject, $moduleId, $lessonId)
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
             /* background: radial-gradient(circle at 30% 20%, rgba(0, 119, 204, 0.10), transparent 55%),
                 radial-gradient(circle at 80% 80%, rgba(85, 51, 204, 0.08), transparent 50%),
                 #f4f8fd; */
@@ -118,6 +119,54 @@ function lUrl($subject, $moduleId, $lessonId)
             }
         }
 
+        .speech-bubble-progress {
+            margin-top: 12px;
+        }
+
+        .sb-progress-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 6px;
+        }
+
+        .sb-progress-row .sbp-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--text-dim);
+            opacity: 0.75;
+        }
+
+        .sb-progress-row .sbp-pct {
+            font-size: 12px;
+            font-weight: 700;
+            /* color: var(--neon-cyan); */
+        }
+
+        /* ── DASH / SEGMENTED STYLE (bubble) ── */
+        .sbp-segments {
+            display: flex;
+            gap: 4px;
+        }
+
+        .sbp-segment {
+            flex: 1;
+            height: 15px;
+            border-radius: 4px;
+            background-color: rgba(0, 119, 204, 0.10);
+        }
+
+        .sbp-segment.filled {
+            background: linear-gradient(135deg, #ffb347, #ff7a00);
+        }
+
+        .sbp-segment.filled.completed {
+            background-color: var(--neon-cyan);
+            background-image: none;
+        }
+
         .speech-bubble {
             position: absolute;
             /* left: 155px; */
@@ -126,7 +175,7 @@ function lUrl($subject, $moduleId, $lessonId)
             /* right: -185px; */
             /* right: -510px; */
             /* top: 2px; */
-            top: 20px;
+            top: -10px;
             /* top: -50px; */
             /* width: 148px; */
             /* width: 175px; */
@@ -229,6 +278,46 @@ function lUrl($subject, $moduleId, $lessonId)
             margin-left: 10rem;
         }
 
+        /* Bare-minimum reset so this is legible on the cyan bg — style freely */
+        .splash-module-meta {
+            color: #fff;
+            width: 520px;
+            /* display: flex;
+            flex-direction: column;
+            gap: 1rem; */
+            margin: -3rem 0 0.7rem;
+            text-align: center;
+        }
+
+        .splash-module-position {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 6px 15px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(6px);
+            font-size: 14.5px;
+            font-weight: 600;
+            /* margin: 0 0 10px; */
+            /* margin: 0; */
+        }
+
+        .splash-module-title {
+            font-size: 28px;
+            font-family: "Orbitron", sans-serif;
+            text-align: center;
+            margin: 10px 0 10px;
+            line-height: 40px;
+            /* margin: 0; */
+        }
+
+        .splash-module-desc {
+            font-size: 14.5px;
+            text-align: center;
+        }
+
         @keyframes splashCardUp {
             from {
                 opacity: 0;
@@ -256,7 +345,7 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .splash-card img {
             /* margin-bottom: 18px; */
-            animation: splashBotFloat 2.6s ease-in-out infinite;
+            /* animation: splashBotFloat 2.6s ease-in-out infinite; */
         }
 
         @keyframes splashBotFloat {
@@ -306,15 +395,23 @@ function lUrl($subject, $moduleId, $lessonId)
             display: inline-flex;
             align-items: center;
             gap: 9px;
-            background-color: var(--neon-cyan);
             color: #fff;
             font-size: 13.5px;
             font-weight: 700;
             padding: 7px 26px;
             border-radius: 99px;
-            box-shadow: 0 10px 24px rgba(0, 119, 204, 0.3);
+            /* box-shadow: 0 10px 24px rgba(0, 119, 204, 0.3); */
             transition: transform .18s ease, box-shadow .18s ease;
             margin: 0.8rem 0 0;
+        }
+
+        .splash-btn.state-continue {
+            background: linear-gradient(135deg, #ffb347, #ff7a00);
+        }
+
+        .splash-btn.state-review,
+        .splash-btn.state-start {
+            background-color: var(--neon-cyan);
         }
 
         .splash-btn:hover {
@@ -2097,6 +2194,11 @@ function lUrl($subject, $moduleId, $lessonId)
     ------------------------------------------------------------------- */
     $progressPct = $totalLessons > 0 ? round(($completedCount / $totalLessons) * 100) : 0;
 
+    // ── Segmented dash progress for the speech bubble ──
+    $sbTotalSegments = 5;
+    $sbFilledSegments = (int) round(($progressPct / 100) * $sbTotalSegments);
+    $sbIsFinished = ($progressPct >= 100);
+
     if ($progressPct <= 0) {
         $moduleState = 'start';
         $splashBtnLabel = 'Start Now';
@@ -2122,16 +2224,38 @@ function lUrl($subject, $moduleId, $lessonId)
          WELCOME / MODULE SPLASH SCREEN
     ============================================= -->
     <div class="module-splash" id="moduleSplash">
+        <div class="splash-module-meta">
+            <span class="splash-module-position">
+                <i class="fa fa-book-open"></i>
+
+                Module
+                <?= $modulePosition ?> of
+                <?= $moduleTotal ?>
+            </span>
+            <h2 class="splash-module-title">
+                <?= htmlspecialchars($module['title'] ?? '') ?>
+            </h2>
+            <?php if (!empty($module['description'])): ?>
+                <p class="splash-module-desc">
+                    <?= nl2br(htmlspecialchars($module['description'])) ?>
+                </p>
+            <?php endif; ?>
+        </div>
         <div class="splash-card">
+
+            <!-- NEW: module position + title + description (dynamic, per module) -->
+
+
+            <!-- <div class="splash-card-parent">
+
+            </div> -->
+
             <div class="splash-bot-icon">
-                <!-- <i class="fa fa-robot"></i> -->
                 <img src="../images/robot-lesson1.png" alt="">
             </div>
             <div class="speech-bubble">
                 <strong>BonBon</strong>
-
                 <p id="bonbonMessage"></p>
-
             </div>
         </div>
     </div>
@@ -2897,18 +3021,38 @@ function lUrl($subject, $moduleId, $lessonId)
 
                 } else {
 
-                    // Append button after typing finishes
-                    el.insertAdjacentHTML("beforeend", `
-                
+                    el.insertAdjacentHTML("afterend", `
+                    <div class="speech-bubble-progress">
+                        <div class="sb-progress-row">
+                            <span class="sbp-label">Progress</span>
+                            <span class="sbp-pct" style="color:<?= $sbIsFinished ? 'var(--neon-cyan)' : '#ff7a00' ?>;"><?= $progressPct ?>%</span>
+                        </div>
+                        <div class="sbp-segments">
+                            <?php for ($i = 1; $i <= $sbTotalSegments; $i++): ?>
+                                <div class="sbp-segment<?= $i <= $sbFilledSegments ? ' filled' . ($sbIsFinished ? ' completed' : '') : '' ?>"></div>
+                            <?php endfor; ?>
+                        </div>
+                    </div>
 
-                <button type="button"
-                        class="splash-btn"
-                        id="splashContinueBtn"
-                        data-state="<?= htmlspecialchars($moduleState) ?>">
-                    <span><?= htmlspecialchars($splashBtnLabel) ?></span>
-                    <i class="fa fa-arrow-right"></i>
-                </button>
-            `);
+                    <button type="button"
+                            class="splash-btn state-<?= htmlspecialchars($moduleState) ?>"
+                            id="splashContinueBtn"
+                            data-state="<?= htmlspecialchars($moduleState) ?>">
+                        <span><?= htmlspecialchars($splashBtnLabel) ?></span>
+                        <i class="fa fa-arrow-right"></i>
+                    </button>
+                    `);
+
+                    // Animate the fill in after insertion so the width transition actually plays
+                    requestAnimationFrame(function () {
+                        var fill = document.getElementById('sbProgressFill');
+                        if (!fill) return;
+                        // Force the browser to register width:0% as a real paint
+                        // before we change it — otherwise the transition gets skipped.
+                        requestAnimationFrame(function () {
+                            fill.style.width = "<?= $progressPct ?>%";
+                        });
+                    });
 
                 }
 

@@ -239,6 +239,16 @@ class StudentsController
         $module = $moduleId ? $studentModel->getInteractiveModuleById($moduleId) : null;
         $lessons = $module ? $studentModel->getIMLessonsWithCounts($moduleId) : [];
 
+        $subjectModulesList = $subject ? $studentModel->getInteractiveModules($subject) : [];
+        $moduleTotal = count($subjectModulesList);
+        $modulePosition = 0;
+        foreach ($subjectModulesList as $idx => $m) {
+            if ((int) $m['id'] === $moduleId) {
+                $modulePosition = $idx + 1;
+                break;
+            }
+        }
+
         if (!$lessonId && !empty($lessons)) {
             $lessonId = $lessons[0]['id'];
         }

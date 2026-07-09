@@ -39,7 +39,7 @@
                             </div> -->
                             <h2>You're doing great — keep the momentum going.</h2>
                             <p>Keep learning to unlock more lessons and quizzes. You've completed
-                                <b><?= $overallProgress['completed'] ?> of <?= $overallProgress['total'] ?> modules</b> - stay
+                                <b><?= $overallProgress['completed'] ?> of <?= $overallProgress['total'] ?> modules</b> stay
                                 consistent and you'll finish the rest in no time.
                             </p>
 
@@ -269,7 +269,7 @@
                                                             Progress
                                                         </span>
                                                         <span
-                                                            style="font-size:12.5px; font-weight:700; color:<?= $isFinished ? 'var(--neon-cyan)' : '#0A2540' ?>;">
+                                                            style="font-size:12.5px; font-weight:700; color:<?= $isFinished ? 'var(--neon-cyan)' : '#ff7a00' ?>;">
                                                             <?= (int) round($pct) ?>%
                                                         </span>
                                                     </div>
@@ -326,7 +326,7 @@
             const el = document.getElementById('bonbonMessage');
             if (!el) return;
 
-            const message = "This is your overall progress — you're doing better than you think! Keep completing modules and you'll reach 100%.";
+            const message = "This is your overall progress you're doing better than you think! Keep completing modules and you'll reach 100%.";
             const speed = 28; // ms per character — lower = faster
             let i = 0;
 
