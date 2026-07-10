@@ -120,7 +120,7 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .speech-bubble-progress {
-            margin-top: 12px;
+            margin-top: 5px;
         }
 
         .sb-progress-row {
@@ -175,7 +175,7 @@ function lUrl($subject, $moduleId, $lessonId)
             /* right: -185px; */
             /* right: -510px; */
             /* top: 2px; */
-            top: -10px;
+            /* top: -200px; */
             /* top: -50px; */
             /* width: 148px; */
             /* width: 175px; */
@@ -195,6 +195,7 @@ function lUrl($subject, $moduleId, $lessonId)
             /* display: none; */
             /* animation: bubblePop 4s ease-in-out infinite; */
         }
+
 
         .speech-bubble strong {
             display: block;
@@ -275,7 +276,7 @@ function lUrl($subject, $moduleId, $lessonId)
             max-width: 420px;
             /* padding: 0 24px; */
             animation: splashCardUp .55s cubic-bezier(.2, .8, .2, 1) both .1s;
-            margin-left: 10rem;
+            margin-left: 15rem;
         }
 
         /* Bare-minimum reset so this is legible on the cyan bg — style freely */
@@ -285,8 +286,9 @@ function lUrl($subject, $moduleId, $lessonId)
             /* display: flex;
             flex-direction: column;
             gap: 1rem; */
-            margin: -3rem 0 0.7rem;
+            margin: -3rem 0 2rem;
             text-align: center;
+            display: none;
         }
 
         .splash-module-position {
@@ -298,7 +300,7 @@ function lUrl($subject, $moduleId, $lessonId)
             background: rgba(255, 255, 255, 0.16);
             border: 1px solid rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(6px);
-            font-size: 14.5px;
+            font-size: 13.5px;
             font-weight: 600;
             /* margin: 0 0 10px; */
             /* margin: 0; */
@@ -329,19 +331,6 @@ function lUrl($subject, $moduleId, $lessonId)
                 transform: translateY(0);
             }
         }
-
-        /* .splash-bot-icon {
-            width: 76px;
-            height: 76px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--neon-blue), var(--electric-purple));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 0 0 6px rgba(0, 85, 170, 0.10), 0 12px 30px rgba(0, 85, 170, 0.25);
-            margin-bottom: 18px;
-            animation: splashBotFloat 2.6s ease-in-out infinite;
-        } */
 
         .splash-card img {
             /* margin-bottom: 18px; */
@@ -402,7 +391,7 @@ function lUrl($subject, $moduleId, $lessonId)
             border-radius: 99px;
             /* box-shadow: 0 10px 24px rgba(0, 119, 204, 0.3); */
             transition: transform .18s ease, box-shadow .18s ease;
-            margin: 0.8rem 0 0;
+            margin: 1rem 0 0;
         }
 
         .splash-btn.state-continue {
@@ -496,25 +485,82 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         /* =============================================
-           LAYOUT SHELL
+           LIST / LESSON VIEW TOGGLE
+           Two states live on #lessonsShell:
+             .view-list   -> only the lesson list shows
+             .view-lesson -> only the topbar + lesson
+                              content shows (list hidden)
+           State is remembered per-module in sessionStorage
+           so Prev/Next and reloads keep whichever view
+           the student was last in.
         ============================================= */
-        .lessons-shell {
-            display: grid;
-            /* grid-template-columns: 252px 1fr; */
-            grid-template-columns: 260px 1fr;
-            height: 100vh;
-            overflow: hidden;
+        .lessons-shell.view-list .lessons-main {
+            display: none;
+        }
+
+        .lessons-shell.view-lesson .lessons-sidebar {
+            display: none;
+        }
+
+        .topbar-back-list {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted, var(--text-dim));
+            padding: 7px 14px;
+            border-radius: 8px;
+            border: 1.5px solid var(--page-border, var(--panel-border));
+            background: var(--page-card, #fff);
+            transition: border-color .15s ease, color .15s ease, transform .15s ease;
+        }
+
+        .topbar-back-list svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .topbar-back-list:hover {
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            transform: translateX(-2px);
         }
 
         /* =============================================
-           LEFT SIDEBAR
+           LAYOUT SHELL
+           Single full-width column (no side-by-side sidebar).
+           The lesson list sits on top, and once a lesson is
+           selected, the topbar + that lesson's content simply
+           continue underneath it in the same column. The shell
+           itself is the one scroll container for the whole page.
         ============================================= */
-        .lessons-sidebar {
+        .lessons-shell {
+            display: block;
             height: 100vh;
             overflow-y: auto;
-            /* background: var(--bg-card); */
+            overflow-x: hidden;
+        }
+
+        /* Lesson content area (topbar + sections) — stacks directly
+           below the lesson list, full width, no independent scroll. */
+        .lessons-main {
+            display: flex;
+            flex-direction: column;
+            /* background: var(--page-bg, #f7f9fc); */
+            /* border-top: 1px solid var(--panel-border); */
+            margin: 0;
+            padding: 0;
+        }
+
+        /* =============================================
+           LESSON LIST (TOP SECTION)
+        ============================================= */
+        .lessons-sidebar {
+            width: 100%;
+            min-height: auto;
             background-color: #FFFFFF;
-            border-right: 1px solid var(--panel-border);
+            border-right: none;
             display: flex;
             flex-direction: column;
             z-index: 10;
@@ -530,17 +576,228 @@ function lUrl($subject, $moduleId, $lessonId)
             border-radius: 3px;
         }
 
-        /* brand */
-        .sb-brand {
+        /* =============================================
+           MODULE OVERVIEW HERO (full-width top banner)
+        ============================================= */
+        .ov-hero {
+            /* background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan) 65%, var(--electric-purple)); */
+            /* padding: 34px 30px; */
+            padding: 25px 30px 34px;
+            color: #fff;
+            /* position: relative; */
+            /* overflow: hidden; */
+            background-color: var(--neon-cyan);
+            display: flex;
+            justify-content: space-between;
+            /* align-items: center; */
+        }
+
+        .ov-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 26px);
+            pointer-events: none;
+        }
+
+        .ov-hero .ov-text {
+            width: 650px;
+        }
+
+        .ov-hero .ov-image {
+            /* width: 150%; */
+            position: relative;
+        }
+
+
+        .speech-bubble {
+            position: absolute;
+            left: -300px;
+            /* left: -315px; */
+            /* right: -185px; */
+            /* right: -510px; */
+            /* top: 2px; */
+            /* top: 25px; */
+            /* top: -50px; */
+            /* width: 148px; */
+            /* width: 175px; */
+            width: 300px;
+            /* background: #fff; */
+            background-color: var(--bg-main);
+            color: var(--text-bright);
+            font-family: var(--font-body);
+            line-height: 1.4;
+            padding: 16px 19px;
+            border-radius: 14px;
+            /* box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18); */
+            /* display: none; */
+            /* animation: bubblePop 4s ease-in-out infinite; */
+        }
+
+        .bubble-1 {
+            top: -10px;
+        }
+
+        .bubble-2 {
+            top: 20px;
+        }
+
+        .speech-bubble strong {
+            display: block;
+            color: var(--neon-cyan);
+            font-family: "Orbitron", sans-serif;
+            font-weight: 700;
+            margin-bottom: 2px;
+            font-size: 14.5px;
+        }
+
+        .speech-bubble p {
+            margin: 0;
+            font-size: 13.5px;
+            color: var(--text-dim);
+            line-height: 22px;
+        }
+
+        .speech-bubble p .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 14px;
+            background: var(--neon-cyan);
+            margin-left: 2px;
+            vertical-align: middle;
+            animation: cursorBlink 0.8s step-end infinite;
+        }
+
+        @keyframes cursorBlink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 40px;
+            /* top: 60px; */
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            transform: rotate(45deg);
+        }
+
+        .ov-hero-back {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: transform .15s ease, color .15s ease;
+        }
+
+        .ov-hero-back:hover {
+            transform: translateX(-3px);
+            color: #fff;
+        }
+
+        .ov-hero-top {
             position: relative;
             z-index: 1;
             display: flex;
-            justify-content: start;
-            align-items: start;
-            gap: 12px;
-            /* padding: 22px 18px 18px; */
-            padding: 20px 16px 15px;
-            /* border-bottom: 1px solid var(--border-dim); */
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 15px;
+        }
+
+        .ov-hero-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .ov-hero-tag {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.72);
+            margin-bottom: 5px;
+        }
+
+        .ov-hero-title {
+            font-size: 28px;
+            font-weight: 700;
+            font-family: "Orbitron", sans-serif;
+            line-height: 1.25;
+        }
+
+        .ov-hero-sub {
+            position: relative;
+            z-index: 1;
+            font-size: 14.5px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 16px;
+        }
+
+        .ov-hero-track {
+            position: relative;
+            z-index: 1;
+            height: 15px;
+            border-radius: 99px;
+            background: rgba(255, 255, 255, 0.22);
+            overflow: hidden;
+            max-width: 900px;
+        }
+
+        .ov-hero-fill {
+            height: 100%;
+            border-radius: 99px;
+            background: #fff;
+            transition: width .6s ease;
+        }
+
+        /* Blue hero banner reused at the top of the lesson CONTENT view,
+           so it's always obvious which lesson/topic you're looking at. */
+        .lesson-hero {
+            /* padding: 20px 32px 20px; */
+            /* padding: 34px 30px 34px; */
+            padding: 25px 30px 34px;
+            display: block;
+        }
+
+        .lesson-hero .ov-hero-back {
+            margin-bottom: 14px;
+        }
+
+        .lesson-hero .ov-hero-tag {
+            margin-bottom: 4px;
+        }
+
+        .lesson-hero .ov-hero-title {
+            font-size: 28px;
+        }
+
+        .lesson-hero .ov-hero-sub {
+            margin-bottom: 0;
         }
 
         .sb-brand-mark {
@@ -635,19 +892,11 @@ function lUrl($subject, $moduleId, $lessonId)
         .sb-lesson-list {
             position: relative;
             z-index: 1;
-            flex: 1;
-            /* padding: 4px 8px 20px; */
-            padding: 4px 12px 20px;
-            overflow-y: auto;
-        }
-
-        .sb-lesson-list::-webkit-scrollbar {
-            width: 3px;
-        }
-
-        .sb-lesson-list::-webkit-scrollbar-thumb {
-            background: var(--border-dim);
-            border-radius: 3px;
+            /* width: 100%; */
+            /* margin: 0 auto; */
+            margin: 0px 180px;
+            /* padding: 28px 20px 60px; */
+            padding: 28px 20px 35px;
         }
 
         /* Group label */
@@ -661,54 +910,119 @@ function lUrl($subject, $moduleId, $lessonId)
             opacity: 0.65;
         }
 
-        /* Nav item */
+        /* Nav item — card style, animated in on load */
         .sb-nav-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 8px;
-            border-radius: 9px;
-            margin-bottom: 1px;
+            gap: 16px;
+            padding: 18px 20px;
+            border-radius: 16px;
+            margin-bottom: 18px;
             cursor: pointer;
-            transition: background .15s;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
             position: relative;
             text-decoration: none;
             color: inherit;
+            opacity: 0;
+            transform: translateX(-18px);
+            animation: sbItemIn .5s cubic-bezier(.2, .8, .2, 1) forwards;
+        }
+
+        @keyframes sbItemIn {
+            from {
+                opacity: 0;
+                transform: translateX(-18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .sb-nav-item:hover {
-            background: rgba(0, 207, 255, 0.06);
+            transform: translateX(3px) translateY(-1px);
+            border-color: rgba(0, 119, 204, 0.35);
+            box-shadow: 0 8px 20px rgba(0, 90, 180, 0.12);
+            background: #ffffff;
         }
 
         .sb-nav-item.active {
-            /* background: rgba(0, 255, 136, 0.09); */
-            background: rgba(0, 119, 204, 0.08);
+            background: linear-gradient(135deg, rgba(0, 119, 204, 0.09), rgba(85, 51, 204, 0.05));
+            border-color: var(--neon-cyan);
+            box-shadow: 0 6px 18px rgba(0, 119, 204, 0.16);
         }
 
         .sb-nav-item.sb-nav-done .sb-nav-title {
-            color: rgba(200, 220, 255, 0.75);
+            /* color: rgba(200, 220, 255, 0.75); */
+            color: var(--text-bright);
+        }
+
+        /* Chevron affordance on the right, like a clickable list card */
+        .sb-nav-chevron {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            opacity: .45;
+            transition: transform .18s ease, opacity .18s ease, color .18s ease;
+        }
+
+        .sb-nav-chevron svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .sb-nav-item:hover .sb-nav-chevron {
+            opacity: 1;
+            transform: translateX(3px);
+            color: var(--neon-cyan);
+        }
+
+        .sb-nav-item.active .sb-nav-chevron {
+            opacity: 1;
+            color: var(--neon-cyan);
+        }
+
+        /* "Done" pill badge, shown next to the lesson title like the reference list */
+        .sb-nav-done-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 9.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: #0a8f4f;
+            background: rgba(0, 168, 89, 0.12);
+            border: 1px solid rgba(0, 168, 89, 0.28);
+            padding: 1px 7px;
+            border-radius: 99px;
+            margin-left: 7px;
+            vertical-align: middle;
         }
 
         /* Icon box */
         .sb-nav-icon {
-            /* width: 28px;
-            height: 28px; */
-            width: 32px;
-            height: 32px;
+            width: 42px;
+            height: 42px;
             flex-shrink: 0;
-            border-radius: 8px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .sb-nav-icon svg {
-            width: 13px;
-            height: 13px;
+            width: 16px;
+            height: 16px;
         }
 
         .sb-nav-icon .fa {
-            font-size: 13px;
+            font-size: 16px;
         }
 
         .icon-type-lesson {
@@ -773,9 +1087,8 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .sb-nav-title {
-            /* font-size: 11.5px; */
-            font-size: 13px;
-            font-weight: 500;
+            font-size: 15.5px;
+            font-weight: 600;
             color: var(--text-dim);
             white-space: nowrap;
             overflow: hidden;
@@ -867,29 +1180,37 @@ function lUrl($subject, $moduleId, $lessonId)
             margin-top: 1px;
         }
 
-        /* =============================================
-           MAIN CONTENT AREA
-        ============================================= */
-        .lessons-main {
-            height: 100vh;
-            overflow-y: auto;
+        /* Bottom nav bar */
+
+        .lesson-bottom-nav {
             display: flex;
-            flex-direction: column;
-            background: var(--page-bg);
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--panel-border);
         }
 
-        /* TOP NAV BAR */
+        .lesson-bottom-nav .topbar-nav-btn {
+            padding: 10px 22px;
+        }
+
+        /* =============================================
+           TOP NAV BAR
+        ============================================= */
         .lessons-topbar {
-            background: var(--page-card);
-            border-bottom: 1px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border-bottom: 1px solid var(--page-border, var(--panel-border));
             padding: 0 32px;
             height: 60px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            /* position: sticky;
-            top: 0; */
+            position: sticky;
+            top: 0;
             z-index: 5;
+            position: sticky;
+            bottom: 0;
             box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
             /* flex-shrink: 0; */
         }
@@ -906,12 +1227,8 @@ function lUrl($subject, $moduleId, $lessonId)
             gap: 7px;
             font-size: 13px;
             font-weight: 600;
-            /* color: var(--green-dark); */
-            /* padding: 7px 14px; */
-            color: var(--text-muted);
+            color: var(--text-muted, var(--text-dim));
             border-radius: 8px;
-            /* background: rgba(0, 137, 74, 0.08); */
-            /* border: 1px solid rgba(0, 137, 74, 0.2); */
             transition: background .15s, transform .15s;
         }
 
@@ -920,7 +1237,6 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .back-btn:hover {
-            /* background: rgba(0, 137, 74, 0.14); */
             transform: translateX(-2px);
         }
 
@@ -930,11 +1246,11 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .topbar-breadcrumb {
-            display: flex;
+            display: none;
             align-items: center;
             gap: 7px;
             font-size: 12.5px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
         }
 
         .topbar-breadcrumb .sep {
@@ -942,14 +1258,12 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .topbar-breadcrumb .current {
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             font-weight: 600;
         }
 
         .topbar-right {
-            /* width: 100%; */
             display: flex;
-            /* justify-content: space-between; */
             align-items: center;
             gap: 12px;
         }
@@ -962,14 +1276,14 @@ function lUrl($subject, $moduleId, $lessonId)
             align-items: center;
             justify-content: center;
             border-radius: 9px;
-            background: var(--page-card);
-            border: 1px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
         }
 
         .bell-wrap svg {
             width: 16px;
             height: 16px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
         }
 
         .bell-dot {
@@ -979,21 +1293,21 @@ function lUrl($subject, $moduleId, $lessonId)
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: var(--red-led);
-            box-shadow: 0 0 5px var(--red-led);
+            background: var(--red-led, var(--danger-red));
+            box-shadow: 0 0 5px var(--red-led, var(--danger-red));
         }
 
         .top-avatar {
             width: 36px;
             height: 36px;
             border-radius: 9px;
-            background: linear-gradient(135deg, var(--green-mid), var(--blue-mid));
+            background: linear-gradient(135deg, var(--green-mid, var(--neon-cyan)), var(--blue-mid, var(--neon-blue)));
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             font-size: 12.5px;
-            color: var(--bg-darkest);
+            color: var(--bg-darkest, #fff);
         }
 
         .topbar-nav-btn {
@@ -1002,7 +1316,7 @@ function lUrl($subject, $moduleId, $lessonId)
             gap: 6px;
             padding: 8px 18px;
             border-radius: 9px;
-            font-size: 13px;
+            font-size: 14.5px;
             font-weight: 700;
             cursor: pointer;
             transition: transform .18s, box-shadow .18s;
@@ -1010,17 +1324,16 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .btn-prev-top {
-            background: var(--page-surface);
+            background: var(--page-surface, #fff);
             border: 1.5px solid var(--panel-border);
             color: var(--text-dim);
         }
 
         .btn-prev-top:hover {
-            background: var(--page-border);
+            background: var(--page-border, var(--panel-border));
         }
 
         .btn-next-top {
-            /* background: linear-gradient(135deg, var(--green-dark), var(--green-mid)); */
             background-color: var(--neon-cyan);
             border: none;
             color: #fff;
@@ -1032,9 +1345,9 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .btn-completed-top {
-            background: var(--page-surface);
+            background: var(--page-surface, #fff);
             border: 1.5px solid rgba(0, 137, 74, 0.3);
-            color: var(--green-dark);
+            color: var(--green-dark, #0a8f4f);
             cursor: default;
             opacity: 0.85;
         }
@@ -1046,14 +1359,14 @@ function lUrl($subject, $moduleId, $lessonId)
             margin: 24px 28px 0;
             border-radius: 16px;
             overflow: hidden;
-            background: var(--page-card);
-            border: 1px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
         }
 
         .module-hero-banner {
             height: 8px;
-            background: linear-gradient(90deg, var(--green-dark), var(--green-neon), var(--blue-elec));
+            background: linear-gradient(90deg, var(--green-dark, var(--neon-blue)), var(--green-neon, var(--neon-cyan)), var(--blue-elec, var(--electric-purple)));
         }
 
         .module-hero-body {
@@ -1078,7 +1391,7 @@ function lUrl($subject, $moduleId, $lessonId)
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .08em;
-            color: var(--green-dark);
+            color: var(--green-dark, var(--neon-cyan));
             background: rgba(0, 137, 74, 0.08);
             border: 1px solid rgba(0, 137, 74, 0.2);
             padding: 4px 12px;
@@ -1094,14 +1407,14 @@ function lUrl($subject, $moduleId, $lessonId)
         .module-hero-title {
             font-size: 22px;
             font-weight: 700;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             line-height: 1.3;
             margin-bottom: 6px;
         }
 
         .module-hero-desc {
             font-size: 13.5px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
             line-height: 1.6;
             margin: 0;
         }
@@ -1119,9 +1432,9 @@ function lUrl($subject, $moduleId, $lessonId)
             align-items: center;
             gap: 7px;
             font-size: 12.5px;
-            color: var(--page-muted);
-            background: var(--page-surface);
-            border: 1px solid var(--page-border);
+            color: var(--page-muted, var(--text-dim));
+            background: var(--page-surface, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             border-radius: 99px;
             padding: 6px 16px;
         }
@@ -1129,30 +1442,28 @@ function lUrl($subject, $moduleId, $lessonId)
         .hero-stat svg {
             width: 13px;
             height: 13px;
-            color: var(--green-dark);
+            color: var(--green-dark, var(--neon-cyan));
         }
 
         .hero-stat-num {
             font-weight: 700;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
         }
 
         /* =============================================
            CONTENT WRAPPER
         ============================================= */
         .lessons-content-wrap {
-            /* padding: 35px 28px 60px; */
-            padding: 35px 28px 35px;
-            height: 100vh;
-            overflow-y: auto;
+            padding: 55px 28px 35px;
+            margin: 0 180px;
+            /* height: calc(100vh - 181px); */
         }
 
         .lesson-title-row {
             display: flex;
             flex-direction: column;
             align-items: start;
-            /* gap: 14px; */
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 20px;
         }
 
@@ -1166,8 +1477,6 @@ function lUrl($subject, $moduleId, $lessonId)
             letter-spacing: .06em;
             padding: 5px 12px;
             border-radius: 99px;
-            /* background: rgba(0, 137, 74, 0.09); */
-            /* border: 1px solid rgba(0, 137, 74, 0.22); */
             background: rgba(0, 119, 204, 0.08);
             border: 1px solid var(--panel-border);
             color: var(--neon-cyan);
@@ -1175,10 +1484,38 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .lesson-main-title {
-            font-size: 22px;
+            font-size: 28px;
             font-weight: 700;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             line-height: 1.3;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .lesson-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            padding: 4px 12px;
+            border-radius: 99px;
+        }
+
+        .lesson-status-pill.is-done {
+            color: #0a8f4f;
+            background: rgba(0, 168, 89, 0.12);
+            border: 1px solid rgba(0, 168, 89, 0.28);
+        }
+
+        .lesson-status-pill.is-pending {
+            color: var(--accent-gold);
+            background: rgba(204, 119, 0, 0.1);
+            border: 1px solid rgba(204, 119, 0, 0.25);
         }
 
         /* =============================================
@@ -1219,12 +1556,12 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .icon-lesson {
             background: rgba(0, 137, 74, 0.12);
-            color: var(--green-dark);
+            color: var(--green-dark, var(--neon-cyan));
         }
 
         .icon-video {
             background: rgba(255, 107, 0, 0.12);
-            color: var(--orange-warn);
+            color: var(--orange-warn, #ff6b00);
         }
 
         .icon-image {
@@ -1234,36 +1571,36 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .icon-flash {
             background: rgba(0, 153, 204, 0.12);
-            color: var(--blue-mid);
+            color: var(--blue-mid, var(--neon-cyan));
         }
 
         .icon-activity {
             background: rgba(155, 93, 229, 0.12);
-            color: var(--purple-chip);
+            color: var(--purple-chip, var(--electric-purple));
         }
 
         .icon-quiz {
             background: rgba(0, 207, 255, 0.12);
-            color: var(--blue-mid);
+            color: var(--blue-mid, var(--neon-cyan));
         }
 
         .ls-section-title {
             font-size: 13.5px;
             font-weight: 700;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
         }
 
         .ls-section-divider {
             flex: 1;
             height: 1px;
-            background: var(--border);
+            background: var(--border, var(--panel-border));
         }
 
         .ls-section-count {
             font-size: 10px;
-            color: var(--page-muted);
-            background: var(--page-surface);
-            border: 1px solid var(--page-border);
+            color: var(--page-muted, var(--text-dim));
+            background: var(--page-surface, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             padding: 2px 8px;
             border-radius: 99px;
         }
@@ -1272,7 +1609,7 @@ function lUrl($subject, $moduleId, $lessonId)
         .lesson-text-card {
             font-size: 14.5px;
             line-height: 1.85;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             overflow-wrap: break-word;
             word-wrap: break-word;
             word-break: break-word;
@@ -1281,8 +1618,8 @@ function lUrl($subject, $moduleId, $lessonId)
 
         /* Video */
         .video-card {
-            background: var(--page-card);
-            border: 1px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             border-radius: 14px;
             overflow: hidden;
             margin-bottom: 16px;
@@ -1297,7 +1634,7 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .video-card-banner {
             height: 5px;
-            background: linear-gradient(90deg, var(--orange-warn), #FFAA44);
+            background: linear-gradient(90deg, var(--orange-warn, #ff6b00), #FFAA44);
         }
 
         .video-card iframe {
@@ -1322,7 +1659,7 @@ function lUrl($subject, $moduleId, $lessonId)
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--orange-warn);
+            color: var(--orange-warn, #ff6b00);
             flex-shrink: 0;
         }
 
@@ -1334,7 +1671,7 @@ function lUrl($subject, $moduleId, $lessonId)
         .video-card-title {
             font-weight: 600;
             font-size: 14px;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
         }
 
         /* Images */
@@ -1349,8 +1686,8 @@ function lUrl($subject, $moduleId, $lessonId)
             aspect-ratio: 16 / 7;
             border-radius: 12px;
             overflow: hidden;
-            background: var(--page-card);
-            border: 1px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             cursor: pointer;
             transition: transform .2s, box-shadow .2s, border-color .2s;
             box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
@@ -1359,7 +1696,7 @@ function lUrl($subject, $moduleId, $lessonId)
         .img-item:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 26px rgba(0, 0, 0, 0.10);
-            border-color: var(--page-border2);
+            border-color: var(--page-border2, var(--panel-border));
         }
 
         .img-item img {
@@ -1371,8 +1708,8 @@ function lUrl($subject, $moduleId, $lessonId)
         .img-item-cap {
             padding: 10px 12px;
             font-size: 12.5px;
-            color: var(--page-muted);
-            border-top: 1px solid var(--page-border);
+            color: var(--page-muted, var(--text-dim));
+            border-top: 1px solid var(--page-border, var(--panel-border));
         }
 
         /* Flashcards */
@@ -1504,17 +1841,17 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .callout.info .callout-icon {
             background: rgba(0, 153, 204, 0.15);
-            color: var(--blue-mid);
+            color: var(--blue-mid, var(--neon-cyan));
         }
 
         .callout.warning .callout-icon {
             background: rgba(255, 107, 0, 0.15);
-            color: var(--orange-warn);
+            color: var(--orange-warn, #ff6b00);
         }
 
         .callout.success .callout-icon {
             background: rgba(0, 137, 74, 0.15);
-            color: var(--green-dark);
+            color: var(--green-dark, var(--neon-cyan));
         }
 
         .callout-icon svg {
@@ -1529,20 +1866,20 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .callout.info .cb-title {
-            color: var(--blue-mid);
+            color: var(--blue-mid, var(--neon-cyan));
         }
 
         .callout.warning .cb-title {
-            color: var(--orange-warn);
+            color: var(--orange-warn, #ff6b00);
         }
 
         .callout.success .cb-title {
-            color: var(--green-dark);
+            color: var(--green-dark, var(--neon-cyan));
         }
 
         .callout-body p {
             font-size: 13px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
             line-height: 1.6;
         }
 
@@ -1552,7 +1889,7 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .activity-hero-card {
-            background: linear-gradient(135deg, #5B2E94, var(--purple-chip));
+            background: linear-gradient(135deg, #5B2E94, var(--purple-chip, var(--electric-purple)));
             border-radius: 14px;
             padding: 20px 22px;
             margin-bottom: 16px;
@@ -1625,19 +1962,19 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .pill-green {
             background: rgba(0, 137, 74, 0.12);
-            color: var(--green-dark);
+            color: var(--green-dark, var(--neon-cyan));
             border: 1px solid rgba(0, 137, 74, 0.22);
         }
 
         .pill-orange {
             background: rgba(255, 107, 0, 0.10);
-            color: var(--orange-warn);
+            color: var(--orange-warn, #ff6b00);
             border: 1px solid rgba(255, 107, 0, 0.22);
         }
 
         .pill-purple {
             background: rgba(155, 93, 229, 0.10);
-            color: var(--purple-chip);
+            color: var(--purple-chip, var(--electric-purple));
             border: 1px solid rgba(155, 93, 229, 0.22);
         }
 
@@ -1660,7 +1997,7 @@ function lUrl($subject, $moduleId, $lessonId)
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--green-dark);
+            color: var(--green-dark, var(--neon-cyan));
             flex-shrink: 0;
         }
 
@@ -1673,17 +2010,17 @@ function lUrl($subject, $moduleId, $lessonId)
             font-weight: 700;
             font-size: 13.5px;
             margin-bottom: 2px;
-            color: var(--green-dark);
+            color: var(--green-dark, var(--neon-cyan));
         }
 
         .submitted-notice-text .sn-sub {
             font-size: 12px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
         }
 
         .question-card {
-            background: var(--page-card);
-            border: 1px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             border-radius: 12px;
             padding: 18px 20px;
             margin-bottom: 12px;
@@ -1700,14 +2037,14 @@ function lUrl($subject, $moduleId, $lessonId)
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .07em;
-            color: var(--purple-chip);
+            color: var(--purple-chip, var(--electric-purple));
             margin-bottom: 7px;
         }
 
         .q-text {
             font-size: 14.5px;
             font-weight: 600;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             line-height: 1.5;
             margin-bottom: 14px;
         }
@@ -1718,22 +2055,22 @@ function lUrl($subject, $moduleId, $lessonId)
             gap: 11px;
             padding: 11px 14px;
             border-radius: 9px;
-            border: 1.5px solid var(--page-border);
+            border: 1.5px solid var(--page-border, var(--panel-border));
             cursor: pointer;
             font-size: 13.5px;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             margin-bottom: 8px;
             transition: border-color .18s, background .18s;
             user-select: none;
         }
 
         .mc-choice:hover {
-            border-color: var(--purple-chip);
+            border-color: var(--purple-chip, var(--electric-purple));
             background: rgba(155, 93, 229, 0.05);
         }
 
         .mc-choice.selected {
-            border-color: var(--purple-chip);
+            border-color: var(--purple-chip, var(--electric-purple));
             background: rgba(155, 93, 229, 0.08);
             color: #4c1d95;
         }
@@ -1742,22 +2079,22 @@ function lUrl($subject, $moduleId, $lessonId)
             width: 26px;
             height: 26px;
             border-radius: 7px;
-            background: var(--page-surface);
-            border: 1px solid var(--page-border);
+            background: var(--page-surface, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             font-size: 11.5px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
             flex-shrink: 0;
             transition: background .18s, color .18s;
         }
 
         .mc-choice.selected .mc-letter {
-            background: var(--purple-chip);
+            background: var(--purple-chip, var(--electric-purple));
             color: #fff;
-            border-color: var(--purple-chip);
+            border-color: var(--purple-chip, var(--electric-purple));
         }
 
         .review-choice {
@@ -1766,36 +2103,36 @@ function lUrl($subject, $moduleId, $lessonId)
             gap: 11px;
             padding: 11px 14px;
             border-radius: 9px;
-            border: 1.5px solid var(--page-border);
+            border: 1.5px solid var(--page-border, var(--panel-border));
             font-size: 13.5px;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             margin-bottom: 8px;
             pointer-events: none;
         }
 
         .activity-answer {
             width: 100%;
-            background: var(--page-card);
-            border: 1.5px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border: 1.5px solid var(--page-border, var(--panel-border));
             border-radius: 9px;
             padding: 12px 14px;
             font-size: 14px;
             resize: vertical;
             min-height: 90px;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             outline: none;
             transition: border-color .2s, box-shadow .2s;
             box-sizing: border-box;
         }
 
         .activity-answer:focus {
-            border-color: var(--purple-chip);
+            border-color: var(--purple-chip, var(--electric-purple));
             box-shadow: 0 0 0 3px rgba(155, 93, 229, 0.12);
         }
 
         /* Quiz */
         .quiz-hero-card {
-            background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+            background: linear-gradient(135deg, var(--blue-dark, var(--neon-blue)), var(--blue-mid, var(--neon-cyan)));
             border-radius: 14px;
             padding: 20px 22px;
             margin-bottom: 20px;
@@ -1867,8 +2204,8 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .q-card {
-            background: var(--page-card);
-            border: 1px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             border-radius: 12px;
             padding: 18px 20px;
             margin-bottom: 12px;
@@ -1880,14 +2217,14 @@ function lUrl($subject, $moduleId, $lessonId)
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .07em;
-            color: var(--blue-mid);
+            color: var(--blue-mid, var(--neon-cyan));
             margin-bottom: 7px;
         }
 
         .q-question {
             font-size: 14.5px;
             font-weight: 600;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             line-height: 1.5;
             margin-bottom: 14px;
         }
@@ -1898,43 +2235,43 @@ function lUrl($subject, $moduleId, $lessonId)
             gap: 11px;
             padding: 11px 14px;
             border-radius: 9px;
-            border: 1.5px solid var(--page-border);
+            border: 1.5px solid var(--page-border, var(--panel-border));
             cursor: pointer;
             font-size: 13.5px;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             margin-bottom: 8px;
             transition: border-color .18s, background .18s;
             user-select: none;
         }
 
         .q-choice:hover {
-            border-color: var(--blue-mid);
+            border-color: var(--blue-mid, var(--neon-cyan));
             background: rgba(0, 153, 204, 0.05);
         }
 
         .q-choice.selected {
-            border-color: var(--blue-mid);
+            border-color: var(--blue-mid, var(--neon-cyan));
             background: rgba(0, 153, 204, 0.08);
         }
 
         .q-choice.selected .choice-letter {
-            background: var(--blue-mid);
+            background: var(--blue-mid, var(--neon-cyan));
             color: #fff;
-            border-color: var(--blue-mid);
+            border-color: var(--blue-mid, var(--neon-cyan));
         }
 
         .choice-letter {
             width: 26px;
             height: 26px;
             border-radius: 7px;
-            background: var(--page-surface);
-            border: 1px solid var(--page-border);
+            background: var(--page-surface, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             font-size: 11.5px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
             flex-shrink: 0;
             transition: background .18s, color .18s;
         }
@@ -1946,15 +2283,15 @@ function lUrl($subject, $moduleId, $lessonId)
             flex-wrap: wrap;
             gap: 12px;
             margin-top: 18px;
-            background: var(--page-card);
-            border: 1px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             border-radius: 12px;
             padding: 14px 18px;
         }
 
         .quiz-status {
             font-size: 12.5px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
         }
 
         .quiz-nav-btns {
@@ -1966,24 +2303,24 @@ function lUrl($subject, $moduleId, $lessonId)
         .btn-qnav-prev {
             padding: 9px 18px;
             border-radius: 9px;
-            border: 1.5px solid var(--page-border);
-            background: var(--page-card);
-            color: var(--page-text);
+            border: 1.5px solid var(--page-border, var(--panel-border));
+            background: var(--page-card, #fff);
+            color: var(--page-text, var(--text-bright));
             font-size: 13px;
             font-weight: 600;
             transition: border-color .18s;
         }
 
         .btn-qnav-prev:hover {
-            border-color: var(--blue-mid);
-            color: var(--blue-mid);
+            border-color: var(--blue-mid, var(--neon-cyan));
+            color: var(--blue-mid, var(--neon-cyan));
         }
 
         .btn-qnav-next,
         .btn-submit-quiz {
             padding: 9px 20px;
             border-radius: 9px;
-            background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+            background: linear-gradient(135deg, var(--blue-dark, var(--neon-blue)), var(--blue-mid, var(--neon-cyan)));
             color: #fff;
             font-size: 13px;
             font-weight: 600;
@@ -2003,7 +2340,7 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .page-indicator {
             font-size: 12.5px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
         }
 
         /* Lock notice */
@@ -2016,7 +2353,7 @@ function lUrl($subject, $moduleId, $lessonId)
             border-radius: 10px;
             padding: 11px 16px;
             font-size: 13px;
-            color: var(--orange-warn);
+            color: var(--orange-warn, #ff6b00);
             position: sticky;
             top: 0;
             z-index: 4;
@@ -2079,7 +2416,7 @@ function lUrl($subject, $moduleId, $lessonId)
         .empty-state {
             text-align: center;
             padding: 80px 40px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -2101,12 +2438,12 @@ function lUrl($subject, $moduleId, $lessonId)
 
         /* Responsive */
         @media (max-width: 900px) {
-            .lessons-shell {
-                grid-template-columns: 1fr;
+            .ov-hero {
+                padding: 22px 20px 26px;
             }
 
-            .lessons-sidebar {
-                display: none;
+            .sb-lesson-list {
+                padding: 20px 16px 50px;
             }
         }
 
@@ -2243,17 +2580,10 @@ function lUrl($subject, $moduleId, $lessonId)
         </div>
         <div class="splash-card">
 
-            <!-- NEW: module position + title + description (dynamic, per module) -->
-
-
-            <!-- <div class="splash-card-parent">
-
-            </div> -->
-
             <div class="splash-bot-icon">
                 <img src="../images/robot-lesson1.png" alt="">
             </div>
-            <div class="speech-bubble">
+            <div class="speech-bubble bubble-1">
                 <strong>BonBon</strong>
                 <p id="bonbonMessage"></p>
             </div>
@@ -2269,38 +2599,43 @@ function lUrl($subject, $moduleId, $lessonId)
         ============================================= -->
         <aside class="lessons-sidebar">
 
-            <!-- Brand -->
-            <div class="sb-brand">
-                <!-- <div class="sb-brand-mark">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#050D14" stroke-width="2">
-                        <path d="M9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4" stroke-linecap="round" />
-                        <rect x="7" y="7" width="10" height="10" rx="1.5" />
-                    </svg>
-                </div> -->
-                <!-- <div class="sb-brand-text"> -->
-                <!-- <div class="name">iLearn<span>-CSS</span></div>
-                    <div class="sub">CSS Student Portal</div> -->
-                <!-- <img src="../images/iLearn-7.png" alt=""> -->
-                <!-- </div> -->
-                <a class="back-btn" href="/learning_management/public/?url=modules&subject=<?= urlencode($subject) ?>">
-                    <!-- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <path d="M19 12H5M11 6l-6 6 6 6" />
-                    </svg> -->
-                    <i class="fa fa-arrow-left"></i>
-
-                    Back to Modules
-                </a>
-            </div>
-
-            <!-- Progress -->
-            <div class="sb-progress-block">
-                <h5><?= htmlspecialchars($module['title'] ?? '') ?></h5>
-                <div class="sb-progress-label">
-                    <span class="pl-title">Module Progress</span>
-                    <span class="pl-pct" id="progressPercent"><?= $progressPct ?>%</span>
+            <!-- Overview hero banner -->
+            <div class="ov-hero">
+                <div class="ov-text">
+                    <a class="ov-hero-back"
+                        href="/learning_management/public/?url=modules&subject=<?= urlencode($subject) ?>">
+                        <i class="fa fa-arrow-left"></i>
+                        Back to Modules
+                    </a>
+                    <div class="ov-hero-top">
+                        <div class="ov-hero-icon">
+                            <i class="fa fa-book-open"></i>
+                        </div>
+                        <div>
+                            <div class="ov-hero-tag">
+                                <?= htmlspecialchars($module['subject_name'] ?? $subject) ?>
+                            </div>
+                            <div class="ov-hero-title">
+                                <?= htmlspecialchars($module['title'] ?? '') ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ov-hero-sub">
+                        <?= $completedCount ?> of
+                        <?= $totalLessons ?> lessons completed
+                    </div>
+                    <div class="ov-hero-track">
+                        <div class="ov-hero-fill" style="width:<?= $progressPct ?>%"></div>
+                    </div>
                 </div>
-                <div class="sb-bar-track">
-                    <div class="sb-bar-fill" id="progressBar" style="width:<?= $progressPct ?>%"></div>
+                <div class="ov-image">
+                    <div class="speech-bubble bubble-2">
+                        <strong>BonBon</strong>
+
+                        <p id="bonbonMessage2"></p>
+
+                    </div>
+                    <img src="../images/robot-ai9.png" alt="">
                 </div>
             </div>
 
@@ -2316,34 +2651,29 @@ function lUrl($subject, $moduleId, $lessonId)
                     $dotClass = $isActive ? 'active-dot' : ($isDone ? 'done' : 'pending');
                     $itemClass = $isActive ? 'active' : '';
                     ?>
-                    <a class="sb-nav-item <?= $itemClass ?>" href="<?= lUrl($subject, $moduleId, $l['id']) ?>">
+                    <a class="sb-nav-item <?= $itemClass ?><?= $isDone ? ' sb-nav-done' : '' ?>"
+                        href="<?= lUrl($subject, $moduleId, $l['id']) ?>" style="animation-delay: <?= $i * 0.06 ?>s;">
                         <div class="sb-nav-icon icon-type-lesson <?= $dotClass ?>">
                             <?php if ($isDone): ?>
-                                <!-- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <path d="M20 6L9 17l-5-5" />
-                                </svg> -->
                                 <i class="fa fa-check"></i>
                             <?php else: ?>
-                                <!-- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                                </svg> -->
                                 <i class="fa fa-book-open"></i>
                             <?php endif; ?>
                         </div>
                         <div class="sb-nav-info">
-                            <div class="sb-nav-title">Lesson <?= $i + 1 ?>: <?= htmlspecialchars($rawTitle) ?></div>
+                            <div class="sb-nav-title">
+                                Lesson <?= $i + 1 ?>: <?= htmlspecialchars($rawTitle) ?>
+                                <?php if ($isDone): ?>
+                                    <span class="sb-nav-done-badge"><i class="fa fa-check"></i> Done</span>
+                                <?php endif; ?>
+                            </div>
                             <div class="sb-nav-meta"><?= $isDone ? 'Completed' : 'Not started' ?></div>
                         </div>
-                        <?php if ($isDone): ?>
-                            <div class="sb-nav-check sb-nav-check-done">
-                                <!-- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="10"
-                                    height="10">
-                                    <path d="M20 6L9 17l-5-5" />
-                                </svg> -->
-                                <i class="fa fa-check"></i>
-                            </div>
-                        <?php endif; ?>
+                        <span class="sb-nav-chevron">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <path d="M9 6l6 6-6 6" />
+                            </svg>
+                        </span>
                     </a>
                 <?php endforeach; ?>
 
@@ -2375,22 +2705,55 @@ function lUrl($subject, $moduleId, $lessonId)
         <!-- =============================================
              MAIN CONTENT
         ============================================= -->
+
         <div class="lessons-main">
 
+            <?php if ($lesson):
+                $heroCleanTitle = preg_replace('/^Lesson\s*\d+\s*:\s*/i', '', $lesson['title']);
+                ?>
+                <!-- BLUE LESSON HERO -->
+                <div class="ov-hero lesson-hero">
+                    <button type="button" class="ov-hero-back js-back-to-list">
+                        <i class="fa fa-arrow-left"></i>
+                        Lessons
+                    </button>
+                    <div class="ov-hero-top">
+                        <div class="ov-hero-icon">
+                            <i class="fa fa-book-open"></i>
+                        </div>
+                        <div>
+                            <div class="ov-hero-tag">Lesson <?= $currentIndex ?> ·
+                                <?= htmlspecialchars($module['title'] ?? '') ?>
+                            </div>
+                            <div class="ov-hero-title"><?= htmlspecialchars($heroCleanTitle) ?></div>
+                        </div>
+                    </div>
+                    <?php if (!empty($lesson['topic'])): ?>
+                        <div class="ov-hero-sub"><?= htmlspecialchars($lesson['topic']) ?></div>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+
             <!-- TOP NAV BAR -->
-            <div class="lessons-topbar">
+            <!-- <div class="lessons-topbar">
                 <div class="topbar-left">
-                    <!-- <a class="back-btn"
-                        href="/learning_management/public/?url=modules&subject=<?= urlencode($subject) ?>">
+                    <button type="button" class="topbar-back-list js-back-to-list">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                             <path d="M19 12H5M11 6l-6 6 6 6" />
                         </svg>
-                        Back to Modules
-                    </a> -->
-                    <!-- <div class="topbar-breadcrumb">
-                        <span class="sep">›</span>
-                        <span><?= htmlspecialchars($module['title'] ?? '') ?></span>
-                    </div> -->
+                        Lessons
+                    </button>
+                    <?php if ($lesson): ?>
+                        <div class="topbar-breadcrumb">
+                            <span>
+                                <?= htmlspecialchars($module['title'] ?? '') ?>
+                            </span>
+                            <span class="sep">›</span>
+                            <span class="current">
+                                <?= htmlspecialchars(preg_replace('/^Lesson\s*\d+\s*:\s*/i', '', $lesson['title'])) ?>
+                            </span>
+                        </div>
+                    <?php endif; ?>
                 </div>
                 <div class="topbar-right">
                     <?php if ($lesson): ?>
@@ -2440,51 +2803,6 @@ function lUrl($subject, $moduleId, $lessonId)
                             <?php endif; ?>
                         <?php endif; ?>
                     <?php endif; ?>
-
-                    <!-- <div class="bell-wrap">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-                            <path d="M13.7 21a2 2 0 0 1-3.4 0" />
-                        </svg>
-                        <span class="bell-dot"></span>
-                    </div>
-                    <div class="top-avatar"><?= htmlspecialchars($initials ?? 'MA') ?></div> -->
-                </div>
-            </div>
-
-            <!-- MODULE HERO -->
-            <!-- <div class="module-hero">
-                <div class="module-hero-banner"></div>
-                <div class="module-hero-body">
-                    <div class="module-hero-left">
-                        <div class="module-hero-tag">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                            </svg>
-                            <?= htmlspecialchars($module['subject_name'] ?? 'Module') ?>
-                        </div>
-                        <h2 class="module-hero-title"><?= htmlspecialchars($module['title'] ?? '') ?></h2>
-                        <?php if (!empty($module['description'])): ?>
-                            <p class="module-hero-desc"><?= nl2br(htmlspecialchars($module['description'])) ?></p>
-                        <?php endif; ?>
-                    </div>
-                    <div class="module-hero-right">
-                        <div class="hero-stat">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                            </svg>
-                            <span><span class="hero-stat-num"><?= $totalLessons ?></span> Lessons</span>
-                        </div>
-                        <div class="hero-stat">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                <path d="M22 4L12 14.01l-3-3" />
-                            </svg>
-                            <span><span class="hero-stat-num"><?= $completedCount ?></span> Completed</span>
-                        </div>
-                    </div>
                 </div>
             </div> -->
 
@@ -2502,6 +2820,7 @@ function lUrl($subject, $moduleId, $lessonId)
 
                 <?php else:
                     $cleanTitle = preg_replace('/^Lesson\s*\d+\s*:\s*/i', '', $lesson['title']);
+                    $isCurrentLessonDone = $lessonCompletion[$lessonId] ?? false;
                     ?>
 
                     <!-- LESSON TITLE -->
@@ -2514,7 +2833,18 @@ function lUrl($subject, $moduleId, $lessonId)
                             </svg>
                             Lesson <?= $currentIndex ?>
                         </span>
-                        <h3 class="lesson-main-title" id="lesson-title"><?= htmlspecialchars($cleanTitle) ?></h3>
+                        <h3 class="lesson-main-title" id="lesson-title">
+                            <?= htmlspecialchars($cleanTitle) ?>
+                            <!-- <?php if ($isCurrentLessonDone): ?>
+                                <span class="lesson-status-pill is-done">
+                                    <i class="fa fa-check"></i> Completed
+                                </span>
+                            <?php else: ?>
+                                <span class="lesson-status-pill is-pending">
+                                    <i class="fa fa-clock"></i> Not started
+                                </span>
+                            <?php endif; ?> -->
+                        </h3>
                     </div>
 
                     <!-- 1. LESSON TEXT -->
@@ -2967,9 +3297,66 @@ function lUrl($subject, $moduleId, $lessonId)
                     <?php endif; ?>
 
                 <?php endif; /* end $lesson check */ ?>
+
+                <!-- BOTTOM PREV / NEXT NAV -->
+                <?php if ($lesson): ?>
+                    <div class="lesson-bottom-nav">
+                        <?php if ($prevLessonId): ?>
+                            <a class="topbar-nav-btn btn-prev-top" href="<?= lUrl($subject, $moduleId, $prevLessonId) ?>"
+                                id="prevBtn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20"
+                                    height="20">
+                                    <path d="M19 12H5M11 6l-6 6 6 6" />
+                                </svg>
+                                Prev
+                            </a>
+                        <?php else: ?>
+                            <span></span>
+                        <?php endif; ?>
+
+                        <?php if ($nextLessonId): ?>
+                            <a class="topbar-nav-btn btn-next-top" href="<?= lUrl($subject, $moduleId, $nextLessonId) ?>"
+                                id="nextBtn">
+                                Next
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20"
+                                    height="20">
+                                    <path d="M5 12h14M13 6l6 6-6 6" />
+                                </svg>
+                            </a>
+                        <?php else: ?>
+                            <?php
+                            $studentModel2 = new Students();
+                            $lastLessonDone = $studentId ? $studentModel2->isLessonCompleted($lessonId, $studentId) : false;
+                            ?>
+                            <?php if ($lastLessonDone): ?>
+                                <span class="topbar-nav-btn btn-completed-top" id="nextBtn">
+                                    Completed
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"
+                                        height="14">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                        <path d="M22 4L12 14.01l-3-3" />
+                                    </svg>
+                                </span>
+                            <?php else: ?>
+                                <button class="topbar-nav-btn btn-next-top" id="nextBtn" type="button">
+                                    Finish
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"
+                                        height="14">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                        <path d="M22 4L12 14.01l-3-3" />
+                                    </svg>
+                                </button>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+
             </div><!-- /lessons-content-wrap -->
 
-        </div><!-- /lessons-main -->
+
+        </div><!-- /lessons-content-wrap -->
+
+    </div><!-- /lessons-main -->
     </div><!-- /lessons-shell -->
 
     <!-- LIGHTBOX -->
@@ -2995,10 +3382,39 @@ function lUrl($subject, $moduleId, $lessonId)
         </style>
     </noscript>
 
-    <!-- <div class="splash-greet">Welcome back, <span><?= htmlspecialchars($splashFirstName) ?></span>!</div>
-    <div class="splash-bubble">
-        <p id="splashMsg"><?= htmlspecialchars($splashMsg) ?></p>
-    </div> -->
+    <script>
+        function startBonbonBubble2Typewriter() {
+            const el = document.getElementById('bonbonMessage2');
+            if (!el || el.dataset.typed) return; // guard against double-typing
+            el.dataset.typed = '1';
+
+            const message = "Ready to learn something new? Every lesson is an opportunity to build your knowledge and improve your skills. Stay curious, complete the activities and quizzes.";
+            const speed = 28;
+            let i = 0;
+
+            const cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+            el.appendChild(cursor);
+
+            function type() {
+                if (i < message.length) {
+                    cursor.insertAdjacentText('beforebegin', message.charAt(i));
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    setTimeout(() => cursor.remove(), 1200);
+                }
+            }
+
+            type();
+        }
+
+        // If splash is being skipped (reload / Prev-Next inside the module),
+        // the shell is visible right away, so start typing immediately.
+        if (document.documentElement.classList.contains('skip-splash')) {
+            startBonbonBubble2Typewriter();
+        }
+    </script>
 
     <script>
         (function () {
@@ -3127,22 +3543,83 @@ function lUrl($subject, $moduleId, $lessonId)
 
             if (!splash || !shell) return;
 
-            // Delegate: listen on the splash container instead of the button,
-            // since the button is added later by the typing script.
             splash.addEventListener('click', function (e) {
                 var btn = e.target.closest('#splashContinueBtn');
                 if (!btn) return;
 
-                // Remember that this module's splash has been dismissed,
-                // so Prev/Next navigation and page reloads skip it from now on
-                // (cleared automatically when the browser tab/session ends).
                 sessionStorage.setItem('splash_dismissed_module_<?= (int) $moduleId ?>', '1');
 
                 splash.classList.add('splash-exit');
                 setTimeout(function () {
                     splash.style.display = 'none';
                     shell.classList.add('shell-visible');
+                    startBonbonBubble2Typewriter(); // 👈 start it now, not on page load
                 }, 460);
+            });
+        })();
+    </script>
+
+    <!-- =============================================
+         LIST VIEW <-> LESSON VIEW TOGGLE
+         Lessons list is shown first. Clicking a lesson
+         hides the list and reveals the topbar + that
+         lesson's content. A "Lessons" button in the
+         topbar brings the list back. State is kept per
+         module in sessionStorage so Prev/Next and page
+         reloads land on the right view.
+    ============================================= -->
+    <script>
+        (function () {
+            var moduleId = <?= (int) ($moduleId ?? 0) ?>;
+            var viewKey = 'lessons_view_module_' + moduleId;
+            var shell = document.getElementById('lessonsShell');
+            var backBtns = document.querySelectorAll('.js-back-to-list');
+
+            if (!shell) return;
+
+            function applyView(view) {
+                shell.classList.remove('view-list', 'view-lesson');
+                shell.classList.add(view === 'lesson' ? 'view-lesson' : 'view-list');
+            }
+
+            // Restore whichever view this module was last showing
+            // (defaults to the list, so a fresh visit always starts there).
+            var savedView = sessionStorage.getItem(viewKey) || 'list';
+            applyView(savedView);
+
+            // Clicking a lesson in the list
+            document.querySelectorAll('.sb-nav-item').forEach(function (item) {
+                item.addEventListener('click', function (e) {
+                    sessionStorage.setItem(viewKey, 'lesson');
+                    if (item.classList.contains('active')) {
+                        // Already viewing this lesson's data — no need to
+                        // reload the page, just reveal the content panel.
+                        e.preventDefault();
+                        applyView('lesson');
+                    }
+                    // Otherwise this is a link to a *different* lesson: let
+                    // it navigate normally. The next page load will read
+                    // the sessionStorage flag above and open straight into
+                    // the lesson view instead of the list.
+                });
+            });
+
+            // Prev / Next topbar links should also keep the lesson view open
+            ['prevBtn', 'nextBtn'].forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el && el.tagName === 'A') {
+                    el.addEventListener('click', function () {
+                        sessionStorage.setItem(viewKey, 'lesson');
+                    });
+                }
+            });
+
+            // "Lessons" buttons (topbar + blue hero) go back to the list
+            backBtns.forEach(function (backBtn) {
+                backBtn.addEventListener('click', function () {
+                    sessionStorage.setItem(viewKey, 'list');
+                    applyView('list');
+                });
             });
         })();
     </script>
