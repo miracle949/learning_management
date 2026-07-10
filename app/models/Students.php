@@ -281,17 +281,30 @@ class Students extends Model
     public function getIMLessonById($lessonId)
     {
         $stmt = $this->db->prepare("
-            SELECT l.id, l.title, l.topic, l.content,
-                   im.id AS module_id, im.title AS module_title,
-                   s.subject_name, s.subject_code
-            FROM tbl_lessons l
-            JOIN tbl_interactive_modules im ON l.interactive_module_id = im.id
-            JOIN tbl_subjects s ON im.subject_id = s.id
-            WHERE l.id = ? LIMIT 1
-        ");
+        SELECT l.id, l.title, l.topic,
+               im.id AS module_id, im.title AS module_title,
+               s.subject_name, s.subject_code
+        FROM tbl_lessons l
+        JOIN tbl_interactive_modules im ON l.interactive_module_id = im.id
+        JOIN tbl_subjects s ON im.subject_id = s.id
+        WHERE l.id = ? LIMIT 1
+    ");
         $stmt->bind_param("i", $lessonId);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function getLessonContentBlocks($lessonId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT id, type, title, body, file_path, file_name
+        FROM tbl_interactive_contents
+        WHERE lesson_id = ? AND type IN ('text', 'image', 'video')
+        ORDER BY id ASC
+    ");
+        $stmt->bind_param("i", $lessonId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
     public function getAdjacentIMLessons($lessonId, $interactiveModuleId)

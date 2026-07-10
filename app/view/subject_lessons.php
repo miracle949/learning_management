@@ -50,6 +50,7 @@ function lUrl($subject, $moduleId, $lessonId)
         body {
             /* background: var(--page-bg); */
             background-image: radial-gradient(circle at 15% 0%, rgba(0, 119, 204, 0.06), transparent 45%), radial-gradient(circle at 100% 30%, rgba(85, 51, 204, 0.06), transparent 40%), repeating-linear-gradient(0deg, rgba(0, 100, 200, 0.035) 0px, rgba(0, 100, 200, 0.035) 1px, transparent 1px, transparent 42px), repeating-linear-gradient(90deg, rgba(0, 100, 200, 0.035) 0px, rgba(0, 100, 200, 0.035) 1px, transparent 1px, transparent 42px);
+            /* background-color: var(--neon-cyan); */
             color: var(--page-text);
             /* -webkit-font-smoothing: antialiased; */
             height: 100%;
@@ -551,6 +552,127 @@ function lUrl($subject, $moduleId, $lessonId)
             /* border-top: 1px solid var(--panel-border); */
             margin: 0;
             padding: 0;
+            position: relative;
+        }
+
+        .lessons-main .robot-page {
+            position: absolute;
+            right: 3%;
+            top: 10%;
+        }
+
+        .lessons-main .robot-page .bubble-3 {
+            top: -100px;
+        }
+
+        /* .lessons-main .robot-page .bubble-3 {
+            border: 1px solid var(--panel-border);
+        }
+
+        .lessons-main .robot-page .bubble-3::before {
+            border: 1px solid var(--panel-border);
+        } */
+
+        .speech-bubble {
+            position: absolute;
+            /* left: -158px; */
+            left: -315px;
+            /* right: -185px; */
+            /* right: -510px; */
+            /* top: 2px; */
+            top: 60px;
+            /* top: -50px; */
+            /* width: 148px; */
+            /* width: 175px; */
+            width: 300px;
+            /* background: #fff; */
+            background-color: var(--bg-main);
+            color: var(--text-bright);
+            font-family: var(--font-body);
+            line-height: 1.4;
+            padding: 16px 19px;
+            border-radius: 14px;
+            /* box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18); */
+            /* display: none; */
+            /* animation: bubblePop 4s ease-in-out infinite; */
+        }
+
+        .speech-bubble strong {
+            display: block;
+            color: var(--neon-cyan);
+            font-family: "Orbitron", sans-serif;
+            font-weight: 700;
+            margin-bottom: 2px;
+            font-size: 14.5px;
+        }
+
+        .speech-bubble p {
+            margin: 0;
+            font-size: 13.5px;
+            color: var(--text-dim);
+            line-height: 22px;
+        }
+
+        .speech-bubble p .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 14px;
+            background: var(--neon-cyan);
+            margin-left: 2px;
+            vertical-align: middle;
+            animation: cursorBlink 0.8s step-end infinite;
+        }
+
+        @keyframes cursorBlink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 20px;
+            /* top: 60px; */
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            transform: rotate(-45deg);
+        }
+
+        .speech-bubble.bubble-3::after {
+            right: -6px;
+            top: 42.5px;
+            transform: rotate(-45deg);
+            /* transform: rotate(100deg); */
+        }
+
+        @keyframes bubblePop {
+
+            0%,
+            8% {
+                opacity: 0;
+                transform: translateY(6px) scale(.92);
+            }
+
+            16%,
+            84% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+            92%,
+            100% {
+                opacity: 0;
+                transform: translateY(6px) scale(.92);
+            }
         }
 
         /* =============================================
@@ -559,7 +681,7 @@ function lUrl($subject, $moduleId, $lessonId)
         .lessons-sidebar {
             width: 100%;
             min-height: auto;
-            background-color: #FFFFFF;
+            /* background-color: #FFFFFF; */
             border-right: none;
             display: flex;
             flex-direction: column;
@@ -782,6 +904,11 @@ function lUrl($subject, $moduleId, $lessonId)
             /* padding: 34px 30px 34px; */
             padding: 25px 30px 34px;
             display: block;
+            border-bottom: 1px solid #CADFF5;
+        }
+
+        .lesson-hero .lesson-hero-text {
+            width: 600px;
         }
 
         .lesson-hero .ov-hero-back {
@@ -1464,7 +1591,7 @@ function lUrl($subject, $moduleId, $lessonId)
             flex-direction: column;
             align-items: start;
             gap: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .lesson-num-badge {
@@ -1479,12 +1606,14 @@ function lUrl($subject, $moduleId, $lessonId)
             border-radius: 99px;
             background: rgba(0, 119, 204, 0.08);
             border: 1px solid var(--panel-border);
+            /* border: 1px solid #CADFF5; */
             color: var(--neon-cyan);
+            /* color: var(--deep-navy); */
             white-space: nowrap;
         }
 
         .lesson-main-title {
-            font-size: 28px;
+            font-size: 23px;
             font-weight: 700;
             color: var(--page-text, var(--text-bright));
             line-height: 1.3;
@@ -1526,7 +1655,7 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .ls-section h4 {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             /* margin: 15px 0 8px; */
         }
@@ -1614,6 +1743,7 @@ function lUrl($subject, $moduleId, $lessonId)
             word-wrap: break-word;
             word-break: break-word;
             max-width: 100%;
+            margin: 0 0 20px;
         }
 
         /* Video */
@@ -1691,6 +1821,7 @@ function lUrl($subject, $moduleId, $lessonId)
             cursor: pointer;
             transition: transform .2s, box-shadow .2s, border-color .2s;
             box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+            margin: 0 0 20px;
         }
 
         .img-item:hover {
@@ -1701,7 +1832,8 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .img-item img {
             width: 100%;
-            height: 385px;
+            /* height: 385px; */
+            height: 100%;
             display: block;
         }
 
@@ -2488,50 +2620,31 @@ function lUrl($subject, $moduleId, $lessonId)
             var storageKey = 'splash_dismissed_module_' + moduleId;
             var dismissed = sessionStorage.getItem(storageKey);
 
-            // Figure out HOW this page was loaded: a reload of the same
-            // page, or a fresh navigation (clicking a link).
             var navType = 'navigate';
             try {
                 var navEntries = performance.getEntriesByType('navigation');
                 if (navEntries && navEntries.length) {
-                    navType = navEntries[0].type; // "navigate" | "reload" | "back_forward" | "prerender"
+                    navType = navEntries[0].type;
                 } else if (performance.navigation) {
-                    // Fallback for older browsers
                     navType = performance.navigation.type === 1 ? 'reload' : 'navigate';
                 }
             } catch (e) { /* ignore, default to 'navigate' */ }
 
-            // Did we arrive here by clicking Prev/Next from ANOTHER lesson
-            // page (internal navigation), as opposed to coming from
-            // modules.php or typing the URL directly?
             var cameFromWithinLessons = document.referrer.indexOf('url=subject_lessons') !== -1;
 
-            // Only skip the splash if it was already dismissed this session
-            // AND we either reloaded the exact same page, or moved between
-            // lessons via Prev/Next inside the module.
             var shouldSkip = dismissed && (navType === 'reload' || navType === 'back_forward' || cameFromWithinLessons);
 
             if (shouldSkip) {
                 document.documentElement.classList.add('skip-splash');
             } else {
-                // Fresh entry (e.g. clicked "Continue Learning" on
-                // modules.php) — clear any stale flag so the splash
-                // always plays again when arriving from the modules list.
                 sessionStorage.removeItem(storageKey);
             }
         })();
     </script>
 
     <?php
-    /* ------------------------------------------------------------------
-       Compute module progress + splash-screen state BEFORE the shell.
-       start   -> module not started yet   -> "Start Now"
-       continue-> module partially done    -> "Continue Learning"
-       review  -> module fully completed   -> "Module Review"
-    ------------------------------------------------------------------- */
     $progressPct = $totalLessons > 0 ? round(($completedCount / $totalLessons) * 100) : 0;
 
-    // ── Segmented dash progress for the speech bubble ──
     $sbTotalSegments = 5;
     $sbFilledSegments = (int) round(($progressPct / 100) * $sbTotalSegments);
     $sbIsFinished = ($progressPct >= 100);
@@ -2557,9 +2670,6 @@ function lUrl($subject, $moduleId, $lessonId)
     }
     ?>
 
-    <!-- =============================================
-         WELCOME / MODULE SPLASH SCREEN
-    ============================================= -->
     <div class="module-splash" id="moduleSplash">
         <div class="splash-module-meta">
             <span class="splash-module-position">
@@ -2594,12 +2704,8 @@ function lUrl($subject, $moduleId, $lessonId)
 
         <?php include("../components/offcanvas.php"); ?>
 
-        <!-- =============================================
-             LEFT SIDEBAR
-        ============================================= -->
         <aside class="lessons-sidebar">
 
-            <!-- Overview hero banner -->
             <div class="ov-hero">
                 <div class="ov-text">
                     <a class="ov-hero-back"
@@ -2639,10 +2745,8 @@ function lUrl($subject, $moduleId, $lessonId)
                 </div>
             </div>
 
-            <!-- ── Sidebar Nav ── -->
             <div class="sb-lesson-list">
 
-                <!-- LESSONS -->
                 <div class="sb-nav-group-label">Lessons</div>
                 <?php foreach ($lessons as $i => $l):
                     $isActive = ($l['id'] == $lessonId);
@@ -2681,7 +2785,6 @@ function lUrl($subject, $moduleId, $lessonId)
 
             </div><!-- /sb-lesson-list -->
 
-            <!-- Footer user -->
             <div class="sb-footer">
                 <div class="sb-user">
                     <div class="sb-avatar">
@@ -2702,111 +2805,48 @@ function lUrl($subject, $moduleId, $lessonId)
             </div>
         </aside>
 
-        <!-- =============================================
-             MAIN CONTENT
-        ============================================= -->
-
         <div class="lessons-main">
+
+            <div class="robot-page">
+                <div class="speech-bubble bubble-3">
+                    <strong>BonBon</strong>
+                    <p id="bonbonMessage3"></p>
+                </div>
+                <img src="../images/robot-ai10.png" alt="">
+            </div>
 
             <?php if ($lesson):
                 $heroCleanTitle = preg_replace('/^Lesson\s*\d+\s*:\s*/i', '', $lesson['title']);
                 ?>
-                <!-- BLUE LESSON HERO -->
                 <div class="ov-hero lesson-hero">
-                    <button type="button" class="ov-hero-back js-back-to-list">
-                        <i class="fa fa-arrow-left"></i>
-                        Lessons
-                    </button>
-                    <div class="ov-hero-top">
-                        <div class="ov-hero-icon">
-                            <i class="fa fa-book-open"></i>
-                        </div>
-                        <div>
-                            <div class="ov-hero-tag">Lesson <?= $currentIndex ?> ·
-                                <?= htmlspecialchars($module['title'] ?? '') ?>
+                    <div class="lesson-hero-text">
+                        <button type="button" class="ov-hero-back js-back-to-list">
+                            <i class="fa fa-arrow-left"></i>
+                            Lessons
+                        </button>
+                        <div class="ov-hero-top">
+                            <div class="ov-hero-icon">
+                                <i class="fa fa-book-open"></i>
                             </div>
-                            <div class="ov-hero-title"><?= htmlspecialchars($heroCleanTitle) ?></div>
+                            <div>
+                                <div class="ov-hero-tag">Lesson
+                                    <?= $currentIndex ?> ·
+                                    <?= htmlspecialchars($module['title'] ?? '') ?>
+                                </div>
+                                <div class="ov-hero-title">
+                                    <?= htmlspecialchars($heroCleanTitle) ?>
+                                </div>
+                            </div>
                         </div>
+                        <?php if (!empty($module['description'])): ?>
+                            <div class="ov-hero-sub">
+                                <?= htmlspecialchars($module['description']) ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
-                    <?php if (!empty($lesson['topic'])): ?>
-                        <div class="ov-hero-sub"><?= htmlspecialchars($lesson['topic']) ?></div>
-                    <?php endif; ?>
                 </div>
             <?php endif; ?>
 
-            <!-- TOP NAV BAR -->
-            <!-- <div class="lessons-topbar">
-                <div class="topbar-left">
-                    <button type="button" class="topbar-back-list js-back-to-list">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M19 12H5M11 6l-6 6 6 6" />
-                        </svg>
-                        Lessons
-                    </button>
-                    <?php if ($lesson): ?>
-                        <div class="topbar-breadcrumb">
-                            <span>
-                                <?= htmlspecialchars($module['title'] ?? '') ?>
-                            </span>
-                            <span class="sep">›</span>
-                            <span class="current">
-                                <?= htmlspecialchars(preg_replace('/^Lesson\s*\d+\s*:\s*/i', '', $lesson['title'])) ?>
-                            </span>
-                        </div>
-                    <?php endif; ?>
-                </div>
-                <div class="topbar-right">
-                    <?php if ($lesson): ?>
-                        <?php if ($prevLessonId): ?>
-                            <a class="topbar-nav-btn btn-prev-top" href="<?= lUrl($subject, $moduleId, $prevLessonId) ?>"
-                                id="prevBtn">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"
-                                    height="14">
-                                    <path d="M19 12H5M11 6l-6 6 6 6" />
-                                </svg>
-                                Prev
-                            </a>
-                        <?php endif; ?>
-
-                        <?php if ($nextLessonId): ?>
-                            <a class="topbar-nav-btn btn-next-top" href="<?= lUrl($subject, $moduleId, $nextLessonId) ?>"
-                                id="nextBtn">
-                                Next
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"
-                                    height="14">
-                                    <path d="M5 12h14M13 6l6 6-6 6" />
-                                </svg>
-                            </a>
-                        <?php else: ?>
-                            <?php
-                            $studentModel2 = new Students();
-                            $lastLessonDone = $studentId ? $studentModel2->isLessonCompleted($lessonId, $studentId) : false;
-                            ?>
-                            <?php if ($lastLessonDone): ?>
-                                <span class="topbar-nav-btn btn-completed-top" id="nextBtn">
-                                    Completed
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"
-                                        height="14">
-                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                        <path d="M22 4L12 14.01l-3-3" />
-                                    </svg>
-                                </span>
-                            <?php else: ?>
-                                <button class="topbar-nav-btn btn-next-top" id="nextBtn" type="button">
-                                    Finish
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"
-                                        height="14">
-                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                        <path d="M22 4L12 14.01l-3-3" />
-                                    </svg>
-                                </button>
-                            <?php endif; ?>
-                        <?php endif; ?>
-                    <?php endif; ?>
-                </div>
-            </div> -->
-
-            <!-- LESSON CONTENT -->
             <div class="lessons-content-wrap">
 
                 <?php if (!$lesson): ?>
@@ -2823,7 +2863,6 @@ function lUrl($subject, $moduleId, $lessonId)
                     $isCurrentLessonDone = $lessonCompletion[$lessonId] ?? false;
                     ?>
 
-                    <!-- LESSON TITLE -->
                     <div class="lesson-title-row">
                         <span class="lesson-num-badge">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11"
@@ -2835,86 +2874,61 @@ function lUrl($subject, $moduleId, $lessonId)
                         </span>
                         <h3 class="lesson-main-title" id="lesson-title">
                             <?= htmlspecialchars($cleanTitle) ?>
-                            <!-- <?php if ($isCurrentLessonDone): ?>
-                                <span class="lesson-status-pill is-done">
-                                    <i class="fa fa-check"></i> Completed
-                                </span>
-                            <?php else: ?>
-                                <span class="lesson-status-pill is-pending">
-                                    <i class="fa fa-clock"></i> Not started
-                                </span>
-                            <?php endif; ?> -->
                         </h3>
                     </div>
 
-                    <!-- 1. LESSON TEXT -->
-                    <?php if (!empty($lesson['content'])): ?>
-                        <div class="ls-section">
-                            <div class="ls-section-head">
-                                <div class="ls-section-divider"></div>
-                            </div>
-                            <h4><?= htmlspecialchars($lesson['topic']) ?></h4>
-                            <div class="lesson-text-card">
-                                <?= nl2br(htmlspecialchars($lesson['content'])) ?>
-                            </div>
-                        </div>
-                    <?php endif; ?>
+                    <?php if (!empty($contentBlocks)): ?>
+                        <div class="ls-section" id="section-content">
+                            <?php if (!empty($lesson['topic'])): ?>
+                                <h4><?= htmlspecialchars($lesson['topic']) ?></h4>
+                            <?php endif; ?>
 
-                    <!-- 2. VIDEOS -->
-                    <?php if (!empty($videos)): ?>
-                        <div class="ls-section" id="section-videos">
-                            <div class="ls-section-head">
-                                <div class="ls-section-icon icon-video">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M23 7l-7 5 7 5V7z" />
-                                        <rect x="1" y="5" width="15" height="14" rx="2" />
-                                    </svg>
-                                </div>
-                                <span class="ls-section-title">Videos</span>
-                                <div class="ls-section-divider"></div>
-                                <span class="ls-section-count"><?= count($videos) ?></span>
-                            </div>
-                            <?php foreach ($videos as $vid): ?>
-                                <div class="video-card">
-                                    <div class="video-card-banner"></div>
-                                    <iframe src="<?= htmlspecialchars(youtubeEmbed($vid['file_path'])) ?>" allowfullscreen
-                                        loading="lazy"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-                                    </iframe>
-                                    <?php if (!empty($vid['title'])): ?>
-                                        <div class="video-card-info">
-                                            <div class="video-type-icon">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M23 7l-7 5 7 5V7z" />
-                                                    <rect x="1" y="5" width="15" height="14" rx="2" />
-                                                </svg>
+                            <?php foreach ($contentBlocks as $block): ?>
+
+                                <?php if ($block['type'] === 'text' && trim($block['body'] ?? '') !== ''): ?>
+                                    <div class="lesson-text-card">
+                                        <?php if (!empty($block['title'])): ?>
+                                            <h4 class="lesson-text-block-title" style="margin-bottom:8px;">
+                                                <?= htmlspecialchars($block['title']) ?>
+                                            </h4>
+                                        <?php endif; ?>
+                                        <?= nl2br(htmlspecialchars($block['body'])) ?>
+                                    </div>
+
+                                <?php elseif ($block['type'] === 'image'): ?>
+                                    <div class="img-item" onclick="dbLightbox('<?= htmlspecialchars($block['file_path']) ?>')">
+                                        <img src="<?= htmlspecialchars($block['file_path']) ?>"
+                                            alt="<?= htmlspecialchars($block['title'] ?? '') ?>" loading="lazy">
+                                        <?php if (!empty($block['title'])): ?>
+                                            <div class="img-item-cap"><?= htmlspecialchars($block['title']) ?></div>
+                                        <?php endif; ?>
+                                    </div>
+
+                                <?php elseif ($block['type'] === 'video'): ?>
+                                    <div class="video-card" style="margin-bottom:16px;">
+                                        <div class="video-card-banner"></div>
+                                        <iframe src="<?= htmlspecialchars(youtubeEmbed($block['file_path'])) ?>" allowfullscreen
+                                            loading="lazy"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                                        </iframe>
+                                        <?php if (!empty($block['title'])): ?>
+                                            <div class="video-card-info">
+                                                <div class="video-type-icon">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <path d="M23 7l-7 5 7 5V7z" />
+                                                        <rect x="1" y="5" width="15" height="14" rx="2" />
+                                                    </svg>
+                                                </div>
+                                                <span class="video-card-title"><?= htmlspecialchars($block['title']) ?></span>
                                             </div>
-                                            <span class="video-card-title"><?= htmlspecialchars($vid['title']) ?></span>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endif; ?>
+
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
 
-                    <!-- 3. IMAGES -->
-                    <?php if (!empty($images)): ?>
-                        <div class="ls-section" id="section-images">
-                            <div class="img-grid">
-                                <?php foreach ($images as $img): ?>
-                                    <div class="img-item" onclick="dbLightbox('<?= htmlspecialchars($img['file_path']) ?>')">
-                                        <img src="<?= htmlspecialchars($img['file_path']) ?>"
-                                            alt="<?= htmlspecialchars($img['title'] ?? '') ?>" loading="lazy">
-                                        <?php if (!empty($img['title'])): ?>
-                                            <div class="img-item-cap"><?= htmlspecialchars($img['title']) ?></div>
-                                        <?php endif; ?>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-
-                    <!-- 4. FLASHCARDS -->
                     <?php if (!empty($flashcards)): ?>
                         <div class="ls-section" id="section-flashcards">
                             <div class="ls-section-head">
@@ -2962,7 +2976,6 @@ function lUrl($subject, $moduleId, $lessonId)
                         </div>
                     <?php endif; ?>
 
-                    <!-- 5. ACTIVITIES -->
                     <?php if (!empty($activityData)): ?>
                         <div class="ls-section" id="section-activities">
                             <div class="ls-section-head">
@@ -3101,7 +3114,6 @@ function lUrl($subject, $moduleId, $lessonId)
                         </div>
                     <?php endif; ?>
 
-                    <!-- 6. QUIZZES -->
                     <?php if (!empty($quizData)): ?>
                         <?php
                         $allQzQuestions = [];
@@ -3298,7 +3310,6 @@ function lUrl($subject, $moduleId, $lessonId)
 
                 <?php endif; /* end $lesson check */ ?>
 
-                <!-- BOTTOM PREV / NEXT NAV -->
                 <?php if ($lesson): ?>
                     <div class="lesson-bottom-nav">
                         <?php if ($prevLessonId): ?>
@@ -3359,7 +3370,6 @@ function lUrl($subject, $moduleId, $lessonId)
     </div><!-- /lessons-main -->
     </div><!-- /lessons-shell -->
 
-    <!-- LIGHTBOX -->
     <div class="db-lightbox" id="dbLightbox" onclick="dbLightboxClose()">
         <button class="db-lightbox-close" onclick="dbLightboxClose()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
@@ -3369,7 +3379,6 @@ function lUrl($subject, $moduleId, $lessonId)
         <img id="dbLightboxImg" src="" alt="">
     </div>
 
-    <!-- Fallback if JavaScript is disabled: show the shell right away -->
     <noscript>
         <style>
             .module-splash {
@@ -3383,9 +3392,9 @@ function lUrl($subject, $moduleId, $lessonId)
     </noscript>
 
     <script>
-        function startBonbonBubble2Typewriter() {
-            const el = document.getElementById('bonbonMessage2');
-            if (!el || el.dataset.typed) return; // guard against double-typing
+        function startBonbonBubble3Typewriter() {
+            const el = document.getElementById('bonbonMessage3');
+            if (!el || el.dataset.typed) return;
             el.dataset.typed = '1';
 
             const message = "Ready to learn something new? Every lesson is an opportunity to build your knowledge and improve your skills. Stay curious, complete the activities and quizzes.";
@@ -3405,15 +3414,40 @@ function lUrl($subject, $moduleId, $lessonId)
                     setTimeout(() => cursor.remove(), 1200);
                 }
             }
-
             type();
         }
 
-        // If splash is being skipped (reload / Prev-Next inside the module),
-        // the shell is visible right away, so start typing immediately.
-        if (document.documentElement.classList.contains('skip-splash')) {
-            startBonbonBubble2Typewriter();
+        // Run every load, regardless of splash state
+        document.addEventListener('DOMContentLoaded', startBonbonBubble3Typewriter);
+    </script>
+
+    <script>
+        function startBonbonBubble2Typewriter() {
+            const el = document.getElementById('bonbonMessage2');
+            if (!el || el.dataset.typed) return;
+            el.dataset.typed = '1';
+
+            const message = "Ready to learn something new? Every lesson is an opportunity to build your knowledge and improve your skills. Stay curious, complete the activities and quizzes.";
+            const speed = 28;
+            let i = 0;
+
+            const cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+            el.appendChild(cursor);
+
+            function type() {
+                if (i < message.length) {
+                    cursor.insertAdjacentText('beforebegin', message.charAt(i));
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    setTimeout(() => cursor.remove(), 1200);
+                }
+            }
+            type();
         }
+
+        document.addEventListener('DOMContentLoaded', startBonbonBubble2Typewriter);
     </script>
 
     <script>
@@ -3459,12 +3493,9 @@ function lUrl($subject, $moduleId, $lessonId)
                     </button>
                     `);
 
-                    // Animate the fill in after insertion so the width transition actually plays
                     requestAnimationFrame(function () {
                         var fill = document.getElementById('sbProgressFill');
                         if (!fill) return;
-                        // Force the browser to register width:0% as a real paint
-                        // before we change it — otherwise the transition gets skipped.
                         requestAnimationFrame(function () {
                             fill.style.width = "<?= $progressPct ?>%";
                         });
@@ -3474,7 +3505,6 @@ function lUrl($subject, $moduleId, $lessonId)
 
             }
 
-            // Skip the typewriter entirely if we're already skipping the splash
             if (!document.documentElement.classList.contains('skip-splash')) {
                 type();
             }
@@ -3482,7 +3512,6 @@ function lUrl($subject, $moduleId, $lessonId)
         })();
     </script>
 
-    <!-- PHP data for lessons.js -->
     <script>
         var LESSON_DATA = {
             lessonId: <?= (int) $lessonId ?>,
@@ -3519,7 +3548,6 @@ function lUrl($subject, $moduleId, $lessonId)
             }, $quizData))) ?>
         };
 
-        /* Smooth scroll helper — scrolls inside .lessons-main, not window */
         function scrollToSection(id) {
             var el = document.getElementById(id);
             if (!el) return;
@@ -3533,9 +3561,6 @@ function lUrl($subject, $moduleId, $lessonId)
         }
     </script>
 
-    <!-- =============================================
-         SPLASH SCREEN -> LESSON SHELL REVEAL LOGIC
-    ============================================= -->
     <script>
         (function () {
             var splash = document.getElementById('moduleSplash');
@@ -3553,21 +3578,13 @@ function lUrl($subject, $moduleId, $lessonId)
                 setTimeout(function () {
                     splash.style.display = 'none';
                     shell.classList.add('shell-visible');
-                    startBonbonBubble2Typewriter(); // 👈 start it now, not on page load
+                    startBonbonBubble2Typewriter();
+                    startBonbonBubble3Typewriter();
                 }, 460);
             });
         })();
     </script>
 
-    <!-- =============================================
-         LIST VIEW <-> LESSON VIEW TOGGLE
-         Lessons list is shown first. Clicking a lesson
-         hides the list and reveals the topbar + that
-         lesson's content. A "Lessons" button in the
-         topbar brings the list back. State is kept per
-         module in sessionStorage so Prev/Next and page
-         reloads land on the right view.
-    ============================================= -->
     <script>
         (function () {
             var moduleId = <?= (int) ($moduleId ?? 0) ?>;
@@ -3580,31 +3597,24 @@ function lUrl($subject, $moduleId, $lessonId)
             function applyView(view) {
                 shell.classList.remove('view-list', 'view-lesson');
                 shell.classList.add(view === 'lesson' ? 'view-lesson' : 'view-list');
+                if (view === 'lesson') {
+                    startBonbonBubble3Typewriter();   // ✅ add this
+                }
             }
 
-            // Restore whichever view this module was last showing
-            // (defaults to the list, so a fresh visit always starts there).
             var savedView = sessionStorage.getItem(viewKey) || 'list';
             applyView(savedView);
 
-            // Clicking a lesson in the list
             document.querySelectorAll('.sb-nav-item').forEach(function (item) {
                 item.addEventListener('click', function (e) {
                     sessionStorage.setItem(viewKey, 'lesson');
                     if (item.classList.contains('active')) {
-                        // Already viewing this lesson's data — no need to
-                        // reload the page, just reveal the content panel.
                         e.preventDefault();
                         applyView('lesson');
                     }
-                    // Otherwise this is a link to a *different* lesson: let
-                    // it navigate normally. The next page load will read
-                    // the sessionStorage flag above and open straight into
-                    // the lesson view instead of the list.
                 });
             });
 
-            // Prev / Next topbar links should also keep the lesson view open
             ['prevBtn', 'nextBtn'].forEach(function (id) {
                 var el = document.getElementById(id);
                 if (el && el.tagName === 'A') {
@@ -3614,7 +3624,6 @@ function lUrl($subject, $moduleId, $lessonId)
                 }
             });
 
-            // "Lessons" buttons (topbar + blue hero) go back to the list
             backBtns.forEach(function (backBtn) {
                 backBtn.addEventListener('click', function () {
                     sessionStorage.setItem(viewKey, 'list');
@@ -3672,7 +3681,6 @@ function lUrl($subject, $moduleId, $lessonId)
         </script>
     <?php endif; ?>
 
-    <!-- <script src="../js_folder/lessons.js"></script> -->
     <script src="../js_folder/lessons.js?v=<?= time() ?>"></script>
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
 </body>

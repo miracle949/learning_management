@@ -213,6 +213,10 @@
     margin-top: 1rem;
 }
 
+.container-fluid main .card-parent-box input{
+    width: 100%;
+}
+
 .container-fluid main .card-parent-box button{
     font-size: 15px;
 }
@@ -227,6 +231,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.container-fluid main .card-parent-box .card-header label{
+    margin-top: 1.5rem;
+    font-size: 14.5px;
 }
 
 .container-fluid main .card-parent-box .card-header h3 {

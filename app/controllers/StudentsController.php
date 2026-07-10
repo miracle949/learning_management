@@ -88,7 +88,7 @@ class StudentsController
 
         $filePath = null;
 
-        // Handle file upload
+
         if (!empty($_FILES['submission_file']['name'])) {
             $uploadDir = '../uploads/submissions/';
             if (!is_dir($uploadDir))
@@ -253,15 +253,19 @@ class StudentsController
             $lessonId = $lessons[0]['id'];
         }
 
-        // ✅ ADD THIS — safety net: always mark started when student opens a lesson
+        // ✅ safety net: always mark started when student opens a lesson
         if ($studentId && $moduleId) {
             $studentModel->markModuleStarted($moduleId, $studentId);
         }
 
         // ... rest unchanged
         $lesson = $lessonId ? $studentModel->getIMLessonById($lessonId) : null;
-        $images = $lessonId ? $studentModel->getLessonImages($lessonId) : [];
-        $videos = $lessonId ? $studentModel->getLessonVideos($lessonId) : [];
+
+        // Ordered text/image/video blocks (builder order via sort_order) —
+        // replaces the old separate $lesson['content'] / $images / $videos
+        // sections, since text no longer lives on tbl_lessons.content.
+        $contentBlocks = $lessonId ? $studentModel->getLessonContentBlocks($lessonId) : [];
+
         $flashcards = $lessonId ? $studentModel->getLessonFlashcards($lessonId) : [];
         $activities = $lessonId ? $studentModel->getLessonActivities($lessonId) : [];
         $quizzes = $lessonId ? $studentModel->getLessonQuizzes($lessonId) : [];
