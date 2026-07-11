@@ -562,7 +562,7 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .lessons-main .robot-page .bubble-3 {
-            top: -100px;
+            top: -50px;
         }
 
         /* .lessons-main .robot-page .bubble-3 {
@@ -704,7 +704,7 @@ function lUrl($subject, $moduleId, $lessonId)
         .ov-hero {
             /* background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan) 65%, var(--electric-purple)); */
             /* padding: 34px 30px; */
-            padding: 25px 30px 34px;
+            padding: 34px 30px;
             color: #fff;
             /* position: relative; */
             /* overflow: hidden; */
@@ -834,7 +834,22 @@ function lUrl($subject, $moduleId, $lessonId)
             color: #fff;
         }
 
-        .ov-hero-top {
+        /* .ov-hero-top {} */
+
+        .ov-hero-top .ov-hero-sub {
+            margin: 0 0 10px;
+        }
+
+        .ov-hero-top .ov-hero-parent {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 15px;
+        }
+
+        .ov-hero-top .ov-parent-lesson{
             position: relative;
             z-index: 1;
             display: flex;
@@ -878,6 +893,7 @@ function lUrl($subject, $moduleId, $lessonId)
             font-size: 14.5px;
             color: rgba(255, 255, 255, 0.8);
             margin-bottom: 16px;
+            line-height: 25px;
         }
 
         .ov-hero-track {
@@ -902,9 +918,10 @@ function lUrl($subject, $moduleId, $lessonId)
         .lesson-hero {
             /* padding: 20px 32px 20px; */
             /* padding: 34px 30px 34px; */
-            padding: 25px 30px 34px;
+            padding: 34px 30px;
             display: block;
             border-bottom: 1px solid #CADFF5;
+            /* height: 233px; */
         }
 
         .lesson-hero .lesson-hero-text {
@@ -1821,7 +1838,7 @@ function lUrl($subject, $moduleId, $lessonId)
             cursor: pointer;
             transition: transform .2s, box-shadow .2s, border-color .2s;
             box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
-            margin: 0 0 20px;
+            margin: 0 0 25px;
         }
 
         .img-item:hover {
@@ -2714,17 +2731,24 @@ function lUrl($subject, $moduleId, $lessonId)
                         Back to Modules
                     </a>
                     <div class="ov-hero-top">
-                        <div class="ov-hero-icon">
-                            <i class="fa fa-book-open"></i>
-                        </div>
-                        <div>
-                            <div class="ov-hero-tag">
-                                <?= htmlspecialchars($module['subject_name'] ?? $subject) ?>
+                        <div class="ov-hero-parent">
+                            <div class="ov-hero-icon">
+                                <i class="fa fa-book-open"></i>
                             </div>
-                            <div class="ov-hero-title">
-                                <?= htmlspecialchars($module['title'] ?? '') ?>
+                            <div>
+                                <div class="ov-hero-tag">
+                                    <?= htmlspecialchars($module['subject_name'] ?? $subject) ?>
+                                </div>
+                                <div class="ov-hero-title">
+                                    <?= htmlspecialchars($module['title'] ?? '') ?>
+                                </div>
                             </div>
                         </div>
+                        <?php if (!empty($module['description'])): ?>
+                            <div class="ov-hero-sub">
+                                <?= htmlspecialchars($module['description']) ?>
+                            </div>
+                        <?php endif; ?>
                     </div>
                     <div class="ov-hero-sub">
                         <?= $completedCount ?> of
@@ -2825,16 +2849,18 @@ function lUrl($subject, $moduleId, $lessonId)
                             Lessons
                         </button>
                         <div class="ov-hero-top">
-                            <div class="ov-hero-icon">
-                                <i class="fa fa-book-open"></i>
-                            </div>
-                            <div>
-                                <div class="ov-hero-tag">Lesson
-                                    <?= $currentIndex ?> ·
-                                    <?= htmlspecialchars($module['title'] ?? '') ?>
+                            <div class="ov-parent-lesson">
+                                <div class="ov-hero-icon">
+                                    <i class="fa fa-book-open"></i>
                                 </div>
-                                <div class="ov-hero-title">
-                                    <?= htmlspecialchars($heroCleanTitle) ?>
+                                <div>
+                                    <div class="ov-hero-tag">Lesson
+                                        <?= $currentIndex ?> ·
+                                        <?= htmlspecialchars($module['title'] ?? '') ?>
+                                    </div>
+                                    <div class="ov-hero-title">
+                                        <?= htmlspecialchars($heroCleanTitle) ?>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -3397,7 +3423,7 @@ function lUrl($subject, $moduleId, $lessonId)
             if (!el || el.dataset.typed) return;
             el.dataset.typed = '1';
 
-            const message = "Ready to learn something new? Every lesson is an opportunity to build your knowledge and improve your skills. Stay curious, complete the activities and quizzes.";
+            const message = "Welcome! I'm your learning assistant, ready to guide you through your journey!";
             const speed = 28;
             let i = 0;
 
