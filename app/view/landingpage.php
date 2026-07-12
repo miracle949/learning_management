@@ -155,7 +155,7 @@
         <!-- FLOATING STRAND CARDS -->
         <div class="strands-float-wrap">
             <div class="strands-grid">
-                <div class="strand-card accent-blue">
+                <div class="strand-card">
                     <img class="strand-card-img"
                         src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&q=80" alt="ICT Strand">
                     <div class="strand-card-body">
@@ -168,7 +168,7 @@
                     </div>
                 </div>
 
-                <div class="strand-card accent-gold">
+                <div class="strand-card">
                     <img class="strand-card-img"
                         src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&q=80"
                         alt="Electronics Strand">
@@ -181,7 +181,7 @@
                     </div>
                 </div>
 
-                <div class="strand-card accent-purple">
+                <div class="strand-card a">
                     <img class="strand-card-img"
                         src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&q=80"
                         alt="Industrial Arts Strand">
@@ -271,7 +271,7 @@
                 </div>
 
                 <div class="about-image reveal reveal-delay-2">
-                    <iframe width="560" height="380" src="https://www.youtube.com/embed/ML_hMpuXTHk?si=fdMLQ3Ms6_0x2CCv"
+                    <iframe src="https://www.youtube.com/embed/ML_hMpuXTHk?si=fdMLQ3Ms6_0x2CCv"
                         title="YouTube video player" frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
@@ -989,7 +989,7 @@
         });
 
         // ── HERO TITLE FLICKER ──
-        const line2 = document.querySelector('.hero-title .line2');
+        const line2 = document.querySelector('.hero-title');
         setTimeout(() => {
             let flickers = 0;
             const flicker = setInterval(() => {

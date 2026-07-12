@@ -371,3 +371,23 @@
 .btn-add-lesson:hover {
     background: #d3f1e3;
 }
+
+.text-keyidea-input {
+    background: #eef6ff;
+    border-color: #bfdbfe;
+}
+
+/* Multiple-image support inside an image block */
+.image-items-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.image-item {
+    border: 1px solid var(--block-border);
+    border-radius: 8px;
+    padding: 10px 12px 4px;
+    background: #fafbfc;
+}

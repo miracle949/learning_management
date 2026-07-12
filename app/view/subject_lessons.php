@@ -36,6 +36,7 @@ function lUrl($subject, $moduleId, $lessonId)
             --bg-main: #ffffff;
             --bg-section-alt: #f0f5fc;
             --panel-bg: #f5f7fb;
+            --hero-height: 100px;
         }
 
         *,
@@ -512,7 +513,7 @@ function lUrl($subject, $moduleId, $lessonId)
             color: var(--text-muted, var(--text-dim));
             padding: 7px 14px;
             border-radius: 8px;
-            border: 1.5px solid var(--page-border, var(--panel-border));
+            border: 1.5px solid var(--panel-border);
             background: var(--page-card, #fff);
             transition: border-color .15s ease, color .15s ease, transform .15s ease;
         }
@@ -548,6 +549,7 @@ function lUrl($subject, $moduleId, $lessonId)
         .lessons-main {
             display: flex;
             flex-direction: column;
+            /* height: 100vh; */
             /* background: var(--page-bg, #f7f9fc); */
             /* border-top: 1px solid var(--panel-border); */
             margin: 0;
@@ -555,23 +557,10 @@ function lUrl($subject, $moduleId, $lessonId)
             position: relative;
         }
 
-        .lessons-main .robot-page {
-            position: absolute;
-            right: 3%;
-            top: 10%;
-        }
-
-        .lessons-main .robot-page .bubble-3 {
-            top: -50px;
-        }
-
-        /* .lessons-main .robot-page .bubble-3 {
-            border: 1px solid var(--panel-border);
-        }
-
-        .lessons-main .robot-page .bubble-3::before {
-            border: 1px solid var(--panel-border);
-        } */
+        /* NOTE: .robot-page used to be positioned relative to .lessons-main,
+           whose height changes with lesson content length — that's why the
+           robot/bubble jumped around. It's now anchored to .lesson-hero
+           instead (a fixed-height element), see rule further down. */
 
         .speech-bubble {
             position: absolute;
@@ -849,7 +838,7 @@ function lUrl($subject, $moduleId, $lessonId)
             margin-bottom: 15px;
         }
 
-        .ov-hero-top .ov-parent-lesson{
+        .ov-hero-top .ov-parent-lesson {
             position: relative;
             z-index: 1;
             display: flex;
@@ -916,12 +905,11 @@ function lUrl($subject, $moduleId, $lessonId)
         /* Blue hero banner reused at the top of the lesson CONTENT view,
            so it's always obvious which lesson/topic you're looking at. */
         .lesson-hero {
-            /* padding: 20px 32px 20px; */
-            /* padding: 34px 30px 34px; */
+            position: relative;
+            /* NEW: anchor for .robot-page inside it */
             padding: 34px 30px;
             display: block;
             border-bottom: 1px solid #CADFF5;
-            /* height: 233px; */
         }
 
         .lesson-hero .lesson-hero-text {
@@ -942,6 +930,22 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .lesson-hero .ov-hero-sub {
             margin-bottom: 0;
+        }
+
+        /* NEW: .robot-page now lives INSIDE .lesson-hero, so it's positioned
+           relative to the hero's fixed-ish height, not the whole
+           .lessons-main column (which grows with lesson content length).
+           Anchored near the hero's own top padding (not vertically
+           centered) so the negative offset on the speech bubble never
+           pushes it above the hero and clips against the viewport. */
+        .lesson-hero .robot-page {
+            position: absolute;
+            right: 3%;
+            top: 100px;
+        }
+
+        .lesson-hero .robot-page .bubble-3 {
+            top: -14px;
         }
 
         .sb-brand-mark {
@@ -1600,7 +1604,7 @@ function lUrl($subject, $moduleId, $lessonId)
         .lessons-content-wrap {
             padding: 55px 28px 35px;
             margin: 0 180px;
-            /* height: calc(100vh - 181px); */
+
         }
 
         .lesson-title-row {
@@ -2685,6 +2689,30 @@ function lUrl($subject, $moduleId, $lessonId)
         $nameParts = explode(' ', trim($studentName));
         $splashFirstName = $nameParts[0];
     }
+
+    // =============================================
+    // BONBON — DYNAMIC LESSON MESSAGE (bubble-3)
+    // ------------------------------------------------------------
+    // Instead of a hardcoded string, build BonBon's message for
+    // the lesson-page speech bubble (#bonbonMessage3) from the
+    // current lesson's title/topic and completion status. Falls
+    // back to a generic greeting when there is no active lesson
+    // (e.g. the empty-state "choose a lesson" view).
+    // =============================================
+    $bonbonLessonMessage = "Welcome! I'm your learning assistant, ready to guide you through your journey!";
+
+    if (!empty($lesson)) {
+        $bonbonCleanTitle = preg_replace('/^Lesson\s*\d+\s*:\s*/i', '', $lesson['title']);
+        $bonbonIsDone = $lessonCompletion[$lessonId] ?? false;
+
+        if ($bonbonIsDone) {
+            $bonbonLessonMessage = "Nice work — you've already completed \"{$bonbonCleanTitle}\"! Feel free to review it anytime.";
+        } elseif (!empty($lesson['topic'])) {
+            $bonbonLessonMessage = "Let's dive into \"{$bonbonCleanTitle}\" — today we're covering {$lesson['topic']}!";
+        } else {
+            $bonbonLessonMessage = "Let's dive into \"{$bonbonCleanTitle}\"! I'll be right here if you need a hand.";
+        }
+    }
     ?>
 
     <div class="module-splash" id="moduleSplash">
@@ -2744,11 +2772,11 @@ function lUrl($subject, $moduleId, $lessonId)
                                 </div>
                             </div>
                         </div>
-                        <?php if (!empty($module['description'])): ?>
+                        <!-- <?php if (!empty($module['description'])): ?>
                             <div class="ov-hero-sub">
                                 <?= htmlspecialchars($module['description']) ?>
                             </div>
-                        <?php endif; ?>
+                        <?php endif; ?> -->
                     </div>
                     <div class="ov-hero-sub">
                         <?= $completedCount ?> of
@@ -2831,14 +2859,6 @@ function lUrl($subject, $moduleId, $lessonId)
 
         <div class="lessons-main">
 
-            <div class="robot-page">
-                <div class="speech-bubble bubble-3">
-                    <strong>BonBon</strong>
-                    <p id="bonbonMessage3"></p>
-                </div>
-                <img src="../images/robot-ai10.png" alt="">
-            </div>
-
             <?php if ($lesson):
                 $heroCleanTitle = preg_replace('/^Lesson\s*\d+\s*:\s*/i', '', $lesson['title']);
                 ?>
@@ -2869,6 +2889,18 @@ function lUrl($subject, $moduleId, $lessonId)
                                 <?= htmlspecialchars($module['description']) ?>
                             </div>
                         <?php endif; ?>
+                    </div>
+
+                    <!-- MOVED: .robot-page now lives inside .lesson-hero so its
+                         position is anchored to this fixed-height banner,
+                         not to .lessons-main (whose height changes with
+                         lesson content length, which caused the jumping). -->
+                    <div class="robot-page">
+                        <div class="speech-bubble bubble-3">
+                            <strong>BonBon</strong>
+                            <p id="bonbonMessage3"></p>
+                        </div>
+                        <img src="../images/robot-ai10.png" alt="">
                     </div>
                 </div>
             <?php endif; ?>
@@ -2920,6 +2952,20 @@ function lUrl($subject, $moduleId, $lessonId)
                                         <?php endif; ?>
                                         <?= nl2br(htmlspecialchars($block['body'])) ?>
                                     </div>
+
+                                    <?php if (!empty($block['key_idea'])): ?>
+                                        <div class="callout info d-flex align-items-center">
+                                            <div class="callout-icon">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="12" cy="12" r="10" />
+                                                    <path d="M12 16v-4M12 8h.01" />
+                                                </svg>
+                                            </div>
+                                            <div class="callout-body">
+                                                <p class="m-0"><strong>Key idea:</strong> <?= nl2br(htmlspecialchars($block['key_idea'])) ?></p>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
 
                                 <?php elseif ($block['type'] === 'image'): ?>
                                     <div class="img-item" onclick="dbLightbox('<?= htmlspecialchars($block['file_path']) ?>')">
@@ -3423,7 +3469,7 @@ function lUrl($subject, $moduleId, $lessonId)
             if (!el || el.dataset.typed) return;
             el.dataset.typed = '1';
 
-            const message = "Welcome! I'm your learning assistant, ready to guide you through your journey!";
+            const message = <?= json_encode($bonbonLessonMessage) ?>;
             const speed = 28;
             let i = 0;
 
@@ -3501,7 +3547,7 @@ function lUrl($subject, $moduleId, $lessonId)
                     <div class="speech-bubble-progress">
                         <div class="sb-progress-row">
                             <span class="sbp-label">Progress</span>
-                            <span class="sbp-pct" style="color:<?= $sbIsFinished ? 'var(--neon-cyan)' : '#ff7a00' ?>;"><?= $progressPct ?>%</span>
+                            <span class="sbp-pct" style="color:<?= $moduleState !== 'continue' ? 'var(--neon-cyan)' : '#ff7a00' ?>;"><?= $progressPct ?>%</span>
                         </div>
                         <div class="sbp-segments">
                             <?php for ($i = 1; $i <= $sbTotalSegments; $i++): ?>

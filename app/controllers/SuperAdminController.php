@@ -173,37 +173,42 @@ class SuperAdminController
                             if ($text === '')
                                 break;
                             $heading = trim($block['heading'] ?? '');
+                            $keyIdea = trim($block['key_idea'] ?? '');
                             $this->superAdminModel->insertInteractiveContent($lessonId, 'text', [
                                 'title' => $heading !== '' ? $heading : null,
                                 'body' => $text,
+                                'key_idea' => $keyIdea !== '' ? $keyIdea : null,
                                 'sort_order' => $sortOrder,
                             ]);
                             break;
 
                         // ── IMAGE ──
                         case 'image':
-                            $file = [
-                                'name' => $blockImages['name'][$modIdx][$lesIdx][$blockIdx] ?? null,
-                                'tmp_name' => $blockImages['tmp_name'][$modIdx][$lesIdx][$blockIdx] ?? null,
-                                'error' => $blockImages['error'][$modIdx][$lesIdx][$blockIdx] ?? UPLOAD_ERR_NO_FILE,
-                                'size' => $blockImages['size'][$modIdx][$lesIdx][$blockIdx] ?? 0,
-                            ];
-                            if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || empty($file['name']))
-                                break;
-                            if (($file['size'] ?? 0) > 5 * 1024 * 1024)
-                                break;
-                            $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-                            if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-                                break;
-                            $uniqueName = uniqid('img_') . '.' . $ext;
-                            if (move_uploaded_file($file['tmp_name'], $imageDir . $uniqueName)) {
-                                $this->superAdminModel->insertInteractiveContent($lessonId, 'image', [
-                                    'title' => trim($block['caption'] ?? ''),
-                                    'file_path' => '/learning_management/uploads/lessons/images/' . $uniqueName,
-                                    'file_name' => $file['name'],
-                                    'file_type' => $ext,
-                                    'sort_order' => $sortOrder,
-                                ]);
+                            $images = $block['images'] ?? [];
+                            foreach ($images as $imgIdx => $imgData) {
+                                $file = [
+                                    'name' => $blockImages['name'][$modIdx][$lesIdx][$blockIdx][$imgIdx] ?? null,
+                                    'tmp_name' => $blockImages['tmp_name'][$modIdx][$lesIdx][$blockIdx][$imgIdx] ?? null,
+                                    'error' => $blockImages['error'][$modIdx][$lesIdx][$blockIdx][$imgIdx] ?? UPLOAD_ERR_NO_FILE,
+                                    'size' => $blockImages['size'][$modIdx][$lesIdx][$blockIdx][$imgIdx] ?? 0,
+                                ];
+                                if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || empty($file['name']))
+                                    continue;
+                                if (($file['size'] ?? 0) > 5 * 1024 * 1024)
+                                    continue;
+                                $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+                                if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                    continue;
+                                $uniqueName = uniqid('img_') . '.' . $ext;
+                                if (move_uploaded_file($file['tmp_name'], $imageDir . $uniqueName)) {
+                                    $this->superAdminModel->insertInteractiveContent($lessonId, 'image', [
+                                        'title' => trim($imgData['caption'] ?? ''),
+                                        'file_path' => '/learning_management/uploads/lessons/images/' . $uniqueName,
+                                        'file_name' => $file['name'],
+                                        'file_type' => $ext,
+                                        'sort_order' => $sortOrder,
+                                    ]);
+                                }
                             }
                             break;
 

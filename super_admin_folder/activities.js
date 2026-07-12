@@ -14,6 +14,11 @@
    the base, with the richer image-upload box + live preview
    (5MB check, thumbnail, remove button) ported over from the
    original per-type builder.
+
+   UPDATE: text blocks now support an optional "Key Idea" callout
+   field, and image blocks now support multiple images per block
+   (each with its own file + caption), rendered as a gallery on
+   the student side.
 ============================================================ */
 
 const BLOCK_META = {
@@ -226,38 +231,33 @@ function buildBlockElement(type) {
       <div class="block-fields">${blockFieldsMarkup(type)}</div>
     </div>`;
 
-  if (type === 'image') wireImageUpload(el);
+  if (type === 'image') {
+    const addBtn = el.querySelector('.btn-add-image');
+    addImageItem(addBtn); // seed the block with one image slot
+  }
 
   return el;
 }
 
 function blockFieldsMarkup(type) {
   if (type === 'text') {
-    // "heading" is optional — leave blank for a plain paragraph block,
-    // fill it in when this block should read as its own subsection
-    // (e.g. "The Hardware Layer", "The Software Layer") like image 5.
+    // "heading" and "key_idea" are both optional. heading renders as a
+    // bold subsection title; key_idea renders as a highlighted callout
+    // box beneath the paragraph (e.g. a blue "Key idea:" box).
     return `
       <input type="text" class="text-heading-input" data-field="heading" placeholder="Section heading (optional) — e.g. The Software Layer">
-      <textarea data-field="text" placeholder="Write the paragraph or section content..."></textarea>`;
+      <textarea data-field="text" placeholder="Write the paragraph or section content..."></textarea>
+      <textarea class="text-keyidea-input" data-field="key_idea" placeholder="Key idea / callout (optional) — e.g. The operating system is the translator between hardware and application software..."></textarea>`;
   }
 
   if (type === 'image') {
-    // Direct children of .block-fields so renumberAll()'s
-    // `.block-fields > [data-field]` selector still finds them —
-    // the upload-box / preview wrapper divs are purely visual.
+    // Holds one or more .image-item rows — admin can attach several
+    // images to a single "Visual References" block.
     return `
-      <input type="file" accept=".jpg,.jpeg,.png,.gif,.webp,image/*" data-field="image_file" class="image-file-input" style="display:none;">
-      <div class="image-upload-box">
-        <div class="image-upload-icon"><i class="fa fa-cloud-upload-alt"></i></div>
-        <p class="image-upload-title">Click to upload image</p>
-        <span class="image-upload-hint">JPG, PNG, GIF &nbsp;·&nbsp; Max 5MB</span>
-        <div class="image-upload-choose">Choose File</div>
-      </div>
-      <div class="image-preview" style="display:none;">
-        <img src="" alt="Preview" class="preview-img">
-        <button type="button" class="remove-preview-btn"><i class="fa fa-times"></i> Remove Image</button>
-      </div>
-      <input type="text" data-field="caption" placeholder="Caption (e.g. Inside a desktop tower — CPU, RAM, and storage)">`;
+      <div class="image-items-wrap"></div>
+      <button type="button" class="btn-add-question btn-add-image" onclick="addImageItem(this)">
+        <i class="fa fa-plus"></i> Add image
+      </button>`;
   }
 
   if (type === 'video') {
@@ -299,15 +299,39 @@ function blockFieldsMarkup(type) {
   return '';
 }
 
-/* ---------- image upload box + live preview (ported from the
-   original per-type builder: 5MB check, FileReader preview,
-   remove button that restores the upload box) ---------- */
-function wireImageUpload(blockEl) {
-  const uploadBox = blockEl.querySelector('.image-upload-box');
-  const fileInput = blockEl.querySelector('.image-file-input');
-  const previewDiv = blockEl.querySelector('.image-preview');
-  const previewImg = blockEl.querySelector('.preview-img');
-  const removeBtn = blockEl.querySelector('.remove-preview-btn');
+/* ---------- image items (one block can hold multiple images) ---------- */
+function addImageItem(btn) {
+  const wrap = btn.previousElementSibling; // .image-items-wrap
+  const row = document.createElement('div');
+  row.className = 'image-item';
+  row.innerHTML = `
+    <div class="question-row-head">
+      <span>Image</span>
+      <button type="button" class="danger" onclick="this.closest('.image-item').remove(); renumberAll();"><i class="fa fa-trash"></i></button>
+    </div>
+    <input type="file" accept=".jpg,.jpeg,.png,.gif,.webp,image/*" data-ifield="image_file" class="image-file-input" style="display:none;">
+    <div class="image-upload-box">
+      <div class="image-upload-icon"><i class="fa fa-cloud-upload-alt"></i></div>
+      <p class="image-upload-title">Click to upload image</p>
+      <span class="image-upload-hint">JPG, PNG, GIF &nbsp;·&nbsp; Max 5MB</span>
+      <div class="image-upload-choose">Choose File</div>
+    </div>
+    <div class="image-preview" style="display:none;">
+      <img src="" alt="Preview" class="preview-img">
+      <button type="button" class="remove-preview-btn"><i class="fa fa-times"></i> Remove Image</button>
+    </div>
+    <input type="text" data-ifield="caption" placeholder="Caption (optional)">`;
+  wrap.appendChild(row);
+  wireImageItemUpload(row);
+  renumberAll();
+}
+
+function wireImageItemUpload(row) {
+  const uploadBox = row.querySelector('.image-upload-box');
+  const fileInput = row.querySelector('.image-file-input');
+  const previewDiv = row.querySelector('.image-preview');
+  const previewImg = row.querySelector('.preview-img');
+  const removeBtn = row.querySelector('.remove-preview-btn');
 
   uploadBox.addEventListener('click', () => fileInput.click());
 
@@ -448,6 +472,8 @@ function renumberAll() {
         const prefix = `blocks[${modIdx}][${lesIdx}][${blockIdx}]`;
         blockEl.dataset.blockIdx = blockIdx;
 
+        // type marker — no visible input needed, controller reads it
+        // via a hidden field so PHP always knows what this block is
         let typeInput = blockEl.querySelector(':scope > .block-body > input[data-field="__type"]');
         if (!typeInput) {
           typeInput = document.createElement('input');
@@ -459,14 +485,14 @@ function renumberAll() {
         typeInput.name = `${prefix}[type]`;
         typeInput.value = blockEl.dataset.type;
 
+        // simple top-level fields (text, heading, key_idea, video_title,
+        // video_url, quiz_title, quiz_instructions, quiz_passing_score,
+        // activity_title, activity_instructions, activity_points)
         blockEl.querySelectorAll(':scope > .block-body > .block-fields > [data-field]').forEach(input => {
-          if (input.dataset.field === 'image_file') {
-            input.name = `block_image[${modIdx}][${lesIdx}][${blockIdx}]`;
-          } else {
-            input.name = `${prefix}[${input.dataset.field}]`;
-          }
+          input.name = `${prefix}[${input.dataset.field}]`;
         });
 
+        // nested quiz/activity questions
         const questionRows = blockEl.querySelectorAll(':scope .question-row');
         questionRows.forEach((qRow, qIdx) => {
           qRow.querySelectorAll('[data-qfield]').forEach(input => {
@@ -474,10 +500,23 @@ function renumberAll() {
           });
         });
 
+        // nested flashcards
         const cardRows = blockEl.querySelectorAll(':scope .card-row');
         cardRows.forEach((cRow, cIdx) => {
           cRow.querySelectorAll('[data-cfield]').forEach(input => {
             input.name = `${prefix}[cards][${cIdx}][${input.dataset.cfield}]`;
+          });
+        });
+
+        // nested image items (one image block can hold several images)
+        const imageItems = blockEl.querySelectorAll(':scope .image-item');
+        imageItems.forEach((imgRow, imgIdx) => {
+          imgRow.querySelectorAll('[data-ifield]').forEach(input => {
+            if (input.dataset.ifield === 'image_file') {
+              input.name = `block_image[${modIdx}][${lesIdx}][${blockIdx}][${imgIdx}]`;
+            } else {
+              input.name = `${prefix}[images][${imgIdx}][${input.dataset.ifield}]`;
+            }
           });
         });
       });

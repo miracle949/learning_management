@@ -113,7 +113,7 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'dashboard';
 
             <li class="<?= $current_url === 'notifications' ? 'active' : '' ?>">
                 <a href="#" class="text-decoration-none">
-                    <i class="fa fa-user"></i>
+                    <i class="fa fa-bell"></i>
                     <span>Notifications</span>
                 </a>
             </li>

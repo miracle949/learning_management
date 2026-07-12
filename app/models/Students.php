@@ -297,7 +297,7 @@ class Students extends Model
     public function getLessonContentBlocks($lessonId)
     {
         $stmt = $this->db->prepare("
-        SELECT id, type, title, body, file_path, file_name
+        SELECT id, type, title, body, key_idea, file_path, file_name
         FROM tbl_interactive_contents
         WHERE lesson_id = ? AND type IN ('text', 'image', 'video')
         ORDER BY id ASC

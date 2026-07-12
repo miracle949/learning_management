@@ -63,11 +63,20 @@
                 </div> -->
 
                 <div class="welcome-nav">
+                    <!-- <div class="burger-button">
+                        <button><i class="fa fa-bars"></i></button>
+                    </div> -->
                     <div class="welcome-nav-text">
-                        <h2>Student Dashboard</h2>
+                        <div class="burger-button">
+                            <button><i class="fa fa-bars"></i></button>
+                        </div>
+                        <div class="welcome-text">
+                            <h2>Student Dashboard</h2>
 
-                        <p>Wednesday, June 18, 2026 · CSS Batch 2026</p>
+                            <p>Wednesday, June 18, 2026 · CSS Batch 2026</p>
+                        </div>
                     </div>
+
                     <div class="welcome-nav-acc">
                         <button>
                             <div class="notification-icon">
@@ -88,6 +97,9 @@
                         </button>
                     </div>
                 </div>
+
+                <h2 class="mobile-heading">Hello, <?= htmlspecialchars($_SESSION["name"]) ?> - Good Day!</h2>
+                <p class="mobile-paragraph">Hope you're having a wonderful day. Let's make the most of it!</p>
 
                 <div class="welcome-banner">
                     <div class="welcome-text">
@@ -121,7 +133,8 @@
                             <strong>I'm, BonBon</strong>
                             <p id="bonbonMessage"></p>
                         </div>
-                        <img src="../images/robot-ai6.png" alt="">
+                        <img class="image1" src="../images/robot-ai6.png" alt="">
+                        <img class="image2" src="../images/robot-ai5.png" alt="">
                     </div>
                 </div>
 
@@ -272,7 +285,7 @@
 
                                     </div>
                                 <?php else: ?>
-                                    <div class="body is-empty" style="height: 233px;">
+                                    <div class="body is-empty" style="height: 285px;">
                                         <i class="fa fa-check-circle" style="font-size: 20px; color: var(--text-dim)"></i>
                                         <p class="m-0" style="font-size: 14.5px; color: var(--text-dim);">No pending tasks.
                                         </p>
@@ -322,7 +335,7 @@
                                     </div>
                                 <?php else: ?>
 
-                                    <div class="body is-empty" style="height: 233px;">
+                                    <div class="body is-empty" style="height: 280px;">
                                         <i class="fa fa-check-circle" style="font-size: 20px; color: var(--text-dim)"></i>
                                         <p class="m-0" style="font-size:14.5px;">No announcements yet.</p>
                                     </div>
@@ -330,333 +343,172 @@
                             </div>
 
                         </div>
+                    </div>
+                    <div class="right-dashboard parent-performance">
+                        <div class="update missing-task">
+                            <div class="header">
+                                <div class="header-icon header-icon-danger">
+                                    <i class="fa fa-triangle-exclamation"></i>
+                                </div>
+                                <h3>Missing Task</h3>
+                            </div>
+                            <div class="body is-empty" style="height: 285px;">
+                                <i class="fa fa-check-circle" style="font-size: 20px; color: var(--text-dim)"></i>
+                                <p class="m-0" style="font-size: 14.5px; color: var(--text-dim);">No missing tasks.</p>
+                            </div>
+                            <!-- Example populated state — mirror this markup per missing item:
+                            <div class="body" style="height: 190px; overflow-y: auto;">
+                                <div class="parent-update">
+                                    <div class="update-icon">
+                                        <i class="fa fa-file-circle-exclamation"></i>
+                                    </div>
+                                    <div class="update-box">
+                                        <div class="update-text">
+                                            <p>Quiz 2 - Subnetting</p>
+                                            <span>Networking · Was due: June 14, 2026</span>
+                                        </div>
+                                        <div class="update-links">
+                                            <span>3 days overdue</span>
+                                            <a href="#">View Task <i class="fa fa-arrow-right"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            -->
+                        </div>
 
-                        <div class="perform enrolled-subjects">
+                        <div class="update upcoming-deadlines">
                             <div class="header">
                                 <div class="header-icon">
-                                    <i class="fa fa-book"></i>
+                                    <i class="fa fa-clock"></i>
                                 </div>
-                                <h3>My Modules</h3>
+                                <h3>Upcoming deadlines</h3>
                             </div>
+                            <div class="body" style="height: 280px; overflow-y: auto;">
 
-                            <div class="body" style="height: 320px; overflow-y: auto;">
-
-                                <div class="module-progress">
-                                    <div class="module-header">
-                                        <h4>Module 1 - Hardware Assembly & Dissambly</h4>
-
-                                        <span>70%</span>
+                                <div class="parent-update">
+                                    <div class="update-icon">
+                                        <i class="fa fa-calendar-days"></i>
                                     </div>
-
-                                    <div class="parent-progress-percent">
-                                        <div class="progress"></div>
-                                    </div>
-
-                                    <div class="module-footer">
-                                        <p>Hardware</p>
-
-                                        <a href="#">View progress <i class="fa fa-arrow-right"></i> </a>
+                                    <div class="update-box">
+                                        <div class="update-text">
+                                            <p>Quiz 3 - IP Addressing</p>
+                                            <span>Due: June 20, 2026 · 08:00 PM</span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="module-progress">
-                                    <div class="module-header">
-                                        <h4>Module 2 - OS Installation & Configuration</h4>
-
-                                        <span>50%</span>
+                                <div class="parent-update">
+                                    <div class="update-icon">
+                                        <i class="fa fa-calendar-days"></i>
                                     </div>
-
-                                    <div class="parent-progress-percent">
-                                        <div class="progress"></div>
-                                    </div>
-
-                                    <div class="module-footer">
-                                        <p>Software</p>
-
-                                        <a href="#">View progress <i class="fa fa-arrow-right"></i> </a>
+                                    <div class="update-box">
+                                        <div class="update-text">
+                                            <p>Quiz 3 - IP Addressing</p>
+                                            <span>Due: June 20, 2026 · 10:00 AM</span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="module-progress">
-                                    <div class="module-header">
-                                        <h4>Module 3 - Network Setup & Cabling</h4>
-
-                                        <span>70%</span>
+                                <div class="parent-update">
+                                    <div class="update-icon">
+                                        <i class="fa fa-calendar-days"></i>
                                     </div>
-
-                                    <div class="parent-progress-percent">
-                                        <div class="progress"></div>
-                                    </div>
-
-                                    <div class="module-footer">
-                                        <p>Networking</p>
-
-                                        <a href="#">View progress <i class="fa fa-arrow-right"></i> </a>
+                                    <div class="update-box">
+                                        <div class="update-text">
+                                            <p>Quiz 3 - IP Addressing</p>
+                                            <span>Due: June 20, 2026 · 05:00 PM</span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="module-progress">
-                                    <div class="module-header">
-                                        <h4>Module 4 - Hardware Assembly & Dissambly</h4>
-
-                                        <span>70%</span>
+                                <div class="parent-update">
+                                    <div class="update-icon">
+                                        <i class="fa fa-calendar-days"></i>
                                     </div>
-
-                                    <div class="parent-progress-percent">
-                                        <div class="progress"></div>
-                                    </div>
-
-                                    <div class="module-footer">
-                                        <p>Repair</p>
-
-                                        <a href="#">View progress <i class="fa fa-arrow-right"></i> </a>
-                                    </div>
-                                </div>
-                                <!-- <div class="progress-box">
-                                    <h4>Introduction to Philosophy of Human Person</h4>
-
-                                    <div class="parent-progress">
-                                        <div class="progress-header">
-                                            <p>Progress</p>
-                                            <span>75%</span>
+                                    <div class="update-box">
+                                        <div class="update-text">
+                                            <p>Quiz 3 - IP Addressing</p>
+                                            <span>Due: June 20, 2026 · 06:00 PM</span>
                                         </div>
-                                        <div class="parent-progress-percent">
-                                            <div class="progress"></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="view">
-                                        <a href="#">View Progress <i class="fa fa-arrow-right"></i></a>
                                     </div>
                                 </div>
 
-                                <div class="progress-box">
-                                    <h4>Introduction to Philosophy of Human Person</h4>
-
-                                    <div class="parent-progress">
-                                        <div class="progress-header">
-                                            <p>Progress</p>
-                                            <span>75%</span>
-                                        </div>
-                                        <div class="parent-progress-percent">
-                                            <div class="progress"></div>
-                                        </div>
+                                <div class="parent-update">
+                                    <div class="update-icon">
+                                        <i class="fa fa-calendar-days"></i>
                                     </div>
-
-                                    <div class="view">
-                                        <a href="">View Progress <i class="fa fa-arrow-right"></i></a>
+                                    <div class="update-box">
+                                        <div class="update-text">
+                                            <p>Quiz 3 - IP Addressing</p>
+                                            <span>Due: June 20, 2026 · 06:00 PM</span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="progress-box">
-                                    <h4>Introduction to Philosophy of Human Person</h4>
-
-                                    <div class="parent-progress">
-                                        <div class="progress-header">
-                                            <p>Progress</p>
-                                            <span>75%</span>
-                                        </div>
-                                        <div class="parent-progress-percent">
-                                            <div class="progress"></div>
-                                        </div>
+                                <div class="parent-update">
+                                    <div class="update-icon">
+                                        <i class="fa fa-calendar-days"></i>
                                     </div>
-
-                                    <div class="view">
-                                        <a href="">View Progress <i class="fa fa-arrow-right"></i></a>
+                                    <div class="update-box">
+                                        <div class="update-text">
+                                            <p>Quiz 3 - IP Addressing</p>
+                                            <span>Due: June 20, 2026 · 06:00 PM</span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="progress-box">
-                                    <h4>Introduction to Philosophy of Human Person</h4>
-
-                                    <div class="parent-progress">
-                                        <div class="progress-header">
-                                            <p>Progress</p>
-                                            <span>75%</span>
-                                        </div>
-                                        <div class="parent-progress-percent">
-                                            <div class="progress"></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="view">
-                                        <a href="">View Progress <i class="fa fa-arrow-right"></i></a>
-                                    </div>
-                                </div> -->
                             </div>
                         </div>
                     </div>
-                    <div class="right-dashboard">
-                        <div class="right-dashboard-nav">
-                            <div class="nav-icon">
-                                <!-- <div class="right-nav-icon">
-                                    <i class="fa fa-user"></i>
-                                </div> -->
-                                <i class="fa fa-user"></i>
-                                <h3>Profile</h3>
-                            </div>
+                </div>
+                <div class="perform enrolled-subjects">
+                    <div class="header">
+                        <div class="header-icon">
+                            <i class="fa fa-book"></i>
+                        </div>
+                        <h3>My Modules</h3>
+                    </div>
 
-                            <!-- <button>
-                                <i class="fa fa-pencil"></i>
-                            </button> -->
+                    <div class="body modules-chart">
+
+                        <div class="chart-row">
+                            <div class="chart-yaxis">
+                                <span>100%</span>
+                                <span>75%</span>
+                                <span>50%</span>
+                                <span>25%</span>
+                                <span>0%</span>
+                            </div>
+                            <div class="chart-bars">
+                                <div class="chart-col" data-label="Module 1 · Hardware">
+                                    <span class="chart-val">70%</span>
+                                    <div class="chart-bar" style="height:70%; background: var(--neon-cyan);"></div>
+                                </div>
+                                <div class="chart-col" data-label="Module 2 · Software">
+                                    <span class="chart-val">50%</span>
+                                    <div class="chart-bar" style="height:50%; background: #5533CC;"></div>
+                                </div>
+                                <div class="chart-col" data-label="Module 3 · Networking">
+                                    <span class="chart-val">70%</span>
+                                    <div class="chart-bar" style="height:70%; background: #1A9E5C;"></div>
+                                </div>
+                                <div class="chart-col" data-label="Module 4 · Repair">
+                                    <span class="chart-val">70%</span>
+                                    <div class="chart-bar" style="height:70%; background: #CC7700;"></div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="right-dashboard-body">
-                            <div class="profile-icon">
-                                <?php
-                                $initial = isset($_SESSION['name']) ? strtoupper(substr($_SESSION['name'], 0, 1)) : '';
-                                echo $initial;
-                                ?>
+                        <!-- <div class="chart-legend">
+                            <div class="chart-legend-spacer"></div>
+                            <div class="chart-legend-items">
+                                <a href="#"><i style="background: var(--neon-cyan);"></i>Module 1 · Hardware</a>
+                                <a href="#"><i style="background: #5533CC;"></i>Module 2 · Software</a>
+                                <a href="#"><i style="background: #1A9E5C;"></i>Module 3 · Networking</a>
+                                <a href="#"><i style="background: #CC7700;"></i>Module 4 · Repair</a>
                             </div>
-
-                            <h4><?= htmlspecialchars($_SESSION["name"]) ?></h4>
-                            <p>Senior High Student</p>
-
-                            <div class="parent-calendar">
-                                <div class="calendar-nav">
-                                    <i class="fa fa-chevron-left" id="calPrev" style="cursor:pointer;"></i>
-                                    <h5 id="calMonthLabel">July 2024</h5>
-                                    <i class="fa fa-chevron-right" id="calNext" style="cursor:pointer;"></i>
-                                </div>
-                                <div class="cal-grid" id="calGrid"></div>
-                            </div>
-
-                            <div class="card-divider"></div>
-
-                            <div class="upcoming-parent">
-                                <div class="nav-icon">
-                                    <!-- <div class="upcoming-nav">
-                                        <i class="fa fa-clock"></i>
-                                    </div> -->
-                                    <i class="fa fa-clock"></i>
-                                    <h3>Upcoming deadlines</h3>
-                                </div>
-
-                                <div class="upcoming-parent-box">
-                                    <div class="upcoming-box">
-                                        <div class="upcoming-icon">
-                                            <i class="fa fa-calendar-days"></i>
-                                        </div>
-                                        <div class="upcoming-text">
-                                            <h5>Quiz 3 - IP Addressing</h5>
-                                            <p>Due: June 20, 2026 <b>| 08:00 PM</b></p>
-                                        </div>
-                                    </div>
-
-                                    <div class="upcoming-box">
-                                        <div class="upcoming-icon">
-                                            <i class="fa fa-calendar-days"></i>
-                                        </div>
-                                        <div class="upcoming-text">
-                                            <h5>Quiz 3 - IP Addressing</h5>
-                                            <p>Due: June 20, 2026 <b>| 10:00 AM</b></p>
-                                        </div>
-                                    </div>
-
-                                    <div class="upcoming-box">
-                                        <div class="upcoming-icon">
-                                            <i class="fa fa-calendar-days"></i>
-                                        </div>
-                                        <div class="upcoming-text">
-                                            <h5>Quiz 3 - IP Addressing</h5>
-                                            <p>Due: June 20, 2026 <b>| 05:00 PM</b></p>
-                                        </div>
-                                    </div>
-
-                                    <div class="upcoming-box">
-                                        <div class="upcoming-icon">
-                                            <i class="fa fa-calendar-days"></i>
-                                        </div>
-                                        <div class="upcoming-text">
-                                            <h5>Quiz 3 - IP Addressing</h5>
-                                            <p>Due: June 20, 2026 <b>| 06:00 PM</b></p>
-                                        </div>
-                                    </div>
-
-                                    <div class="upcoming-box">
-                                        <div class="upcoming-icon">
-                                            <i class="fa fa-calendar-days"></i>
-                                        </div>
-                                        <div class="upcoming-text">
-                                            <h5>Quiz 3 - IP Addressing</h5>
-                                            <p>Due: June 20, 2026 <b>| 06:00 PM</b></p>
-                                        </div>
-                                    </div>
-
-                                    <div class="upcoming-box">
-                                        <div class="upcoming-icon">
-                                            <i class="fa fa-calendar-days"></i>
-                                        </div>
-                                        <div class="upcoming-text">
-                                            <h5>Quiz 3 - IP Addressing</h5>
-                                            <p>Due: June 20, 2026 <b>| 06:00 PM</b></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- <div class="parent-calendar">
-                                <div class="calendar-nav">
-                                    <i class="fa fa-chevron-left"></i>
-                                    <h5>July 2024</h5>
-                                    <i class="fa fa-chevron-right"></i>
-                                </div>
-
-                                <div class="calendar-body">
-                                    <div class="date">
-                                        <p>M</p>
-                                        <div class="circle">
-                                            <span>15</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="date">
-                                        <p>T</p>
-                                        <div class="circle">
-                                            <span>16</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="date">
-                                        <p>W</p>
-                                        <div class="circle">
-                                            <span>17</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="date">
-                                        <p>T</p>
-                                        <div class="circle">
-                                            <span>18</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="date">
-                                        <p>F</p>
-                                        <div class="circle">
-                                            <span>19</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="date">
-                                        <p>S</p>
-                                        <div class="circle">
-                                            <span>20</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="date">
-                                        <p>S</p>
-                                        <div class="circle">
-                                            <span>21</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="cal-grid" id="calGrid">
-                                </div>
-                            </div> -->
-                        </div>
-
+                        </div> -->
                     </div>
                 </div>
 
@@ -668,9 +520,7 @@
                         <h2>Welcome, <?= htmlspecialchars($_SESSION["name"]) ?>! 👋</h2>
                         <div class="d-flex gap-2">
                             <span><?= htmlspecialchars($_SESSION["grade_level"]) ?></span>
-                            <!-- <span>—</span> -->
                             <span><?= htmlspecialchars($_SESSION["section"]) ?></span>
-                            <!-- <span>Here's what's happening with your learning today</span> -->
                         </div>
                     </div>
 
@@ -681,225 +531,6 @@
                                     class="fa fa-arrow-right"></i></a>
 
                         </div>
-                    </div>
-                </div>
-
-                <div class="card-parent-box">
-                    <div class="card-box">
-                        <a href="/learning_management/public/?url=classes">
-                            <div class="data_text">
-                                <span>Enrolled Classes</span>
-                                <p>
-                                    <?= $enrolledCount ?>
-                                </p>
-                            </div>
-                            <div class="data_icon">
-                                <i class="fa fa-book-open"></i>
-                            </div>
-                        </a>
-                    </div>
-
-                    <div class="card-box">
-                        <a href="/learning_management/public/?url=assignments">
-                            <div class="data_text">
-                                <span>Pending Tasks</span>
-                                <p>
-                                    <?= $pendingCount ?>
-                                </p>
-                            </div>
-                            <div class="data_icon">
-                                <i class="fa fa-clock"></i>
-                            </div>
-                        </a>
-                    </div>
-
-                    <div class="card-box">
-                        <div class="data_text">
-                            <span>Completed Task</span>
-                            <p><?= $completedCount ?></p>
-                        </div>
-                        <div class="data_icon">
-                            <i class="fa fa-check-circle"></i>
-                        </div>
-                    </div>
-
-                    <!-- <div class="card-box">
-                        <div class="data_text">
-                            <span>Progress</span>
-                            <p>Static</p>
-                        </div>
-                        <div class="data_icon">
-                            <i class="fa fa-chart-line"></i>
-                        </div>
-                    </div> -->
-                </div>
-
-                <div class="parent-performance">
-                    <div class="update subject-performance">
-                        <div class="header">
-                            <div class="header-icon">
-                                <i class="fa fa-clock"></i>
-                            </div>
-                            <h3>Pending Tasks</h3>
-                        </div>
-                        <div class="body">
-                            <?php if (!empty($pendingAssignments)): ?>
-                                <?php foreach ($pendingAssignments as $item):
-                                    $daysLeft = '';
-                                    if (!empty($item['due_date'])) {
-                                        $now = new DateTime('today');
-                                        $due = new DateTime($item['due_date']);
-
-                                        if ($due < $now) {
-                                            continue; // skip overdue
-                                        }
-
-                                        $interval = $now->diff($due);
-
-                                        if ($interval->days == 0) {
-                                            $daysLeft = 'Due today';
-                                        } elseif ($interval->y == 0 && $interval->m == 0) {
-                                            // Less than a month away — show in days
-                                            $daysLeft = $interval->d . ' day' . ($interval->d > 1 ? 's' : '') . ' left';
-                                        } else {
-                                            // A month or more away — show in months
-                                            $months = ($interval->y * 12) + $interval->m;
-                                            // round up if there are extra days left over (e.g. 1 month 20 days -> "2 months left")
-                                            if ($interval->d >= 15) {
-                                                $months++;
-                                            }
-                                            $daysLeft = $months . ' month' . ($months > 1 ? 's' : '') . ' left';
-                                        }
-                                    }
-                                    ?>
-                                    <div class="update-box">
-                                        <p><?= htmlspecialchars($item['task']) ?></p>
-                                        <span>Due date:
-                                            <?= !empty($item['due_date']) ? date('F j, Y', strtotime($item['due_date'])) : 'No due date' ?></span>
-                                        <?php if ($daysLeft): ?><span><?= htmlspecialchars($daysLeft) ?></span><?php endif; ?>
-                                        <a
-                                            href="/learning_management/public/?url=assignment_view&subject=<?= urlencode($item['subject_code']) ?>&id=<?= $item['id'] ?>">
-                                            View Task <i class="fa fa-arrow-right"></i>
-                                        </a>
-                                    </div>
-
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <p class="text-muted m-0" style="font-size: 14.5px;">No pending tasks.</p>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-                    <div class="perform performance-trend">
-                        <div class="header">
-                            <i class="fa fa-question-circle"></i>
-                            <h3>Announcements</h3>
-                        </div>
-                        <div class="body">
-                            <?php if (!empty($announcements)): ?>
-                                <?php foreach ($announcements as $ann): ?>
-                                    <div class="progress-box">
-                                        <h4><?= htmlspecialchars($ann['subject_name']) ?></h4>
-                                        <p style="font-size:14.5px;font-weight:500;color:#111827;margin:0;">Title:
-                                            <?= htmlspecialchars($ann['title']) ?>
-                                        </p>
-                                        <p style="font-size:14.5px;color:#212529;margin:0;">
-                                            <?= nl2br(htmlspecialchars($ann['message'])) ?>
-                                        </p>
-                                        <div class="view" style="margin-top:8px;">
-                                            <small style="color:#9ca3af;">
-                                                <?= date('F j, Y', strtotime($ann['created_at'])) ?>
-
-                                            </small>
-                                        </div>
-
-                                    </div>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <p class="text-muted m-0" style="font-size:14.5px;">No announcements yet.</p>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div class="perform enrolled-subjects">
-                    <div class="header">
-                        <i class="fa fa-book"></i>
-                        <h3>My Modules</h3>
-                    </div>
-
-                    <div class="body">
-                        <!-- <div class="progress-box">
-                            <h4>Introduction to Philosophy of Human Person</h4>
-
-                            <div class="parent-progress">
-                                <div class="progress-header">
-                                    <p>Progress</p>
-                                    <span>75%</span>
-                                </div>
-                                <div class="parent-progress-percent">
-                                    <div class="progress"></div>
-                                </div>
-                            </div>
-
-                            <div class="view">
-                                <a href="">View Progress <i class="fa fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-
-                        <div class="progress-box">
-                            <h4>Introduction to Philosophy of Human Person</h4>
-
-                            <div class="parent-progress">
-                                <div class="progress-header">
-                                    <p>Progress</p>
-                                    <span>75%</span>
-                                </div>
-                                <div class="parent-progress-percent">
-                                    <div class="progress"></div>
-                                </div>
-                            </div>
-
-                            <div class="view">
-                                <a href="">View Progress <i class="fa fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-
-                        <div class="progress-box">
-                            <h4>Introduction to Philosophy of Human Person</h4>
-
-                            <div class="parent-progress">
-                                <div class="progress-header">
-                                    <p>Progress</p>
-                                    <span>75%</span>
-                                </div>
-                                <div class="parent-progress-percent">
-                                    <div class="progress"></div>
-                                </div>
-                            </div>
-
-                            <div class="view">
-                                <a href="">View Progress <i class="fa fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-
-                        <div class="progress-box">
-                            <h4>Introduction to Philosophy of Human Person</h4>
-
-                            <div class="parent-progress">
-                                <div class="progress-header">
-                                    <p>Progress</p>
-                                    <span>75%</span>
-                                </div>
-                                <div class="parent-progress-percent">
-                                    <div class="progress"></div>
-                                </div>
-                            </div>
-
-                            <div class="view">
-                                <a href="">View Progress <i class="fa fa-arrow-right"></i></a>
-                            </div>
-                        </div> -->
                     </div>
                 </div>
 
@@ -923,10 +554,9 @@
             if (!el) return;
 
             const message = "Welcome! I'm your learning assistant, ready to guide you through your journey!";
-            const speed = 28; // ms per character — lower = faster
+            const speed = 28;
             let i = 0;
 
-            // cursor span that blinks while typing
             const cursor = document.createElement('span');
             cursor.className = 'typing-cursor';
             el.appendChild(cursor);
@@ -937,93 +567,12 @@
                     i++;
                     setTimeout(type, speed);
                 } else {
-                    // remove cursor once finished (optional)
                     setTimeout(() => cursor.remove(), 1200);
                 }
             }
 
             type();
         })();
-    </script>
-
-    <script>
-
-        // ── Mini Calendar ──
-        const today = new Date();
-        let calYear = today.getFullYear();
-        let calMonth = today.getMonth(); // 0-indexed
-
-        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        const dayNames = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-
-        // events on certain dates (day numbers)
-        const events = [20, 22, 28];
-
-        function renderCalendar() {
-            const label = document.getElementById('calMonthLabel');
-            const grid = document.getElementById('calGrid');
-
-            label.textContent = `${monthNames[calMonth]} ${calYear}`;
-            grid.innerHTML = '';
-
-            // Day name headers
-            dayNames.forEach(d => {
-                const el = document.createElement('div');
-                el.className = 'cal-day-name';
-                el.textContent = d;
-                grid.appendChild(el);
-            });
-
-            // First day of month (Mon=0)
-            const firstDay = new Date(calYear, calMonth, 1).getDay();
-            const startOffset = (firstDay === 0) ? 6 : firstDay - 1;
-
-            // Days in previous month
-            const prevMonthDays = new Date(calYear, calMonth, 0).getDate();
-            for (let i = startOffset - 1; i >= 0; i--) {
-                const el = document.createElement('div');
-                el.className = 'cal-day other-month';
-                el.textContent = prevMonthDays - i;
-                grid.appendChild(el);
-            }
-
-            // Days in current month
-            const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-            for (let d = 1; d <= daysInMonth; d++) {
-                const el = document.createElement('div');
-                el.className = 'cal-day';
-
-                const isToday = (calYear === today.getFullYear() && calMonth === today.getMonth() && d === today.getDate());
-                if (isToday) el.classList.add('today');
-                if (events.includes(d) && !isToday) el.classList.add('has-event');
-
-                el.textContent = d;
-                grid.appendChild(el);
-            }
-
-            // Fill remaining
-            const totalCells = grid.querySelectorAll('.cal-day, .cal-day.other-month').length;
-            const remaining = 42 - totalCells - startOffset;
-            for (let d = 1; d <= remaining && d <= 14; d++) {
-                const el = document.createElement('div');
-                el.className = 'cal-day other-month';
-                el.textContent = d;
-                grid.appendChild(el);
-            }
-        }
-
-        document.getElementById('calPrev').addEventListener('click', () => {
-            calMonth--;
-            if (calMonth < 0) { calMonth = 11; calYear--; }
-            renderCalendar();
-        });
-        document.getElementById('calNext').addEventListener('click', () => {
-            calMonth++;
-            if (calMonth > 11) { calMonth = 0; calYear++; }
-            renderCalendar();
-        });
-
-        renderCalendar();
     </script>
 
 </body>

@@ -93,6 +93,10 @@ body {
     overflow: hidden;
 }
 
+.container-fluid main .main-sub-form-parent .main-image-form .main-image-text {
+    display: none;
+}
+
 .container-fluid main .main-sub-form-parent .main-image-form .carousel-slide {
     position: absolute;
     top: 1.5rem;
@@ -151,7 +155,7 @@ body {
     padding: 1.5rem 2.5rem;
 }
 
-.container-fluid main .main-sub-form-parent .main-parent-form .card-logo a{
+.container-fluid main .main-sub-form-parent .main-parent-form .card-logo a {
     display: flex;
     align-items: center;
     justify-content: start;
@@ -159,7 +163,7 @@ body {
     text-decoration: none;
 }
 
-.container-fluid main .main-sub-form-parent .main-parent-form .card-logo a h3{
+.container-fluid main .main-sub-form-parent .main-parent-form .card-logo a h3 {
     margin: 0;
     font-size: 22px;
     font-family: "Orbitron", sans-serif;
@@ -205,6 +209,7 @@ body {
     background: var(--panel-dark);
     border: 1px solid var(--panel-border);
     font-size: 15.5px;
+    border-radius: 7px;
 }
 
 .container-fluid main .main-sub-form-parent .main-parent-form .form-forgot {
@@ -443,8 +448,10 @@ body {
     position: relative;
     z-index: 1;
     height: 100vh;
+    overflow-y: scroll;
     display: flex;
     align-items: center;
+    /* padding: 14rem 2rem 2rem; */
 }
 
 /* floating cards */
@@ -879,5 +886,274 @@ body {
 
     .container-fluid main .main-form {
         align-items: center;
+    }
+}
+
+@media only screen and (max-width: 1045px) {
+    .container-fluid main .main-sub-form-parent {
+        width: 900px;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-image-form {
+        width: 100%;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-image-form .carousel-slide img {
+        width: 400px;
+    }
+}
+
+@media only screen and (max-width: 930px) {
+
+    .container-fluid main .main-sub-form-parent .main-image-form .main-image-text {
+        display: block;
+    }
+
+    .container-fluid main {
+        padding: 14rem 2rem 2rem;
+    }
+
+    .container-fluid main .main-sub-form-parent {
+        flex-direction: column;
+        width: 550px;
+        border-radius: 20px;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-image-form .carousel-slide {
+        display: none;
+    }
+
+    /* .container-fluid main .main-sub-form-parent .main-image-form .carousel-slide img {
+        display: none;
+    } */
+
+    .container-fluid main .main-sub-form-parent .main-image-form {
+        background-color: var(--neon-cyan);
+        height: 220px;
+        padding: 1.5rem 1.5rem 0;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form {
+        padding: 0rem 2.5rem 1.5rem;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-image-form .wave-bottom {
+        position: absolute;
+        left: 0;
+        bottom: -1px;
+        /* -1px avoids a hairline gap */
+        width: 100%;
+        line-height: 0;
+        /* kills the inline-svg whitespace gap */
+        z-index: 2;
+        /* sits above the carousel images */
+        pointer-events: none;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-image-form .wave-bottom svg {
+        display: block;
+        width: 100%;
+        height: 30px;
+        /* tweak wave height here */
+    }
+
+    /* .container-fluid main .main-sub-form-parent .main-image-form .carousel-slide img {
+        width: 350px;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-image-form {
+
+    } */
+
+    .container-fluid main .main-sub-form-parent .main-image-form .main-image-text {
+        margin-top: -2.5rem;
+        width: 100%;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-image-form .main-image-text .main-image-logo a {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        text-decoration: none;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-image-form .main-image-text .main-image-logo a img {
+        width: 40px;
+        height: 40px;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-image-form .main-image-text .main-image-logo a h3 {
+        margin: 0;
+        font-size: 22px;
+        color: var(--deep-navy);
+        font-family: "Orbitron", sans-serif;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-image-form .main-image-text .main-image-tag {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 2.5px;
+        color: var(--deep-navy);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 10px 0;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-image-form .main-image-text .main-image-tag::before {
+        content: '';
+        width: 20px;
+        height: 1px;
+        background-color: var(--deep-navy);
+    }
+
+    .container-fluid main .main-sub-form-parent .main-image-form .main-image-text h1 {
+        font-size: 25px;
+        color: var(--deep-navy);
+        font-weight: 600;
+        font-family: "Orbitron", sans-serif;
+        margin: 10px 0 10px;
+        width: 100%;
+        max-width: 450px;
+        line-height: 35px;
+    }
+}
+
+@media only screen and (max-width: 835px) {
+    .container-fluid main .main-sub-form-parent {
+        flex-direction: column;
+        width: 550px;
+    }
+}
+
+@media only screen and (max-width: 930px) and (max-height: 867px) {
+    .container-fluid main {
+        padding: 1rem;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form .card-logo a {
+        display: none;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form h2 {
+        text-align: center;
+        font-size: 25px;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form p {
+        text-align: center;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form label {
+        font-size: 15px;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form .form-input {
+        margin-top: 1rem;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form .form-input input {
+        font-size: 15px;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form .form-forgot a {
+        font-size: 15px;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form p {
+        font-size: 15px;
+        color: var(--text-dim);
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form .form-forgot {
+        margin-top: 1rem;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form button {
+        font-size: 12.5px;
+        margin-top: 1rem;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form {
+        padding: 0rem 1.5rem 1.5rem;
+    }
+}
+
+@media only screen and (max-width: 415px) and (max-height: 895px) {
+    .container-fluid main {
+        padding: 3rem 1rem 3rem;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form {
+        padding: 0rem 1.5rem 2rem;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form .card-logo a {
+        display: none;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form h2 {
+        text-align: center;
+        font-size: 25px;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form p {
+        text-align: center;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form label {
+        font-size: 15px;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form .form-input {
+        margin-top: 1rem;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form .form-input input {
+        font-size: 15px;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form .form-forgot a {
+        font-size: 15px;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form p {
+        font-size: 15px;
+        color: var(--text-dim);
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form .form-forgot {
+        margin-top: 1rem;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-parent-form button {
+        font-size: 12.5px;
+        margin-top: 1rem;
+    }
+
+    .container-fluid main .main-sub-form-parent .main-image-form .main-image-text h1 {
+        font-size: 23px;
+        color: var(--deep-navy);
+        font-weight: 600;
+        font-family: "Orbitron", sans-serif;
+        margin: 10px 0 10px;
+        width: 100%;
+        max-width: 100%;
+        line-height: 30px;
+    }
+}
+
+@media only screen and (max-width: 415px) and (max-height: 870px) {
+    .container-fluid main {
+        padding: 1rem;
+    }
+}
+
+@media only screen and (max-width: 930px) and (max-height: 630px) {
+    .container-fluid main {
+        padding: 9rem 2rem 2rem;
     }
 }
