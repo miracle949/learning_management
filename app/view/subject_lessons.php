@@ -1,9 +1,43 @@
 <?php
+
 function lUrl($subject, $moduleId, $lessonId)
 {
     return "/learning_management/public/?url=subject_lessons&subject="
         . urlencode($subject) . "&id={$moduleId}&lesson={$lessonId}";
 }
+
+/**
+ * Convert a YouTube URL (watch, youtu.be, embed, shorts, etc.)
+ * into a safe embeddable URL. Returns null if no valid video ID
+ * can be extracted, so callers can skip rendering the video block
+ * instead of fataling.
+ */
+function youtubeEmbed($url)
+{
+    if (empty($url) || !is_string($url)) {
+        return null;
+    }
+
+    $videoId = null;
+
+    // Covers: watch?v=ID, youtu.be/ID, embed/ID, v/ID, shorts/ID
+    if (
+        preg_match(
+            '~(?:youtube\.com/(?:watch\?v=|embed/|v/|shorts/)|youtu\.be/)([A-Za-z0-9_-]{11})~',
+            $url,
+            $matches
+        )
+    ) {
+        $videoId = $matches[1];
+    }
+
+    if (!$videoId) {
+        return null;
+    }
+
+    return 'https://www.youtube.com/embed/' . $videoId;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -49,11 +83,8 @@ function lUrl($subject, $moduleId, $lessonId)
 
         html,
         body {
-            /* background: var(--page-bg); */
             background-image: radial-gradient(circle at 15% 0%, rgba(0, 119, 204, 0.06), transparent 45%), radial-gradient(circle at 100% 30%, rgba(85, 51, 204, 0.06), transparent 40%), repeating-linear-gradient(0deg, rgba(0, 100, 200, 0.035) 0px, rgba(0, 100, 200, 0.035) 1px, transparent 1px, transparent 42px), repeating-linear-gradient(90deg, rgba(0, 100, 200, 0.035) 0px, rgba(0, 100, 200, 0.035) 1px, transparent 1px, transparent 42px);
-            /* background-color: var(--neon-cyan); */
             color: var(--page-text);
-            /* -webkit-font-smoothing: antialiased; */
             height: 100%;
             overflow: hidden;
         }
@@ -84,9 +115,6 @@ function lUrl($subject, $moduleId, $lessonId)
             align-items: center;
             justify-content: center;
             flex-direction: column;
-            /* background: radial-gradient(circle at 30% 20%, rgba(0, 119, 204, 0.10), transparent 55%),
-                radial-gradient(circle at 80% 80%, rgba(85, 51, 204, 0.08), transparent 50%),
-                #f4f8fd; */
             background-color: var(--neon-cyan);
             animation: splashFadeIn .5s ease both;
         }
@@ -144,10 +172,8 @@ function lUrl($subject, $moduleId, $lessonId)
         .sb-progress-row .sbp-pct {
             font-size: 12px;
             font-weight: 700;
-            /* color: var(--neon-cyan); */
         }
 
-        /* ── DASH / SEGMENTED STYLE (bubble) ── */
         .sbp-segments {
             display: flex;
             gap: 4px;
@@ -171,31 +197,14 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .speech-bubble {
             position: absolute;
-            /* left: 155px; */
             left: -300px;
-            /* left: -315px; */
-            /* right: -185px; */
-            /* right: -510px; */
-            /* top: 2px; */
-            /* top: -200px; */
-            /* top: -50px; */
-            /* width: 148px; */
-            /* width: 175px; */
             width: 300px;
-            /* background: #fff; */
             background-color: var(--bg-main);
             color: var(--text-bright);
             font-family: var(--font-body);
             line-height: 1.4;
             padding: 16px 19px;
             border-radius: 14px;
-            /* display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column; */
-            /* box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18); */
-            /* display: none; */
-            /* animation: bubblePop 4s ease-in-out infinite; */
         }
 
 
@@ -242,7 +251,6 @@ function lUrl($subject, $moduleId, $lessonId)
             position: absolute;
             right: -6px;
             top: 50px;
-            /* top: 60px; */
             width: 12px;
             height: 12px;
             background: #fff;
@@ -276,18 +284,13 @@ function lUrl($subject, $moduleId, $lessonId)
             align-items: center;
             text-align: center;
             max-width: 420px;
-            /* padding: 0 24px; */
             animation: splashCardUp .55s cubic-bezier(.2, .8, .2, 1) both .1s;
             margin-left: 15rem;
         }
 
-        /* Bare-minimum reset so this is legible on the cyan bg — style freely */
         .splash-module-meta {
             color: #fff;
             width: 520px;
-            /* display: flex;
-            flex-direction: column;
-            gap: 1rem; */
             margin: -3rem 0 2rem;
             text-align: center;
             display: none;
@@ -304,8 +307,6 @@ function lUrl($subject, $moduleId, $lessonId)
             backdrop-filter: blur(6px);
             font-size: 13.5px;
             font-weight: 600;
-            /* margin: 0 0 10px; */
-            /* margin: 0; */
         }
 
         .splash-module-title {
@@ -314,7 +315,6 @@ function lUrl($subject, $moduleId, $lessonId)
             text-align: center;
             margin: 10px 0 10px;
             line-height: 40px;
-            /* margin: 0; */
         }
 
         .splash-module-desc {
@@ -332,11 +332,6 @@ function lUrl($subject, $moduleId, $lessonId)
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
-
-        .splash-card img {
-            /* margin-bottom: 18px; */
-            /* animation: splashBotFloat 2.6s ease-in-out infinite; */
         }
 
         @keyframes splashBotFloat {
@@ -391,7 +386,6 @@ function lUrl($subject, $moduleId, $lessonId)
             font-weight: 700;
             padding: 7px 26px;
             border-radius: 99px;
-            /* box-shadow: 0 10px 24px rgba(0, 119, 204, 0.3); */
             transition: transform .18s ease, box-shadow .18s ease;
             margin: 1rem 0 0;
         }
@@ -407,7 +401,7 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .splash-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 14px 30px rgba(0, 119, 204, 0.38);
+            /* box-shadow: 0 14px 30px rgba(0, 119, 204, 0.38); */
         }
 
         .splash-btn i {
@@ -419,7 +413,6 @@ function lUrl($subject, $moduleId, $lessonId)
             transform: translateX(3px);
         }
 
-        /* Hide the shell until the splash is dismissed, then reveal it */
         .lessons-shell {
             opacity: 0;
         }
@@ -461,7 +454,6 @@ function lUrl($subject, $moduleId, $lessonId)
             }
         }
 
-        /* If JS is disabled, don't leave the page blank */
         .no-js .module-splash {
             display: none;
         }
@@ -470,14 +462,6 @@ function lUrl($subject, $moduleId, $lessonId)
             opacity: 1;
         }
 
-        /* =============================================
-           SKIP-SPLASH STATE
-           Added so that once a user has dismissed the
-           BonBon splash for a given module (tracked via
-           sessionStorage), reloading the page or moving
-           between lessons (Prev/Next full-page links)
-           does NOT show the splash again.
-        ============================================= */
         .skip-splash .module-splash {
             display: none !important;
         }
@@ -486,16 +470,6 @@ function lUrl($subject, $moduleId, $lessonId)
             opacity: 1 !important;
         }
 
-        /* =============================================
-           LIST / LESSON VIEW TOGGLE
-           Two states live on #lessonsShell:
-             .view-list   -> only the lesson list shows
-             .view-lesson -> only the topbar + lesson
-                              content shows (list hidden)
-           State is remembered per-module in sessionStorage
-           so Prev/Next and reloads keep whichever view
-           the student was last in.
-        ============================================= */
         .lessons-shell.view-list .lessons-main {
             display: none;
         }
@@ -529,14 +503,6 @@ function lUrl($subject, $moduleId, $lessonId)
             transform: translateX(-2px);
         }
 
-        /* =============================================
-           LAYOUT SHELL
-           Single full-width column (no side-by-side sidebar).
-           The lesson list sits on top, and once a lesson is
-           selected, the topbar + that lesson's content simply
-           continue underneath it in the same column. The shell
-           itself is the one scroll container for the whole page.
-        ============================================= */
         .lessons-shell {
             display: block;
             height: 100vh;
@@ -544,46 +510,25 @@ function lUrl($subject, $moduleId, $lessonId)
             overflow-x: hidden;
         }
 
-        /* Lesson content area (topbar + sections) — stacks directly
-           below the lesson list, full width, no independent scroll. */
         .lessons-main {
             display: flex;
             flex-direction: column;
-            /* height: 100vh; */
-            /* background: var(--page-bg, #f7f9fc); */
-            /* border-top: 1px solid var(--panel-border); */
             margin: 0;
             padding: 0;
             position: relative;
         }
 
-        /* NOTE: .robot-page used to be positioned relative to .lessons-main,
-           whose height changes with lesson content length — that's why the
-           robot/bubble jumped around. It's now anchored to .lesson-hero
-           instead (a fixed-height element), see rule further down. */
-
         .speech-bubble {
             position: absolute;
-            /* left: -158px; */
             left: -315px;
-            /* right: -185px; */
-            /* right: -510px; */
-            /* top: 2px; */
             top: 60px;
-            /* top: -50px; */
-            /* width: 148px; */
-            /* width: 175px; */
             width: 300px;
-            /* background: #fff; */
             background-color: var(--bg-main);
             color: var(--text-bright);
             font-family: var(--font-body);
             line-height: 1.4;
             padding: 16px 19px;
             border-radius: 14px;
-            /* box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18); */
-            /* display: none; */
-            /* animation: bubblePop 4s ease-in-out infinite; */
         }
 
         .speech-bubble strong {
@@ -612,24 +557,11 @@ function lUrl($subject, $moduleId, $lessonId)
             animation: cursorBlink 0.8s step-end infinite;
         }
 
-        @keyframes cursorBlink {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0;
-            }
-        }
-
         .speech-bubble::after {
             content: '';
             position: absolute;
             right: -6px;
             top: 20px;
-            /* top: 60px; */
             width: 12px;
             height: 12px;
             background: #fff;
@@ -640,28 +572,6 @@ function lUrl($subject, $moduleId, $lessonId)
             right: -6px;
             top: 42.5px;
             transform: rotate(-45deg);
-            /* transform: rotate(100deg); */
-        }
-
-        @keyframes bubblePop {
-
-            0%,
-            8% {
-                opacity: 0;
-                transform: translateY(6px) scale(.92);
-            }
-
-            16%,
-            84% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-
-            92%,
-            100% {
-                opacity: 0;
-                transform: translateY(6px) scale(.92);
-            }
         }
 
         /* =============================================
@@ -670,7 +580,6 @@ function lUrl($subject, $moduleId, $lessonId)
         .lessons-sidebar {
             width: 100%;
             min-height: auto;
-            /* background-color: #FFFFFF; */
             border-right: none;
             display: flex;
             flex-direction: column;
@@ -691,16 +600,11 @@ function lUrl($subject, $moduleId, $lessonId)
            MODULE OVERVIEW HERO (full-width top banner)
         ============================================= */
         .ov-hero {
-            /* background: linear-gradient(135deg, var(--neon-blue), var(--neon-cyan) 65%, var(--electric-purple)); */
-            /* padding: 34px 30px; */
             padding: 34px 30px;
             color: #fff;
-            /* position: relative; */
-            /* overflow: hidden; */
             background-color: var(--neon-cyan);
             display: flex;
             justify-content: space-between;
-            /* align-items: center; */
         }
 
         .ov-hero::before {
@@ -716,33 +620,7 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .ov-hero .ov-image {
-            /* width: 150%; */
             position: relative;
-        }
-
-
-        .speech-bubble {
-            position: absolute;
-            left: -300px;
-            /* left: -315px; */
-            /* right: -185px; */
-            /* right: -510px; */
-            /* top: 2px; */
-            /* top: 25px; */
-            /* top: -50px; */
-            /* width: 148px; */
-            /* width: 175px; */
-            width: 300px;
-            /* background: #fff; */
-            background-color: var(--bg-main);
-            color: var(--text-bright);
-            font-family: var(--font-body);
-            line-height: 1.4;
-            padding: 16px 19px;
-            border-radius: 14px;
-            /* box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18); */
-            /* display: none; */
-            /* animation: bubblePop 4s ease-in-out infinite; */
         }
 
         .bubble-1 {
@@ -751,56 +629,6 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .bubble-2 {
             top: 20px;
-        }
-
-        .speech-bubble strong {
-            display: block;
-            color: var(--neon-cyan);
-            font-family: "Orbitron", sans-serif;
-            font-weight: 700;
-            margin-bottom: 2px;
-            font-size: 14.5px;
-        }
-
-        .speech-bubble p {
-            margin: 0;
-            font-size: 13.5px;
-            color: var(--text-dim);
-            line-height: 22px;
-        }
-
-        .speech-bubble p .typing-cursor {
-            display: inline-block;
-            width: 2px;
-            height: 14px;
-            background: var(--neon-cyan);
-            margin-left: 2px;
-            vertical-align: middle;
-            animation: cursorBlink 0.8s step-end infinite;
-        }
-
-        @keyframes cursorBlink {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0;
-            }
-        }
-
-        .speech-bubble::after {
-            content: '';
-            position: absolute;
-            right: -6px;
-            top: 40px;
-            /* top: 60px; */
-            width: 12px;
-            height: 12px;
-            background: #fff;
-            transform: rotate(45deg);
         }
 
         .ov-hero-back {
@@ -822,8 +650,6 @@ function lUrl($subject, $moduleId, $lessonId)
             transform: translateX(-3px);
             color: #fff;
         }
-
-        /* .ov-hero-top {} */
 
         .ov-hero-top .ov-hero-sub {
             margin: 0 0 10px;
@@ -902,11 +728,8 @@ function lUrl($subject, $moduleId, $lessonId)
             transition: width .6s ease;
         }
 
-        /* Blue hero banner reused at the top of the lesson CONTENT view,
-           so it's always obvious which lesson/topic you're looking at. */
         .lesson-hero {
             position: relative;
-            /* NEW: anchor for .robot-page inside it */
             padding: 34px 30px;
             display: block;
             border-bottom: 1px solid #CADFF5;
@@ -932,12 +755,6 @@ function lUrl($subject, $moduleId, $lessonId)
             margin-bottom: 0;
         }
 
-        /* NEW: .robot-page now lives INSIDE .lesson-hero, so it's positioned
-           relative to the hero's fixed-ish height, not the whole
-           .lessons-main column (which grows with lesson content length).
-           Anchored near the hero's own top padding (not vertically
-           centered) so the negative offset on the speech bubble never
-           pushes it above the hero and clips against the viewport. */
         .lesson-hero .robot-page {
             position: absolute;
             right: 3%;
@@ -981,16 +798,13 @@ function lUrl($subject, $moduleId, $lessonId)
             margin-top: 1px;
         }
 
-        /* progress */
         .sb-progress-block {
             position: relative;
-            /* padding: 14px 16px; */
             padding: 0px 16px 14px;
             border-bottom: 1px solid var(--border);
         }
 
         .sb-progress-block h5 {
-            /* color: #FFFFFF; */
             color: var(--text-bright);
             font-size: 14.5px;
             line-height: 20px;
@@ -1006,7 +820,6 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .sb-progress-label .pl-title {
-            /* font-size: 9px; */
             font-size: 11.5px;
             letter-spacing: 1.4px;
             text-transform: uppercase;
@@ -1021,7 +834,6 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .sb-bar-track {
             height: 15px;
-            /* background: rgba(255, 255, 255, 0.07); */
             background: rgba(0, 119, 204, 0.08);
             border-radius: 3px;
             overflow: hidden;
@@ -1029,27 +841,20 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .sb-bar-fill {
             height: 100%;
-            /* background: linear-gradient(90deg, var(--neon-blue), var(--neon-cyan)); */
             background-color: var(--neon-cyan);
             border-radius: 3px;
             box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
             transition: width .6s ease;
         }
 
-        /* ── Sidebar nav list ── */
         .sb-lesson-list {
             position: relative;
             z-index: 1;
-            /* width: 100%; */
-            /* margin: 0 auto; */
             margin: 0px 180px;
-            /* padding: 28px 20px 60px; */
             padding: 28px 20px 35px;
         }
 
-        /* Group label */
         .sb-nav-group-label {
-            /* font-size: 9px; */
             font-size: 10.5px;
             letter-spacing: 1.6px;
             text-transform: uppercase;
@@ -1058,7 +863,6 @@ function lUrl($subject, $moduleId, $lessonId)
             opacity: 0.65;
         }
 
-        /* Nav item — card style, animated in on load */
         .sb-nav-item {
             display: flex;
             align-items: center;
@@ -1104,11 +908,9 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .sb-nav-item.sb-nav-done .sb-nav-title {
-            /* color: rgba(200, 220, 255, 0.75); */
             color: var(--text-bright);
         }
 
-        /* Chevron affordance on the right, like a clickable list card */
         .sb-nav-chevron {
             flex-shrink: 0;
             display: flex;
@@ -1135,7 +937,6 @@ function lUrl($subject, $moduleId, $lessonId)
             color: var(--neon-cyan);
         }
 
-        /* "Done" pill badge, shown next to the lesson title like the reference list */
         .sb-nav-done-badge {
             display: inline-flex;
             align-items: center;
@@ -1153,7 +954,6 @@ function lUrl($subject, $moduleId, $lessonId)
             vertical-align: middle;
         }
 
-        /* Icon box */
         .sb-nav-icon {
             width: 42px;
             height: 42px;
@@ -1174,22 +974,17 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .icon-type-lesson {
-            /* background: rgba(0, 137, 74, 0.14); */
             background: rgba(0, 119, 204, 0.08);
             color: var(--neon-cyan);
         }
 
         .icon-type-lesson.done {
-            /* background: rgba(0, 137, 74, 0.22); */
             background-color: var(--neon-cyan);
             color: var(--deep-navy);
         }
 
         .icon-type-lesson.active-dot {
-            /* background: rgba(0, 255, 136, 0.15);
-            color: var(--green-neon); */
             background-color: var(--neon-cyan);
-            /* background: rgba(0, 119, 204, 0.08); */
             color: var(--deep-navy);
         }
 
@@ -1228,7 +1023,6 @@ function lUrl($subject, $moduleId, $lessonId)
             color: var(--green-mid);
         }
 
-        /* Text info */
         .sb-nav-info {
             flex: 1;
             min-width: 0;
@@ -1250,7 +1044,6 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .sb-nav-meta {
-            /* font-size: 9.5px; */
             font-size: 11.5px;
             color: var(--text-muted);
             opacity: 0.6;
@@ -1260,10 +1053,7 @@ function lUrl($subject, $moduleId, $lessonId)
             text-overflow: ellipsis;
         }
 
-        /* Completion dot */
         .sb-nav-check {
-            /* width: 16px;
-            height: 16px; */
             width: 30px;
             height: 30px;
             border-radius: 50%;
@@ -1281,7 +1071,6 @@ function lUrl($subject, $moduleId, $lessonId)
             display: none;
         }
 
-        /* sidebar footer */
         .sb-footer {
             position: relative;
             z-index: 1;
@@ -1328,8 +1117,6 @@ function lUrl($subject, $moduleId, $lessonId)
             margin-top: 1px;
         }
 
-        /* Bottom nav bar */
-
         .lesson-bottom-nav {
             display: flex;
             align-items: center;
@@ -1357,10 +1144,7 @@ function lUrl($subject, $moduleId, $lessonId)
             position: sticky;
             top: 0;
             z-index: 5;
-            position: sticky;
-            bottom: 0;
             box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
-            /* flex-shrink: 0; */
         }
 
         .topbar-left {
@@ -1627,9 +1411,7 @@ function lUrl($subject, $moduleId, $lessonId)
             border-radius: 99px;
             background: rgba(0, 119, 204, 0.08);
             border: 1px solid var(--panel-border);
-            /* border: 1px solid #CADFF5; */
             color: var(--neon-cyan);
-            /* color: var(--deep-navy); */
             white-space: nowrap;
         }
 
@@ -1678,14 +1460,12 @@ function lUrl($subject, $moduleId, $lessonId)
         .ls-section h4 {
             font-size: 18px;
             font-weight: 600;
-            /* margin: 15px 0 8px; */
         }
 
         .ls-section-head {
             display: flex;
             align-items: center;
             gap: 9px;
-            /* margin-bottom: 16px; */
             margin-bottom: 25px;
         }
 
@@ -1755,7 +1535,6 @@ function lUrl($subject, $moduleId, $lessonId)
             border-radius: 99px;
         }
 
-        /* Lesson text */
         .lesson-text-card {
             font-size: 14.5px;
             line-height: 1.85;
@@ -1767,7 +1546,6 @@ function lUrl($subject, $moduleId, $lessonId)
             margin: 0 0 20px;
         }
 
-        /* Video */
         .video-card {
             background: var(--page-card, #fff);
             border: 1px solid var(--page-border, var(--panel-border));
@@ -1825,7 +1603,6 @@ function lUrl($subject, $moduleId, $lessonId)
             color: var(--page-text, var(--text-bright));
         }
 
-        /* Images */
         .img-grid {
             display: grid;
             gap: 14px;
@@ -1853,7 +1630,6 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .img-item img {
             width: 100%;
-            /* height: 385px; */
             height: 100%;
             display: block;
         }
@@ -1865,7 +1641,6 @@ function lUrl($subject, $moduleId, $lessonId)
             border-top: 1px solid var(--page-border, var(--panel-border));
         }
 
-        /* Flashcards */
         .fc-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -1957,7 +1732,6 @@ function lUrl($subject, $moduleId, $lessonId)
             display: block;
         }
 
-        /* Callouts */
         .callout {
             border-radius: 12px;
             padding: 15px 18px;
@@ -2036,7 +1810,6 @@ function lUrl($subject, $moduleId, $lessonId)
             line-height: 1.6;
         }
 
-        /* Activity */
         .activity-block {
             margin-bottom: 24px;
         }
@@ -2283,7 +2056,6 @@ function lUrl($subject, $moduleId, $lessonId)
             box-shadow: 0 0 0 3px rgba(155, 93, 229, 0.12);
         }
 
-        /* Quiz */
         .quiz-hero-card {
             background: linear-gradient(135deg, var(--blue-dark, var(--neon-blue)), var(--blue-mid, var(--neon-cyan)));
             border-radius: 14px;
@@ -2496,7 +2268,6 @@ function lUrl($subject, $moduleId, $lessonId)
             color: var(--page-muted, var(--text-dim));
         }
 
-        /* Lock notice */
         .lock-notice {
             display: none;
             align-items: center;
@@ -2520,7 +2291,6 @@ function lUrl($subject, $moduleId, $lessonId)
             flex-shrink: 0;
         }
 
-        /* Lightbox */
         .db-lightbox {
             display: none;
             position: fixed;
@@ -2565,7 +2335,6 @@ function lUrl($subject, $moduleId, $lessonId)
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Empty state */
         .empty-state {
             text-align: center;
             padding: 80px 40px;
@@ -2589,7 +2358,6 @@ function lUrl($subject, $moduleId, $lessonId)
             font-size: 14px;
         }
 
-        /* Responsive */
         @media (max-width: 900px) {
             .ov-hero {
                 padding: 22px 20px 26px;
@@ -2626,15 +2394,6 @@ function lUrl($subject, $moduleId, $lessonId)
 
 <body>
 
-    <!-- =============================================
-         SKIP-SPLASH CHECK
-         Runs immediately on every load. If this module's
-         splash has already been dismissed this session
-         (see sessionStorage flag set below), add the
-         skip-splash class to <html> BEFORE the splash
-         markup paints, so the robot screen never flashes
-         on Prev/Next navigation or on page reload.
-    ============================================= -->
     <script>
         (function () {
             var moduleId = <?= (int) ($moduleId ?? 0) ?>;
@@ -2690,15 +2449,6 @@ function lUrl($subject, $moduleId, $lessonId)
         $splashFirstName = $nameParts[0];
     }
 
-    // =============================================
-    // BONBON — DYNAMIC LESSON MESSAGE (bubble-3)
-    // ------------------------------------------------------------
-    // Instead of a hardcoded string, build BonBon's message for
-    // the lesson-page speech bubble (#bonbonMessage3) from the
-    // current lesson's title/topic and completion status. Falls
-    // back to a generic greeting when there is no active lesson
-    // (e.g. the empty-state "choose a lesson" view).
-    // =============================================
     $bonbonLessonMessage = "Welcome! I'm your learning assistant, ready to guide you through your journey!";
 
     if (!empty($lesson)) {
@@ -2745,7 +2495,7 @@ function lUrl($subject, $moduleId, $lessonId)
         </div>
     </div>
 
-    <div class="lessons-shell" id="lessonsShell">
+    <div class="lessons-shell<?= $lesson ? ' view-lesson' : ' view-list' ?>" id="lessonsShell">
 
         <?php include("../components/offcanvas.php"); ?>
 
@@ -2772,11 +2522,6 @@ function lUrl($subject, $moduleId, $lessonId)
                                 </div>
                             </div>
                         </div>
-                        <!-- <?php if (!empty($module['description'])): ?>
-                            <div class="ov-hero-sub">
-                                <?= htmlspecialchars($module['description']) ?>
-                            </div>
-                        <?php endif; ?> -->
                     </div>
                     <div class="ov-hero-sub">
                         <?= $completedCount ?> of
@@ -2891,10 +2636,6 @@ function lUrl($subject, $moduleId, $lessonId)
                         <?php endif; ?>
                     </div>
 
-                    <!-- MOVED: .robot-page now lives inside .lesson-hero so its
-                         position is anchored to this fixed-height banner,
-                         not to .lessons-main (whose height changes with
-                         lesson content length, which caused the jumping). -->
                     <div class="robot-page">
                         <div class="speech-bubble bubble-3">
                             <strong>BonBon</strong>
@@ -2962,7 +2703,8 @@ function lUrl($subject, $moduleId, $lessonId)
                                                 </svg>
                                             </div>
                                             <div class="callout-body">
-                                                <p class="m-0"><strong>Key idea:</strong> <?= nl2br(htmlspecialchars($block['key_idea'])) ?></p>
+                                                <p class="m-0"><strong>Key idea:</strong> <?= nl2br(htmlspecialchars($block['key_idea'])) ?>
+                                                </p>
                                             </div>
                                         </div>
                                     <?php endif; ?>
@@ -2976,26 +2718,50 @@ function lUrl($subject, $moduleId, $lessonId)
                                         <?php endif; ?>
                                     </div>
 
-                                <?php elseif ($block['type'] === 'video'): ?>
-                                    <div class="video-card" style="margin-bottom:16px;">
-                                        <div class="video-card-banner"></div>
-                                        <iframe src="<?= htmlspecialchars(youtubeEmbed($block['file_path'])) ?>" allowfullscreen
-                                            loading="lazy"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-                                        </iframe>
-                                        <?php if (!empty($block['title'])): ?>
-                                            <div class="video-card-info">
-                                                <div class="video-type-icon">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                        <path d="M23 7l-7 5 7 5V7z" />
-                                                        <rect x="1" y="5" width="15" height="14" rx="2" />
-                                                    </svg>
+                                    <?php
+                                    /* =====================================================
+                                       FIX: VIDEO BLOCK — GUARDED AGAINST FATAL ERROR
+                                       -----------------------------------------------------
+                                       Previously this called
+                                       htmlspecialchars(youtubeEmbed($block['file_path']))
+                                       directly. If $block['file_path'] was empty/malformed,
+                                       or youtubeEmbed() returned null for any reason,
+                                       htmlspecialchars() would throw a fatal TypeError in
+                                       PHP 8+ ("must be of type string, null given"). That
+                                       fatal halted the whole script mid-render, which is why
+                                       everything AFTER this point on the page — flashcards,
+                                       activities, quiz, bottom nav, and every <script> tag
+                                       including the BonBon typewriter and the "Lessons" back
+                                       button handler — never reached the browser on lessons
+                                       that contain a video block.
+
+                                       Fix: skip the block entirely (instead of fataling) if
+                                       there's no file_path, or if youtubeEmbed() can't
+                                       produce a valid embed URL for it.
+                                    ===================================================== */
+                                    ?>
+                                <?php elseif ($block['type'] === 'video' && !empty($block['file_path'])):
+                                    $embedUrl = youtubeEmbed($block['file_path']);
+                                    if (!empty($embedUrl)): ?>
+                                        <div class="video-card" style="margin-bottom:16px;">
+                                            <div class="video-card-banner"></div>
+                                            <iframe src="<?= htmlspecialchars($embedUrl) ?>" allowfullscreen loading="lazy"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                                            </iframe>
+                                            <?php if (!empty($block['title'])): ?>
+                                                <div class="video-card-info">
+                                                    <div class="video-type-icon">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                            <path d="M23 7l-7 5 7 5V7z" />
+                                                            <rect x="1" y="5" width="15" height="14" rx="2" />
+                                                        </svg>
+                                                    </div>
+                                                    <span class="video-card-title"><?= htmlspecialchars($block['title']) ?></span>
                                                 </div>
-                                                <span class="video-card-title"><?= htmlspecialchars($block['title']) ?></span>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-                                <?php endif; ?>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif;
+                                endif; ?>
 
                             <?php endforeach; ?>
                         </div>
@@ -3407,10 +3173,7 @@ function lUrl($subject, $moduleId, $lessonId)
                                 </svg>
                             </a>
                         <?php else: ?>
-                            <?php
-                            $studentModel2 = new Students();
-                            $lastLessonDone = $studentId ? $studentModel2->isLessonCompleted($lessonId, $studentId) : false;
-                            ?>
+                            <?php $lastLessonDone = $isCurrentLessonDone ?? ($lessonCompletion[$lessonId] ?? false); ?>
                             <?php if ($lastLessonDone): ?>
                                 <span class="topbar-nav-btn btn-completed-top" id="nextBtn">
                                     Completed
@@ -3489,7 +3252,6 @@ function lUrl($subject, $moduleId, $lessonId)
             type();
         }
 
-        // Run every load, regardless of splash state
         document.addEventListener('DOMContentLoaded', startBonbonBubble3Typewriter);
     </script>
 
@@ -3670,7 +3432,7 @@ function lUrl($subject, $moduleId, $lessonId)
                 shell.classList.remove('view-list', 'view-lesson');
                 shell.classList.add(view === 'lesson' ? 'view-lesson' : 'view-list');
                 if (view === 'lesson') {
-                    startBonbonBubble3Typewriter();   // ✅ add this
+                    startBonbonBubble3Typewriter();
                 }
             }
 
