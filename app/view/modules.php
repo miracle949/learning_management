@@ -141,6 +141,7 @@
                                     // ✅ Progress-aware status: completed > in-progress > not-started
                                     $prog = $moduleProgress[$mod['id']] ?? null;
                                     $isFinished = $prog && (int) $prog['is_finished'] === 1;
+                                    
                                     $isStarted = in_array($mod['id'], $startedModuleIds);
                                     $pct = $prog ? (float) $prog['completion_percentage'] : 0;
                                     $pct = max(0, min(100, $pct)); // clamp for safety

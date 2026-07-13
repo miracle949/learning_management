@@ -1285,7 +1285,7 @@ div.rightbar{
 
 .enrolled-subjects .body .module-progress {
     padding: 0 0 12px;
-    border-bottom: 1px solid var(--page-border);
+    border-bottom: 1px solid var(--panel-border);
 }
 
 .enrolled-subjects .body .module-progress .module-header {
