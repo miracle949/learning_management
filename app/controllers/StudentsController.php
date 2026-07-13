@@ -88,7 +88,7 @@ class StudentsController
 
         $filePath = null;
 
-        // Handle file upload
+
         if (!empty($_FILES['submission_file']['name'])) {
             $uploadDir = '../uploads/submissions/';
             if (!is_dir($uploadDir))
@@ -178,10 +178,10 @@ class StudentsController
         }
 
         $startedModuleIds = $studentId ? $studentModel->getStartedModuleIds($studentId) : [];
-
-        // ✅ ADD THIS — gives the view what it needs to show "Completed"
-        // instead of "Continue Learning" and to power the filter tabs
         $moduleProgress = $studentId ? $studentModel->getModuleProgressMap($studentId) : [];
+
+        // ✅ NEW — real overall progress across ALL modules in this subject
+        $overallProgress = $studentModel->getOverallModuleProgress($studentId, count($modules));
 
         $lessonCounts = [];
         $imageCounts = [];
@@ -239,19 +239,33 @@ class StudentsController
         $module = $moduleId ? $studentModel->getInteractiveModuleById($moduleId) : null;
         $lessons = $module ? $studentModel->getIMLessonsWithCounts($moduleId) : [];
 
+        $subjectModulesList = $subject ? $studentModel->getInteractiveModules($subject) : [];
+        $moduleTotal = count($subjectModulesList);
+        $modulePosition = 0;
+        foreach ($subjectModulesList as $idx => $m) {
+            if ((int) $m['id'] === $moduleId) {
+                $modulePosition = $idx + 1;
+                break;
+            }
+        }
+
         if (!$lessonId && !empty($lessons)) {
             $lessonId = $lessons[0]['id'];
         }
 
-        // ✅ ADD THIS — safety net: always mark started when student opens a lesson
+        // ✅ safety net: always mark started when student opens a lesson
         if ($studentId && $moduleId) {
             $studentModel->markModuleStarted($moduleId, $studentId);
         }
 
         // ... rest unchanged
         $lesson = $lessonId ? $studentModel->getIMLessonById($lessonId) : null;
-        $images = $lessonId ? $studentModel->getLessonImages($lessonId) : [];
-        $videos = $lessonId ? $studentModel->getLessonVideos($lessonId) : [];
+
+        // Ordered text/image/video blocks (builder order via sort_order) —
+        // replaces the old separate $lesson['content'] / $images / $videos
+        // sections, since text no longer lives on tbl_lessons.content.
+        $contentBlocks = $lessonId ? $studentModel->getLessonContentBlocks($lessonId) : [];
+
         $flashcards = $lessonId ? $studentModel->getLessonFlashcards($lessonId) : [];
         $activities = $lessonId ? $studentModel->getLessonActivities($lessonId) : [];
         $quizzes = $lessonId ? $studentModel->getLessonQuizzes($lessonId) : [];

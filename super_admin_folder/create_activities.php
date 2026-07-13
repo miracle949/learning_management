@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="../css_folder/create_activities.css">
+    <link rel="stylesheet" href="../css_folder/create_activities_blocks.css">
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
 </head>
@@ -35,8 +36,7 @@
                                 <div class="card-text">
                                     <h4><?= htmlspecialchars($subject['subject_name']) ?></h4>
                                     <?php if (!empty($subject['grade_name'])): ?>
-                                        <small
-                                            style="color:#16a34a; font-weight:600; font-size:14.5px; display:block;">
+                                        <small style="color:#16a34a; font-weight:600; font-size:14.5px; display:block;">
                                             <i class="fa fa-layer-group"></i>
                                             <?= htmlspecialchars($subject['grade_name']) ?>
                                         </small>
@@ -56,7 +56,7 @@
 
                 <div class="body">
                     <form action="/learning_management/public/?url=save_interactive_module" method="POST"
-                        enctype="multipart/form-data">
+                        enctype="multipart/form-data" id="createActivitiesForm">
 
                         <input type="hidden" name="subject_id" value="<?= htmlspecialchars($subject['id'] ?? '') ?>">
 
@@ -70,6 +70,13 @@
                                 </div>
                             </div>
 
+                            <!--
+                                #contentContainer is populated entirely by activities.js.
+                                Each module -> lesson -> block (text/image/video/quiz/
+                                activity/flashcard) is built dynamically so the admin can
+                                interleave them in any order — the DOM order becomes the
+                                sort_order saved to tbl_interactive_contents.
+                            -->
                             <div id="contentContainer" style="padding:1.5rem 0 0 0;">
                                 <div class="text-content" id="contentEmpty" style="display:flex;">
                                     <i class="fa fa-inbox"></i>

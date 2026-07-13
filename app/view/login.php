@@ -126,6 +126,25 @@
                     <div class="carousel-slide slide-3">
                         <img src="../images/login9.jpg" alt="">
                     </div>
+
+                    <div class="wave-bottom">
+                        <svg viewBox="0 0 500 150" preserveAspectRatio="none">
+                            <path
+                                d="M0,40 C60,10 120,70 180,40 C240,10 300,70 360,40 C420,10 460,60 500,40 L500,150 L0,150 Z"
+                                fill="#ffffff"></path>
+                        </svg>
+                    </div>
+
+                    <div class="main-image-text">
+                        <div class="main-image-logo">
+                            <a href="/learning_management/public/?url=landingpage">
+                                <img src="../images/logo2.png" alt="">
+                                <h3>SHS Strand</h3>
+                            </a>
+                        </div>
+                        <div class="main-image-tag">Learning Management System</div>
+                        <h1>Unlock your learning potential with one login.</h1>
+                    </div>
                 </div>
 
                 <div class="main-parent-form">
@@ -149,12 +168,12 @@
                         <div class="form-input form-input1">
                             <label>Learner Reference Number (LRN)</label>
                             <input type="text" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" id=""
-                                placeholder="Enter your email">
+                                placeholder="Enter your email" required>
                         </div>
 
                         <div class="form-input form-input2">
                             <label>Password</label>
-                            <input type="password" name="password" id="" placeholder="Enter your password">
+                            <input type="password" name="password" id="" placeholder="Enter your password" required>
                         </div>
 
                         <div class="form-forgot">

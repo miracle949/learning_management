@@ -1,9 +1,43 @@
 <?php
+
 function lUrl($subject, $moduleId, $lessonId)
 {
     return "/learning_management/public/?url=subject_lessons&subject="
         . urlencode($subject) . "&id={$moduleId}&lesson={$lessonId}";
 }
+
+/**
+ * Convert a YouTube URL (watch, youtu.be, embed, shorts, etc.)
+ * into a safe embeddable URL. Returns null if no valid video ID
+ * can be extracted, so callers can skip rendering the video block
+ * instead of fataling.
+ */
+function youtubeEmbed($url)
+{
+    if (empty($url) || !is_string($url)) {
+        return null;
+    }
+
+    $videoId = null;
+
+    // Covers: watch?v=ID, youtu.be/ID, embed/ID, v/ID, shorts/ID
+    if (
+        preg_match(
+            '~(?:youtube\.com/(?:watch\?v=|embed/|v/|shorts/)|youtu\.be/)([A-Za-z0-9_-]{11})~',
+            $url,
+            $matches
+        )
+    ) {
+        $videoId = $matches[1];
+    }
+
+    if (!$videoId) {
+        return null;
+    }
+
+    return 'https://www.youtube.com/embed/' . $videoId;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,38 +56,21 @@ function lUrl($subject, $moduleId, $lessonId)
            ILEARN-CSS DESIGN TOKENS
         ============================================= */
         :root {
-            --green-neon: #00FF88;
-            --green-mid: #00C96B;
-            --green-dark: #00894A;
-            --green-light: #E8FBF2;
-            --blue-elec: #00CFFF;
-            --blue-mid: #0099CC;
-            --blue-dark: #006B99;
-            --orange-warn: #FF6B00;
-            --yellow-volt: #FFD700;
-            --red-led: #FF3B3B;
-            --purple-chip: #9B5DE5;
-
-            --bg-darkest: #050D14;
-            --bg-dark: #0A1628;
-            --bg-panel: #0F2040;
-            --bg-card: #0E1E35;
-            --bg-surface: #112244;
-
-            --border-dim: rgba(0, 255, 136, 0.12);
-            --border-glow: rgba(0, 207, 255, 0.30);
-
-            --text-white: #FFFFFF;
-            --text-bright: #E8F4FF;
-            --text-muted: rgba(200, 220, 255, 0.55);
-
-            --page-bg: #F5F8FB;
-            --page-card: #FFFFFF;
-            --page-surface: #EAF0F8;
-            --page-border: #D6E3F0;
-            --page-border2: #B8CCDF;
-            --page-muted: #4A6B8A;
-            --page-text: #0A2540;
+            --neon-cyan: #0077cc;
+            --neon-blue: #0055aa;
+            --electric-purple: #5533cc;
+            --deep-navy: #ffffff;
+            --panel-dark: #f4f7fb;
+            --panel-mid: #e8eef8;
+            --panel-border: rgba(0, 100, 200, 0.15);
+            --text-bright: #0a1a2e;
+            --text-dim: #4a6080;
+            --accent-gold: #cc7700;
+            --danger-red: #cc2244;
+            --bg-main: #ffffff;
+            --bg-section-alt: #f0f5fc;
+            --panel-bg: #f5f7fb;
+            --hero-height: 100px;
         }
 
         *,
@@ -66,9 +83,8 @@ function lUrl($subject, $moduleId, $lessonId)
 
         html,
         body {
-            background: var(--page-bg);
+            background-image: radial-gradient(circle at 15% 0%, rgba(0, 119, 204, 0.06), transparent 45%), radial-gradient(circle at 100% 30%, rgba(85, 51, 204, 0.06), transparent 40%), repeating-linear-gradient(0deg, rgba(0, 100, 200, 0.035) 0px, rgba(0, 100, 200, 0.035) 1px, transparent 1px, transparent 42px), repeating-linear-gradient(90deg, rgba(0, 100, 200, 0.035) 0px, rgba(0, 100, 200, 0.035) 1px, transparent 1px, transparent 42px);
             color: var(--page-text);
-            -webkit-font-smoothing: antialiased;
             height: 100%;
             overflow: hidden;
         }
@@ -89,24 +105,482 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         /* =============================================
-           LAYOUT SHELL
+           WELCOME / MODULE SPLASH SCREEN
         ============================================= */
+        .module-splash {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background-color: var(--neon-cyan);
+            animation: splashFadeIn .5s ease both;
+        }
+
+        .module-splash::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 26px);
+            pointer-events: none;
+        }
+
+        @keyframes splashFadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .module-splash.splash-exit {
+            animation: splashFadeOut .45s ease forwards;
+            pointer-events: none;
+        }
+
+        @keyframes splashFadeOut {
+            to {
+                opacity: 0;
+                transform: scale(1.04);
+            }
+        }
+
+        .speech-bubble-progress {
+            margin-top: 5px;
+        }
+
+        .sb-progress-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 6px;
+        }
+
+        .sb-progress-row .sbp-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--text-dim);
+            opacity: 0.75;
+        }
+
+        .sb-progress-row .sbp-pct {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .sbp-segments {
+            display: flex;
+            gap: 4px;
+        }
+
+        .sbp-segment {
+            flex: 1;
+            height: 15px;
+            border-radius: 4px;
+            background-color: rgba(0, 119, 204, 0.10);
+        }
+
+        .sbp-segment.filled {
+            background: linear-gradient(135deg, #ffb347, #ff7a00);
+        }
+
+        .sbp-segment.filled.completed {
+            background-color: var(--neon-cyan);
+            background-image: none;
+        }
+
+        .speech-bubble {
+            position: absolute;
+            left: -300px;
+            width: 300px;
+            background-color: var(--bg-main);
+            color: var(--text-bright);
+            font-family: var(--font-body);
+            line-height: 1.4;
+            padding: 16px 19px;
+            border-radius: 14px;
+        }
+
+
+        .speech-bubble strong {
+            display: block;
+            color: var(--neon-cyan);
+            font-family: "Orbitron", sans-serif;
+            font-weight: 700;
+            margin-bottom: 2px;
+            font-size: 14.5px;
+        }
+
+        .speech-bubble p {
+            margin: 0;
+            font-size: 13.5px;
+            color: var(--text-dim);
+            line-height: 22px;
+        }
+
+        .speech-bubble p .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 14px;
+            background: var(--neon-cyan);
+            margin-left: 2px;
+            vertical-align: middle;
+            animation: cursorBlink 0.8s step-end infinite;
+        }
+
+        @keyframes cursorBlink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50px;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            transform: rotate(45deg);
+        }
+
+        @keyframes bubblePop {
+
+            0%,
+            8% {
+                opacity: 0;
+                transform: translateY(6px) scale(.92);
+            }
+
+            16%,
+            84% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+            92%,
+            100% {
+                opacity: 0;
+                transform: translateY(6px) scale(.92);
+            }
+        }
+
+        .splash-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            max-width: 420px;
+            animation: splashCardUp .55s cubic-bezier(.2, .8, .2, 1) both .1s;
+            margin-left: 15rem;
+        }
+
+        .splash-module-meta {
+            color: #fff;
+            width: 520px;
+            margin: -3rem 0 2rem;
+            text-align: center;
+            display: none;
+        }
+
+        .splash-module-position {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 6px 15px;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(6px);
+            font-size: 13.5px;
+            font-weight: 600;
+        }
+
+        .splash-module-title {
+            font-size: 28px;
+            font-family: "Orbitron", sans-serif;
+            text-align: center;
+            margin: 10px 0 10px;
+            line-height: 40px;
+        }
+
+        .splash-module-desc {
+            font-size: 14.5px;
+            text-align: center;
+        }
+
+        @keyframes splashCardUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes splashBotFloat {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        .splash-bot-icon i {
+            font-size: 30px;
+            color: #fff;
+        }
+
+        .splash-greet {
+            font-size: 21px;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 16px;
+        }
+
+        .splash-greet span {
+            color: var(--neon-cyan);
+        }
+
+        .splash-bubble {
+            background: #fff;
+            border: 1px solid var(--panel-border);
+            border-radius: 16px;
+            padding: 16px 20px;
+            box-shadow: 0 8px 24px rgba(0, 50, 100, 0.08);
+            margin-bottom: 26px;
+        }
+
+        .splash-bubble p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-dim);
+        }
+
+        .splash-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            color: #fff;
+            font-size: 13.5px;
+            font-weight: 700;
+            padding: 7px 26px;
+            border-radius: 99px;
+            transition: transform .18s ease, box-shadow .18s ease;
+            margin: 1rem 0 0;
+        }
+
+        .splash-btn.state-continue {
+            background: linear-gradient(135deg, #ffb347, #ff7a00);
+        }
+
+        .splash-btn.state-review,
+        .splash-btn.state-start {
+            background-color: var(--neon-cyan);
+        }
+
+        .splash-btn:hover {
+            transform: translateY(-2px);
+            /* box-shadow: 0 14px 30px rgba(0, 119, 204, 0.38); */
+        }
+
+        .splash-btn i {
+            font-size: 12px;
+            transition: transform .18s ease;
+        }
+
+        .splash-btn:hover i {
+            transform: translateX(3px);
+        }
+
         .lessons-shell {
-            display: grid;
-            /* grid-template-columns: 252px 1fr; */
-            grid-template-columns: 260px 1fr;
+            opacity: 0;
+        }
+
+        .lessons-shell.shell-visible {
+            opacity: 1;
+            transition: opacity .4s ease;
+        }
+
+        .lessons-shell.shell-visible .lessons-sidebar {
+            animation: sidebarSlideIn .55s cubic-bezier(.2, .8, .2, 1) both;
+        }
+
+        .lessons-shell.shell-visible .lessons-main {
+            animation: mainFadeUp .55s cubic-bezier(.2, .8, .2, 1) both .12s;
+        }
+
+        @keyframes sidebarSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-26px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes mainFadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .no-js .module-splash {
+            display: none;
+        }
+
+        .no-js .lessons-shell {
+            opacity: 1;
+        }
+
+        .skip-splash .module-splash {
+            display: none !important;
+        }
+
+        .skip-splash .lessons-shell {
+            opacity: 1 !important;
+        }
+
+        .lessons-shell.view-list .lessons-main {
+            display: none;
+        }
+
+        .lessons-shell.view-lesson .lessons-sidebar {
+            display: none;
+        }
+
+        .topbar-back-list {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted, var(--text-dim));
+            padding: 7px 14px;
+            border-radius: 8px;
+            border: 1.5px solid var(--panel-border);
+            background: var(--page-card, #fff);
+            transition: border-color .15s ease, color .15s ease, transform .15s ease;
+        }
+
+        .topbar-back-list svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .topbar-back-list:hover {
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            transform: translateX(-2px);
+        }
+
+        .lessons-shell {
+            display: block;
             height: 100vh;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .lessons-main {
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+            padding: 0;
+            position: relative;
+        }
+
+        .speech-bubble {
+            position: absolute;
+            left: -315px;
+            top: 60px;
+            width: 300px;
+            background-color: var(--bg-main);
+            color: var(--text-bright);
+            font-family: var(--font-body);
+            line-height: 1.4;
+            padding: 16px 19px;
+            border-radius: 14px;
+        }
+
+        .speech-bubble strong {
+            display: block;
+            color: var(--neon-cyan);
+            font-family: "Orbitron", sans-serif;
+            font-weight: 700;
+            margin-bottom: 2px;
+            font-size: 14.5px;
+        }
+
+        .speech-bubble p {
+            margin: 0;
+            font-size: 13.5px;
+            color: var(--text-dim);
+            line-height: 22px;
+        }
+
+        .speech-bubble p .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 14px;
+            background: var(--neon-cyan);
+            margin-left: 2px;
+            vertical-align: middle;
+            animation: cursorBlink 0.8s step-end infinite;
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            transform: rotate(-45deg);
+        }
+
+        .speech-bubble.bubble-3::after {
+            right: -6px;
+            top: 42.5px;
+            transform: rotate(-45deg);
         }
 
         /* =============================================
-           LEFT SIDEBAR
+           LESSON LIST (TOP SECTION)
         ============================================= */
         .lessons-sidebar {
-            height: 100vh;
-            overflow-y: auto;
-            background: var(--bg-card);
-            border-right: 1px solid var(--border-dim);
+            width: 100%;
+            min-height: auto;
+            border-right: none;
             display: flex;
             flex-direction: column;
             z-index: 10;
@@ -122,17 +596,173 @@ function lUrl($subject, $moduleId, $lessonId)
             border-radius: 3px;
         }
 
-        /* brand */
-        .sb-brand {
+        /* =============================================
+           MODULE OVERVIEW HERO (full-width top banner)
+        ============================================= */
+        .ov-hero {
+            padding: 34px 30px;
+            color: #fff;
+            background-color: var(--neon-cyan);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .ov-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 26px);
+            pointer-events: none;
+        }
+
+        .ov-hero .ov-text {
+            width: 650px;
+        }
+
+        .ov-hero .ov-image {
+            position: relative;
+        }
+
+        .bubble-1 {
+            top: -10px;
+        }
+
+        .bubble-2 {
+            top: 20px;
+        }
+
+        .ov-hero-back {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: transform .15s ease, color .15s ease;
+        }
+
+        .ov-hero-back:hover {
+            transform: translateX(-3px);
+            color: #fff;
+        }
+
+        .ov-hero-top .ov-hero-sub {
+            margin: 0 0 10px;
+        }
+
+        .ov-hero-top .ov-hero-parent {
             position: relative;
             z-index: 1;
             display: flex;
-            justify-content: start;
-            align-items: start;
-            gap: 12px;
-            /* padding: 22px 18px 18px; */
-            padding: 20px 16px 15px;
-            /* border-bottom: 1px solid var(--border-dim); */
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 15px;
+        }
+
+        .ov-hero-top .ov-parent-lesson {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 15px;
+        }
+
+        .ov-hero-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .ov-hero-tag {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.72);
+            margin-bottom: 5px;
+        }
+
+        .ov-hero-title {
+            font-size: 28px;
+            font-weight: 700;
+            font-family: "Orbitron", sans-serif;
+            line-height: 1.25;
+        }
+
+        .ov-hero-sub {
+            position: relative;
+            z-index: 1;
+            font-size: 14.5px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 16px;
+            line-height: 25px;
+        }
+
+        .ov-hero-track {
+            position: relative;
+            z-index: 1;
+            height: 15px;
+            border-radius: 99px;
+            background: rgba(255, 255, 255, 0.22);
+            overflow: hidden;
+            max-width: 900px;
+        }
+
+        .ov-hero-fill {
+            height: 100%;
+            border-radius: 99px;
+            background: #fff;
+            transition: width .6s ease;
+        }
+
+        .lesson-hero {
+            position: relative;
+            padding: 34px 30px;
+            display: block;
+            border-bottom: 1px solid #CADFF5;
+        }
+
+        .lesson-hero .lesson-hero-text {
+            width: 600px;
+        }
+
+        .lesson-hero .ov-hero-back {
+            margin-bottom: 14px;
+        }
+
+        .lesson-hero .ov-hero-tag {
+            margin-bottom: 4px;
+        }
+
+        .lesson-hero .ov-hero-title {
+            font-size: 28px;
+        }
+
+        .lesson-hero .ov-hero-sub {
+            margin-bottom: 0;
+        }
+
+        .lesson-hero .robot-page {
+            position: absolute;
+            right: 3%;
+            top: 100px;
+        }
+
+        .lesson-hero .robot-page .bubble-3 {
+            top: -14px;
         }
 
         .sb-brand-mark {
@@ -168,16 +798,14 @@ function lUrl($subject, $moduleId, $lessonId)
             margin-top: 1px;
         }
 
-        /* progress */
         .sb-progress-block {
             position: relative;
-            /* padding: 14px 16px; */
             padding: 0px 16px 14px;
-            border-bottom: 1px solid var(--border-dim);
+            border-bottom: 1px solid var(--border);
         }
 
         .sb-progress-block h5 {
-            color: #FFFFFF;
+            color: var(--text-bright);
             font-size: 14.5px;
             line-height: 20px;
             font-weight: 600;
@@ -192,7 +820,6 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .sb-progress-label .pl-title {
-            /* font-size: 9px; */
             font-size: 11.5px;
             letter-spacing: 1.4px;
             text-transform: uppercase;
@@ -206,42 +833,28 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .sb-bar-track {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.07);
+            height: 15px;
+            background: rgba(0, 119, 204, 0.08);
             border-radius: 3px;
             overflow: hidden;
         }
 
         .sb-bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--green-dark), var(--green-neon));
+            background-color: var(--neon-cyan);
             border-radius: 3px;
             box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
             transition: width .6s ease;
         }
 
-        /* ── Sidebar nav list ── */
         .sb-lesson-list {
             position: relative;
             z-index: 1;
-            flex: 1;
-            /* padding: 4px 8px 20px; */
-            padding: 4px 12px 20px;
-            overflow-y: auto;
+            margin: 0px 180px;
+            padding: 28px 20px 35px;
         }
 
-        .sb-lesson-list::-webkit-scrollbar {
-            width: 3px;
-        }
-
-        .sb-lesson-list::-webkit-scrollbar-thumb {
-            background: var(--border-dim);
-            border-radius: 3px;
-        }
-
-        /* Group label */
         .sb-nav-group-label {
-            /* font-size: 9px; */
             font-size: 10.5px;
             letter-spacing: 1.6px;
             text-transform: uppercase;
@@ -250,68 +863,129 @@ function lUrl($subject, $moduleId, $lessonId)
             opacity: 0.65;
         }
 
-        /* Nav item */
         .sb-nav-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 8px 8px;
-            border-radius: 9px;
-            margin-bottom: 1px;
+            gap: 16px;
+            padding: 18px 20px;
+            border-radius: 16px;
+            margin-bottom: 18px;
             cursor: pointer;
-            transition: background .15s;
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
             position: relative;
             text-decoration: none;
             color: inherit;
+            opacity: 0;
+            transform: translateX(-18px);
+            animation: sbItemIn .5s cubic-bezier(.2, .8, .2, 1) forwards;
+        }
+
+        @keyframes sbItemIn {
+            from {
+                opacity: 0;
+                transform: translateX(-18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .sb-nav-item:hover {
-            background: rgba(0, 207, 255, 0.06);
+            transform: translateX(3px) translateY(-1px);
+            border-color: rgba(0, 119, 204, 0.35);
+            box-shadow: 0 8px 20px rgba(0, 90, 180, 0.12);
+            background: #ffffff;
         }
 
         .sb-nav-item.active {
-            background: rgba(0, 255, 136, 0.09);
+            background: linear-gradient(135deg, rgba(0, 119, 204, 0.09), rgba(85, 51, 204, 0.05));
+            border-color: var(--neon-cyan);
+            box-shadow: 0 6px 18px rgba(0, 119, 204, 0.16);
         }
 
         .sb-nav-item.sb-nav-done .sb-nav-title {
-            color: rgba(200, 220, 255, 0.75);
+            color: var(--text-bright);
         }
 
-        /* Icon box */
-        .sb-nav-icon {
-            /* width: 28px;
-            height: 28px; */
-            width: 35px;
-            height: 35px;
+        .sb-nav-chevron {
             flex-shrink: 0;
-            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            opacity: .45;
+            transition: transform .18s ease, opacity .18s ease, color .18s ease;
+        }
+
+        .sb-nav-chevron svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .sb-nav-item:hover .sb-nav-chevron {
+            opacity: 1;
+            transform: translateX(3px);
+            color: var(--neon-cyan);
+        }
+
+        .sb-nav-item.active .sb-nav-chevron {
+            opacity: 1;
+            color: var(--neon-cyan);
+        }
+
+        .sb-nav-done-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 9.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: #0a8f4f;
+            background: rgba(0, 168, 89, 0.12);
+            border: 1px solid rgba(0, 168, 89, 0.28);
+            padding: 1px 7px;
+            border-radius: 99px;
+            margin-left: 7px;
+            vertical-align: middle;
+        }
+
+        .sb-nav-icon {
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .sb-nav-icon svg {
-            width: 13px;
-            height: 13px;
+            width: 16px;
+            height: 16px;
         }
 
         .sb-nav-icon .fa {
-            font-size: 14px;
+            font-size: 16px;
         }
 
         .icon-type-lesson {
-            background: rgba(0, 137, 74, 0.14);
-            color: var(--green-mid);
+            background: rgba(0, 119, 204, 0.08);
+            color: var(--neon-cyan);
         }
 
         .icon-type-lesson.done {
-            background: rgba(0, 137, 74, 0.22);
-            color: var(--green-neon);
+            background-color: var(--neon-cyan);
+            color: var(--deep-navy);
         }
 
         .icon-type-lesson.active-dot {
-            background: rgba(0, 255, 136, 0.15);
-            color: var(--green-neon);
+            background-color: var(--neon-cyan);
+            color: var(--deep-navy);
         }
 
         .icon-type-video {
@@ -349,17 +1023,15 @@ function lUrl($subject, $moduleId, $lessonId)
             color: var(--green-mid);
         }
 
-        /* Text info */
         .sb-nav-info {
             flex: 1;
             min-width: 0;
         }
 
         .sb-nav-title {
-            /* font-size: 11.5px; */
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-muted);
+            font-size: 15.5px;
+            font-weight: 600;
+            color: var(--text-dim);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -367,12 +1039,11 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .sb-nav-item.active .sb-nav-title {
-            color: var(--green-neon);
+            color: var(--text-bright);
             font-weight: 600;
         }
 
         .sb-nav-meta {
-            /* font-size: 9.5px; */
             font-size: 11.5px;
             color: var(--text-muted);
             opacity: 0.6;
@@ -382,10 +1053,7 @@ function lUrl($subject, $moduleId, $lessonId)
             text-overflow: ellipsis;
         }
 
-        /* Completion dot */
         .sb-nav-check {
-            /* width: 16px;
-            height: 16px; */
             width: 30px;
             height: 30px;
             border-radius: 50%;
@@ -403,7 +1071,6 @@ function lUrl($subject, $moduleId, $lessonId)
             display: none;
         }
 
-        /* sidebar footer */
         .sb-footer {
             position: relative;
             z-index: 1;
@@ -450,21 +1117,25 @@ function lUrl($subject, $moduleId, $lessonId)
             margin-top: 1px;
         }
 
-        /* =============================================
-           MAIN CONTENT AREA
-        ============================================= */
-        .lessons-main {
-            height: 100vh;
-            overflow-y: auto;
+        .lesson-bottom-nav {
             display: flex;
-            flex-direction: column;
-            background: var(--page-bg);
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--panel-border);
         }
 
-        /* TOP NAV BAR */
+        .lesson-bottom-nav .topbar-nav-btn {
+            padding: 10px 22px;
+        }
+
+        /* =============================================
+           TOP NAV BAR
+        ============================================= */
         .lessons-topbar {
-            background: var(--page-card);
-            border-bottom: 1px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border-bottom: 1px solid var(--page-border, var(--panel-border));
             padding: 0 32px;
             height: 60px;
             display: flex;
@@ -474,7 +1145,6 @@ function lUrl($subject, $moduleId, $lessonId)
             top: 0;
             z-index: 5;
             box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
-            flex-shrink: 0;
         }
 
         .topbar-left {
@@ -489,21 +1159,16 @@ function lUrl($subject, $moduleId, $lessonId)
             gap: 7px;
             font-size: 13px;
             font-weight: 600;
-            /* color: var(--green-dark); */
-            /* padding: 7px 14px; */
-            color: var(--text-muted);
+            color: var(--text-muted, var(--text-dim));
             border-radius: 8px;
-            /* background: rgba(0, 137, 74, 0.08); */
-            /* border: 1px solid rgba(0, 137, 74, 0.2); */
             transition: background .15s, transform .15s;
         }
 
-        .back-btn .fa{
+        .back-btn .fa {
             font-size: 10px;
         }
 
         .back-btn:hover {
-            /* background: rgba(0, 137, 74, 0.14); */
             transform: translateX(-2px);
         }
 
@@ -513,11 +1178,11 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .topbar-breadcrumb {
-            display: flex;
+            display: none;
             align-items: center;
             gap: 7px;
             font-size: 12.5px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
         }
 
         .topbar-breadcrumb .sep {
@@ -525,14 +1190,12 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .topbar-breadcrumb .current {
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             font-weight: 600;
         }
 
         .topbar-right {
-            /* width: 100%; */
             display: flex;
-            /* justify-content: space-between; */
             align-items: center;
             gap: 12px;
         }
@@ -545,14 +1208,14 @@ function lUrl($subject, $moduleId, $lessonId)
             align-items: center;
             justify-content: center;
             border-radius: 9px;
-            background: var(--page-card);
-            border: 1px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
         }
 
         .bell-wrap svg {
             width: 16px;
             height: 16px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
         }
 
         .bell-dot {
@@ -562,21 +1225,21 @@ function lUrl($subject, $moduleId, $lessonId)
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: var(--red-led);
-            box-shadow: 0 0 5px var(--red-led);
+            background: var(--red-led, var(--danger-red));
+            box-shadow: 0 0 5px var(--red-led, var(--danger-red));
         }
 
         .top-avatar {
             width: 36px;
             height: 36px;
             border-radius: 9px;
-            background: linear-gradient(135deg, var(--green-mid), var(--blue-mid));
+            background: linear-gradient(135deg, var(--green-mid, var(--neon-cyan)), var(--blue-mid, var(--neon-blue)));
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             font-size: 12.5px;
-            color: var(--bg-darkest);
+            color: var(--bg-darkest, #fff);
         }
 
         .topbar-nav-btn {
@@ -585,7 +1248,7 @@ function lUrl($subject, $moduleId, $lessonId)
             gap: 6px;
             padding: 8px 18px;
             border-radius: 9px;
-            font-size: 13px;
+            font-size: 14.5px;
             font-weight: 700;
             cursor: pointer;
             transition: transform .18s, box-shadow .18s;
@@ -593,17 +1256,17 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .btn-prev-top {
-            background: var(--page-surface);
-            border: 1.5px solid var(--page-border);
-            color: var(--page-text);
+            background: var(--page-surface, #fff);
+            border: 1.5px solid var(--panel-border);
+            color: var(--text-dim);
         }
 
         .btn-prev-top:hover {
-            background: var(--page-border);
+            background: var(--page-border, var(--panel-border));
         }
 
         .btn-next-top {
-            background: linear-gradient(135deg, var(--green-dark), var(--green-mid));
+            background-color: var(--neon-cyan);
             border: none;
             color: #fff;
         }
@@ -614,9 +1277,9 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .btn-completed-top {
-            background: var(--page-surface);
+            background: var(--page-surface, #fff);
             border: 1.5px solid rgba(0, 137, 74, 0.3);
-            color: var(--green-dark);
+            color: var(--green-dark, #0a8f4f);
             cursor: default;
             opacity: 0.85;
         }
@@ -628,14 +1291,14 @@ function lUrl($subject, $moduleId, $lessonId)
             margin: 24px 28px 0;
             border-radius: 16px;
             overflow: hidden;
-            background: var(--page-card);
-            border: 1px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
         }
 
         .module-hero-banner {
             height: 8px;
-            background: linear-gradient(90deg, var(--green-dark), var(--green-neon), var(--blue-elec));
+            background: linear-gradient(90deg, var(--green-dark, var(--neon-blue)), var(--green-neon, var(--neon-cyan)), var(--blue-elec, var(--electric-purple)));
         }
 
         .module-hero-body {
@@ -660,7 +1323,7 @@ function lUrl($subject, $moduleId, $lessonId)
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .08em;
-            color: var(--green-dark);
+            color: var(--green-dark, var(--neon-cyan));
             background: rgba(0, 137, 74, 0.08);
             border: 1px solid rgba(0, 137, 74, 0.2);
             padding: 4px 12px;
@@ -676,14 +1339,14 @@ function lUrl($subject, $moduleId, $lessonId)
         .module-hero-title {
             font-size: 22px;
             font-weight: 700;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             line-height: 1.3;
             margin-bottom: 6px;
         }
 
         .module-hero-desc {
             font-size: 13.5px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
             line-height: 1.6;
             margin: 0;
         }
@@ -701,9 +1364,9 @@ function lUrl($subject, $moduleId, $lessonId)
             align-items: center;
             gap: 7px;
             font-size: 12.5px;
-            color: var(--page-muted);
-            background: var(--page-surface);
-            border: 1px solid var(--page-border);
+            color: var(--page-muted, var(--text-dim));
+            background: var(--page-surface, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             border-radius: 99px;
             padding: 6px 16px;
         }
@@ -711,54 +1374,80 @@ function lUrl($subject, $moduleId, $lessonId)
         .hero-stat svg {
             width: 13px;
             height: 13px;
-            color: var(--green-dark);
+            color: var(--green-dark, var(--neon-cyan));
         }
 
         .hero-stat-num {
             font-weight: 700;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
         }
 
         /* =============================================
            CONTENT WRAPPER
         ============================================= */
         .lessons-content-wrap {
-            /* padding: 35px 28px 60px; */
-            padding: 35px 28px 35px;
-            height: 100vh;
-            overflow-y: auto;
+            padding: 55px 28px 35px;
+            margin: 0 180px;
+
         }
 
         .lesson-title-row {
             display: flex;
             flex-direction: column;
             align-items: start;
-            /* gap: 14px; */
-            gap: 20px;
-            margin-bottom: 20px;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         .lesson-num-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-size: 10.5px;
+            font-size: 11.5px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .06em;
             padding: 5px 12px;
             border-radius: 99px;
-            background: rgba(0, 137, 74, 0.09);
-            border: 1px solid rgba(0, 137, 74, 0.22);
-            color: var(--green-dark);
+            background: rgba(0, 119, 204, 0.08);
+            border: 1px solid var(--panel-border);
+            color: var(--neon-cyan);
             white-space: nowrap;
         }
 
         .lesson-main-title {
-            font-size: 22px;
+            font-size: 23px;
             font-weight: 700;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             line-height: 1.3;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .lesson-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            padding: 4px 12px;
+            border-radius: 99px;
+        }
+
+        .lesson-status-pill.is-done {
+            color: #0a8f4f;
+            background: rgba(0, 168, 89, 0.12);
+            border: 1px solid rgba(0, 168, 89, 0.28);
+        }
+
+        .lesson-status-pill.is-pending {
+            color: var(--accent-gold);
+            background: rgba(204, 119, 0, 0.1);
+            border: 1px solid rgba(204, 119, 0, 0.25);
         }
 
         /* =============================================
@@ -768,17 +1457,15 @@ function lUrl($subject, $moduleId, $lessonId)
             margin-bottom: 28px;
         }
 
-        .ls-section h4{
-            font-size: 20px;
+        .ls-section h4 {
+            font-size: 18px;
             font-weight: 600;
-            /* margin: 15px 0 8px; */
         }
 
         .ls-section-head {
             display: flex;
             align-items: center;
             gap: 9px;
-            /* margin-bottom: 16px; */
             margin-bottom: 25px;
         }
 
@@ -799,12 +1486,12 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .icon-lesson {
             background: rgba(0, 137, 74, 0.12);
-            color: var(--green-dark);
+            color: var(--green-dark, var(--neon-cyan));
         }
 
         .icon-video {
             background: rgba(255, 107, 0, 0.12);
-            color: var(--orange-warn);
+            color: var(--orange-warn, #ff6b00);
         }
 
         .icon-image {
@@ -814,55 +1501,54 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .icon-flash {
             background: rgba(0, 153, 204, 0.12);
-            color: var(--blue-mid);
+            color: var(--blue-mid, var(--neon-cyan));
         }
 
         .icon-activity {
             background: rgba(155, 93, 229, 0.12);
-            color: var(--purple-chip);
+            color: var(--purple-chip, var(--electric-purple));
         }
 
         .icon-quiz {
             background: rgba(0, 207, 255, 0.12);
-            color: var(--blue-mid);
+            color: var(--blue-mid, var(--neon-cyan));
         }
 
         .ls-section-title {
             font-size: 13.5px;
             font-weight: 700;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
         }
 
         .ls-section-divider {
             flex: 1;
             height: 1px;
-            background: var(--page-border);
+            background: var(--border, var(--panel-border));
         }
 
         .ls-section-count {
             font-size: 10px;
-            color: var(--page-muted);
-            background: var(--page-surface);
-            border: 1px solid var(--page-border);
+            color: var(--page-muted, var(--text-dim));
+            background: var(--page-surface, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             padding: 2px 8px;
             border-radius: 99px;
         }
 
-        /* Lesson text */
         .lesson-text-card {
             font-size: 14.5px;
             line-height: 1.85;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             overflow-wrap: break-word;
             word-wrap: break-word;
             word-break: break-word;
             max-width: 100%;
+            margin: 0 0 20px;
         }
 
-        /* Video */
         .video-card {
-            background: var(--page-card);
-            border: 1px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             border-radius: 14px;
             overflow: hidden;
             margin-bottom: 16px;
@@ -877,7 +1563,7 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .video-card-banner {
             height: 5px;
-            background: linear-gradient(90deg, var(--orange-warn), #FFAA44);
+            background: linear-gradient(90deg, var(--orange-warn, #ff6b00), #FFAA44);
         }
 
         .video-card iframe {
@@ -902,7 +1588,7 @@ function lUrl($subject, $moduleId, $lessonId)
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--orange-warn);
+            color: var(--orange-warn, #ff6b00);
             flex-shrink: 0;
         }
 
@@ -914,10 +1600,9 @@ function lUrl($subject, $moduleId, $lessonId)
         .video-card-title {
             font-weight: 600;
             font-size: 14px;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
         }
 
-        /* Images */
         .img-grid {
             display: grid;
             gap: 14px;
@@ -929,33 +1614,33 @@ function lUrl($subject, $moduleId, $lessonId)
             aspect-ratio: 16 / 7;
             border-radius: 12px;
             overflow: hidden;
-            background: var(--page-card);
-            border: 1px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             cursor: pointer;
             transition: transform .2s, box-shadow .2s, border-color .2s;
             box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+            margin: 0 0 25px;
         }
 
         .img-item:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 26px rgba(0, 0, 0, 0.10);
-            border-color: var(--page-border2);
+            border-color: var(--page-border2, var(--panel-border));
         }
 
         .img-item img {
             width: 100%;
-            height: 385px;
+            height: 100%;
             display: block;
         }
 
         .img-item-cap {
             padding: 10px 12px;
             font-size: 12.5px;
-            color: var(--page-muted);
-            border-top: 1px solid var(--page-border);
+            color: var(--page-muted, var(--text-dim));
+            border-top: 1px solid var(--page-border, var(--panel-border));
         }
 
-        /* Flashcards */
         .fc-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -1047,7 +1732,6 @@ function lUrl($subject, $moduleId, $lessonId)
             display: block;
         }
 
-        /* Callouts */
         .callout {
             border-radius: 12px;
             padding: 15px 18px;
@@ -1084,17 +1768,17 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .callout.info .callout-icon {
             background: rgba(0, 153, 204, 0.15);
-            color: var(--blue-mid);
+            color: var(--blue-mid, var(--neon-cyan));
         }
 
         .callout.warning .callout-icon {
             background: rgba(255, 107, 0, 0.15);
-            color: var(--orange-warn);
+            color: var(--orange-warn, #ff6b00);
         }
 
         .callout.success .callout-icon {
             background: rgba(0, 137, 74, 0.15);
-            color: var(--green-dark);
+            color: var(--green-dark, var(--neon-cyan));
         }
 
         .callout-icon svg {
@@ -1109,30 +1793,29 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .callout.info .cb-title {
-            color: var(--blue-mid);
+            color: var(--blue-mid, var(--neon-cyan));
         }
 
         .callout.warning .cb-title {
-            color: var(--orange-warn);
+            color: var(--orange-warn, #ff6b00);
         }
 
         .callout.success .cb-title {
-            color: var(--green-dark);
+            color: var(--green-dark, var(--neon-cyan));
         }
 
         .callout-body p {
             font-size: 13px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
             line-height: 1.6;
         }
 
-        /* Activity */
         .activity-block {
             margin-bottom: 24px;
         }
 
         .activity-hero-card {
-            background: linear-gradient(135deg, #5B2E94, var(--purple-chip));
+            background: linear-gradient(135deg, #5B2E94, var(--purple-chip, var(--electric-purple)));
             border-radius: 14px;
             padding: 20px 22px;
             margin-bottom: 16px;
@@ -1205,19 +1888,19 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .pill-green {
             background: rgba(0, 137, 74, 0.12);
-            color: var(--green-dark);
+            color: var(--green-dark, var(--neon-cyan));
             border: 1px solid rgba(0, 137, 74, 0.22);
         }
 
         .pill-orange {
             background: rgba(255, 107, 0, 0.10);
-            color: var(--orange-warn);
+            color: var(--orange-warn, #ff6b00);
             border: 1px solid rgba(255, 107, 0, 0.22);
         }
 
         .pill-purple {
             background: rgba(155, 93, 229, 0.10);
-            color: var(--purple-chip);
+            color: var(--purple-chip, var(--electric-purple));
             border: 1px solid rgba(155, 93, 229, 0.22);
         }
 
@@ -1240,7 +1923,7 @@ function lUrl($subject, $moduleId, $lessonId)
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--green-dark);
+            color: var(--green-dark, var(--neon-cyan));
             flex-shrink: 0;
         }
 
@@ -1253,17 +1936,17 @@ function lUrl($subject, $moduleId, $lessonId)
             font-weight: 700;
             font-size: 13.5px;
             margin-bottom: 2px;
-            color: var(--green-dark);
+            color: var(--green-dark, var(--neon-cyan));
         }
 
         .submitted-notice-text .sn-sub {
             font-size: 12px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
         }
 
         .question-card {
-            background: var(--page-card);
-            border: 1px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             border-radius: 12px;
             padding: 18px 20px;
             margin-bottom: 12px;
@@ -1280,14 +1963,14 @@ function lUrl($subject, $moduleId, $lessonId)
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .07em;
-            color: var(--purple-chip);
+            color: var(--purple-chip, var(--electric-purple));
             margin-bottom: 7px;
         }
 
         .q-text {
             font-size: 14.5px;
             font-weight: 600;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             line-height: 1.5;
             margin-bottom: 14px;
         }
@@ -1298,22 +1981,22 @@ function lUrl($subject, $moduleId, $lessonId)
             gap: 11px;
             padding: 11px 14px;
             border-radius: 9px;
-            border: 1.5px solid var(--page-border);
+            border: 1.5px solid var(--page-border, var(--panel-border));
             cursor: pointer;
             font-size: 13.5px;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             margin-bottom: 8px;
             transition: border-color .18s, background .18s;
             user-select: none;
         }
 
         .mc-choice:hover {
-            border-color: var(--purple-chip);
+            border-color: var(--purple-chip, var(--electric-purple));
             background: rgba(155, 93, 229, 0.05);
         }
 
         .mc-choice.selected {
-            border-color: var(--purple-chip);
+            border-color: var(--purple-chip, var(--electric-purple));
             background: rgba(155, 93, 229, 0.08);
             color: #4c1d95;
         }
@@ -1322,22 +2005,22 @@ function lUrl($subject, $moduleId, $lessonId)
             width: 26px;
             height: 26px;
             border-radius: 7px;
-            background: var(--page-surface);
-            border: 1px solid var(--page-border);
+            background: var(--page-surface, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             font-size: 11.5px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
             flex-shrink: 0;
             transition: background .18s, color .18s;
         }
 
         .mc-choice.selected .mc-letter {
-            background: var(--purple-chip);
+            background: var(--purple-chip, var(--electric-purple));
             color: #fff;
-            border-color: var(--purple-chip);
+            border-color: var(--purple-chip, var(--electric-purple));
         }
 
         .review-choice {
@@ -1346,36 +2029,35 @@ function lUrl($subject, $moduleId, $lessonId)
             gap: 11px;
             padding: 11px 14px;
             border-radius: 9px;
-            border: 1.5px solid var(--page-border);
+            border: 1.5px solid var(--page-border, var(--panel-border));
             font-size: 13.5px;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             margin-bottom: 8px;
             pointer-events: none;
         }
 
         .activity-answer {
             width: 100%;
-            background: var(--page-card);
-            border: 1.5px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border: 1.5px solid var(--page-border, var(--panel-border));
             border-radius: 9px;
             padding: 12px 14px;
             font-size: 14px;
             resize: vertical;
             min-height: 90px;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             outline: none;
             transition: border-color .2s, box-shadow .2s;
             box-sizing: border-box;
         }
 
         .activity-answer:focus {
-            border-color: var(--purple-chip);
+            border-color: var(--purple-chip, var(--electric-purple));
             box-shadow: 0 0 0 3px rgba(155, 93, 229, 0.12);
         }
 
-        /* Quiz */
         .quiz-hero-card {
-            background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+            background: linear-gradient(135deg, var(--blue-dark, var(--neon-blue)), var(--blue-mid, var(--neon-cyan)));
             border-radius: 14px;
             padding: 20px 22px;
             margin-bottom: 20px;
@@ -1447,8 +2129,8 @@ function lUrl($subject, $moduleId, $lessonId)
         }
 
         .q-card {
-            background: var(--page-card);
-            border: 1px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             border-radius: 12px;
             padding: 18px 20px;
             margin-bottom: 12px;
@@ -1460,14 +2142,14 @@ function lUrl($subject, $moduleId, $lessonId)
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .07em;
-            color: var(--blue-mid);
+            color: var(--blue-mid, var(--neon-cyan));
             margin-bottom: 7px;
         }
 
         .q-question {
             font-size: 14.5px;
             font-weight: 600;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             line-height: 1.5;
             margin-bottom: 14px;
         }
@@ -1478,43 +2160,43 @@ function lUrl($subject, $moduleId, $lessonId)
             gap: 11px;
             padding: 11px 14px;
             border-radius: 9px;
-            border: 1.5px solid var(--page-border);
+            border: 1.5px solid var(--page-border, var(--panel-border));
             cursor: pointer;
             font-size: 13.5px;
-            color: var(--page-text);
+            color: var(--page-text, var(--text-bright));
             margin-bottom: 8px;
             transition: border-color .18s, background .18s;
             user-select: none;
         }
 
         .q-choice:hover {
-            border-color: var(--blue-mid);
+            border-color: var(--blue-mid, var(--neon-cyan));
             background: rgba(0, 153, 204, 0.05);
         }
 
         .q-choice.selected {
-            border-color: var(--blue-mid);
+            border-color: var(--blue-mid, var(--neon-cyan));
             background: rgba(0, 153, 204, 0.08);
         }
 
         .q-choice.selected .choice-letter {
-            background: var(--blue-mid);
+            background: var(--blue-mid, var(--neon-cyan));
             color: #fff;
-            border-color: var(--blue-mid);
+            border-color: var(--blue-mid, var(--neon-cyan));
         }
 
         .choice-letter {
             width: 26px;
             height: 26px;
             border-radius: 7px;
-            background: var(--page-surface);
-            border: 1px solid var(--page-border);
+            background: var(--page-surface, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             font-size: 11.5px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
             flex-shrink: 0;
             transition: background .18s, color .18s;
         }
@@ -1526,15 +2208,15 @@ function lUrl($subject, $moduleId, $lessonId)
             flex-wrap: wrap;
             gap: 12px;
             margin-top: 18px;
-            background: var(--page-card);
-            border: 1px solid var(--page-border);
+            background: var(--page-card, #fff);
+            border: 1px solid var(--page-border, var(--panel-border));
             border-radius: 12px;
             padding: 14px 18px;
         }
 
         .quiz-status {
             font-size: 12.5px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
         }
 
         .quiz-nav-btns {
@@ -1546,24 +2228,24 @@ function lUrl($subject, $moduleId, $lessonId)
         .btn-qnav-prev {
             padding: 9px 18px;
             border-radius: 9px;
-            border: 1.5px solid var(--page-border);
-            background: var(--page-card);
-            color: var(--page-text);
+            border: 1.5px solid var(--page-border, var(--panel-border));
+            background: var(--page-card, #fff);
+            color: var(--page-text, var(--text-bright));
             font-size: 13px;
             font-weight: 600;
             transition: border-color .18s;
         }
 
         .btn-qnav-prev:hover {
-            border-color: var(--blue-mid);
-            color: var(--blue-mid);
+            border-color: var(--blue-mid, var(--neon-cyan));
+            color: var(--blue-mid, var(--neon-cyan));
         }
 
         .btn-qnav-next,
         .btn-submit-quiz {
             padding: 9px 20px;
             border-radius: 9px;
-            background: linear-gradient(135deg, var(--blue-dark), var(--blue-mid));
+            background: linear-gradient(135deg, var(--blue-dark, var(--neon-blue)), var(--blue-mid, var(--neon-cyan)));
             color: #fff;
             font-size: 13px;
             font-weight: 600;
@@ -1583,10 +2265,9 @@ function lUrl($subject, $moduleId, $lessonId)
 
         .page-indicator {
             font-size: 12.5px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
         }
 
-        /* Lock notice */
         .lock-notice {
             display: none;
             align-items: center;
@@ -1596,7 +2277,7 @@ function lUrl($subject, $moduleId, $lessonId)
             border-radius: 10px;
             padding: 11px 16px;
             font-size: 13px;
-            color: var(--orange-warn);
+            color: var(--orange-warn, #ff6b00);
             position: sticky;
             top: 0;
             z-index: 4;
@@ -1610,7 +2291,6 @@ function lUrl($subject, $moduleId, $lessonId)
             flex-shrink: 0;
         }
 
-        /* Lightbox */
         .db-lightbox {
             display: none;
             position: fixed;
@@ -1655,11 +2335,10 @@ function lUrl($subject, $moduleId, $lessonId)
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Empty state */
         .empty-state {
             text-align: center;
             padding: 80px 40px;
-            color: var(--page-muted);
+            color: var(--page-muted, var(--text-dim));
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -1679,14 +2358,13 @@ function lUrl($subject, $moduleId, $lessonId)
             font-size: 14px;
         }
 
-        /* Responsive */
         @media (max-width: 900px) {
-            .lessons-shell {
-                grid-template-columns: 1fr;
+            .ov-hero {
+                padding: 22px 20px 26px;
             }
 
-            .lessons-sidebar {
-                display: none;
+            .sb-lesson-list {
+                padding: 20px 16px 50px;
             }
         }
 
@@ -1706,61 +2384,166 @@ function lUrl($subject, $moduleId, $lessonId)
             .img-grid {
                 grid-template-columns: 1fr 1fr;
             }
+
+            .splash-card {
+                max-width: 320px;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="lessons-shell">
+
+    <script>
+        (function () {
+            var moduleId = <?= (int) ($moduleId ?? 0) ?>;
+            var storageKey = 'splash_dismissed_module_' + moduleId;
+            var dismissed = sessionStorage.getItem(storageKey);
+
+            var navType = 'navigate';
+            try {
+                var navEntries = performance.getEntriesByType('navigation');
+                if (navEntries && navEntries.length) {
+                    navType = navEntries[0].type;
+                } else if (performance.navigation) {
+                    navType = performance.navigation.type === 1 ? 'reload' : 'navigate';
+                }
+            } catch (e) { /* ignore, default to 'navigate' */ }
+
+            var cameFromWithinLessons = document.referrer.indexOf('url=subject_lessons') !== -1;
+
+            var shouldSkip = dismissed && (navType === 'reload' || navType === 'back_forward' || cameFromWithinLessons);
+
+            if (shouldSkip) {
+                document.documentElement.classList.add('skip-splash');
+            } else {
+                sessionStorage.removeItem(storageKey);
+            }
+        })();
+    </script>
+
+    <?php
+    $progressPct = $totalLessons > 0 ? round(($completedCount / $totalLessons) * 100) : 0;
+
+    $sbTotalSegments = 5;
+    $sbFilledSegments = (int) round(($progressPct / 100) * $sbTotalSegments);
+    $sbIsFinished = ($progressPct >= 100);
+
+    if ($progressPct <= 0) {
+        $moduleState = 'start';
+        $splashBtnLabel = 'Start Now';
+        $splashMsg = "You haven't started this module yet. Let's dive in!";
+    } elseif ($progressPct >= 100) {
+        $moduleState = 'review';
+        $splashBtnLabel = 'Module Review';
+        $splashMsg = "You've completed this module. Feel free to review any lesson, anytime.";
+    } else {
+        $moduleState = 'continue';
+        $splashBtnLabel = 'Continue Learning';
+        $splashMsg = "You're {$progressPct}% through this module — keep up the the great progress.";
+    }
+
+    $splashFirstName = 'Student';
+    if (!empty($studentName)) {
+        $nameParts = explode(' ', trim($studentName));
+        $splashFirstName = $nameParts[0];
+    }
+
+    $bonbonLessonMessage = "Welcome! I'm your learning assistant, ready to guide you through your journey!";
+
+    if (!empty($lesson)) {
+        $bonbonCleanTitle = preg_replace('/^Lesson\s*\d+\s*:\s*/i', '', $lesson['title']);
+        $bonbonIsDone = $lessonCompletion[$lessonId] ?? false;
+
+        if ($bonbonIsDone) {
+            $bonbonLessonMessage = "Nice work — you've already completed \"{$bonbonCleanTitle}\"! Feel free to review it anytime.";
+        } elseif (!empty($lesson['topic'])) {
+            $bonbonLessonMessage = "Let's dive into \"{$bonbonCleanTitle}\" — today we're covering {$lesson['topic']}!";
+        } else {
+            $bonbonLessonMessage = "Let's dive into \"{$bonbonCleanTitle}\"! I'll be right here if you need a hand.";
+        }
+    }
+    ?>
+
+    <div class="module-splash" id="moduleSplash">
+        <div class="splash-module-meta">
+            <span class="splash-module-position">
+                <i class="fa fa-book-open"></i>
+
+                Module
+                <?= $modulePosition ?> of
+                <?= $moduleTotal ?>
+            </span>
+            <h2 class="splash-module-title">
+                <?= htmlspecialchars($module['title'] ?? '') ?>
+            </h2>
+            <?php if (!empty($module['description'])): ?>
+                <p class="splash-module-desc">
+                    <?= nl2br(htmlspecialchars($module['description'])) ?>
+                </p>
+            <?php endif; ?>
+        </div>
+        <div class="splash-card">
+
+            <div class="splash-bot-icon">
+                <img src="../images/robot-lesson1.png" alt="">
+            </div>
+            <div class="speech-bubble bubble-1">
+                <strong>BonBon</strong>
+                <p id="bonbonMessage"></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="lessons-shell<?= $lesson ? ' view-lesson' : ' view-list' ?>" id="lessonsShell">
 
         <?php include("../components/offcanvas.php"); ?>
 
-        <!-- =============================================
-             LEFT SIDEBAR
-        ============================================= -->
         <aside class="lessons-sidebar">
 
-            <!-- Brand -->
-            <div class="sb-brand">
-                <!-- <div class="sb-brand-mark">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#050D14" stroke-width="2">
-                        <path d="M9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4" stroke-linecap="round" />
-                        <rect x="7" y="7" width="10" height="10" rx="1.5" />
-                    </svg>
-                </div> -->
-                <!-- <div class="sb-brand-text"> -->
-                <!-- <div class="name">iLearn<span>-CSS</span></div>
-                    <div class="sub">CSS Student Portal</div> -->
-                <!-- <img src="../images/iLearn-7.png" alt=""> -->
-                <!-- </div> -->
-                <a class="back-btn" href="/learning_management/public/?url=modules&subject=<?= urlencode($subject) ?>">
-                    <!-- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <path d="M19 12H5M11 6l-6 6 6 6" />
-                    </svg> -->
-                    <i class="fa fa-arrow-left"></i>
+            <div class="ov-hero">
+                <div class="ov-text">
+                    <a class="ov-hero-back"
+                        href="/learning_management/public/?url=modules&subject=<?= urlencode($subject) ?>">
+                        <i class="fa fa-arrow-left"></i>
+                        Back to Modules
+                    </a>
+                    <div class="ov-hero-top">
+                        <div class="ov-hero-parent">
+                            <div class="ov-hero-icon">
+                                <i class="fa fa-book-open"></i>
+                            </div>
+                            <div>
+                                <div class="ov-hero-tag">
+                                    <?= htmlspecialchars($module['subject_name'] ?? $subject) ?>
+                                </div>
+                                <div class="ov-hero-title">
+                                    <?= htmlspecialchars($module['title'] ?? '') ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ov-hero-sub">
+                        <?= $completedCount ?> of
+                        <?= $totalLessons ?> lessons completed
+                    </div>
+                    <div class="ov-hero-track">
+                        <div class="ov-hero-fill" style="width:<?= $progressPct ?>%"></div>
+                    </div>
+                </div>
+                <div class="ov-image">
+                    <div class="speech-bubble bubble-2">
+                        <strong>BonBon</strong>
 
-                    Back to Modules
-                </a>
+                        <p id="bonbonMessage2"></p>
+
+                    </div>
+                    <img src="../images/robot-ai9.png" alt="">
+                </div>
             </div>
 
-            <?php $progressPct = $totalLessons > 0 ? round(($completedCount / $totalLessons) * 100) : 0; ?>
-
-            <!-- Progress -->
-            <div class="sb-progress-block">
-                <h5><?= htmlspecialchars($module['title'] ?? '') ?></h5>
-                <div class="sb-progress-label">
-                    <span class="pl-title">Module Progress</span>
-                    <span class="pl-pct" id="progressPercent"><?= $progressPct ?>%</span>
-                </div>
-                <div class="sb-bar-track">
-                    <div class="sb-bar-fill" id="progressBar" style="width:<?= $progressPct ?>%"></div>
-                </div>
-            </div>
-
-            <!-- ── Sidebar Nav ── -->
             <div class="sb-lesson-list">
 
-                <!-- LESSONS -->
                 <div class="sb-nav-group-label">Lessons</div>
                 <?php foreach ($lessons as $i => $l):
                     $isActive = ($l['id'] == $lessonId);
@@ -1769,34 +2552,29 @@ function lUrl($subject, $moduleId, $lessonId)
                     $dotClass = $isActive ? 'active-dot' : ($isDone ? 'done' : 'pending');
                     $itemClass = $isActive ? 'active' : '';
                     ?>
-                    <a class="sb-nav-item <?= $itemClass ?>" href="<?= lUrl($subject, $moduleId, $l['id']) ?>">
+                    <a class="sb-nav-item <?= $itemClass ?><?= $isDone ? ' sb-nav-done' : '' ?>"
+                        href="<?= lUrl($subject, $moduleId, $l['id']) ?>" style="animation-delay: <?= $i * 0.06 ?>s;">
                         <div class="sb-nav-icon icon-type-lesson <?= $dotClass ?>">
                             <?php if ($isDone): ?>
-                                <!-- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                    <path d="M20 6L9 17l-5-5" />
-                                </svg> -->
                                 <i class="fa fa-check"></i>
                             <?php else: ?>
-                                <!-- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                                </svg> -->
                                 <i class="fa fa-book-open"></i>
                             <?php endif; ?>
                         </div>
                         <div class="sb-nav-info">
-                            <div class="sb-nav-title">Lesson <?= $i + 1 ?>: <?= htmlspecialchars($rawTitle) ?></div>
+                            <div class="sb-nav-title">
+                                Lesson <?= $i + 1 ?>: <?= htmlspecialchars($rawTitle) ?>
+                                <?php if ($isDone): ?>
+                                    <span class="sb-nav-done-badge"><i class="fa fa-check"></i> Done</span>
+                                <?php endif; ?>
+                            </div>
                             <div class="sb-nav-meta"><?= $isDone ? 'Completed' : 'Not started' ?></div>
                         </div>
-                        <?php if ($isDone): ?>
-                            <div class="sb-nav-check sb-nav-check-done">
-                                <!-- <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="10"
-                                    height="10">
-                                    <path d="M20 6L9 17l-5-5" />
-                                </svg> -->
-                                <i class="fa fa-check"></i>
-                            </div>
-                        <?php endif; ?>
+                        <span class="sb-nav-chevron">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <path d="M9 6l6 6-6 6" />
+                            </svg>
+                        </span>
                     </a>
                 <?php endforeach; ?>
 
@@ -1804,7 +2582,6 @@ function lUrl($subject, $moduleId, $lessonId)
 
             </div><!-- /sb-lesson-list -->
 
-            <!-- Footer user -->
             <div class="sb-footer">
                 <div class="sb-user">
                     <div class="sb-avatar">
@@ -1825,123 +2602,50 @@ function lUrl($subject, $moduleId, $lessonId)
             </div>
         </aside>
 
-        <!-- =============================================
-             MAIN CONTENT
-        ============================================= -->
         <div class="lessons-main">
 
-            <!-- TOP NAV BAR -->
-            <div class="lessons-topbar">
-                <div class="topbar-left">
-                    <!-- <a class="back-btn"
-                        href="/learning_management/public/?url=modules&subject=<?= urlencode($subject) ?>">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                            <path d="M19 12H5M11 6l-6 6 6 6" />
-                        </svg>
-                        Back to Modules
-                    </a> -->
-                    <!-- <div class="topbar-breadcrumb">
-                        <span class="sep">›</span>
-                        <span><?= htmlspecialchars($module['title'] ?? '') ?></span>
-                    </div> -->
-                </div>
-                <div class="topbar-right">
-                    <?php if ($lesson): ?>
-                        <?php if ($prevLessonId): ?>
-                            <a class="topbar-nav-btn btn-prev-top" href="<?= lUrl($subject, $moduleId, $prevLessonId) ?>"
-                                id="prevBtn">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"
-                                    height="14">
-                                    <path d="M19 12H5M11 6l-6 6 6 6" />
-                                </svg>
-                                Prev
-                            </a>
-                        <?php endif; ?>
-
-                        <?php if ($nextLessonId): ?>
-                            <a class="topbar-nav-btn btn-next-top" href="<?= lUrl($subject, $moduleId, $nextLessonId) ?>"
-                                id="nextBtn">
-                                Next
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"
-                                    height="14">
-                                    <path d="M5 12h14M13 6l6 6-6 6" />
-                                </svg>
-                            </a>
-                        <?php else: ?>
-                            <?php
-                            $studentModel2 = new Students();
-                            $lastLessonDone = $studentId ? $studentModel2->isLessonCompleted($lessonId, $studentId) : false;
-                            ?>
-                            <?php if ($lastLessonDone): ?>
-                                <span class="topbar-nav-btn btn-completed-top" id="nextBtn">
-                                    Completed
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"
-                                        height="14">
-                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                        <path d="M22 4L12 14.01l-3-3" />
-                                    </svg>
-                                </span>
-                            <?php else: ?>
-                                <button class="topbar-nav-btn btn-next-top" id="nextBtn" type="button">
-                                    Finish
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"
-                                        height="14">
-                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                        <path d="M22 4L12 14.01l-3-3" />
-                                    </svg>
-                                </button>
-                            <?php endif; ?>
-                        <?php endif; ?>
-                    <?php endif; ?>
-
-                    <!-- <div class="bell-wrap">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-                            <path d="M13.7 21a2 2 0 0 1-3.4 0" />
-                        </svg>
-                        <span class="bell-dot"></span>
-                    </div>
-                    <div class="top-avatar"><?= htmlspecialchars($initials ?? 'MA') ?></div> -->
-                </div>
-            </div>
-
-            <!-- MODULE HERO -->
-            <!-- <div class="module-hero">
-                <div class="module-hero-banner"></div>
-                <div class="module-hero-body">
-                    <div class="module-hero-left">
-                        <div class="module-hero-tag">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                            </svg>
-                            <?= htmlspecialchars($module['subject_name'] ?? 'Module') ?>
+            <?php if ($lesson):
+                $heroCleanTitle = preg_replace('/^Lesson\s*\d+\s*:\s*/i', '', $lesson['title']);
+                ?>
+                <div class="ov-hero lesson-hero">
+                    <div class="lesson-hero-text">
+                        <button type="button" class="ov-hero-back js-back-to-list">
+                            <i class="fa fa-arrow-left"></i>
+                            Lessons
+                        </button>
+                        <div class="ov-hero-top">
+                            <div class="ov-parent-lesson">
+                                <div class="ov-hero-icon">
+                                    <i class="fa fa-book-open"></i>
+                                </div>
+                                <div>
+                                    <div class="ov-hero-tag">Lesson
+                                        <?= $currentIndex ?> ·
+                                        <?= htmlspecialchars($module['title'] ?? '') ?>
+                                    </div>
+                                    <div class="ov-hero-title">
+                                        <?= htmlspecialchars($heroCleanTitle) ?>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <h2 class="module-hero-title"><?= htmlspecialchars($module['title'] ?? '') ?></h2>
                         <?php if (!empty($module['description'])): ?>
-                            <p class="module-hero-desc"><?= nl2br(htmlspecialchars($module['description'])) ?></p>
+                            <div class="ov-hero-sub">
+                                <?= htmlspecialchars($module['description']) ?>
+                            </div>
                         <?php endif; ?>
                     </div>
-                    <div class="module-hero-right">
-                        <div class="hero-stat">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                            </svg>
-                            <span><span class="hero-stat-num"><?= $totalLessons ?></span> Lessons</span>
+
+                    <div class="robot-page">
+                        <div class="speech-bubble bubble-3">
+                            <strong>BonBon</strong>
+                            <p id="bonbonMessage3"></p>
                         </div>
-                        <div class="hero-stat">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                <path d="M22 4L12 14.01l-3-3" />
-                            </svg>
-                            <span><span class="hero-stat-num"><?= $completedCount ?></span> Completed</span>
-                        </div>
+                        <img src="../images/robot-ai10.png" alt="">
                     </div>
                 </div>
-            </div> -->
+            <?php endif; ?>
 
-            <!-- LESSON CONTENT -->
             <div class="lessons-content-wrap">
 
                 <?php if (!$lesson): ?>
@@ -1955,9 +2659,9 @@ function lUrl($subject, $moduleId, $lessonId)
 
                 <?php else:
                     $cleanTitle = preg_replace('/^Lesson\s*\d+\s*:\s*/i', '', $lesson['title']);
+                    $isCurrentLessonDone = $lessonCompletion[$lessonId] ?? false;
                     ?>
 
-                    <!-- LESSON TITLE -->
                     <div class="lesson-title-row">
                         <span class="lesson-num-badge">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11"
@@ -1967,77 +2671,102 @@ function lUrl($subject, $moduleId, $lessonId)
                             </svg>
                             Lesson <?= $currentIndex ?>
                         </span>
-                        <h3 class="lesson-main-title" id="lesson-title"><?= htmlspecialchars($cleanTitle) ?></h3>
+                        <h3 class="lesson-main-title" id="lesson-title">
+                            <?= htmlspecialchars($cleanTitle) ?>
+                        </h3>
                     </div>
 
-                    <!-- 1. LESSON TEXT -->
-                    <?php if (!empty($lesson['content'])): ?>
-                        <div class="ls-section">
-                            <div class="ls-section-head">
-                                <div class="ls-section-divider"></div>
-                            </div>
-                            <h4><?= htmlspecialchars($lesson['topic']) ?></h4>
-                            <div class="lesson-text-card">
-                                <?= nl2br(htmlspecialchars($lesson['content'])) ?>
-                            </div>
-                        </div>
-                    <?php endif; ?>
+                    <?php if (!empty($contentBlocks)): ?>
+                        <div class="ls-section" id="section-content">
+                            <?php if (!empty($lesson['topic'])): ?>
+                                <h4><?= htmlspecialchars($lesson['topic']) ?></h4>
+                            <?php endif; ?>
 
-                    <!-- 2. VIDEOS -->
-                    <?php if (!empty($videos)): ?>
-                        <div class="ls-section" id="section-videos">
-                            <div class="ls-section-head">
-                                <div class="ls-section-icon icon-video">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M23 7l-7 5 7 5V7z" />
-                                        <rect x="1" y="5" width="15" height="14" rx="2" />
-                                    </svg>
-                                </div>
-                                <span class="ls-section-title">Videos</span>
-                                <div class="ls-section-divider"></div>
-                                <span class="ls-section-count"><?= count($videos) ?></span>
-                            </div>
-                            <?php foreach ($videos as $vid): ?>
-                                <div class="video-card">
-                                    <div class="video-card-banner"></div>
-                                    <iframe src="<?= htmlspecialchars(youtubeEmbed($vid['file_path'])) ?>" allowfullscreen
-                                        loading="lazy"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-                                    </iframe>
-                                    <?php if (!empty($vid['title'])): ?>
-                                        <div class="video-card-info">
-                                            <div class="video-type-icon">
+                            <?php foreach ($contentBlocks as $block): ?>
+
+                                <?php if ($block['type'] === 'text' && trim($block['body'] ?? '') !== ''): ?>
+                                    <div class="lesson-text-card">
+                                        <?php if (!empty($block['title'])): ?>
+                                            <h4 class="lesson-text-block-title" style="margin-bottom:8px;">
+                                                <?= htmlspecialchars($block['title']) ?>
+                                            </h4>
+                                        <?php endif; ?>
+                                        <?= nl2br(htmlspecialchars($block['body'])) ?>
+                                    </div>
+
+                                    <?php if (!empty($block['key_idea'])): ?>
+                                        <div class="callout info d-flex align-items-center">
+                                            <div class="callout-icon">
                                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M23 7l-7 5 7 5V7z" />
-                                                    <rect x="1" y="5" width="15" height="14" rx="2" />
+                                                    <circle cx="12" cy="12" r="10" />
+                                                    <path d="M12 16v-4M12 8h.01" />
                                                 </svg>
                                             </div>
-                                            <span class="video-card-title"><?= htmlspecialchars($vid['title']) ?></span>
+                                            <div class="callout-body">
+                                                <p class="m-0"><strong>Key idea:</strong> <?= nl2br(htmlspecialchars($block['key_idea'])) ?>
+                                                </p>
+                                            </div>
                                         </div>
                                     <?php endif; ?>
-                                </div>
+
+                                <?php elseif ($block['type'] === 'image'): ?>
+                                    <div class="img-item" onclick="dbLightbox('<?= htmlspecialchars($block['file_path']) ?>')">
+                                        <img src="<?= htmlspecialchars($block['file_path']) ?>"
+                                            alt="<?= htmlspecialchars($block['title'] ?? '') ?>" loading="lazy">
+                                        <?php if (!empty($block['title'])): ?>
+                                            <div class="img-item-cap"><?= htmlspecialchars($block['title']) ?></div>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <?php
+                                    /* =====================================================
+                                       FIX: VIDEO BLOCK — GUARDED AGAINST FATAL ERROR
+                                       -----------------------------------------------------
+                                       Previously this called
+                                       htmlspecialchars(youtubeEmbed($block['file_path']))
+                                       directly. If $block['file_path'] was empty/malformed,
+                                       or youtubeEmbed() returned null for any reason,
+                                       htmlspecialchars() would throw a fatal TypeError in
+                                       PHP 8+ ("must be of type string, null given"). That
+                                       fatal halted the whole script mid-render, which is why
+                                       everything AFTER this point on the page — flashcards,
+                                       activities, quiz, bottom nav, and every <script> tag
+                                       including the BonBon typewriter and the "Lessons" back
+                                       button handler — never reached the browser on lessons
+                                       that contain a video block.
+
+                                       Fix: skip the block entirely (instead of fataling) if
+                                       there's no file_path, or if youtubeEmbed() can't
+                                       produce a valid embed URL for it.
+                                    ===================================================== */
+                                    ?>
+                                <?php elseif ($block['type'] === 'video' && !empty($block['file_path'])):
+                                    $embedUrl = youtubeEmbed($block['file_path']);
+                                    if (!empty($embedUrl)): ?>
+                                        <div class="video-card" style="margin-bottom:16px;">
+                                            <div class="video-card-banner"></div>
+                                            <iframe src="<?= htmlspecialchars($embedUrl) ?>" allowfullscreen loading="lazy"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                                            </iframe>
+                                            <?php if (!empty($block['title'])): ?>
+                                                <div class="video-card-info">
+                                                    <div class="video-type-icon">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                            <path d="M23 7l-7 5 7 5V7z" />
+                                                            <rect x="1" y="5" width="15" height="14" rx="2" />
+                                                        </svg>
+                                                    </div>
+                                                    <span class="video-card-title"><?= htmlspecialchars($block['title']) ?></span>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                    <?php endif;
+                                endif; ?>
+
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
 
-                    <!-- 3. IMAGES -->
-                    <?php if (!empty($images)): ?>
-                        <div class="ls-section" id="section-images">
-                            <div class="img-grid">
-                                <?php foreach ($images as $img): ?>
-                                    <div class="img-item" onclick="dbLightbox('<?= htmlspecialchars($img['file_path']) ?>')">
-                                        <img src="<?= htmlspecialchars($img['file_path']) ?>"
-                                            alt="<?= htmlspecialchars($img['title'] ?? '') ?>" loading="lazy">
-                                        <?php if (!empty($img['title'])): ?>
-                                            <div class="img-item-cap"><?= htmlspecialchars($img['title']) ?></div>
-                                        <?php endif; ?>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-
-                    <!-- 4. FLASHCARDS -->
                     <?php if (!empty($flashcards)): ?>
                         <div class="ls-section" id="section-flashcards">
                             <div class="ls-section-head">
@@ -2085,7 +2814,6 @@ function lUrl($subject, $moduleId, $lessonId)
                         </div>
                     <?php endif; ?>
 
-                    <!-- 5. ACTIVITIES -->
                     <?php if (!empty($activityData)): ?>
                         <div class="ls-section" id="section-activities">
                             <div class="ls-section-head">
@@ -2224,7 +2952,6 @@ function lUrl($subject, $moduleId, $lessonId)
                         </div>
                     <?php endif; ?>
 
-                    <!-- 6. QUIZZES -->
                     <?php if (!empty($quizData)): ?>
                         <?php
                         $allQzQuestions = [];
@@ -2420,12 +3147,64 @@ function lUrl($subject, $moduleId, $lessonId)
                     <?php endif; ?>
 
                 <?php endif; /* end $lesson check */ ?>
+
+                <?php if ($lesson): ?>
+                    <div class="lesson-bottom-nav">
+                        <?php if ($prevLessonId): ?>
+                            <a class="topbar-nav-btn btn-prev-top" href="<?= lUrl($subject, $moduleId, $prevLessonId) ?>"
+                                id="prevBtn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20"
+                                    height="20">
+                                    <path d="M19 12H5M11 6l-6 6 6 6" />
+                                </svg>
+                                Prev
+                            </a>
+                        <?php else: ?>
+                            <span></span>
+                        <?php endif; ?>
+
+                        <?php if ($nextLessonId): ?>
+                            <a class="topbar-nav-btn btn-next-top" href="<?= lUrl($subject, $moduleId, $nextLessonId) ?>"
+                                id="nextBtn">
+                                Next
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20"
+                                    height="20">
+                                    <path d="M5 12h14M13 6l6 6-6 6" />
+                                </svg>
+                            </a>
+                        <?php else: ?>
+                            <?php $lastLessonDone = $isCurrentLessonDone ?? ($lessonCompletion[$lessonId] ?? false); ?>
+                            <?php if ($lastLessonDone): ?>
+                                <span class="topbar-nav-btn btn-completed-top" id="nextBtn">
+                                    Completed
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"
+                                        height="14">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                        <path d="M22 4L12 14.01l-3-3" />
+                                    </svg>
+                                </span>
+                            <?php else: ?>
+                                <button class="topbar-nav-btn btn-next-top" id="nextBtn" type="button">
+                                    Finish
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"
+                                        height="14">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                        <path d="M22 4L12 14.01l-3-3" />
+                                    </svg>
+                                </button>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
+
             </div><!-- /lessons-content-wrap -->
 
-        </div><!-- /lessons-main -->
+
+        </div><!-- /lessons-content-wrap -->
+
+    </div><!-- /lessons-main -->
     </div><!-- /lessons-shell -->
 
-    <!-- LIGHTBOX -->
     <div class="db-lightbox" id="dbLightbox" onclick="dbLightboxClose()">
         <button class="db-lightbox-close" onclick="dbLightboxClose()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
@@ -2435,7 +3214,138 @@ function lUrl($subject, $moduleId, $lessonId)
         <img id="dbLightboxImg" src="" alt="">
     </div>
 
-    <!-- PHP data for lessons.js -->
+    <noscript>
+        <style>
+            .module-splash {
+                display: none;
+            }
+
+            .lessons-shell {
+                opacity: 1;
+            }
+        </style>
+    </noscript>
+
+    <script>
+        function startBonbonBubble3Typewriter() {
+            const el = document.getElementById('bonbonMessage3');
+            if (!el || el.dataset.typed) return;
+            el.dataset.typed = '1';
+
+            const message = <?= json_encode($bonbonLessonMessage) ?>;
+            const speed = 28;
+            let i = 0;
+
+            const cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+            el.appendChild(cursor);
+
+            function type() {
+                if (i < message.length) {
+                    cursor.insertAdjacentText('beforebegin', message.charAt(i));
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    setTimeout(() => cursor.remove(), 1200);
+                }
+            }
+            type();
+        }
+
+        document.addEventListener('DOMContentLoaded', startBonbonBubble3Typewriter);
+    </script>
+
+    <script>
+        function startBonbonBubble2Typewriter() {
+            const el = document.getElementById('bonbonMessage2');
+            if (!el || el.dataset.typed) return;
+            el.dataset.typed = '1';
+
+            const message = "Ready to learn something new? Every lesson is an opportunity to build your knowledge and improve your skills. Stay curious, complete the activities and quizzes.";
+            const speed = 28;
+            let i = 0;
+
+            const cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+            el.appendChild(cursor);
+
+            function type() {
+                if (i < message.length) {
+                    cursor.insertAdjacentText('beforebegin', message.charAt(i));
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    setTimeout(() => cursor.remove(), 1200);
+                }
+            }
+            type();
+        }
+
+        document.addEventListener('DOMContentLoaded', startBonbonBubble2Typewriter);
+    </script>
+
+    <script>
+        (function () {
+
+            const el = document.getElementById("bonbonMessage");
+
+            const message = <?= json_encode("Welcome back, $splashFirstName! $splashMsg") ?>;
+
+            let i = 0;
+            const speed = 30;
+
+            function type() {
+
+                if (i < message.length) {
+
+                    el.textContent += message.charAt(i);
+                    i++;
+
+                    setTimeout(type, speed);
+
+                } else {
+
+                    el.insertAdjacentHTML("afterend", `
+                    <div class="speech-bubble-progress">
+                        <div class="sb-progress-row">
+                            <span class="sbp-label">Progress</span>
+                            <span class="sbp-pct" style="color:<?= $moduleState !== 'continue' ? 'var(--neon-cyan)' : '#ff7a00' ?>;"><?= $progressPct ?>%</span>
+                        </div>
+                        <div class="sbp-segments">
+                            <?php for ($i = 1; $i <= $sbTotalSegments; $i++): ?>
+                                <div class="sbp-segment<?= $i <= $sbFilledSegments ? ' filled' . ($sbIsFinished ? ' completed' : '') : '' ?>"></div>
+                            <?php endfor; ?>
+                        </div>
+                    </div>
+
+                    <button type="button"
+                            class="splash-btn state-<?= htmlspecialchars($moduleState) ?>"
+                            id="splashContinueBtn"
+                            data-state="<?= htmlspecialchars($moduleState) ?>">
+                        <span><?= htmlspecialchars($splashBtnLabel) ?></span>
+                        <i class="fa fa-arrow-right"></i>
+                    </button>
+                    `);
+
+                    requestAnimationFrame(function () {
+                        var fill = document.getElementById('sbProgressFill');
+                        if (!fill) return;
+                        requestAnimationFrame(function () {
+                            fill.style.width = "<?= $progressPct ?>%";
+                        });
+                    });
+
+                }
+
+            }
+
+            if (!document.documentElement.classList.contains('skip-splash')) {
+                type();
+            }
+
+        })();
+    </script>
+
     <script>
         var LESSON_DATA = {
             lessonId: <?= (int) $lessonId ?>,
@@ -2472,7 +3382,6 @@ function lUrl($subject, $moduleId, $lessonId)
             }, $quizData))) ?>
         };
 
-        /* Smooth scroll helper — scrolls inside .lessons-main, not window */
         function scrollToSection(id) {
             var el = document.getElementById(id);
             if (!el) return;
@@ -2484,6 +3393,78 @@ function lUrl($subject, $moduleId, $lessonId)
                 el.scrollIntoView({ behavior: 'smooth' });
             }
         }
+    </script>
+
+    <script>
+        (function () {
+            var splash = document.getElementById('moduleSplash');
+            var shell = document.getElementById('lessonsShell');
+
+            if (!splash || !shell) return;
+
+            splash.addEventListener('click', function (e) {
+                var btn = e.target.closest('#splashContinueBtn');
+                if (!btn) return;
+
+                sessionStorage.setItem('splash_dismissed_module_<?= (int) $moduleId ?>', '1');
+
+                splash.classList.add('splash-exit');
+                setTimeout(function () {
+                    splash.style.display = 'none';
+                    shell.classList.add('shell-visible');
+                    startBonbonBubble2Typewriter();
+                    startBonbonBubble3Typewriter();
+                }, 460);
+            });
+        })();
+    </script>
+
+    <script>
+        (function () {
+            var moduleId = <?= (int) ($moduleId ?? 0) ?>;
+            var viewKey = 'lessons_view_module_' + moduleId;
+            var shell = document.getElementById('lessonsShell');
+            var backBtns = document.querySelectorAll('.js-back-to-list');
+
+            if (!shell) return;
+
+            function applyView(view) {
+                shell.classList.remove('view-list', 'view-lesson');
+                shell.classList.add(view === 'lesson' ? 'view-lesson' : 'view-list');
+                if (view === 'lesson') {
+                    startBonbonBubble3Typewriter();
+                }
+            }
+
+            var savedView = sessionStorage.getItem(viewKey) || 'list';
+            applyView(savedView);
+
+            document.querySelectorAll('.sb-nav-item').forEach(function (item) {
+                item.addEventListener('click', function (e) {
+                    sessionStorage.setItem(viewKey, 'lesson');
+                    if (item.classList.contains('active')) {
+                        e.preventDefault();
+                        applyView('lesson');
+                    }
+                });
+            });
+
+            ['prevBtn', 'nextBtn'].forEach(function (id) {
+                var el = document.getElementById(id);
+                if (el && el.tagName === 'A') {
+                    el.addEventListener('click', function () {
+                        sessionStorage.setItem(viewKey, 'lesson');
+                    });
+                }
+            });
+
+            backBtns.forEach(function (backBtn) {
+                backBtn.addEventListener('click', function () {
+                    sessionStorage.setItem(viewKey, 'list');
+                    applyView('list');
+                });
+            });
+        })();
     </script>
 
     <?php $hasActiveQuiz = !empty($quizData) && isset($firstQzDone) && !$firstQzDone; ?>
@@ -2534,7 +3515,6 @@ function lUrl($subject, $moduleId, $lessonId)
         </script>
     <?php endif; ?>
 
-    <!-- <script src="../js_folder/lessons.js"></script> -->
     <script src="../js_folder/lessons.js?v=<?= time() ?>"></script>
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
 </body>

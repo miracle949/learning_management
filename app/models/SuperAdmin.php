@@ -150,27 +150,49 @@ class SuperAdmin extends Model
         return $row ? $row['id'] : null;
     }
 
-    public function insertLesson($interactiveModuleId, $title, $topic, $content)
+    public function insertLesson($interactiveModuleId, $title, $topic)
     {
         $existingId = $this->getLessonByTitle($interactiveModuleId, $title);
         if ($existingId)
             return ['id' => $existingId, 'existed' => true];
 
         $stmt = $this->db->prepare("
-            INSERT INTO tbl_lessons (interactive_module_id, title, topic, content)
-            VALUES (?, ?, ?, ?)
-        ");
-        $stmt->bind_param("isss", $interactiveModuleId, $title, $topic, $content);
+        INSERT INTO tbl_lessons (interactive_module_id, title, topic)
+        VALUES (?, ?, ?)
+    ");
+        $stmt->bind_param("iss", $interactiveModuleId, $title, $topic);
         $stmt->execute();
         return ['id' => $this->db->insert_id, 'existed' => false];
     }
 
     // ============================================================
+// LESSON CONTENT — replaces the old per-block 'text' rows in
+// tbl_interactive_contents. All text blocks for a lesson are
+// concatenated (in block order) and stored on the lesson itself.
+// ============================================================
+    public function updateLessonContent($lessonId, $content)
+    {
+        $stmt = $this->db->prepare("UPDATE tbl_lessons SET content = ? WHERE id = ?");
+        $stmt->bind_param("si", $content, $lessonId);
+        $stmt->execute();
+    }
+
+    // ============================================================
     // INTERACTIVE CONTENTS (moved from Teacher.php)
+    // ------------------------------------------------------------
+    // FIX (see notes below the class): the bind_param() type string
+    // previously had 3 'i's in a row ("...iii...") instead of 2,
+    // which shifted $cardFront (a string) into an integer slot —
+    // silently corrupting/zeroing flashcard front text on every
+    // insert. Also added explicit prepare()/execute() error checks
+    // so a schema mismatch throws instead of failing silently and
+    // still reporting "save_success" back to the admin.
     // ============================================================
     public function insertInteractiveContent($lessonId, $type, $data = [])
     {
         $title = $data['title'] ?? null;
+        $body = $data['body'] ?? null;
+        $keyIdea = $data['key_idea'] ?? null;
         $instructions = $data['instructions'] ?? null;
         $question = $data['question'] ?? null;
         $questionType = $data['question_type'] ?? null;
@@ -190,32 +212,48 @@ class SuperAdmin extends Model
         $fileType = $data['file_type'] ?? null;
 
         $stmt = $this->db->prepare("
-            INSERT INTO tbl_interactive_contents (
-                lesson_id, type, title, instructions,
-                question, question_type,
-                choice_a, choice_b, choice_c, choice_d,
-                correct_ans, model_answer,
-                passing_score, total_points,
-                card_front, card_back, card_type,
-                file_path, file_name, file_type,
-                created_at
-            ) VALUES (
-                ?, ?, ?, ?,
-                ?, ?,
-                ?, ?, ?, ?,
-                ?, ?,
-                ?, ?,
-                ?, ?, ?,
-                ?, ?, ?,
-                NOW()
-            )
-        ");
+        INSERT INTO tbl_interactive_contents (
+            lesson_id, type, title, body, key_idea, instructions,
+            question, question_type,
+            choice_a, choice_b, choice_c, choice_d,
+            correct_ans, model_answer,
+            passing_score, total_points,
+            card_front, card_back, card_type,
+            file_path, file_name, file_type,
+            created_at
+        ) VALUES (
+            ?, ?, ?, ?, ?, ?,
+            ?, ?,
+            ?, ?, ?, ?,
+            ?, ?,
+            ?, ?,
+            ?, ?, ?,
+            ?, ?, ?,
+            NOW()
+        )
+    ");
 
+        if (!$stmt) {
+            throw new \RuntimeException(
+                'insertInteractiveContent: prepare() failed — ' . $this->db->error
+            );
+        }
+
+        // lessonId(i), type(s), title(s), body(s), key_idea(s), instructions(s),
+        // question(s), question_type(s), choice_a(s), choice_b(s),
+        // choice_c(s), choice_d(s), correct_ans(s), model_answer(s)
+        //   -> 1 i + 13 s
+        // passing_score(i), total_points(i)              -> 2 i
+        // card_front(s), card_back(s), card_type(s),
+        // file_path(s), file_name(s), file_type(s)        -> 6 s
+        // Total: 22 params: "i" + "s"x13 + "i"x2 + "s"x6
         $stmt->bind_param(
-            "isssssssssssiiisssss",
+            "isssssssssssssiissssss",
             $lessonId,
             $type,
             $title,
+            $body,
+            $keyIdea,
             $instructions,
             $question,
             $questionType,
@@ -235,7 +273,12 @@ class SuperAdmin extends Model
             $fileType
         );
 
-        $stmt->execute();
+        if (!$stmt->execute()) {
+            throw new \RuntimeException(
+                'insertInteractiveContent: execute() failed — ' . $stmt->error
+            );
+        }
+
         return $this->db->insert_id;
     }
 
