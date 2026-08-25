@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher</title>
     <link rel="stylesheet" href="../css_folder/teacher.css">
+    <link rel="stylesheet" href="../css_folder/components.css">
     <!-- <link rel="stylesheet" href="../css_folder/components.css"> -->
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
@@ -44,25 +45,40 @@
                                         </a>
                                     </div> -->
 
-            <?php include("../teacher_folder/nav.php"); ?>
-
             <main>
 
+                <div class="welcome-nav">
+                    <div class="welcome-nav-text">
+                        <h2>Teacher Dashboard</h2>
+                        <p>Wednesday, June 18, 2026 · CSS Batch 2026</p>
+                    </div>
+                    <div class="welcome-nav-acc">
+
+                    </div>
+                </div>
+
                 <div class="welcome-banner">
-                    <h2>Welcome, <?= htmlspecialchars($teacherInfo['name']) ?>! 👋</h2>
-                    <p>Good Day Teacher!</p>
+                    <div class="welcome-banner-text">
+                        <h2>Hello, Welcome Teacher
+                            <?= htmlspecialchars($teacherInfo['name']) ?> - Good Day!👋
+                        </h2>
+                        <p>Your guidance today can make a difference in every student's learning journey.</p>
+                    </div>
                 </div>
 
                 <div class="parent-card">
 
-                    <!-- TOTAL CLASSES -->
+                    <!-- TOTAL STUDENTS -->
                     <div class="card-box">
                         <a href="/learning_management/public/?url=classes_teacher">
                             <div class="card-text">
-                                <span>Total Classes</span>
+                                <span>Total Students</span>
                                 <p>
                                     <?= (int) ($stats['total_classes'] ?? 0) ?>
                                 </p>
+                                <div class="stat-data">
+                                    Across all classes
+                                </div>
                             </div>
                             <div class="card-icon">
                                 <i class="fa fa-graduation-cap"></i>
@@ -70,26 +86,58 @@
                         </a>
                     </div>
 
-                    <!-- TOTAL STUDENTS -->
+                    <!-- Pending Submission -->
                     <div class="card-box">
-                        <div class="card-text">
-                            <span>Total Students</span>
-                            <p><?= (int)($totalStudents ?? 0) ?></p>
-                        </div>
-                        <div class="card-icon">
-                            <i class="fa fa-users"></i>
-                        </div>
+                        <a href="#">
+                            <div class="card-text">
+                                <span>Pending Submission</span>
+                                <p>
+                                    <?= (int) ($totalStudents ?? 0) ?>
+                                </p>
+                                <div class="stat-data">
+                                    Awaiting your review
+                                </div>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fa fa-users"></i>
+                            </div>
+                        </a>
                     </div>
 
-                    <!-- SUBMITTED ASSIGNMENTS -->
+                    <!-- UPCOMING ACTIVITIES -->
                     <div class="card-box">
-                        <div class="card-text">
-                            <span>Submitted Assignments</span>
-                            <p><?= (int) ($submittedCount ?? 0) ?></p>
-                        </div>
-                        <div class="card-icon">
-                            <i class="fa fa-book-open"></i>
-                        </div>
+                        <a href="#">
+                            <div class="card-text">
+                                <span>Upcoming Dues</span>
+                                <p>
+                                    <?= (int) ($submittedCount ?? 0) ?>
+                                </p>
+                                <div class="stat-data">
+                                    Due next 7 days
+                                </div>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fa fa-book-open"></i>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- OVER-ALL CLASS AVERAGE -->
+                    <div class="card-box">
+                        <a href="/learning_management/public/?url=classes_teacher">
+                            <div class="card-text">
+                                <span>Overall Class Average</span>
+                                <p>
+                                    <?= (int) ($stats['total_classes'] ?? 0) ?>
+                                </p>
+                                <div class="stat-data">
+                                    Across all classes
+                                </div>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fa fa-graduation-cap"></i>
+                            </div>
+                        </a>
                     </div>
 
                 </div>

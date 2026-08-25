@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($subject['subject_name'] ?? 'Create Module') ?></title>
     <link rel="stylesheet" href="../css_folder/create_module.css">
+    <link rel="stylesheet" href="../css_folder/create_activities_blocks.css">
+    <link rel="stylesheet" href="../css_folder/components.css">
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
 </head>
@@ -15,7 +17,6 @@
         <?php include("sidebar.php") ?>
 
         <div class="rightbar">
-            <?php include("nav.php") ?>
             <main>
 
                 <?php if ($subject): ?>
@@ -95,7 +96,7 @@
 
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
     <!-- Reuse the same lesson.js — it targets #addModuleBtn and #contentContainer -->
-    <script src="../teacher_folder/lesson_folder/lesson.js"></script>
+    <script src="../teacher_folder/create_module_folder/create_module.js"></script>
 </body>
 
 </html>

@@ -29,32 +29,73 @@
             text-decoration: underline;
         }
 
-        .av-header-card {
+        /* .av-header-card {
             background: #fff;
             border: 1px solid #E2E8E5;
             border-radius: 12px;
             box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
-        }
+        } */
 
-        .av-header-top {
+        /* .av-header-top {
             display: flex;
             align-items: flex-start;
             gap: 1.2rem;
             padding: 2rem 1.8rem 0rem 1.8rem;
             width: 100%;
+        } */
+
+        .mv-attachments-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .av-header-card {
+            margin: 15px 0 0;
+        }
+
+        .av-header-top {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            border: 1px solid var(--border);
+            background-color: var(--neon-cyan);
+            padding: 2rem;
+            /* padding: 2rem 1.8rem 0rem 1.8rem; */
+            width: 100%;
+            border-radius: 20px;
+        }
+
+        .av-header-top::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 26px);
+            pointer-events: none;
         }
 
         .av-header-icon {
-            width: 52px;
-            height: 52px;
-            min-width: 52px;
-            border-radius: 50%;
-            background-color: #E8F5EE;
+            width: 54px;
+            height: 54px;
+            /* min-width: 52px; */
+            /* border-radius: 50%;
+            background-color: #E8F5EE; */
+            /* background-color: var(--neon-cyan); */
+            background-color: #ffffff;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--green);
+            color: var(--neon-cyan);
             font-size: 22px;
+        }
+
+        .av-body-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+
         }
 
         .av-header-info {
@@ -63,18 +104,27 @@
 
         .av-header-info small {
             font-size: 12px;
-            color: #aaa;
-            font-weight: 600;
+            /* color: var(--neon-cyan); */
+            color: #ffffff;
+            font-weight: 500;
             display: block;
-            margin-bottom: 4px;
+            margin: 0 0 6px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .divider {
+            font-size: 13.5px;
+            color: #ffffff;
         }
 
         .av-header-info h2 {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 800;
-            color: #1a1a1a;
-            margin: 0 0 0px;
-            line-height: 1.4;
+            font-family: "Orbitron", sans-serif;
+            /* color: #1a1a1a; */
+            color: #ffffff;
+            margin: 0 0 6px;
         }
 
         .av-date-parent {
@@ -86,27 +136,31 @@
 
         .av-date {
             font-size: 13.5px;
-            color: #aaa;
+            /* color: #1a1a1a; */
+            color: #ffffff;
             display: block;
         }
 
         .date-received {
             display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
+            align-items: center;
+            /* flex-direction: column; */
+            gap: 1rem;
         }
 
         .av-points {
             font-size: 13.5px;
-            font-weight: 600;
+            font-weight: 500;
+            color: #ffffff;
         }
 
         .av-due-badge {
             display: inline-block;
-            color: var(--green);
+            /* color: var(--green); */
+            color: #ffffff;
             font-size: 13.5px;
-            font-weight: 600;
-            padding: 4px 14px;
+            font-weight: 500;
+            padding: 3px 10px;
             border-radius: 20px;
         }
 
@@ -127,18 +181,20 @@
             line-height: 1.7;
             margin: 0;
             border-left: 4px solid var(--green);
-            padding-left: 14px;
+            /* padding-left: 14px; */
         }
 
         .av-template-card {
-            padding: 1.5rem 1.8rem;
+            /* padding: 1.5rem 1.8rem; */
+            margin: 1rem 0 0;
         }
 
         .av-template-card h5 {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 800;
-            color: #333;
+            color: #1a1a1a;
             margin-bottom: 1rem;
+            font-family: "Orbitron", sans-serif;
         }
 
         .av-file-card:hover .av-file-icon {
@@ -147,19 +203,22 @@
         }
 
         .av-file-icon {
-            width: 140px;
-            height: 110px;
+            width: 38px;
+            height: 38px;
             border-radius: 12px;
             display: flex;
-            flex-direction: column;
+            /* flex-direction: column; */
             align-items: center;
             justify-content: center;
             gap: 8px;
             font-size: 32px;
-            color: #DB0001;
             transition: opacity .18s, transform .18s;
-            background-color: #F0F0F0;
-            cursor: pointer;
+            background-color: #ffffff;
+        }
+
+        .av-file-icon .fa {
+            font-size: 17px;
+            color: var(--neon-cyan);
         }
 
         .av-file-icon.word {
@@ -184,8 +243,9 @@
             gap: 10px;
             font-size: 13px;
             font-weight: 700;
-            padding: 10px;
+            /* padding: 10px; */
             border-radius: 20px;
+            color: #1a1a1a;
         }
 
         .av-file-badge.word {
@@ -202,7 +262,7 @@
 
         /* ─── Submission area ─── */
         .av-message-card {
-            margin-top: 2rem;
+            margin-top: 4rem;
             /* padding-bottom: 2rem; */
         }
 
@@ -213,7 +273,7 @@
             border: 1px solid rgba(0, 0, 0, 0.1);
             border-radius: 10px;
             padding: 10px 16px;
-            margin: 0 20px;
+            /* margin: 0 20px; */
             background-color: #F0F0F0;
             transition: background .2s, border-color .2s;
         }
@@ -410,8 +470,13 @@
         }
 
         .av-instructions-card {
-            padding: 0 2rem 2rem 2rem;
-            margin-top: 2rem;
+            /* padding: 0 2rem 2rem 2rem; */
+            /* margin-top: 2rem; */
+        }
+
+        .av-desc-text {
+            font-size: 14.5px;
+            color: var(--text-dim);
         }
 
         .av-instructions-card p {
@@ -419,12 +484,18 @@
             font-size: 14.5px;
         }
 
-        .av-instructions-card p:nth-child(1) {
+        .av-instructions-card p {
+            margin: 20px 0 0;
+            font-size: 15px;
+            color: #1a1a1a;
+            font-family: "Orbitron", sans-serif;
             font-weight: 700;
         }
 
-        .av-instructions-card p:nth-child(2) {
-            margin: 0.8rem 0;
+        .av-instructions-card .av-instruction {
+            color: var(--text-dim);
+            font-size: 14.5px;
+            margin: 8px 0 0;
         }
 
         @keyframes slideUp {
@@ -715,13 +786,23 @@
         .rightbar {
             padding: 1.8rem 1.4rem 1.8rem 1.4rem;
         }
+
+        .mv-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13.5px;
+            font-weight: 500;
+            color: var(--text-dim);
+            text-decoration: none;
+            margin-bottom: 1.2rem;
+        }
     </style>
 </head>
 
 <body>
     <div class="container-fluid p-0">
         <?php include("../components/offcanvas.php"); ?>
-        <?php include("../components/navbar.php"); ?>
         <?php include("../components/sidebar.php"); ?>
 
         <div class="rightbar">
@@ -752,100 +833,138 @@
                     $cannotResubmit = $isOverdue;
                     ?>
 
+                    <div class="navbar-bread">
+                        <div class="bread-crambs">
+                            Dashboard <i class="fa fa-chevron-right"></i>
+                            My Subject
+                            <i class="fa fa-chevron-right"></i>
+                            Classwork
+                            <i class="fa fa-chevron-right"></i>
+                            <b><?= htmlspecialchars($assignment['task']) ?></b>
+                        </div>
+
+                        <div class="notification">
+                            <button>
+                                <i class="fa fa-bell"></i>
+                            </button>
+                        </div>
+                    </div>
+
                     <a href="/learning_management/public/?url=subjects&subject=<?= htmlspecialchars($subjectSlug) ?>"
-                        class="av-back-link">
-                        <i class="fa fa-arrow-left"></i> Back to Subject
+                        class="mv-back-link">
+                        <i class="fa fa-chevron-left"></i>
                     </a>
 
                     <div class="av-header-card">
-                        <div class="av-header-top">
-                            <div class="av-header-icon">
-                                <i class="fa fa-file-alt"></i>
-                            </div>
-                            <div class="av-header-info">
-                                <small>New Assignment</small>
-                                <h2><?= htmlspecialchars($assignment['task']) ?></h2>
-                                <div class="av-desc-card">
-                                    <h5>Description</h5>
-                                    <p><?= htmlspecialchars($assignment['description']) ?></p>
+                        <div class="av-body-card">
+                            <div class="av-header-top">
+                                <div class="av-header-icon">
+                                    <i class="fa fa-file-alt"></i>
                                 </div>
-                                <div class="date-received">
-                                    <span class="av-date">
-                                        Date Received:
-                                        <?= date('M j', strtotime($assignment['posted_at'])) ?>
-                                    </span>
-                                </div>
-                                <div class="av-date-parent">
-                                    <span class="av-points">
-                                        <?php if ($existingSubmission && isset($existingSubmission['points_earned']) && $existingSubmission['points_earned'] !== null): ?>
-                                            <?php
-                                            $percent = $assignment['points'] > 0
-                                                ? ($existingSubmission['points_earned'] / $assignment['points']) * 100
-                                                : 0;
-                                            $scoreColor = $percent >= 75 ? '#4CAF7D' : '#C82525';
-                                            ?>
-                                            <span style="color:<?= $scoreColor ?>; font-size:15px; font-weight:600;">
-                                                <?= (int) $existingSubmission['points_earned'] ?>
-                                            </span>
-                                            <span style="color:#aaa; font-size:15px; font-weight:600;">
-                                                / <?= htmlspecialchars($assignment['points']) ?> pts
-                                            </span>
-                                        <?php else: ?>
-                                            <?= htmlspecialchars($assignment['points']) ?> pts
-                                        <?php endif; ?>
-                                    </span>
-                                    <div class="due-date">
-                                        <?php if (!empty($assignment['due_date'])): ?>
-                                            <?php
-                                            $dueDateTime = $assignment['due_date'];
-                                            if (!empty($assignment['due_time'])) {
-                                                $dueDateTime .= ' ' . $assignment['due_time'];
-                                            }
-                                            $dueTimestamp = strtotime($dueDateTime);
-                                            $isOverdue = $dueTimestamp < time();
-                                            ?>
-                                            <span class="av-due-badge"
-                                                style="color: <?= $isOverdue ? '#ef4444' : 'var(--green)' ?>;">
-                                                <i class="fa fa-<?= $isOverdue ? 'clock' : 'calendar-alt' ?>"></i>
-                                                Due: <?= date('M j, Y', $dueTimestamp) ?> at <?= date('g:i A', $dueTimestamp) ?>
-                                            </span>
-                                        <?php endif; ?>
+                                <div class="av-header-info">
+                                    <small>New Assignment</small>
+                                    <h2>
+                                        <?= htmlspecialchars($assignment['task']) ?>
+                                    </h2>
+                                    <div class="date-received">
+                                        <span class="av-date">
+                                            Date Received:
+                                            <?= date('M j', strtotime($assignment['posted_at'])) ?>
+                                        </span>
+
+                                        <div class="divider">|</div>
+
+                                        <div class="due-date">
+                                            <?php if (!empty($assignment['due_date'])): ?>
+                                                <?php
+                                                $dueDateTime = $assignment['due_date'];
+                                                if (!empty($assignment['due_time'])) {
+                                                    $dueDateTime .= ' ' . $assignment['due_time'];
+                                                }
+                                                $dueTimestamp = strtotime($dueDateTime);
+                                                $isOverdue = $dueTimestamp < time();
+                                                ?>
+                                                <span class="av-due-badge" style="color: <?= $isOverdue ? '#dc2626' : '#ffffff' ?>;
+           background: <?= $isOverdue ? '#fff5f5' : 'transparent' ?>;
+           border: 1px solid <?= $isOverdue ? '#fecaca' : 'transparent' ?>;">
+                                                    <i class="fa fa-<?= $isOverdue ? 'clock' : 'calendar-alt' ?>"></i>
+                                                    Due:
+                                                    <?= date('M j, Y', $dueTimestamp) ?> at
+                                                    <?= date('g:i A', $dueTimestamp) ?>
+                                                </span>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <div class="divider">|</div>
+
+                                        <span class="av-points">
+                                            <?php if ($existingSubmission && isset($existingSubmission['points_earned']) && $existingSubmission['points_earned'] !== null): ?>
+                                                <?php
+                                                $percent = $assignment['points'] > 0
+                                                    ? ($existingSubmission['points_earned'] / $assignment['points']) * 100
+                                                    : 0;
+                                                $scoreColor = $percent >= 75 ? '#4CAF7D' : '#C82525';
+                                                ?>
+                                                <span style="color:<?= $scoreColor ?>; font-size:15px; font-weight:600;">
+                                                    <?= (int) $existingSubmission['points_earned'] ?>
+                                                </span>
+                                                <span style="color:#aaa; font-size:15px; font-weight:600;">
+                                                    /
+                                                    <?= htmlspecialchars($assignment['points']) ?> pts
+                                                </span>
+                                            <?php else: ?>
+                                                <?= htmlspecialchars($assignment['points']) ?> pts
+                                            <?php endif; ?>
+                                        </span>
                                     </div>
+                                    <!-- <div class="av-date-parent">
+                                    
+
+                                </div> -->
                                 </div>
                             </div>
-                        </div>
 
-                        <hr>
+                            <hr>
 
-                        <div class="av-instructions-card">
-                            <p>Instructions:</p>
-                            <p><?= nl2br(htmlspecialchars($assignment['instructions'])) ?></p>
-                        </div>
+                            <div class="av-instructions-card">
+                                <div class="av-desc-text">
+                                    <?= nl2br(htmlspecialchars($assignment['description'])) ?>
+                                </div>
+                                <p>Instructions:</p>
+                                <div class="av-instruction">
+                                    <?= nl2br(htmlspecialchars($assignment['instructions'])) ?>
+                                </div>
+                            </div>
 
-                        <?php if (!empty($templates)): ?>
-                            <div class="av-template-card">
-                                <h5>Template / Files</h5>
-                                <?php foreach ($templates as $tpl):
-                                    $tplType = $tpl['file_type'] ?? 'other';
-                                    $tplIcon = $tplType === 'word' ? 'fa-file-word' : 'fa-file-pdf';
-                                    ?>
-                                    <div class="av-file-card" onclick="openModal(
+                            <?php if (!empty($templates)): ?>
+                                <div class="av-template-card">
+                                    <h5>Attached Files</h5>
+                                    <?php foreach ($templates as $tpl):
+                                        $tplType = $tpl['file_type'] ?? 'other';
+                                        $tplIcon = $tplType === 'word' ? 'fa-file-word' : 'fa-file-pdf';
+                                        ?>
+                                        <div class="mv-attachments-grid">
+                                            <div class="av-file-card" onclick="openModal(
                                          '<?= htmlspecialchars($tpl['file_path']) ?>',
                                          '<?= htmlspecialchars($tpl['file_name']) ?>',
                                          '<?= $tplType ?>'
                                      )">
-                                        <div class="av-file-icon <?= htmlspecialchars($tplType) ?>">
-                                            <i class="fa <?= $tplIcon ?>"></i>
-                                            <span><?= strtoupper($tplType) ?></span>
+                                                <div class="av-file-icon <?= htmlspecialchars($tplType) ?>">
+                                                    <i class="fa <?= $tplIcon ?>"></i>
+                                                    <!-- <span>
+                                                        <?= strtoupper($tplType) ?>
+                                                    </span> -->
+                                                </div>
+                                                <span class="av-file-badge <?= htmlspecialchars($tplType) ?>">
+                                                    <!-- <i class="fa <?= $tplIcon ?>"></i> -->
+                                                    <?= htmlspecialchars($tpl['file_name']) ?>
+                                                </span>
+                                            </div>
                                         </div>
-                                        <span class="av-file-badge <?= htmlspecialchars($tplType) ?>">
-                                            <i class="fa <?= $tplIcon ?>"></i>
-                                            <?= htmlspecialchars($tpl['file_name']) ?>
-                                        </span>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
 
                         <!-- ══ SUBMISSION AREA ══ -->
                         <div class="av-message-card" id="submissionArea">
@@ -1358,15 +1477,15 @@
                     </p>
                     <div class="av-submitted-file-card"
                          onclick="openModal('${filePath.replace(/'/g, "\\'")}', '${fileName.replace(/'/g, "\\'")}', '${fileType}')">
-                                                                                                                                    <div class="av-file-icon ${badge}">
-                                                                                                                                        <i class="fa ${icon}"></i>
-                                                                                                                                        <span>${label}</span>
-                                                                                                                                    </div>
-                                                                                                                                    <span class="av-file-badge ${badge}">
-                                                                                                                                        <i class="fa ${icon}"></i>
-                                                                                                                                        ${fileName}
-                                                                                                                                    </span>
-                                                                                                                                </div>`;
+                                                                                                                                                                                                                    <div class="av-file-icon ${badge}">
+                                                                                                                                                                                                                        <i class="fa ${icon}"></i>
+                                                                                                                                                                                                                        <span>${label}</span>
+                                                                                                                                                                                                                    </div>
+                                                                                                                                                                                                                    <span class="av-file-badge ${badge}">
+                                                                                                                                                                                                                        <i class="fa ${icon}"></i>
+                                                                                                                                                                                                                        ${fileName}
+                                                                                                                                                                                                                    </span>
+                                                                                                                                                                                                                </div>`;
 
                     // Insert before the first child (above the msgBox)
                     submissionArea.insertBefore(section, submissionArea.firstChild);

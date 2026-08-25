@@ -1,393 +1,745 @@
-/* Add-on styles for the ordered block builder inside create_activities.php.
-   Uses the same mint-green accent already visible in your admin screenshots —
-   adjust --block-primary if your create_activities.css uses a different hex. */
+/* ══════════════════════════════════════════════════════════════
+   CREATE MODULE — BLOCK BUILDER STYLES
+   ------------------------------------------------------------
+   Styles every class create_module.js renders: module-item,
+   lesson-item, block, block-fields, insert-row, mini-menu,
+   image-item, question-row, card-row, plus the rich-text editor
+   toolbar for text blocks. Uses the same CSS variables already
+   defined in create_module.css (--green, --orange, etc.) so it
+   drops in as a natural extension rather than a separate look.
+   ══════════════════════════════════════════════════════════════ */
 
-:root {
-    --block-primary: #16a34a;
-    --block-primary-dark: #0f7d38;
-    --block-primary-light: #e7f8ee;
-    --block-border: #e2e8f0;
-    --block-ink: #1f2937;
-    --block-ink-dim: #6b7280;
-    --block-danger: #dc2626;
-    --block-amber: #b45309;
-    --block-purple: #6d28d9;
-    --block-blue: #1d4ed8;
+/* ── MODULE ── */
+.module-item {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 14px;
+    padding: 2rem;
+    margin-top: 1.5rem;
+    background-color: #ffffff;
 }
 
-.module-item,
-.lesson-item {
-    font-size: 14.5px;
-    color: var(--block-ink);
+#contentContainer>.module-item:first-child {
+    margin-top: 0;
 }
 
-.lesson-item {
-    border: 1px solid var(--block-border);
-    border-radius: 10px;
-    background: #fafbfc;
-    padding: 18px 20px 20px;
-    margin-top: 14px;
-}
-
-.lesson-head,
-.question-row-head {
+.module-item>.card-header h3 {
     display: flex;
     align-items: center;
+    gap: 0.6rem;
+}
+
+.module-item>.card-header h3 i {
+    color: var(--green);
+}
+
+.module-title-input,
+.module-description-input {
+    width: 100%;
+    margin-top: 0.4rem;
+}
+
+.btn-add-lesson {
+    margin-top: 1.25rem;
+    padding: 10px 22px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--green);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(76, 175, 125, 0.30);
+    transition: background-color .15s;
+}
+
+.btn-add-lesson:hover {
+    background-color: var(--green-dark);
+}
+
+.lessons-wrap {
+    padding-left: 1.5rem;
+    border-left: 3px solid var(--green-mid);
+    margin-left: 0.5rem;
+}
+
+.lessons-wrap:not(:empty) {
+    margin-top: 1.25rem;
+}
+
+/* ── LESSON ── */
+.lesson-item {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+    padding: 1.75rem;
+    margin-top: 1.25rem;
+    background-color: #fbfdfc;
+}
+
+.lessons-wrap>.lesson-item:first-child {
+    margin-top: 0;
+}
+
+.lesson-head {
+    display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
+    align-items: center;
+    margin-bottom: 1.1rem;
 }
 
 .lesson-head h4 {
-    font-size: 13.5px;
-    font-weight: 700;
     margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.lesson-head h4 i {
+    color: var(--green);
 }
 
 .field-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 14px;
-    margin-bottom: 10px;
+    gap: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.field-row label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+}
+
+.field-row input {
+    width: 100%;
 }
 
 .content-label {
     font-size: 11.5px;
     font-weight: 700;
-    letter-spacing: .04em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--block-ink-dim);
-    margin: 16px 0 10px;
+    color: var(--text-muted);
+    margin: 1.4rem 0 0.85rem;
 }
 
-/* ---------- block list & insert rows ---------- */
 .block-list {
     display: flex;
     flex-direction: column;
 }
 
+/* ── ADD-BLOCK TOOLBAR ── */
+.add-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1rem;
+}
+
+.add-toolbar button {
+    padding: 9px 18px;
+    border-radius: 8px;
+    border: none;
+    color: #ffffff;
+    font-size: 13.5px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    transition: filter .15s;
+}
+
+.add-toolbar button:hover {
+    filter: brightness(0.92);
+}
+
+.add-toolbar button:nth-child(1) {
+    background-color: var(--green-dark);
+    box-shadow: 0 3px 10px rgba(45, 106, 79, 0.25);
+}
+
+.add-toolbar button:nth-child(2) {
+    background-color: var(--orange);
+    box-shadow: 0 3px 10px rgba(255, 138, 101, 0.30);
+}
+
+.add-toolbar button:nth-child(3) {
+    background-color: #3B5BDB;
+    box-shadow: 0 3px 10px rgba(59, 91, 219, 0.25);
+}
+
+.add-toolbar button:nth-child(4) {
+    background-color: #0EA5E9;
+    box-shadow: 0 3px 10px rgba(14, 165, 233, 0.25);
+}
+
+.add-toolbar button:nth-child(5) {
+    background-color: var(--green-text);
+    box-shadow: 0 3px 10px rgba(74, 106, 88, 0.25);
+}
+
+.add-toolbar button:nth-child(6) {
+    background-color: #7c3aed;
+    box-shadow: 0 3px 10px rgba(124, 58, 237, 0.25);
+}
+
+/* ── INSERT-BETWEEN ROW ── */
 .insert-row {
     display: flex;
     align-items: center;
-    gap: 8px;
-    min-height: 18px;
+    gap: 0.5rem;
+    margin: 0.3rem 0;
     position: relative;
 }
 
 .insert-row .line {
     flex: 1;
     height: 1px;
-    background: transparent;
-}
-
-.insert-row:hover .line {
-    background: var(--block-border);
+    background-color: rgba(0, 0, 0, 0.08);
 }
 
 .insert-add {
-    display: none;
-    width: 20px;
-    height: 20px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
-    background: var(--block-primary);
-    color: #fff;
-    border: none;
+    border: 1px dashed rgba(0, 0, 0, 0.25);
+    background-color: #ffffff;
+    color: var(--text-muted);
+    display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    flex: 0 0 auto;
+    font-size: 11px;
+    flex-shrink: 0;
+    transition: .15s;
 }
 
-.insert-row:hover .insert-add {
-    display: inline-flex;
+.insert-add:hover {
+    border-color: var(--green);
+    color: var(--green);
+    background-color: var(--green-light);
 }
 
 .mini-menu {
     position: absolute;
+    top: 32px;
     left: 50%;
-    top: 22px;
     transform: translateX(-50%);
-    background: #fff;
-    border: 1px solid var(--block-border);
-    border-radius: 8px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, .08);
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+    padding: 0.4rem;
     display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    padding: 6px;
-    z-index: 5;
-    width: 260px;
+    flex-direction: column;
+    gap: 0.2rem;
+    z-index: 30;
+    min-width: 150px;
 }
 
 .mini-menu button {
     border: none;
-    background: var(--block-primary-light);
-    color: var(--block-primary-dark);
-    font-size: 12px;
-    font-weight: 600;
-    padding: 5px 9px;
+    background: none;
+    text-align: left;
+    padding: 0.5rem 0.75rem;
     border-radius: 6px;
+    font-size: 13.5px;
+    font-weight: 500;
     cursor: pointer;
+    color: var(--text-dark);
+    font-family: 'Poppins', sans-serif;
 }
 
 .mini-menu button:hover {
-    background: #d3f1e3;
+    background-color: var(--green-light);
+    color: var(--green-dark);
 }
 
-/* ---------- block card ---------- */
+/* ── BLOCK ── */
 .block {
     display: flex;
-    gap: 10px;
-    background: #fff;
-    border: 1px solid var(--block-border);
-    border-radius: 10px;
-    padding: 14px 14px 16px;
+    gap: 0.75rem;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin: 0.5rem 0;
+    background-color: #ffffff;
+    position: relative;
 }
 
 .block-handle {
-    flex: 0 0 auto;
-    color: #c2c8d0;
-    padding-top: 4px;
+    color: rgba(0, 0, 0, 0.22);
+    padding-top: 0.3rem;
     cursor: grab;
+    font-size: 13px;
 }
 
 .block-body {
-    flex: 1 1 auto;
+    flex: 1;
     min-width: 0;
 }
 
 .block-top {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
+    align-items: center;
+    margin-bottom: 0.9rem;
 }
 
 .block-type-tag {
-    display: inline-block;
-    font-size: 11.5px;
+    font-size: 10.5px;
     font-weight: 700;
-    padding: 3px 10px;
-    border-radius: 999px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 4px 11px;
+    border-radius: 20px;
+    color: #ffffff;
 }
 
 .tag-text {
-    background: #eaf1fe;
-    color: var(--block-blue);
+    background-color: var(--green-dark);
 }
 
 .tag-image {
-    background: #fdf1de;
-    color: var(--block-amber);
+    background-color: var(--orange);
 }
 
 .tag-video {
-    background: #f3ebfe;
-    color: var(--block-purple);
+    background-color: #3B5BDB;
 }
 
 .tag-quiz {
-    background: var(--block-primary-light);
-    color: var(--block-primary-dark);
+    background-color: #0EA5E9;
 }
 
 .tag-activity {
-    background: #fdebea;
-    color: #b91c1c;
+    background-color: var(--green-text);
 }
 
 .tag-flashcard {
-    background: #e9f4fe;
-    color: #1477c4;
+    background-color: #7c3aed;
 }
 
 .block-actions {
     display: flex;
-    gap: 2px;
+    gap: 0.4rem;
 }
 
 .block-actions button {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
     border: none;
-    background: transparent;
-    color: var(--block-ink-dim);
-    border-radius: 6px;
+    background-color: #f3f4f6;
+    color: #4b5563;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    font-size: 11.5px;
+    transition: .15s;
 }
 
 .block-actions button:hover {
-    background: #f1f4f7;
-    color: var(--block-ink);
+    background-color: var(--green-light);
+    color: var(--green-dark);
 }
 
 .block-actions button.danger:hover {
-    color: var(--block-danger);
+    background-color: #fee2e2;
+    color: #dc2626;
 }
 
+.block-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.block-fields>input,
+.block-fields>textarea,
+.block-fields>select {
+    width: 100%;
+}
+
+/* ── generic field styling used everywhere inside a block ── */
 .block-fields input[type="text"],
 .block-fields input[type="number"],
-.block-fields input[type="file"],
+.block-fields input[type="url"],
 .block-fields textarea,
 .block-fields select,
 .question-row input,
-.question-row textarea,
 .question-row select,
+.question-row textarea,
 .card-row input,
-.card-row select {
-    width: 100%;
-    border: 1px solid var(--block-border);
-    border-radius: 7px;
-    padding: 8px 10px;
-    font-size: 13px;
-    font-family: inherit;
-    margin-bottom: 8px;
-    background: #fafbfc;
+.card-row select,
+.image-item input[type="text"] {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 0.65rem 0.85rem;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    background-color: #ffffff;
+}
+
+.block-fields input:focus,
+.block-fields textarea:focus,
+.block-fields select:focus,
+.question-row input:focus,
+.question-row select:focus,
+.question-row textarea:focus,
+.card-row input:focus,
+.card-row select:focus,
+.image-item input:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(76, 175, 125, 0.15);
 }
 
 .block-fields textarea {
-    min-height: 64px;
     resize: vertical;
+    min-height: 70px;
 }
 
-/* Section heading on a text block (e.g. "The Software Layer") —
-   styled bolder/larger than the other inputs so it visually reads
-   as a heading while you're building the lesson, matching how it
-   renders on the student side. */
-.text-heading-input {
+.text-keyidea-input {
+    background-color: var(--green-light) !important;
+    border-color: var(--green-mid) !important;
+}
+
+/* ── RICH TEXT EDITOR (Text block body) ── */
+.rte-group {
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.rte-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.45rem;
+    background-color: #f9fbf9;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.rte-btn {
+    width: 30px;
+    height: 30px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 12.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dark);
+    transition: .15s;
+}
+
+.rte-btn:hover {
+    background-color: var(--green-light);
+    border-color: var(--green-mid);
+    color: var(--green-dark);
+}
+
+.rte-btn.active {
+    background-color: var(--green);
+    border-color: var(--green);
+    color: #ffffff;
+}
+
+.rte-sep {
+    width: 1px;
+    align-self: stretch;
+    background-color: rgba(0, 0, 0, 0.10);
+    margin: 2px 4px;
+}
+
+.rte-editor {
+    min-height: 130px;
+    padding: 0.9rem 1rem;
     font-size: 14.5px;
-    font-weight: 700;
-    color: var(--block-ink);
-    background: #fff;
+    line-height: 1.65;
+    background-color: #ffffff;
+    outline: none;
 }
 
-/* ---------- nested questions / cards ---------- */
-.questions-wrap,
-.cards-wrap {
+.rte-editor:focus {
+    box-shadow: inset 0 0 0 3px rgba(76, 175, 125, 0.12);
+}
+
+.rte-editor:empty:before {
+    content: attr(data-placeholder);
+    color: #9ca3af;
+}
+
+.rte-editor b,
+.rte-editor strong {
+    font-weight: 700;
+}
+
+.rte-editor u {
+    text-decoration: underline;
+}
+
+.rte-editor s,
+.rte-editor strike {
+    text-decoration: line-through;
+}
+
+.rte-editor ul,
+.rte-editor ol {
+    padding-left: 1.4rem;
+    margin: 0.4rem 0;
+}
+
+/* ── IMAGE ITEMS ── */
+.image-items-wrap {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 8px;
+    gap: 1rem;
 }
 
-.question-row,
-.card-row {
-    border: 1px solid var(--block-border);
-    border-radius: 8px;
-    padding: 10px 12px 4px;
-    background: #fafbfc;
+.image-item {
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    border-radius: 10px;
+    padding: 1rem;
+    background-color: #fcfcfc;
 }
 
 .question-row-head {
-    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.65rem;
+    font-size: 12.5px;
     font-weight: 700;
-    color: var(--block-ink-dim);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--text-muted);
 }
 
-.question-row-head button {
+.question-row-head button.danger {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
     border: none;
-    background: transparent;
-    color: var(--block-ink-dim);
+    background-color: #fee2e2;
+    color: #dc2626;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 11px;
+    transition: .15s;
+}
+
+.question-row-head button.danger:hover {
+    background-color: #fecaca;
+}
+
+.image-upload-box {
+    border: 2px dashed var(--green);
+    border-radius: 12px;
+    padding: 1.75rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    background-color: var(--green-light);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: background-color .2s;
+}
+
+.image-upload-box:hover {
+    background-color: #ddf3e7;
+}
+
+.image-upload-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #d1fae5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.image-upload-icon i {
+    color: var(--green);
+    font-size: 20px;
+}
+
+.image-upload-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #374151;
+    margin: 0;
+}
+
+.image-upload-hint {
+    font-size: 11.5px;
+    color: #9ca3af;
+}
+
+.image-upload-choose {
+    margin-top: 4px;
+    background-color: var(--green);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 20px;
+}
+
+.image-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: var(--green-light);
+    border: 2px solid var(--green);
+    border-radius: 12px;
+}
+
+.preview-img {
+    max-width: 100%;
+    max-height: 220px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.remove-preview-btn {
+    background-color: #fee2e2;
+    border: none;
+    color: #dc2626;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 8px;
     cursor: pointer;
 }
 
-.question-row-head button:hover {
-    color: var(--block-danger);
+.remove-preview-btn:hover {
+    background-color: #fecaca;
+}
+
+/* ── QUIZ / ACTIVITY QUESTIONS ── */
+.questions-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 0.75rem;
+}
+
+.question-row {
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    border-radius: 10px;
+    padding: 1rem;
+    background-color: #fcfcfc;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
 }
 
 .choice-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: 0.65rem;
 }
 
+/* ── FLASHCARDS ── */
+.cards-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 0.75rem;
+}
+
+.card-row {
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    border-radius: 10px;
+    padding: 1rem;
+    background-color: #fcfcfc;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+/* ── "Add question / image / flashcard" buttons inside a block ── */
 .btn-add-question {
-    border: 1px dashed var(--block-border);
-    background: #fff;
-    color: var(--block-primary-dark);
-    font-size: 12.5px;
+    align-self: flex-start;
+    margin-top: 0.25rem;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: none;
+    color: #ffffff;
+    font-size: 13px;
     font-weight: 600;
-    padding: 7px 12px;
-    border-radius: 7px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    background-color: #3B5BDB;
+    box-shadow: 0 3px 10px rgba(59, 91, 219, 0.25);
+    transition: background-color .15s;
 }
 
 .btn-add-question:hover {
-    background: var(--block-primary-light);
+    background-color: #2f4ac7;
 }
 
-/* ---------- toolbar ---------- */
-.add-toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 14px;
+.btn-add-image {
+    background-color: var(--orange);
+    box-shadow: 0 3px 10px rgba(255, 138, 101, 0.30);
 }
 
-.add-toolbar button {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: var(--block-primary-light);
-    color: var(--block-primary-dark);
-    border: none;
-    font-size: 12.5px;
-    font-weight: 600;
-    padding: 7px 13px;
-    border-radius: 7px;
-    cursor: pointer;
+.btn-add-image:hover {
+    background-color: var(--orange-dark);
 }
 
-.add-toolbar button:hover {
-    background: #d3f1e3;
-}
-
+/* ── shared "remove this whole thing" (module / lesson) button ── */
 .remove-btn {
-    width: 26px;
-    height: 26px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     border: none;
-    background: var(--block-primary-light);
-    color: var(--block-primary-dark);
+    background-color: var(--green-light);
+    color: var(--green);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+    transition: .15s;
+    flex-shrink: 0;
 }
 
 .remove-btn:hover {
-    background: #fde3e1;
-    color: var(--block-danger);
+    background-color: #fee2e2;
+    color: #dc2626;
 }
 
-.btn-add-lesson {
-    border: 1px solid var(--block-border);
-    background: var(--block-primary-light);
-    color: var(--block-primary-dark);
-    font-size: 12.5px;
-    font-weight: 600;
-    padding: 7px 14px;
-    border-radius: 7px;
-    cursor: pointer;
-    margin: 20px 0 4px;
-}
+@media (max-width: 768px) {
+    .field-row {
+        grid-template-columns: 1fr;
+    }
 
-.btn-add-lesson:hover {
-    background: #d3f1e3;
-}
-
-.text-keyidea-input {
-    background: #eef6ff;
-    border-color: #bfdbfe;
-}
-
-/* Multiple-image support inside an image block */
-.image-items-wrap {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 8px;
-}
-
-.image-item {
-    border: 1px solid var(--block-border);
-    border-radius: 8px;
-    padding: 10px 12px 4px;
-    background: #fafbfc;
+    .choice-grid {
+        grid-template-columns: 1fr;
+    }
 }

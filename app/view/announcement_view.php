@@ -22,6 +22,18 @@
             font-weight: 700;
             color: var(--green);
             text-decoration: none;
+            /* margin-bottom: 1.2rem; */
+            margin: 0 0 21px;
+        }
+
+        .mv-back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13.5px;
+            font-weight: 500;
+            color: var(--text-dim);
+            text-decoration: none;
             margin-bottom: 1.2rem;
         }
 
@@ -29,23 +41,188 @@
             text-decoration: underline;
         }
 
-        .anv-main-card {
+        .reminder {
+            font-size: 15px;
+            font-family: "Orbitron", sans-serif;
+            color: #1a1a1a;
+            margin: 20px 0 8px;
+        }
+
+        /* .anv-main-card {
             background: #fff;
             border: 1px solid #E2E8E5;
             border-radius: 12px;
-            /* padding: 1.8rem; */
+            padding: 1.8rem;
             box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
             margin-bottom: 1.4rem;
         }
+            
 
         .anv-card-top {
             display: flex;
             align-items: center;
             gap: 1.2rem;
-            /* margin-bottom: 1.4rem; */
+            margin-bottom: 1.4rem;
             padding: 1.8rem;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        } */
+
+        .anv-main-sub-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            margin: 15px 0 0;
+            position: relative;
         }
+
+        .anv-main-sub-card img {
+            width: 180px;
+            height: 200px;
+            position: absolute;
+            top: -5rem;
+            right: 20px;
+        }
+
+        .speech-bubble-announce {
+            position: absolute;
+            left: -510px;
+            /* left: -315px; */
+            /* right: -185px; */
+            /* right: -510px; */
+            /* top: 2px; */
+            top: -100px;
+            /* top: -50px; */
+            /* width: 148px; */
+            /* width: 175px; */
+            width: 280px;
+            /* background: #fff; */
+            background-color: var(--bg-main);
+            color: var(--text-bright);
+            font-family: var(--font-body);
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            line-height: 1.4;
+            padding: 16px 19px;
+            border-radius: 14px;
+            background: #fff;
+            /* box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18); */
+            /* display: none; */
+            /* animation: bubblePop 4s ease-in-out infinite; */
+        }
+
+        .speech-bubble-announce strong {
+            display: block;
+            color: var(--neon-cyan);
+            font-family: "Orbitron", sans-serif;
+            font-weight: 700;
+            margin-bottom: 2px;
+            font-size: 14.5px;
+        }
+
+        .speech-bubble-announce p {
+            margin: 0;
+            font-size: 13.5px;
+            color: var(--text-dim);
+            line-height: 22px;
+        }
+
+        .speech-bubble-announce p .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 14px;
+            background: var(--neon-cyan);
+            margin-left: 2px;
+            vertical-align: middle;
+            animation: cursorBlink 0.8s step-end infinite;
+        }
+
+        @keyframes cursorBlink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .speech-bubble-announce::after {
+            content: '';
+            position: absolute;
+            right: -6px;
+            top: 50px;
+            /* top: 60px; */
+            width: 12px;
+            height: 12px;
+            background: #ffffff;
+            /* border: 1px solid var(--border); */
+            /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04); */
+            transform: rotate(45deg);
+            /* z-index: -1; */
+        }
+
+        @keyframes bubblePop {
+
+            0%,
+            8% {
+                opacity: 0;
+                transform: translateY(6px) scale(.92);
+            }
+
+            16%,
+            84% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+            92%,
+            100% {
+                opacity: 0;
+                transform: translateY(6px) scale(.92);
+            }
+        }
+
+        .anv-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            /* height: 400px; */
+            gap: 1.2rem;
+            position: relative;
+            /* overflow: hidden; */
+            border: 1px solid var(--border);
+            background-color: var(--neon-cyan);
+            padding: 2rem;
+            /* background-color: var(--neon-cyan); */
+            border-radius: 20px;
+            /* margin-bottom: 1.4rem; */
+            /* padding: 1.8rem; */
+            /* border-bottom: 1px solid rgba(0, 0, 0, 0.1); */
+        }
+
+        .anv-card-top::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 26px);
+            pointer-events: none;
+        }
+
+        .anv-card-top .anv-card-left {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+        }
+
+        .anv-card-top .anv-card-right {
+            position: relative;
+        }
+
+        /* .anv-card-top .anv-card-right img{
+            position: absolute;
+        } */
 
         .anv-card-icon {
             width: 52px;
@@ -62,26 +239,39 @@
         }
 
         .anv-card-label {
-            font-size: 17px;
+            font-size: 12px;
             /* color: #aaa; */
-            color: #212529;
-            font-weight: 700;
+            /* color: #212529; */
+            /* font-weight: 700; */
             /* text-transform: uppercase; */
-            letter-spacing: .5px;
+            /* letter-spacing: .5px;
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 4px; */
+            font-weight: 500;
+            display: block;
+            /* margin-bottom: 6px; */
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            /* color: #cc7700; */
+            color: #ffffff;
         }
 
         .anv-card-top h2 {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 800;
-            color: #1a1a1a;
-            margin: 0 0 4px;
+            color: #ffffff;
+            /* color: #1a1a1a; */
+            font-family: "Orbitron", sans-serif;
+            margin: 0 0 6px;
         }
 
         .anv-date {
-            font-size: 12px;
-            color: #aaa;
+            font-size: 13.5px;
+            /* color: #1a1a1a; */
+            color: #ffffff;
+            /* margin-top: 6px; */
+            /* margin-top: 5px; */
             display: block;
         }
 
@@ -96,12 +286,19 @@
         }
 
         .anv-avatar {
-            width: 44px;
+            /* width: 44px;
             height: 44px;
-            min-width: 44px;
-            border-radius: 50%;
-            background: var(--green);
-            color: #fff;
+            min-width: 44px; */
+            /* border-radius: 50%; */
+            width: 54px;
+            height: 54px;
+            border-radius: 10px;
+            /* background: var(--green);
+            color: #fff; */
+            /* background: #fef3c7 !important; */
+            background-color: #ffffff;
+            /* color: #cc7700 !important; */
+            color: var(--neon-cyan);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -109,12 +306,12 @@
             font-size: 16px;
         }
 
-        .anv-poster-name {
-            font-size: 14px;
-            font-weight: 500;
-            color: #1a1a1a;
-            display: block;
-        }
+        /* .anv-poster-name {
+            font-size: 24px;
+            font-weight: 800;
+            font-family: "Orbitron", sans-serif;
+            color: #ffffff;
+        } */
 
         .anv-poster-meta {
             font-size: 12px;
@@ -124,17 +321,19 @@
 
         .anv-header-text {
             font-size: 14.5px;
-            font-weight: 600;
-            padding: 1.8rem 1.8rem 0;
-            margin: 0;
+            font-weight: 500;
+            /* padding: 1.8rem 1.8rem 0; */
+            margin: 0 0 8px;
+            color: var(--text-dim);
         }
 
         .anv-body-text {
             font-size: 14.5px;
-            color: #333;
+            /* color: #1a1a1a; */
+            color: var(--text-dim);
             line-height: 1.8;
             margin: 0;
-            padding: 1.4rem 1.8rem 1.8rem;
+            /* padding: 1.4rem 1.8rem 1.8rem; */
         }
 
         .anv-message-card {
@@ -251,7 +450,7 @@
             flex-shrink: 0;
         }
 
-        .rightbar{
+        .rightbar {
             padding: 1.8rem 1.4rem 1.8rem 1.4rem;
         }
     </style>
@@ -260,7 +459,6 @@
 <body>
     <div class="container-fluid p-0">
         <?php include("../components/offcanvas.php"); ?>
-        <?php include("../components/navbar.php"); ?>
         <?php include("../components/sidebar.php"); ?>
 
         <div class="rightbar">
@@ -293,50 +491,81 @@
 
                 <?php else: ?>
 
-                    <a href="/learning_management/public/?url=subjects&subject=<?= htmlspecialchars($announcement['slug']) ?>"
-                        class="anv-back-link">
-                        <i class="fa fa-arrow-left"></i> Back to <?= htmlspecialchars($announcement['subject_name']) ?>
+                    <div class="navbar-bread">
+                        <div class="bread-crambs">
+                            Dashboard <i class="fa fa-chevron-right"></i>
+                            My Subject
+                            <i class="fa fa-chevron-right"></i>
+                            Stream
+                            <i class="fa fa-chevron-right"></i>
+                            <b>Announcement</b>
+                        </div>
+
+                        <div class="notification">
+                            <button>
+                                <i class="fa fa-bell"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <a href="/learning_management/public/?url=subjects&subject=<?= htmlspecialchars($subjectSlug) ?>"
+                        class="mv-back-link">
+                        <i class="fa fa-chevron-left"></i>
                     </a>
 
                     <div class="anv-main-card">
-                        <div class="anv-card-top">
-                            <div class="anv-card-icon">
-                                <!-- <i class="fa fa-bullhorn"></i> -->
+                        <div class="anv-main-sub-card">
+                            <div class="anv-card-top">
+                                <div class="anv-card-left">
+                                    <div class="anv-card-icon">
+                                        <!-- <i class="fa fa-bullhorn"></i> -->
 
-                                <div class="anv-avatar"><?= $initials ?></div>
+                                        <div class="anv-avatar">
+                                            <?= $initials ?>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="anv-card-label ">Announcement</span>
+                                        <!-- <h2><?= htmlspecialchars($announcement['title']) ?></h2> -->
+                                        <h2 class="anv-poster-name">
+                                            <?= htmlspecialchars($announcement['teacher_name']) ?>
+                                        </h2>
+                                        <span class="anv-date">
+                                            Date Received:
+                                            <?= date('M j', strtotime($announcement['posted_at'])) ?>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="anv-card-right">
+                                    <div class="speech-bubble-announce">
+                                        <strong>BonBon</strong>
+                                        <p id="bonbonMessage"></p>
+                                    </div>
+                                    <img src="../images/announce-bonbon.png" alt="">
+                                </div>
                             </div>
-                            <div style="display: flex; flex-direction: column; gap: 0.3rem;">
-                                <span class="anv-card-label m-0">Announcement</span>
-                                <!-- <h2><?= htmlspecialchars($announcement['title']) ?></h2> -->
-                                <span class="anv-poster-name"><?= htmlspecialchars($announcement['teacher_name']) ?></span>
-                                <span class="anv-date">
-                                    Date Received: <?= date('M j', strtotime($announcement['posted_at'])) ?>
-                                </span>
+
+
+                            <!-- <div class="mv-border"></div> -->
+                            <hr>
+
+                            <!-- Full announcement body -->
+                            <div class="anv-body">
+                                <p class="anv-body-text">
+                                    <?= nl2br(htmlspecialchars($announcement['body'])) ?>
+                                </p>
+                                <div class="reminder">
+                                    Reminder
+                                </div>
+                                <h2 class="anv-header-text">
+                                    <?= htmlspecialchars($announcement['title']) ?>
+                                </h2>
                             </div>
                         </div>
 
-                        <!-- Teacher info -->
-                        <!-- <div class="anv-poster-row">
-                            <div class="anv-avatar"><?= $initials ?></div>
-                            <div>
-                                <span class="anv-poster-name"><?= htmlspecialchars($announcement['teacher_name']) ?></span>
-                                <span class="anv-poster-meta">
-                                    Date Received: <?= date('M j', strtotime($announcement['posted_at'])) ?>
-                                </span>
-                            </div>
-                        </div> -->
-
-                        <!-- Full announcement body -->
-                        <h2 class="anv-header-text">Title:
-                            <?= htmlspecialchars($announcement['title']) ?>
-                        </h2>
-                        <p class="anv-body-text">
-                            <?= nl2br(htmlspecialchars($announcement['body'])) ?>
-                        </p>
-
                         <!-- Message text box -->
                         <div style="background:#fff; border:1px solid rgba(0,0,0,0.1); border-radius:10px; 
-                padding:10px 16px; display:flex; align-items:center; gap:10px; margin: 6rem 10px 16px;">
+                padding:10px 16px; display:none; align-items:center; gap:10px; margin: 6rem 0px 16px;">
                             <input type="text" id="annMsgInput" placeholder="Message..."
                                 style="flex:1; border:none; outline:none; font-size:14px; color:#333; background:transparent;">
                             <button onclick="sendAnnMessage()" title="Send" style="background:#00C950;border:none;border-radius:50%;width:36px;height:36px;
@@ -346,7 +575,7 @@
                         </div>
 
                         <!-- Action icons -->
-                        <div style="display:flex;justify-content:space-between;align-items:center;
+                        <div style="display:none;justify-content:space-between;align-items:center;
                 padding:10px 50px;border-radius:12px;border:1px solid rgba(0,0,0,0.1);background:#F0F0F0;">
                             <button title="Attach file" onclick="document.getElementById('attachFileInput').click()"
                                 style="background:none;border:none;color: var(--green);font-size:23px;cursor:pointer;padding:0;">
@@ -385,6 +614,35 @@
     </div>
     </div>
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        (function typewriter() {
+            const el = document.getElementById('bonbonMessage');
+            if (!el) return;
+
+            const message = "Heads up! <?= htmlspecialchars(addslashes($announcement['title'])) ?> — check the reminder below for details.";
+            const speed = 20; // ms per character — lower = faster
+            let i = 0;
+
+            // cursor span that blinks while typing
+            const cursor = document.createElement('span');
+            cursor.className = 'typing-cursor';
+            el.appendChild(cursor);
+
+            function type() {
+                if (i < message.length) {
+                    cursor.insertAdjacentText('beforebegin', message.charAt(i));
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    // remove cursor once finished (optional)
+                    setTimeout(() => cursor.remove(), 1200);
+                }
+            }
+
+            type();
+        })();
+    </script>
 
     <script>
         let annAttachedFile = null;

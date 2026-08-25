@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Classes</title>
     <link rel="stylesheet" href="../css_folder/classes_teacher.css">
+    <link rel="stylesheet" href="../css_folder/components.css">
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
     <style>
@@ -276,10 +277,6 @@
             font-size: 14px;
             margin: 0;
         }
-
-        .container-fluid .rightbar main {
-            margin-top: 68px;
-        }
     </style>
 </head>
 
@@ -316,8 +313,6 @@
                     <button><i class="fa fa-sign-out"></i> Logout</button>
                 </form>
             </nav> -->
-
-            <?php include("nav.php") ?>
 
             <main>
                 <?php

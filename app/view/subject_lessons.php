@@ -107,6 +107,18 @@ function youtubeEmbed($url)
         /* =============================================
            WELCOME / MODULE SPLASH SCREEN
         ============================================= */
+
+        .back-module {
+            position: fixed;
+            left: 30px;
+            top: 30px;
+        }
+
+        .back-module a {
+            font-size: 20px;
+            color: #ffffff;
+        }
+
         .module-splash {
             position: fixed;
             inset: 0;
@@ -526,6 +538,8 @@ function youtubeEmbed($url)
             background-color: var(--bg-main);
             color: var(--text-bright);
             font-family: var(--font-body);
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
             line-height: 1.4;
             padding: 16px 19px;
             border-radius: 14px;
@@ -1278,8 +1292,10 @@ function youtubeEmbed($url)
 
         .btn-completed-top {
             background: var(--page-surface, #fff);
-            border: 1.5px solid rgba(0, 137, 74, 0.3);
-            color: var(--green-dark, #0a8f4f);
+            /* border: 1.5px solid rgba(0, 137, 74, 0.3); */
+            border: 1.5px solid var(--neon-cyan);
+            /* color: var(--green-dark, #0a8f4f); */
+            color: var(--neon-cyan);
             cursor: default;
             opacity: 0.85;
         }
@@ -1463,7 +1479,7 @@ function youtubeEmbed($url)
         }
 
         .ls-section-head {
-            display: flex;
+            display: none;
             align-items: center;
             gap: 9px;
             margin-bottom: 25px;
@@ -1551,7 +1567,8 @@ function youtubeEmbed($url)
             border: 1px solid var(--page-border, var(--panel-border));
             border-radius: 14px;
             overflow: hidden;
-            margin-bottom: 16px;
+            margin: 20px 0 20px;
+            /* margin-bottom: 16px; */
             box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
             transition: box-shadow .2s, transform .2s;
         }
@@ -1568,16 +1585,17 @@ function youtubeEmbed($url)
 
         .video-card iframe {
             width: 100%;
-            height: 300px;
+            height: 350px;
             display: block;
             border: none;
         }
 
         .video-card-info {
-            padding: 14px 18px;
+            /* padding: 14px 18px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 10px; */
+
         }
 
         .video-type-icon {
@@ -1598,20 +1616,38 @@ function youtubeEmbed($url)
         }
 
         .video-card-title {
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--page-text, var(--text-bright));
+            /* font-weight: 600; */
+            /* font-size: 14px;
+            color: var(--page-text, var(--text-bright)); */
+            font-size: 23px;
+            color: var(--text-bright);
+            font-weight: 700;
         }
 
         .img-grid {
             display: grid;
+            grid-template-columns: repeat(3, 1fr);
             gap: 14px;
             margin-top: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .img-grid.img-grid-1 {
+            grid-template-columns: 1fr;
+        }
+
+        .img-grid.img-grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .img-grid.img-grid-1 .img-item {
+            aspect-ratio: 16 / 9;
         }
 
         .img-item {
+            position: relative;
             width: 100%;
-            aspect-ratio: 16 / 7;
+            aspect-ratio: 4 / 3;
             border-radius: 12px;
             overflow: hidden;
             background: var(--page-card, #fff);
@@ -1619,7 +1655,13 @@ function youtubeEmbed($url)
             cursor: pointer;
             transition: transform .2s, box-shadow .2s, border-color .2s;
             box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
-            margin: 0 0 25px;
+        }
+
+        .img-item img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
         }
 
         .img-item:hover {
@@ -1628,23 +1670,18 @@ function youtubeEmbed($url)
             border-color: var(--page-border2, var(--panel-border));
         }
 
-        .img-item img {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        .img-item-cap {
-            padding: 10px 12px;
-            font-size: 12.5px;
-            color: var(--page-muted, var(--text-dim));
-            border-top: 1px solid var(--page-border, var(--panel-border));
+        .img-item-desc {
+            font-size: 14.5px;
+            color: var(--text-dim);
+            margin: 0 0 16px;
+            display: none;
         }
 
         .fc-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 14px;
+            margin: 20px 0 0;
         }
 
         .fc-item {
@@ -1711,7 +1748,7 @@ function youtubeEmbed($url)
         }
 
         .fc-text {
-            font-size: 12.5px;
+            font-size: 11.5px;
             font-weight: 600;
             line-height: 1.45;
             display: block;
@@ -1732,7 +1769,7 @@ function youtubeEmbed($url)
             display: block;
         }
 
-        .callout {
+        .callout-idea {
             border-radius: 12px;
             padding: 15px 18px;
             margin: 16px 0;
@@ -1741,7 +1778,7 @@ function youtubeEmbed($url)
             align-items: flex-start;
         }
 
-        .callout.info {
+        .callout-idea.info {
             background: rgba(0, 153, 204, 0.07);
             border: 1px solid rgba(0, 153, 204, 0.2);
         }
@@ -1756,7 +1793,7 @@ function youtubeEmbed($url)
             border: 1px solid rgba(0, 137, 74, 0.2);
         }
 
-        .callout-icon {
+        .callout-idea .callout-icon {
             width: 30px;
             height: 30px;
             border-radius: 8px;
@@ -1766,34 +1803,38 @@ function youtubeEmbed($url)
             flex-shrink: 0;
         }
 
-        .callout.info .callout-icon {
+        .callout .callout-icon {
+            display: none;
+        }
+
+        .callout-idea.info .callout-icon {
             background: rgba(0, 153, 204, 0.15);
             color: var(--blue-mid, var(--neon-cyan));
         }
 
-        .callout.warning .callout-icon {
+        .callout-idea.warning .callout-icon {
             background: rgba(255, 107, 0, 0.15);
             color: var(--orange-warn, #ff6b00);
         }
 
-        .callout.success .callout-icon {
+        .callout-idea.success .callout-icon {
             background: rgba(0, 137, 74, 0.15);
             color: var(--green-dark, var(--neon-cyan));
         }
 
-        .callout-icon svg {
+        .callout-idea .callout-icon svg {
             width: 15px;
             height: 15px;
         }
 
         .callout-body .cb-title {
-            font-size: 12.5px;
+            font-size: 23px;
             font-weight: 700;
-            margin-bottom: 3px;
+            margin: 10px 0 0;
         }
 
         .callout.info .cb-title {
-            color: var(--blue-mid, var(--neon-cyan));
+            color: var(--text-bright);
         }
 
         .callout.warning .cb-title {
@@ -1805,9 +1846,9 @@ function youtubeEmbed($url)
         }
 
         .callout-body p {
-            font-size: 13px;
-            color: var(--page-muted, var(--text-dim));
-            line-height: 1.6;
+            font-size: 14.5px;
+            color: var(--text-bright);
+            margin: 0;
         }
 
         .activity-block {
@@ -1815,9 +1856,6 @@ function youtubeEmbed($url)
         }
 
         .activity-hero-card {
-            background: linear-gradient(135deg, #5B2E94, var(--purple-chip, var(--electric-purple)));
-            border-radius: 14px;
-            padding: 20px 22px;
             margin-bottom: 16px;
             position: relative;
             overflow: hidden;
@@ -1834,34 +1872,35 @@ function youtubeEmbed($url)
         }
 
         .act-hero-tag {
-            position: relative;
-            z-index: 1;
             display: inline-block;
-            font-size: 9.5px;
+            align-items: center;
+            gap: 6px;
+            font-size: 11.5px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: .07em;
-            background: rgba(0, 0, 0, 0.25);
-            color: rgba(255, 255, 255, 0.8);
-            padding: 3px 10px;
+            letter-spacing: .06em;
+            padding: 5px 12px;
             border-radius: 99px;
-            margin-bottom: 8px;
+            background: rgba(0, 119, 204, 0.08);
+            border: 1px solid var(--panel-border);
+            color: var(--neon-cyan);
+            white-space: nowrap;
         }
 
         .act-hero-title {
             position: relative;
             z-index: 1;
-            font-size: 17px;
+            font-size: 23px;
             font-weight: 700;
-            color: #fff;
-            margin-bottom: 6px;
+            color: var(--text-bright);
+            margin: 10px 0 0;
         }
 
         .act-hero-desc {
             position: relative;
             z-index: 1;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.72);
+            font-size: 14.5px;
+            color: var(--text-bright);
             line-height: 1.55;
             margin-bottom: 12px;
         }
@@ -1869,7 +1908,7 @@ function youtubeEmbed($url)
         .act-meta-pills {
             position: relative;
             z-index: 1;
-            display: flex;
+            display: none;
             gap: 7px;
             flex-wrap: wrap;
         }
@@ -1963,7 +2002,7 @@ function youtubeEmbed($url)
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .07em;
-            color: var(--purple-chip, var(--electric-purple));
+            color: var(--neon-cyan);
             margin-bottom: 7px;
         }
 
@@ -2052,62 +2091,63 @@ function youtubeEmbed($url)
         }
 
         .activity-answer:focus {
-            border-color: var(--purple-chip, var(--electric-purple));
-            box-shadow: 0 0 0 3px rgba(155, 93, 229, 0.12);
-        }
-
-        .quiz-hero-card {
-            background: linear-gradient(135deg, var(--blue-dark, var(--neon-blue)), var(--blue-mid, var(--neon-cyan)));
-            border-radius: 14px;
-            padding: 20px 22px;
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .quiz-hero-card::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-            background-size: 22px 22px;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 0 3px rgba(0, 119, 204, 0.12);
         }
 
         .quiz-hero-inner {
             position: relative;
             z-index: 1;
+            margin: 0 0 20px;
         }
 
         .quiz-hero-tag {
             display: inline-block;
-            font-size: 9.5px;
+            align-items: center;
+            gap: 6px;
+            font-size: 11.5px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: .07em;
-            background: rgba(0, 0, 0, 0.22);
-            color: rgba(255, 255, 255, 0.8);
-            padding: 3px 10px;
+            letter-spacing: .06em;
+            padding: 5px 12px;
             border-radius: 99px;
-            margin-bottom: 8px;
+            background: rgba(0, 119, 204, 0.08);
+            border: 1px solid var(--panel-border);
+            color: var(--neon-cyan);
+            white-space: nowrap;
+        }
+
+        .flash-hero-tag {
+            display: inline-block;
+            align-items: center;
+            gap: 6px;
+            font-size: 11.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            padding: 5px 12px;
+            border-radius: 99px;
+            background: rgba(0, 119, 204, 0.08);
+            border: 1px solid var(--panel-border);
+            color: var(--neon-cyan);
+            white-space: nowrap;
         }
 
         .quiz-hero-title {
-            font-size: 17px;
+            font-size: 23px;
             font-weight: 700;
-            color: #fff;
-            margin-bottom: 6px;
+            color: var(--text-bright);
+            margin: 10px 0 8px;
         }
 
         .quiz-hero-desc {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.72);
-            margin-bottom: 12px;
+            font-size: 14.5px;
+            color: var(--text-bright);
+            margin: 0;
         }
 
         .quiz-stats-strip {
-            display: flex;
+            display: none;
             gap: 18px;
             flex-wrap: wrap;
         }
@@ -2234,11 +2274,20 @@ function youtubeEmbed($url)
             font-size: 13px;
             font-weight: 600;
             transition: border-color .18s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn-qnav-prev:hover {
             border-color: var(--blue-mid, var(--neon-cyan));
             color: var(--blue-mid, var(--neon-cyan));
+        }
+
+        .btn-qnav-next {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn-qnav-next,
@@ -2266,6 +2315,7 @@ function youtubeEmbed($url)
         .page-indicator {
             font-size: 12.5px;
             color: var(--page-muted, var(--text-dim));
+            display: none;
         }
 
         .lock-notice {
@@ -2359,6 +2409,10 @@ function youtubeEmbed($url)
         }
 
         @media (max-width: 900px) {
+            .img-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
             .ov-hero {
                 padding: 22px 20px 26px;
             }
@@ -2388,6 +2442,22 @@ function youtubeEmbed($url)
             .splash-card {
                 max-width: 320px;
             }
+        }
+
+        .img-grid-header {
+            margin-top: 1.5rem;
+        }
+
+        .img-grid-header .img-grid-title {
+            font-size: 23px;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin: 0 0 4px;
+        }
+
+        .img-grid-header .img-grid-meta {
+            font-size: 13.5px;
+            color: var(--text-dim);
         }
     </style>
 </head>
@@ -2423,24 +2493,36 @@ function youtubeEmbed($url)
     </script>
 
     <?php
+
     $progressPct = $totalLessons > 0 ? round(($completedCount / $totalLessons) * 100) : 0;
 
     $sbTotalSegments = 5;
     $sbFilledSegments = (int) round(($progressPct / 100) * $sbTotalSegments);
     $sbIsFinished = ($progressPct >= 100);
 
-    if ($progressPct <= 0) {
-        $moduleState = 'start';
-        $splashBtnLabel = 'Start Now';
-        $splashMsg = "You haven't started this module yet. Let's dive in!";
-    } elseif ($progressPct >= 100) {
+    // $isModuleStarted = $completedCount > 0;
+    
+    // foreach ($lessonCompletion as $done) {
+    //     if ($done) {
+    //         $isModuleStarted = true;
+    //         break;
+    //     }
+    // }
+    
+    if ($progressPct >= 100) {
         $moduleState = 'review';
         $splashBtnLabel = 'Module Review';
         $splashMsg = "You've completed this module. Feel free to review any lesson, anytime.";
-    } else {
+    } elseif ($progressPct > 0 || !empty($isModuleStarted)) {
         $moduleState = 'continue';
         $splashBtnLabel = 'Continue Learning';
-        $splashMsg = "You're {$progressPct}% through this module — keep up the the great progress.";
+        $splashMsg = $progressPct > 0
+            ? "You're {$progressPct}% through this module — keep up the great progress."
+            : "Let's pick up where you left off.";
+    } else {
+        $moduleState = 'start';
+        $splashBtnLabel = 'Start Now';
+        $splashMsg = "You haven't started this module yet. Let's dive in!";
     }
 
     $splashFirstName = 'Student';
@@ -2466,6 +2548,11 @@ function youtubeEmbed($url)
     ?>
 
     <div class="module-splash" id="moduleSplash">
+        <div class="back-module">
+            <a href="/learning_management/public/?url=modules&subject=css">
+                <i class="fa fa-arrow-left"></i>
+            </a>
+        </div>
         <div class="splash-module-meta">
             <span class="splash-module-position">
                 <i class="fa fa-book-open"></i>
@@ -2682,241 +2769,241 @@ function youtubeEmbed($url)
                                 <h4><?= htmlspecialchars($lesson['topic']) ?></h4>
                             <?php endif; ?>
 
-                            <?php foreach ($contentBlocks as $block): ?>
+                            <?php $inImgGrid = false; ?>
+                            <?php
+                            // Precompute image-group sizes so the grid can size itself dynamically
+                            $imgGroupSize = [];
+                            $runStart = null;
+                            $runCount = 0;
+                            foreach ($contentBlocks as $idx => $block) {
+                                if ($block['type'] === 'image') {
+                                    if ($runStart === null) {
+                                        $runStart = $idx;
+                                    }
+                                    $runCount++;
+                                } else {
+                                    if ($runStart !== null) {
+                                        $imgGroupSize[$runStart] = $runCount;
+                                    }
+                                    $runStart = null;
+                                    $runCount = 0;
+                                }
+                            }
+                            if ($runStart !== null) {
+                                $imgGroupSize[$runStart] = $runCount;
+                            }
+                            ?>
+                            <?php foreach ($contentBlocks as $idx => $block): ?>
 
-                                <?php if ($block['type'] === 'text' && trim($block['body'] ?? '') !== ''): ?>
-                                    <div class="lesson-text-card">
-                                        <?php if (!empty($block['title'])): ?>
-                                            <h4 class="lesson-text-block-title" style="margin-bottom:8px;">
-                                                <?= htmlspecialchars($block['title']) ?>
-                                            </h4>
-                                        <?php endif; ?>
-                                        <?= nl2br(htmlspecialchars($block['body'])) ?>
-                                    </div>
-
-                                    <?php if (!empty($block['key_idea'])): ?>
-                                        <div class="callout info d-flex align-items-center">
-                                            <div class="callout-icon">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <circle cx="12" cy="12" r="10" />
-                                                    <path d="M12 16v-4M12 8h.01" />
-                                                </svg>
-                                            </div>
-                                            <div class="callout-body">
-                                                <p class="m-0"><strong>Key idea:</strong> <?= nl2br(htmlspecialchars($block['key_idea'])) ?>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    <?php endif; ?>
-
-                                <?php elseif ($block['type'] === 'image'): ?>
-                                    <div class="img-item" onclick="dbLightbox('<?= htmlspecialchars($block['file_path']) ?>')">
-                                        <img src="<?= htmlspecialchars($block['file_path']) ?>"
-                                            alt="<?= htmlspecialchars($block['title'] ?? '') ?>" loading="lazy">
-                                        <?php if (!empty($block['title'])): ?>
-                                            <div class="img-item-cap"><?= htmlspecialchars($block['title']) ?></div>
-                                        <?php endif; ?>
-                                    </div>
-
-                                    <?php
-                                    /* =====================================================
-                                       FIX: VIDEO BLOCK — GUARDED AGAINST FATAL ERROR
-                                       -----------------------------------------------------
-                                       Previously this called
-                                       htmlspecialchars(youtubeEmbed($block['file_path']))
-                                       directly. If $block['file_path'] was empty/malformed,
-                                       or youtubeEmbed() returned null for any reason,
-                                       htmlspecialchars() would throw a fatal TypeError in
-                                       PHP 8+ ("must be of type string, null given"). That
-                                       fatal halted the whole script mid-render, which is why
-                                       everything AFTER this point on the page — flashcards,
-                                       activities, quiz, bottom nav, and every <script> tag
-                                       including the BonBon typewriter and the "Lessons" back
-                                       button handler — never reached the browser on lessons
-                                       that contain a video block.
-
-                                       Fix: skip the block entirely (instead of fataling) if
-                                       there's no file_path, or if youtubeEmbed() can't
-                                       produce a valid embed URL for it.
-                                    ===================================================== */
+                                <?php if ($block['type'] === 'text' && (trim($block['title'] ?? '') !== '' || trim($block['body'] ?? '') !== '')):
+                                    if ($inImgGrid) {
+                                        echo '</div></div>';
+                                        $inImgGrid = false;
+                                    }
                                     ?>
-                                <?php elseif ($block['type'] === 'video' && !empty($block['file_path'])):
+                                    <div class="lesson-text-card">
+                                        <div class="lesson-text-card">
+                                            <?php if (trim($block['body'] ?? '') !== ''): ?>
+                                                <?= $block['body'] ?>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <?php if (!empty($block['key_idea'])): ?>
+                                            <div class="callout-idea info d-flex align-items-center">
+                                                <div class="callout-icon">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                        <circle cx="12" cy="12" r="10" />
+                                                        <path d="M12 16v-4M12 8h.01" />
+                                                    </svg>
+                                                </div>
+                                                <div class="callout-body">
+                                                    <p class="m-0"><strong>Key idea:</strong>
+                                                        <?= nl2br(htmlspecialchars($block['key_idea'])) ?>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+
+                                    <?php elseif ($block['type'] === 'image'):
+                                    if (!$inImgGrid) {
+                                        $groupTitle = trim($block['title'] ?? '');
+                                        $groupSize = $imgGroupSize[$idx] ?? 1;
+
+                                        $gridClass = 'img-grid';
+                                        if ($groupSize === 1) {
+                                            $gridClass .= ' img-grid-1';
+                                        } elseif ($groupSize === 2) {
+                                            $gridClass .= ' img-grid-2';
+                                        }
+
+                                        echo '<div class="img-grid-wrap">';
+                                        if ($groupTitle !== '') {
+                                            echo '<div class="img-grid-header">';
+                                            echo '<h3 class="img-grid-title">' . htmlspecialchars($groupTitle) . '</h3>';
+                                            echo '<div class="img-grid-meta">Reference gallery</div>';
+                                            echo '</div>';
+                                        }
+                                        echo '<div class="' . $gridClass . '">';
+                                        $inImgGrid = true;
+                                    }
+                                    ?>
+                                        <div class="img-item" onclick="dbLightbox('<?= htmlspecialchars($block['file_path']) ?>')">
+                                            <img src="<?= htmlspecialchars($block['file_path']) ?>"
+                                                alt="<?= htmlspecialchars($block['title'] ?? '') ?>" loading="lazy">
+                                        </div>
+
+                                    <?php elseif ($block['type'] === 'video' && !empty($block['file_path'])):
+                                    if ($inImgGrid) {
+                                        echo '</div></div>';
+                                        $inImgGrid = false;
+                                    }
                                     $embedUrl = youtubeEmbed($block['file_path']);
                                     if (!empty($embedUrl)): ?>
-                                        <div class="video-card" style="margin-bottom:16px;">
-                                            <div class="video-card-banner"></div>
-                                            <iframe src="<?= htmlspecialchars($embedUrl) ?>" allowfullscreen loading="lazy"
-                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-                                            </iframe>
                                             <?php if (!empty($block['title'])): ?>
                                                 <div class="video-card-info">
-                                                    <div class="video-type-icon">
-                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                            <path d="M23 7l-7 5 7 5V7z" />
-                                                            <rect x="1" y="5" width="15" height="14" rx="2" />
-                                                        </svg>
-                                                    </div>
-                                                    <span class="video-card-title"><?= htmlspecialchars($block['title']) ?></span>
+                                                    <span class="video-card-title">
+                                                        <?= htmlspecialchars($block['title']) ?>
+                                                    </span>
                                                 </div>
                                             <?php endif; ?>
-                                        </div>
-                                    <?php endif;
+                                            <div class="video-card">
+                                                <div class="video-card-banner"></div>
+                                                <iframe src="<?= htmlspecialchars($embedUrl) ?>" allowfullscreen loading="lazy"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                                                </iframe>
+                                            </div>
+                                        <?php endif;
                                 endif; ?>
 
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if (!empty($flashcards)): ?>
-                        <div class="ls-section" id="section-flashcards">
-                            <div class="ls-section-head">
-                                <div class="ls-section-icon icon-flash">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="2" y="5" width="20" height="14" rx="2" />
-                                        <path d="M2 10h20" />
-                                    </svg>
-                                </div>
-                                <span class="ls-section-title">Flashcards</span>
-                                <div class="ls-section-divider"></div>
-                                <span class="ls-section-count"><?= count($flashcards) ?> cards</span>
-                            </div>
-                            <div class="callout info">
-                                <div class="callout-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="12" r="10" />
-                                        <path d="M12 16v-4M12 8h.01" />
-                                    </svg>
-                                </div>
-                                <div class="callout-body">
-                                    <div class="cb-title">How to Use Flashcards</div>
-                                    <p>Click any card to flip it and reveal the answer. Click again to go back to the question.
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="fc-grid">
-                                <?php foreach ($flashcards as $fc): ?>
-                                    <div class="fc-item" onclick="this.classList.toggle('flipped')">
-                                        <div class="fc-inner">
-                                            <div class="fc-front">
-                                                <span class="fc-label">Question</span>
-                                                <span class="fc-text"><?= htmlspecialchars($fc['card_front']) ?></span>
-                                                <span class="fc-hint">Tap to reveal →</span>
-                                            </div>
-                                            <div class="fc-back">
-                                                <span class="fc-label">Answer</span>
-                                                <span class="fc-text"><?= htmlspecialchars($fc['card_back']) ?></span>
-                                                <span class="fc-hint">← Tap to go back</span>
-                                            </div>
-                                        </div>
-                                    </div>
                                 <?php endforeach; ?>
-                            </div>
-                        </div>
-                    <?php endif; ?>
 
-                    <?php if (!empty($activityData)): ?>
-                        <div class="ls-section" id="section-activities">
-                            <div class="ls-section-head">
-                                <div class="ls-section-icon icon-activity">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                        <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                    </svg>
-                                </div>
-                                <span class="ls-section-title">Activities</span>
-                                <div class="ls-section-divider"></div>
-                                <span class="ls-section-count"><?= count($activityData) ?></span>
+                                <?php if ($inImgGrid) {
+                                    echo '</div></div>';
+                                    $inImgGrid = false;
+                                } ?>
                             </div>
+                        <?php endif; ?>
 
-                            <?php foreach ($activityData as $actId => $data):
-                                $act = $data['activity'];
-                                $questions = $data['questions'];
-                                $isSubmitted = ($data['submission'] !== null);
-                                ?>
-                                <div class="activity-block">
-                                    <div class="activity-hero-card">
-                                        <div class="act-hero-tag">✏️ Hands-On Activity</div>
-                                        <div class="act-hero-title"><?= htmlspecialchars($act['title']) ?></div>
-                                        <?php if (!empty($act['instructions'])): ?>
-                                            <div class="act-hero-desc"><?= htmlspecialchars($act['instructions']) ?></div>
-                                        <?php endif; ?>
-                                        <div class="act-meta-pills">
-                                            <span class="meta-pill pill-white"><?= count($questions) ?> Questions</span>
-                                            <span class="meta-pill pill-white">⭐ <?= (int) $act['total_points'] ?> pts</span>
-                                            <?php if ($isSubmitted): ?>
-                                                <span class="meta-pill pill-white">✓ Submitted</span>
-                                            <?php else: ?>
-                                                <span class="meta-pill pill-white">Answer Required</span>
-                                            <?php endif; ?>
-                                        </div>
+                        <?php
+                        if (!empty($flashcards)): ?>
+                            <div class="ls-section" id="section-flashcards">
+                                <div class="ls-section-head">
+                                    <div class="ls-section-icon icon-flash">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="2" y="5" width="20" height="14" rx="2" />
+                                            <path d="M2 10h20" />
+                                        </svg>
                                     </div>
-
-                                    <?php if ($isSubmitted): ?>
-                                        <div class="submitted-notice">
-                                            <div class="submitted-check">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                                    <path d="M22 4L12 14.01l-3-3" />
-                                                </svg>
-                                            </div>
-                                            <div class="submitted-notice-text">
-                                                <div class="sn-title">Activity Submitted</div>
-                                                <div class="sn-sub">You have already completed this activity. Review your answers below.
+                                    <span class="ls-section-title">Flashcards</span>
+                                    <div class="ls-section-divider"></div>
+                                    <span class="ls-section-count"><?= count($flashcards) ?> cards</span>
+                                </div>
+                                <div class="callout info">
+                                    <div class="callout-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10" />
+                                            <path d="M12 16v-4M12 8h.01" />
+                                        </svg>
+                                    </div>
+                                    <div class="callout-body">
+                                        <div class="flash-hero-tag">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                width="11" height="11">
+                                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                                            </svg>
+                                            Flashcards
+                                        </div>
+                                        <div class="cb-title">How to Use Flashcards</div>
+                                        <p>Click any card to flip it and reveal the answer. Click again to go back to the
+                                            question.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="fc-grid">
+                                    <?php foreach ($flashcards as $fc): ?>
+                                        <div class="fc-item" onclick="this.classList.toggle('flipped')">
+                                            <div class="fc-inner">
+                                                <div class="fc-front">
+                                                    <span class="fc-label">Question</span>
+                                                    <span class="fc-text"><?= htmlspecialchars($fc['card_front']) ?></span>
+                                                    <span class="fc-hint">Tap to reveal →</span>
+                                                </div>
+                                                <div class="fc-back">
+                                                    <span class="fc-label">Answer</span>
+                                                    <span class="fc-text"><?= htmlspecialchars($fc['card_back']) ?></span>
+                                                    <span class="fc-hint">← Tap to go back</span>
                                                 </div>
                                             </div>
                                         </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
 
-                                        <?php foreach ($questions as $qi => $q): ?>
-                                            <div class="question-card">
-                                                <div class="q-num-label">Question <?= $qi + 1 ?></div>
-                                                <div class="q-text"><?= htmlspecialchars($q['question']) ?></div>
-                                                <?php if ($q['question_type'] === 'multiple_choice'):
-                                                    $ltrs = ['A', 'B', 'C', 'D'];
-                                                    $ch = ['a' => $q['choice_a'], 'b' => $q['choice_b'], 'c' => $q['choice_c'], 'd' => $q['choice_d']];
-                                                    $li = 0;
-                                                    foreach ($ch as $key => $val):
-                                                        if ($val === null)
-                                                            continue;
-                                                        $isCorrect = strtolower($key) === strtolower($q['correct_ans'] ?? '');
-                                                        ?>
-                                                        <div class="review-choice"
-                                                            style="<?= $isCorrect ? 'border-color:#22c55e;background:rgba(34,197,94,0.06);' : '' ?>">
-                                                            <span class="mc-letter"
-                                                                style="<?= $isCorrect ? 'background:#22c55e;color:#fff;border-color:#22c55e;' : '' ?>"><?= $ltrs[$li++] ?></span>
-                                                            <?= htmlspecialchars($val) ?>
-                                                            <?php if ($isCorrect): ?>
-                                                                <svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" width="14"
-                                                                    height="14" style="margin-left:auto">
-                                                                    <path d="M20 6L9 17l-5-5" />
-                                                                </svg>
-                                                            <?php endif; ?>
-                                                        </div>
-                                                    <?php endforeach; ?>
+                        <?php endif; ?>
+
+
+
+                        <?php if (!empty($activityData)): ?>
+                            <div class="ls-section" id="section-activities">
+                                <div class="ls-section-head">
+                                    <div class="ls-section-icon icon-activity">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                            <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                        </svg>
+                                    </div>
+                                    <span class="ls-section-title">Activities</span>
+                                    <div class="ls-section-divider"></div>
+                                    <span class="ls-section-count"><?= count($activityData) ?></span>
+                                </div>
+
+                                <?php foreach ($activityData as $actId => $data):
+                                    $act = $data['activity'];
+                                    $questions = $data['questions'];
+                                    $isSubmitted = ($data['submission'] !== null);
+                                    ?>
+                                    <div class="activity-block">
+                                        <div class="activity-hero-card">
+                                            <div class="act-hero-tag">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                    width="11" height="11">
+                                                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                                                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                                                </svg>
+                                                Hands-On Activity
+                                            </div>
+                                            <div class="act-hero-title"><?= htmlspecialchars($act['title']) ?></div>
+                                            <?php if (!empty($act['instructions'])): ?>
+                                                <div class="act-hero-desc"><?= nl2br(htmlspecialchars($act['instructions'])) ?></div>
+                                            <?php endif; ?>
+                                            <div class="act-meta-pills">
+                                                <span class="meta-pill pill-white"><?= count($questions) ?> Questions</span>
+                                                <span class="meta-pill pill-white">⭐ <?= (int) $act['total_points'] ?> pts</span>
+                                                <?php if ($isSubmitted): ?>
+                                                    <span class="meta-pill pill-white">✓ Submitted</span>
                                                 <?php else: ?>
-                                                    <div
-                                                        style="background:var(--page-surface);border:1.5px solid var(--page-border);border-radius:9px;padding:12px 14px;font-size:13.5px;color:var(--page-muted);font-style:italic;">
-                                                        Essay question — written response recorded
-                                                    </div>
-                                                    <?php if (!empty($q['model_answer'])): ?>
-                                                        <div class="callout success" style="margin-top:8px;">
-                                                            <div class="callout-icon">
-                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                                    <path
-                                                                        d="M9 18h6M10 22h4M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17H8v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z" />
-                                                                </svg>
-                                                            </div>
-                                                            <div class="callout-body">
-                                                                <div class="cb-title">Model Answer</div>
-                                                                <p><?= nl2br(htmlspecialchars($q['model_answer'])) ?></p>
-                                                            </div>
-                                                        </div>
-                                                    <?php endif; ?>
+                                                    <span class="meta-pill pill-white">Answer Required</span>
                                                 <?php endif; ?>
                                             </div>
-                                        <?php endforeach; ?>
+                                        </div>
 
-                                    <?php else: ?>
-                                        <div class="activity-answers-wrapper" data-activity-id="<?= (int) $actId ?>">
+                                        <?php if ($isSubmitted): ?>
+                                            <div class="submitted-notice">
+                                                <div class="submitted-check">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                                        <path d="M22 4L12 14.01l-3-3" />
+                                                    </svg>
+                                                </div>
+                                                <div class="submitted-notice-text">
+                                                    <div class="sn-title">Activity Submitted</div>
+                                                    <div class="sn-sub">You have already completed this activity. Review your answers
+                                                        below.
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <?php foreach ($questions as $qi => $q): ?>
                                                 <div class="question-card">
                                                     <div class="q-num-label">Question <?= $qi + 1 ?></div>
@@ -2925,387 +3012,442 @@ function youtubeEmbed($url)
                                                         $ltrs = ['A', 'B', 'C', 'D'];
                                                         $ch = ['a' => $q['choice_a'], 'b' => $q['choice_b'], 'c' => $q['choice_c'], 'd' => $q['choice_d']];
                                                         $li = 0;
-                                                        ?>
-                                                        <input type="hidden" id="mc_hidden_<?= (int) $q['id'] ?>" value="">
-                                                        <?php foreach ($ch as $key => $val):
+                                                        foreach ($ch as $key => $val):
                                                             if ($val === null)
                                                                 continue;
+                                                            $isCorrect = strtolower($key) === strtolower($q['correct_ans'] ?? '');
                                                             ?>
-                                                            <div class="mc-choice" data-qid="<?= (int) $q['id'] ?>"
-                                                                data-act-id="<?= (int) $actId ?>" data-key="<?= $key ?>" onclick="pickMC(this)">
-                                                                <span class="mc-letter"><?= $ltrs[$li++] ?></span>
+                                                            <div class="review-choice"
+                                                                style="<?= $isCorrect ? 'border-color:#22c55e;background:rgba(34,197,94,0.06);' : '' ?>">
+                                                                <span class="mc-letter"
+                                                                    style="<?= $isCorrect ? 'background:#22c55e;color:#fff;border-color:#22c55e;' : '' ?>"><?= $ltrs[$li++] ?></span>
                                                                 <?= htmlspecialchars($val) ?>
+                                                                <?php if ($isCorrect): ?>
+                                                                    <svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" width="14"
+                                                                        height="14" style="margin-left:auto">
+                                                                        <path d="M20 6L9 17l-5-5" />
+                                                                    </svg>
+                                                                <?php endif; ?>
                                                             </div>
                                                         <?php endforeach; ?>
                                                     <?php else: ?>
-                                                        <textarea class="activity-answer" data-qid="<?= (int) $q['id'] ?>"
-                                                            data-act-id="<?= (int) $actId ?>" placeholder="Type your answer here…"
-                                                            rows="4"></textarea>
+                                                        <div
+                                                            style="background:var(--page-surface);border:1.5px solid var(--page-border);border-radius:9px;padding:12px 14px;font-size:13.5px;color:var(--page-muted);font-style:italic;">
+                                                            Essay question — written response recorded
+                                                        </div>
+                                                        <?php if (!empty($q['model_answer'])): ?>
+                                                            <div class="callout success" style="margin-top:8px;">
+                                                                <div class="callout-icon">
+                                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                        <path
+                                                                            d="M9 18h6M10 22h4M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17H8v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z" />
+                                                                    </svg>
+                                                                </div>
+                                                                <div class="callout-body">
+                                                                    <div class="cb-title">Model Answer</div>
+                                                                    <p><?= nl2br(htmlspecialchars($q['model_answer'])) ?></p>
+                                                                </div>
+                                                            </div>
+                                                        <?php endif; ?>
                                                     <?php endif; ?>
                                                 </div>
                                             <?php endforeach; ?>
-                                        </div>
-                                    <?php endif; ?>
 
-                                </div><!-- /activity-block -->
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
+                                        <?php else: ?>
+                                            <div class="activity-answers-wrapper" data-activity-id="<?= (int) $actId ?>">
+                                                <?php foreach ($questions as $qi => $q): ?>
+                                                    <div class="question-card">
+                                                        <div class="q-num-label">Question <?= $qi + 1 ?></div>
+                                                        <div class="q-text"><?= htmlspecialchars($q['question']) ?></div>
+                                                        <?php if ($q['question_type'] === 'multiple_choice'):
+                                                            $ltrs = ['A', 'B', 'C', 'D'];
+                                                            $ch = ['a' => $q['choice_a'], 'b' => $q['choice_b'], 'c' => $q['choice_c'], 'd' => $q['choice_d']];
+                                                            $li = 0;
+                                                            ?>
+                                                            <input type="hidden" id="mc_hidden_<?= (int) $q['id'] ?>" value="">
+                                                            <?php foreach ($ch as $key => $val):
+                                                                if ($val === null)
+                                                                    continue;
+                                                                ?>
+                                                                <div class="mc-choice" data-qid="<?= (int) $q['id'] ?>"
+                                                                    data-act-id="<?= (int) $actId ?>" data-key="<?= $key ?>" onclick="pickMC(this)">
+                                                                    <span class="mc-letter"><?= $ltrs[$li++] ?></span>
+                                                                    <?= htmlspecialchars($val) ?>
+                                                                </div>
+                                                            <?php endforeach; ?>
+                                                        <?php else: ?>
+                                                            <textarea class="activity-answer" data-qid="<?= (int) $q['id'] ?>"
+                                                                data-act-id="<?= (int) $actId ?>" placeholder="Type your answer here…"
+                                                                rows="4"></textarea>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                            </div>
+                                        <?php endif; ?>
 
-                    <?php if (!empty($quizData)): ?>
-                        <?php
-                        $allQzQuestions = [];
-                        $firstQzDone = true;
-                        foreach ($quizData as $qzId => $data) {
-                            if (!$data['result'])
-                                $firstQzDone = false;
-                            foreach ($data['questions'] as $q) {
-                                $allQzQuestions[] = [
-                                    'q' => $q,
-                                    'qzId' => (int) $qzId,
-                                    'passing_score' => (int) $data['quiz']['passing_score'],
-                                    'result' => $data['result'],
-                                    'quiz' => $data['quiz'],
-                                ];
-                            }
-                        }
-                        $grandTotal = count($allQzQuestions);
-                        $firstData = reset($quizData);
-                        $firstQz = $firstData['quiz'];
-                        $questionsPerPage = 5;
-                        $totalPages = $grandTotal > 0 ? (int) ceil($grandTotal / $questionsPerPage) : 1;
-                        ?>
-
-                        <div class="ls-section" id="section-quizzes">
-                            <div class="ls-section-head">
-                                <div class="ls-section-icon icon-quiz">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M9 11l3 3L22 4" />
-                                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
-                                    </svg>
-                                </div>
-                                <span class="ls-section-title">Quiz</span>
-                                <div class="ls-section-divider"></div>
-                                <span class="ls-section-count"><?= $grandTotal ?> questions</span>
+                                    </div><!-- /activity-block -->
+                                <?php endforeach; ?>
                             </div>
+                        <?php endif; ?>
 
-                            <?php if ($firstQzDone): ?>
-                                <?php foreach ($quizData as $qzId => $data):
-                                    if (!$data['result'])
-                                        continue;
-                                    ?>
+                        <?php if (!empty($quizData)): ?>
+                            <?php
+                            $allQzQuestions = [];
+                            $firstQzDone = true;
+                            foreach ($quizData as $qzId => $data) {
+                                if (!$data['result'])
+                                    $firstQzDone = false;
+                                foreach ($data['questions'] as $q) {
+                                    $allQzQuestions[] = [
+                                        'q' => $q,
+                                        'qzId' => (int) $qzId,
+                                        'passing_score' => (int) $data['quiz']['passing_score'],
+                                        'result' => $data['result'],
+                                        'quiz' => $data['quiz'],
+                                    ];
+                                }
+                            }
+                            $grandTotal = count($allQzQuestions);
+                            $firstData = reset($quizData);
+                            $firstQz = $firstData['quiz'];
+                            $questionsPerPage = 5;
+                            $totalPages = $grandTotal > 0 ? (int) ceil($grandTotal / $questionsPerPage) : 1;
+                            ?>
+
+                            <div class="ls-section" id="section-quizzes">
+                                <div class="ls-section-head">
+                                    <div class="ls-section-icon icon-quiz">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M9 11l3 3L22 4" />
+                                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                                        </svg>
+                                    </div>
+                                    <span class="ls-section-title">Quiz</span>
+                                    <div class="ls-section-divider"></div>
+                                    <span class="ls-section-count"><?= $grandTotal ?> questions</span>
+                                </div>
+
+                                <?php if ($firstQzDone): ?>
+                                    <?php foreach ($quizData as $qzId => $data):
+                                        if (!$data['result'])
+                                            continue;
+                                        ?>
+                                        <div class="quiz-hero-card">
+                                            <div class="quiz-hero-inner">
+                                                <div class="quiz-hero-tag">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                        width="11" height="11">
+                                                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                                                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                                                    </svg>
+                                                    Quiz
+                                                </div>
+                                                <div class="quiz-hero-title"><?= htmlspecialchars($firstQz['title']) ?></div>
+                                                <?php if (!empty($firstQz['instructions'])): ?>
+                                                    <div class="quiz-hero-desc"><?= htmlspecialchars($firstQz['instructions']) ?></div>
+                                                <?php endif; ?>
+                                                <div class="quiz-stats-strip">
+                                                    <div class="quiz-stat">
+                                                        <div class="qs-val"><?= (int) $data['result']['score'] ?></div>
+                                                        <div class="qs-lbl">Your Score</div>
+                                                    </div>
+                                                    <div class="quiz-stat">
+                                                        <div class="qs-val"><?= (int) $data['result']['total'] ?></div>
+                                                        <div class="qs-lbl">Total Points</div>
+                                                    </div>
+                                                    <div class="quiz-stat">
+                                                        <div class="qs-val"><?= (int) $firstQz['passing_score'] ?></div>
+                                                        <div class="qs-lbl">Passing Score</div>
+                                                    </div>
+                                                    <div class="quiz-stat">
+                                                        <div class="qs-val"><?= $grandTotal ?></div>
+                                                        <div class="qs-lbl">Questions</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <?php
+                                        $studentAnswers = [];
+                                        if (!empty($data['result']['answers_json']))
+                                            $studentAnswers = json_decode($data['result']['answers_json'], true) ?? [];
+                                        ?>
+                                        <?php foreach ($data['questions'] as $qi => $q):
+                                            $ch = ['a' => $q['choice_a'], 'b' => $q['choice_b'], 'c' => $q['choice_c'], 'd' => $q['choice_d']];
+                                            $qLtrs = ['A', 'B', 'C', 'D'];
+                                            $studentPicked = strtolower($studentAnswers[$q['id']] ?? '');
+                                            ?>
+                                            <div class="q-card">
+                                                <p class="q-number">Question <?= $qi + 1 ?></p>
+                                                <p class="q-question"><?= htmlspecialchars($q['question']) ?></p>
+                                                <div>
+                                                    <?php $li = 0;
+                                                    foreach ($ch as $key => $val):
+                                                        if ($val === null)
+                                                            continue;
+                                                        $isCorrect = strtolower($key) === strtolower($q['correct_ans']);
+                                                        $isPicked = ($key === $studentPicked);
+                                                        $isWrong = ($isPicked && !$isCorrect);
+                                                        if ($isCorrect) {
+                                                            $bs = 'border-color:#22c55e;background:rgba(34,197,94,0.06);';
+                                                            $ls = 'background:#22c55e;color:#fff;border-color:#22c55e;';
+                                                            $ic = '<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" width="14" height="14" style="margin-left:auto"><path d="M20 6L9 17l-5-5"/></svg>';
+                                                        } elseif ($isWrong) {
+                                                            $bs = 'border-color:#ef4444;background:rgba(239,68,68,0.06);';
+                                                            $ls = 'background:#ef4444;color:#fff;border-color:#ef4444;';
+                                                            $ic = '<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" width="14" height="14" style="margin-left:auto"><path d="M18 6L6 18M6 6l12 12"/></svg>';
+                                                        } else {
+                                                            $bs = 'border-color:var(--page-border);';
+                                                            $ls = '';
+                                                            $ic = '';
+                                                        }
+                                                        ?>
+                                                        <div class="q-choice" style="pointer-events:none;<?= $bs ?>">
+                                                            <span class="choice-letter" style="<?= $ls ?>"><?= $qLtrs[$li++] ?></span>
+                                                            <?= htmlspecialchars($val) ?>
+                                                            <?= $ic ?>
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    <?php endforeach; ?>
+
+                                <?php else: ?>
                                     <div class="quiz-hero-card">
                                         <div class="quiz-hero-inner">
-                                            <div class="quiz-hero-tag">📋 Quiz Results</div>
+                                            <div class="quiz-hero-tag">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                    width="11" height="11">
+                                                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                                                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                                                </svg>
+                                                Quiz
+                                            </div>
                                             <div class="quiz-hero-title"><?= htmlspecialchars($firstQz['title']) ?></div>
                                             <?php if (!empty($firstQz['instructions'])): ?>
                                                 <div class="quiz-hero-desc"><?= htmlspecialchars($firstQz['instructions']) ?></div>
                                             <?php endif; ?>
                                             <div class="quiz-stats-strip">
                                                 <div class="quiz-stat">
-                                                    <div class="qs-val"><?= (int) $data['result']['score'] ?></div>
-                                                    <div class="qs-lbl">Your Score</div>
-                                                </div>
-                                                <div class="quiz-stat">
-                                                    <div class="qs-val"><?= (int) $data['result']['total'] ?></div>
-                                                    <div class="qs-lbl">Total Points</div>
+                                                    <div class="qs-val"><?= $grandTotal ?></div>
+                                                    <div class="qs-lbl">Questions</div>
                                                 </div>
                                                 <div class="quiz-stat">
                                                     <div class="qs-val"><?= (int) $firstQz['passing_score'] ?></div>
                                                     <div class="qs-lbl">Passing Score</div>
                                                 </div>
                                                 <div class="quiz-stat">
-                                                    <div class="qs-val"><?= $grandTotal ?></div>
-                                                    <div class="qs-lbl">Questions</div>
+                                                    <div class="qs-val"><?= $totalPages ?></div>
+                                                    <div class="qs-lbl">Pages</div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <?php
-                                    $studentAnswers = [];
-                                    if (!empty($data['result']['answers_json']))
-                                        $studentAnswers = json_decode($data['result']['answers_json'], true) ?? [];
-                                    ?>
-                                    <?php foreach ($data['questions'] as $qi => $q):
-                                        $ch = ['a' => $q['choice_a'], 'b' => $q['choice_b'], 'c' => $q['choice_c'], 'd' => $q['choice_d']];
+                                    <?php foreach ($allQzQuestions as $qi => $item):
+                                        $q = $item['q'];
                                         $qLtrs = ['A', 'B', 'C', 'D'];
-                                        $studentPicked = strtolower($studentAnswers[$q['id']] ?? '');
+                                        $ch = ['a' => $q['choice_a'], 'b' => $q['choice_b'], 'c' => $q['choice_c'], 'd' => $q['choice_d']];
+                                        $pageIdx = (int) floor($qi / $questionsPerPage);
                                         ?>
-                                        <div class="q-card">
-                                            <p class="q-number">Question <?= $qi + 1 ?></p>
+                                        <div class="q-card unified-q-card" id="unified_q<?= $qi ?>" data-qzid="<?= $item['qzId'] ?>"
+                                            data-page="<?= $pageIdx ?>" style="<?= $pageIdx > 0 ? 'display:none;' : '' ?>">
+                                            <p class="q-number">Question <?= $qi + 1 ?> of <?= $grandTotal ?></p>
                                             <p class="q-question"><?= htmlspecialchars($q['question']) ?></p>
                                             <div>
                                                 <?php $li = 0;
                                                 foreach ($ch as $key => $val):
                                                     if ($val === null)
                                                         continue;
-                                                    $isCorrect = strtolower($key) === strtolower($q['correct_ans']);
-                                                    $isPicked = ($key === $studentPicked);
-                                                    $isWrong = ($isPicked && !$isCorrect);
-                                                    if ($isCorrect) {
-                                                        $bs = 'border-color:#22c55e;background:rgba(34,197,94,0.06);';
-                                                        $ls = 'background:#22c55e;color:#fff;border-color:#22c55e;';
-                                                        $ic = '<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" width="14" height="14" style="margin-left:auto"><path d="M20 6L9 17l-5-5"/></svg>';
-                                                    } elseif ($isWrong) {
-                                                        $bs = 'border-color:#ef4444;background:rgba(239,68,68,0.06);';
-                                                        $ls = 'background:#ef4444;color:#fff;border-color:#ef4444;';
-                                                        $ic = '<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" width="14" height="14" style="margin-left:auto"><path d="M18 6L6 18M6 6l12 12"/></svg>';
-                                                    } else {
-                                                        $bs = 'border-color:var(--page-border);';
-                                                        $ls = '';
-                                                        $ic = '';
-                                                    }
                                                     ?>
-                                                    <div class="q-choice" style="pointer-events:none;<?= $bs ?>">
-                                                        <span class="choice-letter" style="<?= $ls ?>"><?= $qLtrs[$li++] ?></span>
+                                                    <div class="q-choice unified-choice" data-qi="<?= $qi ?>"
+                                                        data-qid="<?= (int) $q['id'] ?>" data-key="<?= $key ?>"
+                                                        data-qzid="<?= $item['qzId'] ?>" onclick="unifiedPick(this)">
+                                                        <span class="choice-letter"><?= $qLtrs[$li++] ?></span>
                                                         <?= htmlspecialchars($val) ?>
-                                                        <?= $ic ?>
                                                     </div>
                                                 <?php endforeach; ?>
                                             </div>
                                         </div>
                                     <?php endforeach; ?>
-                                <?php endforeach; ?>
 
-                            <?php else: ?>
-                                <div class="quiz-hero-card">
-                                    <div class="quiz-hero-inner">
-                                        <div class="quiz-hero-tag">📋 Quiz</div>
-                                        <div class="quiz-hero-title"><?= htmlspecialchars($firstQz['title']) ?></div>
-                                        <?php if (!empty($firstQz['instructions'])): ?>
-                                            <div class="quiz-hero-desc"><?= htmlspecialchars($firstQz['instructions']) ?></div>
-                                        <?php endif; ?>
-                                        <div class="quiz-stats-strip">
-                                            <div class="quiz-stat">
-                                                <div class="qs-val"><?= $grandTotal ?></div>
-                                                <div class="qs-lbl">Questions</div>
-                                            </div>
-                                            <div class="quiz-stat">
-                                                <div class="qs-val"><?= (int) $firstQz['passing_score'] ?></div>
-                                                <div class="qs-lbl">Passing Score</div>
-                                            </div>
-                                            <div class="quiz-stat">
-                                                <div class="qs-val"><?= $totalPages ?></div>
-                                                <div class="qs-lbl">Pages</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <?php foreach ($allQzQuestions as $qi => $item):
-                                    $q = $item['q'];
-                                    $qLtrs = ['A', 'B', 'C', 'D'];
-                                    $ch = ['a' => $q['choice_a'], 'b' => $q['choice_b'], 'c' => $q['choice_c'], 'd' => $q['choice_d']];
-                                    $pageIdx = (int) floor($qi / $questionsPerPage);
-                                    ?>
-                                    <div class="q-card unified-q-card" id="unified_q<?= $qi ?>" data-qzid="<?= $item['qzId'] ?>"
-                                        data-page="<?= $pageIdx ?>" style="<?= $pageIdx > 0 ? 'display:none;' : '' ?>">
-                                        <p class="q-number">Question <?= $qi + 1 ?> of <?= $grandTotal ?></p>
-                                        <p class="q-question"><?= htmlspecialchars($q['question']) ?></p>
-                                        <div>
-                                            <?php $li = 0;
-                                            foreach ($ch as $key => $val):
-                                                if ($val === null)
-                                                    continue;
-                                                ?>
-                                                <div class="q-choice unified-choice" data-qi="<?= $qi ?>" data-qid="<?= (int) $q['id'] ?>"
-                                                    data-key="<?= $key ?>" data-qzid="<?= $item['qzId'] ?>" onclick="unifiedPick(this)">
-                                                    <span class="choice-letter"><?= $qLtrs[$li++] ?></span>
-                                                    <?= htmlspecialchars($val) ?>
-                                                </div>
-                                            <?php endforeach; ?>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-
-                                <div class="quiz-nav-bar">
-                                    <span class="quiz-status" id="unified_status">0 / <?= $grandTotal ?> answered</span>
-                                    <div class="quiz-nav-btns">
-                                        <button class="btn-qnav-prev" id="unified_prev" style="display:none;"
-                                            onclick="unifiedPageNav(-1)">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13"
-                                                height="13">
-                                                <path d="M19 12H5M11 6l-6 6 6 6" />
-                                            </svg>
-                                            Prev
-                                        </button>
-                                        <span class="page-indicator" id="unified_page_indicator">Page 1 of <?= $totalPages ?></span>
-                                        <?php if ($grandTotal > 5): ?>
-                                            <button class="btn-qnav-next" id="unified_next" onclick="unifiedPageNav(1)">
-                                                Next
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13"
-                                                    height="13">
-                                                    <path d="M5 12h14M13 6l6 6-6 6" />
-                                                </svg>
+                                    <div class="quiz-nav-bar">
+                                        <span class="quiz-status" id="unified_status">0 / <?= $grandTotal ?> answered</span>
+                                        <div class="quiz-nav-btns">
+                                            <button class="btn-qnav-prev" id="unified_prev" style="display:none;"
+                                                onclick="unifiedPageNav(-1)">
+                                                <i class="fa fa-arrow-left"></i>
+                                                Prev
                                             </button>
-                                        <?php endif; ?>
+                                            <span class="page-indicator" id="unified_page_indicator">Page 1 of
+                                                <?= $totalPages ?></span>
+                                            <?php if ($grandTotal > 5): ?>
+                                                <button class="btn-qnav-next" id="unified_next" onclick="unifiedPageNav(1)">
+                                                    Next
+                                                    <i class="fa fa-arrow-right"></i>
+                                                </button>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
-                                </div>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+
+                    <?php endif; /* end $lesson check */ ?>
+
+                    <?php if ($lesson): ?>
+                        <div class="lesson-bottom-nav">
+                            <?php if ($prevLessonId): ?>
+                                <a class="topbar-nav-btn btn-prev-top" href="<?= lUrl($subject, $moduleId, $prevLessonId) ?>"
+                                    id="prevBtn">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20"
+                                        height="20">
+                                        <path d="M19 12H5M11 6l-6 6 6 6" />
+                                    </svg>
+                                    Prev
+                                </a>
+                            <?php else: ?>
+                                <span></span>
+                            <?php endif; ?>
+
+                            <?php if ($nextLessonId): ?>
+                                <a class="topbar-nav-btn btn-next-top" href="<?= lUrl($subject, $moduleId, $nextLessonId) ?>"
+                                    id="nextBtn">
+                                    Next
+                                    <i class="fa fa-arrow-right"></i>
+                                </a>
+                            <?php else: ?>
+                                <?php $lastLessonDone = $isCurrentLessonDone ?? ($lessonCompletion[$lessonId] ?? false); ?>
+                                <?php if ($lastLessonDone): ?>
+                                    <span class="topbar-nav-btn btn-completed-top" id="nextBtn">
+                                        Completed
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"
+                                            height="14">
+                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                            <path d="M22 4L12 14.01l-3-3" />
+                                        </svg>
+                                    </span>
+                                <?php else: ?>
+                                    <button class="topbar-nav-btn btn-next-top" id="nextBtn" type="button">
+                                        Finish
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"
+                                            height="14">
+                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                            <path d="M22 4L12 14.01l-3-3" />
+                                        </svg>
+                                    </button>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </div>
                     <?php endif; ?>
 
-                <?php endif; /* end $lesson check */ ?>
+                </div><!-- /lessons-content-wrap -->
 
-                <?php if ($lesson): ?>
-                    <div class="lesson-bottom-nav">
-                        <?php if ($prevLessonId): ?>
-                            <a class="topbar-nav-btn btn-prev-top" href="<?= lUrl($subject, $moduleId, $prevLessonId) ?>"
-                                id="prevBtn">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20"
-                                    height="20">
-                                    <path d="M19 12H5M11 6l-6 6 6 6" />
-                                </svg>
-                                Prev
-                            </a>
-                        <?php else: ?>
-                            <span></span>
-                        <?php endif; ?>
+            </div><!-- /lessons-main -->
+        </div><!-- /lessons-shell -->
 
-                        <?php if ($nextLessonId): ?>
-                            <a class="topbar-nav-btn btn-next-top" href="<?= lUrl($subject, $moduleId, $nextLessonId) ?>"
-                                id="nextBtn">
-                                Next
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20"
-                                    height="20">
-                                    <path d="M5 12h14M13 6l6 6-6 6" />
-                                </svg>
-                            </a>
-                        <?php else: ?>
-                            <?php $lastLessonDone = $isCurrentLessonDone ?? ($lessonCompletion[$lessonId] ?? false); ?>
-                            <?php if ($lastLessonDone): ?>
-                                <span class="topbar-nav-btn btn-completed-top" id="nextBtn">
-                                    Completed
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"
-                                        height="14">
-                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                        <path d="M22 4L12 14.01l-3-3" />
-                                    </svg>
-                                </span>
-                            <?php else: ?>
-                                <button class="topbar-nav-btn btn-next-top" id="nextBtn" type="button">
-                                    Finish
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14"
-                                        height="14">
-                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                        <path d="M22 4L12 14.01l-3-3" />
-                                    </svg>
-                                </button>
-                            <?php endif; ?>
-                        <?php endif; ?>
-                    </div>
-                <?php endif; ?>
+        <div class="db-lightbox" id="dbLightbox" onclick="dbLightboxClose()">
+            <button class="db-lightbox-close" onclick="dbLightboxClose()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+            </button>
+            <img id="dbLightboxImg" src="" alt="">
+        </div>
 
-            </div><!-- /lessons-content-wrap -->
-
-
-        </div><!-- /lessons-content-wrap -->
-
-    </div><!-- /lessons-main -->
-    </div><!-- /lessons-shell -->
-
-    <div class="db-lightbox" id="dbLightbox" onclick="dbLightboxClose()">
-        <button class="db-lightbox-close" onclick="dbLightboxClose()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
-                <path d="M18 6L6 18M6 6l12 12" />
-            </svg>
-        </button>
-        <img id="dbLightboxImg" src="" alt="">
-    </div>
-
-    <noscript>
-        <style>
-            .module-splash {
-                display: none;
-            }
-
-            .lessons-shell {
-                opacity: 1;
-            }
-        </style>
-    </noscript>
-
-    <script>
-        function startBonbonBubble3Typewriter() {
-            const el = document.getElementById('bonbonMessage3');
-            if (!el || el.dataset.typed) return;
-            el.dataset.typed = '1';
-
-            const message = <?= json_encode($bonbonLessonMessage) ?>;
-            const speed = 28;
-            let i = 0;
-
-            const cursor = document.createElement('span');
-            cursor.className = 'typing-cursor';
-            el.appendChild(cursor);
-
-            function type() {
-                if (i < message.length) {
-                    cursor.insertAdjacentText('beforebegin', message.charAt(i));
-                    i++;
-                    setTimeout(type, speed);
-                } else {
-                    setTimeout(() => cursor.remove(), 1200);
+        <noscript>
+            <style>
+                .module-splash {
+                    display: none;
                 }
-            }
-            type();
-        }
 
-        document.addEventListener('DOMContentLoaded', startBonbonBubble3Typewriter);
-    </script>
-
-    <script>
-        function startBonbonBubble2Typewriter() {
-            const el = document.getElementById('bonbonMessage2');
-            if (!el || el.dataset.typed) return;
-            el.dataset.typed = '1';
-
-            const message = "Ready to learn something new? Every lesson is an opportunity to build your knowledge and improve your skills. Stay curious, complete the activities and quizzes.";
-            const speed = 28;
-            let i = 0;
-
-            const cursor = document.createElement('span');
-            cursor.className = 'typing-cursor';
-            el.appendChild(cursor);
-
-            function type() {
-                if (i < message.length) {
-                    cursor.insertAdjacentText('beforebegin', message.charAt(i));
-                    i++;
-                    setTimeout(type, speed);
-                } else {
-                    setTimeout(() => cursor.remove(), 1200);
+                .lessons-shell {
+                    opacity: 1;
                 }
+            </style>
+        </noscript>
+
+        <script>
+            function startBonbonBubble3Typewriter() {
+                const el = document.getElementById('bonbonMessage3');
+                if (!el || el.dataset.typed) return;
+                el.dataset.typed = '1';
+
+                const message = <?= json_encode($bonbonLessonMessage) ?>;
+                const speed = 28;
+                let i = 0;
+
+                const cursor = document.createElement('span');
+                cursor.className = 'typing-cursor';
+                el.appendChild(cursor);
+
+                function type() {
+                    if (i < message.length) {
+                        cursor.insertAdjacentText('beforebegin', message.charAt(i));
+                        i++;
+                        setTimeout(type, speed);
+                    } else {
+                        setTimeout(() => cursor.remove(), 1200);
+                    }
+                }
+                type();
             }
-            type();
-        }
 
-        document.addEventListener('DOMContentLoaded', startBonbonBubble2Typewriter);
-    </script>
+            document.addEventListener('DOMContentLoaded', startBonbonBubble3Typewriter);
+        </script>
 
-    <script>
-        (function () {
+        <script>
+            function startBonbonBubble2Typewriter() {
+                const el = document.getElementById('bonbonMessage2');
+                if (!el || el.dataset.typed) return;
+                el.dataset.typed = '1';
 
-            const el = document.getElementById("bonbonMessage");
+                const message = "Ready to learn something new? Every lesson is an opportunity to build your knowledge and improve your skills. Stay curious, complete the activities and quizzes.";
+                const speed = 28;
+                let i = 0;
 
-            const message = <?= json_encode("Welcome back, $splashFirstName! $splashMsg") ?>;
+                const cursor = document.createElement('span');
+                cursor.className = 'typing-cursor';
+                el.appendChild(cursor);
 
-            let i = 0;
-            const speed = 30;
+                function type() {
+                    if (i < message.length) {
+                        cursor.insertAdjacentText('beforebegin', message.charAt(i));
+                        i++;
+                        setTimeout(type, speed);
+                    } else {
+                        setTimeout(() => cursor.remove(), 1200);
+                    }
+                }
+                type();
+            }
 
-            function type() {
+            document.addEventListener('DOMContentLoaded', startBonbonBubble2Typewriter);
+        </script>
 
-                if (i < message.length) {
+        <script>
+            (function () {
 
-                    el.textContent += message.charAt(i);
-                    i++;
+                const el = document.getElementById("bonbonMessage");
 
-                    setTimeout(type, speed);
+                const message = <?= json_encode("Welcome back, $splashFirstName! $splashMsg") ?>;
 
-                } else {
+                let i = 0;
+                const speed = 30;
 
-                    el.insertAdjacentHTML("afterend", `
+                function type() {
+
+                    if (i < message.length) {
+
+                        el.textContent += message.charAt(i);
+                        i++;
+
+                        setTimeout(type, speed);
+
+                    } else {
+
+                        el.insertAdjacentHTML("afterend", `
                     <div class="speech-bubble-progress">
                         <div class="sb-progress-row">
                             <span class="sbp-label">Progress</span>
@@ -3327,196 +3469,204 @@ function youtubeEmbed($url)
                     </button>
                     `);
 
-                    requestAnimationFrame(function () {
-                        var fill = document.getElementById('sbProgressFill');
-                        if (!fill) return;
                         requestAnimationFrame(function () {
-                            fill.style.width = "<?= $progressPct ?>%";
+                            var fill = document.getElementById('sbProgressFill');
+                            if (!fill) return;
+                            requestAnimationFrame(function () {
+                                fill.style.width = "<?= $progressPct ?>%";
+                            });
                         });
-                    });
 
-                }
-
-            }
-
-            if (!document.documentElement.classList.contains('skip-splash')) {
-                type();
-            }
-
-        })();
-    </script>
-
-    <script>
-        var LESSON_DATA = {
-            lessonId: <?= (int) $lessonId ?>,
-            moduleId: <?= (int) $moduleId ?>,
-            subject: '<?= htmlspecialchars($subject) ?>',
-            studentId: <?= (int) $studentId ?>,
-            activities: <?= json_encode(array_values(array_map(function ($d) {
-                return [
-                    'id' => (int) $d['activity']['id'],
-                    'required' => count($d['questions']),
-                    'done' => ($d['submission'] !== null),
-                    'questions' => array_map(function ($q) {
-                        return [
-                            'id' => (int) $q['id'],
-                            'question' => $q['question'],
-                            'question_type' => $q['question_type'],
-                            'choice_a' => $q['choice_a'] ?? null,
-                            'choice_b' => $q['choice_b'] ?? null,
-                            'choice_c' => $q['choice_c'] ?? null,
-                            'choice_d' => $q['choice_d'] ?? null,
-                            'correct_ans' => $q['correct_ans'] ?? null,
-                            'model_answer' => $q['model_answer'] ?? null,
-                        ];
-                    }, $d['questions']),
-                ];
-            }, $activityData))) ?>,
-            quizzes: <?= json_encode(array_values(array_map(function ($d) {
-                return [
-                    'id' => (int) $d['quiz']['id'],
-                    'required' => count($d['questions']),
-                    'passing_score' => (int) $d['quiz']['passing_score'],
-                    'done' => ($d['result'] !== null),
-                ];
-            }, $quizData))) ?>
-        };
-
-        function scrollToSection(id) {
-            var el = document.getElementById(id);
-            if (!el) return;
-            var main = document.querySelector('.lessons-main');
-            if (main) {
-                var offset = el.getBoundingClientRect().top - main.getBoundingClientRect().top + main.scrollTop - 16;
-                main.scrollTo({ top: offset, behavior: 'smooth' });
-            } else {
-                el.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-    </script>
-
-    <script>
-        (function () {
-            var splash = document.getElementById('moduleSplash');
-            var shell = document.getElementById('lessonsShell');
-
-            if (!splash || !shell) return;
-
-            splash.addEventListener('click', function (e) {
-                var btn = e.target.closest('#splashContinueBtn');
-                if (!btn) return;
-
-                sessionStorage.setItem('splash_dismissed_module_<?= (int) $moduleId ?>', '1');
-
-                splash.classList.add('splash-exit');
-                setTimeout(function () {
-                    splash.style.display = 'none';
-                    shell.classList.add('shell-visible');
-                    startBonbonBubble2Typewriter();
-                    startBonbonBubble3Typewriter();
-                }, 460);
-            });
-        })();
-    </script>
-
-    <script>
-        (function () {
-            var moduleId = <?= (int) ($moduleId ?? 0) ?>;
-            var viewKey = 'lessons_view_module_' + moduleId;
-            var shell = document.getElementById('lessonsShell');
-            var backBtns = document.querySelectorAll('.js-back-to-list');
-
-            if (!shell) return;
-
-            function applyView(view) {
-                shell.classList.remove('view-list', 'view-lesson');
-                shell.classList.add(view === 'lesson' ? 'view-lesson' : 'view-list');
-                if (view === 'lesson') {
-                    startBonbonBubble3Typewriter();
-                }
-            }
-
-            var savedView = sessionStorage.getItem(viewKey) || 'list';
-            applyView(savedView);
-
-            document.querySelectorAll('.sb-nav-item').forEach(function (item) {
-                item.addEventListener('click', function (e) {
-                    sessionStorage.setItem(viewKey, 'lesson');
-                    if (item.classList.contains('active')) {
-                        e.preventDefault();
-                        applyView('lesson');
                     }
-                });
-            });
 
-            ['prevBtn', 'nextBtn'].forEach(function (id) {
-                var el = document.getElementById(id);
-                if (el && el.tagName === 'A') {
-                    el.addEventListener('click', function () {
-                        sessionStorage.setItem(viewKey, 'lesson');
-                    });
-                }
-            });
-
-            backBtns.forEach(function (backBtn) {
-                backBtn.addEventListener('click', function () {
-                    sessionStorage.setItem(viewKey, 'list');
-                    applyView('list');
-                });
-            });
-        })();
-    </script>
-
-    <?php $hasActiveQuiz = !empty($quizData) && isset($firstQzDone) && !$firstQzDone; ?>
-    <?php if ($hasActiveQuiz): ?>
-        <script>
-            (function () {
-                const questionsPerPage = <?= (int) $questionsPerPage ?>;
-                const grandTotal = <?= (int) $grandTotal ?>;
-                const totalPages = <?= (int) $totalPages ?>;
-                let currentPage = 0;
-
-                function showPage(page) {
-                    document.querySelectorAll('.unified-q-card').forEach(el => el.style.display = 'none');
-                    document.querySelectorAll(`.unified-q-card[data-page="${page}"]`).forEach(el => el.style.display = 'block');
-                    var ind = document.getElementById('unified_page_indicator');
-                    if (ind) ind.textContent = `Page ${page + 1} of ${totalPages}`;
-                    var prev = document.getElementById('unified_prev');
-                    if (prev) prev.style.display = page > 0 ? 'inline-flex' : 'none';
-                    var next = document.getElementById('unified_next');
-                    if (next) {
-                        if (grandTotal > 5 && page < totalPages - 1) {
-                            next.style.display = 'inline-flex';
-                            next.innerHTML = 'Next <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
-                            next.onclick = () => unifiedPageNav(1);
-                        } else {
-                            next.style.display = 'none';
-                        }
-                    }
-                    currentPage = page;
                 }
 
-                window.unifiedPageNav = function (dir) {
-                    var newPage = currentPage + dir;
-                    if (newPage < 0 || newPage >= totalPages) return;
-                    document.querySelectorAll('.unified-q-card').forEach(el => el.style.display = 'none');
-                    document.querySelectorAll(`.unified-q-card[data-page="${newPage}"]`).forEach(el => el.style.display = 'block');
-                    var ind = document.getElementById('unified_page_indicator');
-                    if (ind) ind.textContent = `Page ${newPage + 1} of ${totalPages}`;
-                    var prev = document.getElementById('unified_prev');
-                    if (prev) prev.style.display = newPage > 0 ? 'inline-flex' : 'none';
-                    var next = document.getElementById('unified_next');
-                    if (next) next.style.display = (grandTotal > 5 && newPage < totalPages - 1) ? 'inline-flex' : 'none';
-                    currentPage = newPage;
-                };
+                if (!document.documentElement.classList.contains('skip-splash')) {
+                    type();
+                }
 
-                showPage(0);
             })();
         </script>
-    <?php endif; ?>
 
-    <script src="../js_folder/lessons.js?v=<?= time() ?>"></script>
-    <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
+        <script>
+            fetch('/learning_management/public/?url=mark_flashcards_viewed', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'lesson_id=' + currentLessonId
+            });
+        </script>
+
+        <script>
+            var LESSON_DATA = {
+                lessonId: <?= (int) $lessonId ?>,
+                moduleId: <?= (int) $moduleId ?>,
+                subject: '<?= htmlspecialchars($subject) ?>',
+                studentId: <?= (int) $studentId ?>,
+                activities: <?= json_encode(array_values(array_map(function ($d) {
+                    return [
+                        'id' => (int) $d['activity']['id'],
+                        'required' => count($d['questions']),
+                        'done' => ($d['submission'] !== null),
+                        'questions' => array_map(function ($q) {
+                            return [
+                                'id' => (int) $q['id'],
+                                'question' => $q['question'],
+                                'question_type' => $q['question_type'],
+                                'choice_a' => $q['choice_a'] ?? null,
+                                'choice_b' => $q['choice_b'] ?? null,
+                                'choice_c' => $q['choice_c'] ?? null,
+                                'choice_d' => $q['choice_d'] ?? null,
+                                'correct_ans' => $q['correct_ans'] ?? null,
+                                'model_answer' => $q['model_answer'] ?? null,
+                            ];
+                        }, $d['questions']),
+                    ];
+                }, $activityData))) ?>,
+                quizzes: <?= json_encode(array_values(array_map(function ($d) {
+                    return [
+                        'id' => (int) $d['quiz']['id'],
+                        'required' => count($d['questions']),
+                        'passing_score' => (int) $d['quiz']['passing_score'],
+                        'done' => ($d['result'] !== null),
+                    ];
+                }, $quizData))) ?>
+            };
+
+            function scrollToSection(id) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                var main = document.querySelector('.lessons-main');
+                if (main) {
+                    var offset = el.getBoundingClientRect().top - main.getBoundingClientRect().top + main.scrollTop - 16;
+                    main.scrollTo({ top: offset, behavior: 'smooth' });
+                } else {
+                    el.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        </script>
+
+        <script>
+            (function () {
+                var splash = document.getElementById('moduleSplash');
+                var shell = document.getElementById('lessonsShell');
+
+                if (!splash || !shell) return;
+
+                splash.addEventListener('click', function (e) {
+                    var btn = e.target.closest('#splashContinueBtn');
+                    if (!btn) return;
+
+                    sessionStorage.setItem('splash_dismissed_module_<?= (int) $moduleId ?>', '1');
+
+                    splash.classList.add('splash-exit');
+                    setTimeout(function () {
+                        splash.style.display = 'none';
+                        shell.classList.add('shell-visible');
+                        startBonbonBubble2Typewriter();
+                        startBonbonBubble3Typewriter();
+                    }, 460);
+                });
+            })();
+        </script>
+
+        <script>
+            (function () {
+                var moduleId = <?= (int) ($moduleId ?? 0) ?>;
+                var viewKey = 'lessons_view_module_' + moduleId;
+                var shell = document.getElementById('lessonsShell');
+                var backBtns = document.querySelectorAll('.js-back-to-list');
+
+                if (!shell) return;
+
+                function applyView(view) {
+                    shell.classList.remove('view-list', 'view-lesson');
+                    shell.classList.add(view === 'lesson' ? 'view-lesson' : 'view-list');
+                    if (view === 'lesson') {
+                        startBonbonBubble3Typewriter();
+                    }
+                }
+
+                var savedView = sessionStorage.getItem(viewKey) || 'list';
+                applyView(savedView);
+
+                document.querySelectorAll('.sb-nav-item').forEach(function (item) {
+                    item.addEventListener('click', function (e) {
+                        sessionStorage.setItem(viewKey, 'lesson');
+                        if (item.classList.contains('active')) {
+                            e.preventDefault();
+                            applyView('lesson');
+                        }
+                    });
+                });
+
+                ['prevBtn', 'nextBtn'].forEach(function (id) {
+                    var el = document.getElementById(id);
+                    if (el && el.tagName === 'A') {
+                        el.addEventListener('click', function () {
+                            sessionStorage.setItem(viewKey, 'lesson');
+                        });
+                    }
+                });
+
+                backBtns.forEach(function (backBtn) {
+                    backBtn.addEventListener('click', function () {
+                        sessionStorage.setItem(viewKey, 'list');
+                        applyView('list');
+                    });
+                });
+            })();
+        </script>
+
+        <?php $hasActiveQuiz = !empty($quizData) && isset($firstQzDone) && !$firstQzDone; ?>
+        <?php if ($hasActiveQuiz): ?>
+            <script>
+                (function () {
+                    const questionsPerPage = <?= (int) $questionsPerPage ?>;
+                    const grandTotal = <?= (int) $grandTotal ?>;
+                    const totalPages = <?= (int) $totalPages ?>;
+                    let currentPage = 0;
+
+                    function showPage(page) {
+                        document.querySelectorAll('.unified-q-card').forEach(el => el.style.display = 'none');
+                        document.querySelectorAll(`.unified-q-card[data-page="${page}"]`).forEach(el => el.style.display = 'block');
+                        var ind = document.getElementById('unified_page_indicator');
+                        if (ind) ind.textContent = `Page ${page + 1} of ${totalPages}`;
+                        var prev = document.getElementById('unified_prev');
+                        if (prev) prev.style.display = page > 0 ? 'inline-flex' : 'none';
+                        var next = document.getElementById('unified_next');
+                        if (next) {
+                            if (grandTotal > 5 && page < totalPages - 1) {
+                                next.style.display = 'inline-flex';
+                                next.innerHTML = 'Next <i class="fa fa-arrow-right"></i>';
+                                next.onclick = () => unifiedPageNav(1);
+                            } else {
+                                next.style.display = 'none';
+                            }
+                        }
+                        currentPage = page;
+                    }
+
+                    window.unifiedPageNav = function (dir) {
+                        var newPage = currentPage + dir;
+                        if (newPage < 0 || newPage >= totalPages) return;
+                        document.querySelectorAll('.unified-q-card').forEach(el => el.style.display = 'none');
+                        document.querySelectorAll(`.unified-q-card[data-page="${newPage}"]`).forEach(el => el.style.display = 'block');
+                        var ind = document.getElementById('unified_page_indicator');
+                        if (ind) ind.textContent = `Page ${newPage + 1} of ${totalPages}`;
+                        var prev = document.getElementById('unified_prev');
+                        if (prev) prev.style.display = newPage > 0 ? 'inline-flex' : 'none';
+                        var next = document.getElementById('unified_next');
+                        if (next) next.style.display = (grandTotal > 5 && newPage < totalPages - 1) ? 'inline-flex' : 'none';
+                        currentPage = newPage;
+                    };
+
+                    showPage(0);
+                })();
+            </script>
+        <?php endif; ?>
+
+        <script src="../js_folder/lessons.js?v=<?= time() ?>"></script>
+        <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
 </body>
 
 

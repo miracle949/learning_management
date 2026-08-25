@@ -170,13 +170,13 @@ class SuperAdminController
                         // Layer", rendered above this block's body text.
                         case 'text':
                             $text = trim($block['text'] ?? '');
-                            if ($text === '')
-                                break;
                             $heading = trim($block['heading'] ?? '');
                             $keyIdea = trim($block['key_idea'] ?? '');
+                            if ($text === '' && $heading === '')
+                                break;                       // only skip if BOTH are empty
                             $this->superAdminModel->insertInteractiveContent($lessonId, 'text', [
                                 'title' => $heading !== '' ? $heading : null,
-                                'body' => $text,
+                                'body' => $text !== '' ? $text : null,
                                 'key_idea' => $keyIdea !== '' ? $keyIdea : null,
                                 'sort_order' => $sortOrder,
                             ]);
@@ -184,8 +184,9 @@ class SuperAdminController
 
                         // ── IMAGE ──
                         case 'image':
-                            $images = $block['images'] ?? [];
-                            foreach ($images as $imgIdx => $imgData) {
+                            $groupTitle = trim($block['image_title'] ?? '');
+                            $imgNames = $blockImages['name'][$modIdx][$lesIdx][$blockIdx] ?? [];
+                            foreach ($imgNames as $imgIdx => $imgName) {
                                 $file = [
                                     'name' => $blockImages['name'][$modIdx][$lesIdx][$blockIdx][$imgIdx] ?? null,
                                     'tmp_name' => $blockImages['tmp_name'][$modIdx][$lesIdx][$blockIdx][$imgIdx] ?? null,
@@ -202,7 +203,7 @@ class SuperAdminController
                                 $uniqueName = uniqid('img_') . '.' . $ext;
                                 if (move_uploaded_file($file['tmp_name'], $imageDir . $uniqueName)) {
                                     $this->superAdminModel->insertInteractiveContent($lessonId, 'image', [
-                                        'title' => trim($imgData['caption'] ?? ''),
+                                        'title' => $groupTitle !== '' ? $groupTitle : null,
                                         'file_path' => '/learning_management/uploads/lessons/images/' . $uniqueName,
                                         'file_name' => $file['name'],
                                         'file_type' => $ext,

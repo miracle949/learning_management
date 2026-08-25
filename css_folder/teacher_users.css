@@ -43,17 +43,6 @@
     scrollbar-width: none;
 }
 
-.container-fluid main {
-    /* background-color: #F2F3FF; */
-    background-color: #F7F9F8;
-    padding: 1.8rem 1.4rem 1.8rem 1.4rem;
-    /* height: calc(100vh - 68px);
-    overflow-y: auto; */
-    margin-top: 68px;
-    /* height: calc(100vh - 68px);
-    overflow-y: auto; */
-}
-
 .container-fluid .rightbar main h2 {
     font-size: 21px;
     margin: 0 0 8px;
@@ -300,18 +289,6 @@
     /* margin-top: 1rem; */
 }
 
-.container-fluid .sidebar .sidebar-menu {
-    margin-top: 1rem;
-}
-
-.container-fluid .sidebar .sidebar-menu ul .sidebar-category h5 {
-    margin: 10px 6px;
-    font-size: 13px;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: #808080;
-}
-
 .container-fluid .sidebar .sidebar-menu ul li {
     list-style: none;
     line-height: 50px;
@@ -377,13 +354,16 @@
 }
 
 .container-fluid .rightbar {
-    width: calc(100% - 235px);
+    width: calc(100% - 248px);
     /* height: 100vh; */
     /* margin-top: 68px; */
     /* overflow-y: auto; */
-    margin-left: 235px;
+    margin-left: 248px;
+    height: 100vh;
+    overflow-y: auto;
     border-left: 1px solid rgba(0, 0, 0, 0.1);
-    background-color: #F7F9F8;
+    /* background-color: #F7F9F8; */
+    padding: 1.8rem;
 }
 
 /* .container-fluid .rightbar::-webkit-scrollbar{

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="../css_folder/student_records.css">
+    <link rel="stylesheet" href="../css_folder/components.css">
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
 
@@ -183,8 +184,6 @@
         <?php include("../admin_folder/sidebar.php") ?>
 
         <div class="rightbar">
-
-            <?php include("../admin_folder/nav.php") ?>
             <!-- MAIN -->
             <main class="main">
 

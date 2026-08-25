@@ -8,9 +8,9 @@ class Students extends Model
     public function getGradedAssignments($studentId)
     {
         $stmt = $this->db->prepare("
-        SELECT a.id, a.task, a.due_date, a.points AS total_points,
-               s.subject_code, sub.submitted_at, sub.graded_at,
-               sub.points_earned, sub.feedback
+        SELECT a.id, a.task, a.type, a.due_date, a.points AS total_points,
+           s.subject_code, sub.submitted_at, sub.graded_at,
+           sub.points_earned, sub.feedback
         FROM tbl_assignments a
         JOIN tbl_assignment_submissions sub ON sub.assignment_id = a.id
         JOIN tbl_subjects s ON a.subject_id = s.id
@@ -663,6 +663,265 @@ class Students extends Model
         return $stmt->execute();
     }
 
+    // ── DASHBOARD STAT HELPERS ──────────────────────────────────
+    public function countDueSoonAssignments($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total
+        FROM tbl_assignments a
+        JOIN tbl_subjects s ON a.subject_id = s.id
+        JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+        WHERE a.id NOT IN (
+            SELECT assignment_id FROM tbl_assignment_submissions WHERE student_id = ?
+        )
+        AND a.due_date IS NOT NULL
+        AND a.due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)
+    ");
+        $stmt->bind_param("ii", $studentId, $studentId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function countPendingDueThisWeek($studentId)
+    {
+        return $this->countDueSoonAssignments($studentId); // same window, used for "Pending Tasks" stat line
+    }
+
+    public function countCompletedThisWeek($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total
+        FROM tbl_assignment_submissions
+        WHERE student_id = ?
+        AND submitted_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+    ");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function countTotalAssignmentsForStudent($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total
+        FROM tbl_assignments a
+        JOIN tbl_subjects s ON a.subject_id = s.id
+        JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+    ");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function getOverallProgressForStudent($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total FROM tbl_interactive_modules im
+        JOIN tbl_subjects s ON im.subject_id = s.id
+        JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+    ");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        $totalModules = (int) $stmt->get_result()->fetch_assoc()['total'];
+
+        $moduleProgress = $this->getOverallModuleProgress($studentId, $totalModules);
+        $modulePct = $moduleProgress['percentage'];
+
+        $totalAssignments = $this->countTotalAssignmentsForStudent($studentId);
+        $completedAssignments = $this->countCompletedAssignments($studentId);
+        $assignmentPct = $totalAssignments > 0 ? ($completedAssignments / $totalAssignments) * 100 : 0;
+
+        if ($totalModules > 0 && $totalAssignments > 0) {
+            $overall = round(($assignmentPct + $modulePct) / 2);
+        } elseif ($totalModules > 0) {
+            $overall = $modulePct;
+        } elseif ($totalAssignments > 0) {
+            $overall = round($assignmentPct);
+        } else {
+            $overall = 0;
+        }
+
+        return (int) $overall;
+    }
+
+    public function getOverallProgressDeltaThisWeek($studentId)
+    {
+        $totalAssignments = $this->countTotalAssignmentsForStudent($studentId);
+        if ($totalAssignments === 0)
+            return 0;
+        $completedThisWeek = $this->countCompletedThisWeek($studentId);
+        return (int) round(($completedThisWeek / $totalAssignments) * 100);
+    }
+
+    // ── MODULES PAGE STAT HELPERS (global, across all enrolled classes) ──
+    public function countTotalModulesForStudent($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(DISTINCT im.id) AS total
+        FROM tbl_interactive_modules im
+        JOIN tbl_subjects s ON im.subject_id = s.id
+        JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+    ");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function countTotalQuizzesForStudent($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(DISTINCT ic.title, ic.lesson_id) AS total
+        FROM tbl_interactive_contents ic
+        JOIN tbl_lessons l ON ic.lesson_id = l.id
+        JOIN tbl_interactive_modules im ON l.interactive_module_id = im.id
+        JOIN tbl_subjects s ON im.subject_id = s.id
+        JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+        WHERE ic.type = 'quiz'
+    ");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function countCompletedQuizzesForStudent($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total
+        FROM tbl_quiz_results qr
+        JOIN tbl_interactive_contents ic ON qr.content_id = ic.id
+        JOIN tbl_lessons l ON ic.lesson_id = l.id
+        JOIN tbl_interactive_modules im ON l.interactive_module_id = im.id
+        JOIN tbl_subjects s ON im.subject_id = s.id
+        JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+        WHERE qr.student_id = ?
+    ");
+        $stmt->bind_param("ii", $studentId, $studentId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function countModulesInProgressForStudent($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total
+        FROM tbl_module_progress
+        WHERE student_id = ? AND status = 'in_progress'
+    ");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function countTotalActivitiesForStudent($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total
+        FROM tbl_interactive_contents ic
+        JOIN tbl_lessons l ON ic.lesson_id = l.id
+        JOIN tbl_interactive_modules im ON l.interactive_module_id = im.id
+        JOIN tbl_subjects s ON im.subject_id = s.id
+        JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+        WHERE ic.type = 'activity'
+    ");
+        $stmt->bind_param("i", $studentId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function countActivitiesCompletedThisWeek($studentId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total
+        FROM tbl_activity_submissions asub
+        JOIN tbl_interactive_contents ic ON asub.content_id = ic.id
+        JOIN tbl_lessons l ON ic.lesson_id = l.id
+        JOIN tbl_interactive_modules im ON l.interactive_module_id = im.id
+        JOIN tbl_subjects s ON im.subject_id = s.id
+        JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+        WHERE asub.student_id = ?
+        AND asub.submitted_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+    ");
+        $stmt->bind_param("ii", $studentId, $studentId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    // ── DASHBOARD: in-progress modules across ALL enrolled subjects ──
+    public function getInProgressModulesForStudent($studentId, $limit = 6)
+    {
+        if (!$studentId)
+            return [];
+
+        $stmt = $this->db->prepare("
+        SELECT mp.interactive_module_id AS id,
+               im.title,
+               mp.completion_percentage,
+               mp.total_lessons,
+               mp.completed_lessons,
+               mp.last_accessed_at,
+               s.subject_code,
+               s.subject_name
+        FROM tbl_module_progress mp
+        JOIN tbl_interactive_modules im ON mp.interactive_module_id = im.id
+        JOIN tbl_subjects s ON im.subject_id = s.id
+        WHERE mp.student_id = ?
+          AND mp.is_finished = 0
+          AND mp.completion_percentage > 0
+        ORDER BY mp.last_accessed_at DESC
+        LIMIT ?
+    ");
+        $stmt->bind_param("ii", $studentId, $limit);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // ── DASHBOARD: which lesson comes next in a module, by position ──
+// $completedCount is used as a 0-indexed offset: if 3 lessons are
+// done, the next lesson is the 4th one (offset 3).
+    public function getLessonByPosition($moduleId, $offset)
+    {
+        $stmt = $this->db->prepare("
+        SELECT id, title, topic
+        FROM tbl_lessons
+        WHERE interactive_module_id = ?
+        ORDER BY id ASC
+        LIMIT 1 OFFSET ?
+    ");
+        $stmt->bind_param("ii", $moduleId, $offset);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    // Kept as a thin wrapper so nothing else that calls this breaks.
+    public function getNextLessonForModule($moduleId, $completedCount)
+    {
+        return $this->getLessonByPosition($moduleId, $completedCount);
+    }
+
+    // ── DASHBOARD: upcoming deadlines within a day window ──
+    public function getUpcomingDeadlines($studentId, $days = 30, $limit = 10)
+    {
+        if (!$studentId)
+            return [];
+
+        $stmt = $this->db->prepare("
+        SELECT a.id, a.task, a.due_date, a.due_time, s.subject_code, s.subject_name
+        FROM tbl_assignments a
+        JOIN tbl_subjects s ON a.subject_id = s.id
+        JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+        WHERE a.id NOT IN (
+            SELECT assignment_id FROM tbl_assignment_submissions WHERE student_id = ?
+        )
+        AND a.due_date IS NOT NULL
+        AND a.due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL ? DAY)
+        ORDER BY a.due_date ASC, a.due_time ASC
+        LIMIT ?
+    ");
+        $stmt->bind_param("iiii", $studentId, $studentId, $days, $limit);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function getStartedSubjectSlugs($studentId)
     {
         if (!$studentId)
@@ -967,16 +1226,36 @@ class Students extends Model
         return $stmt->get_result()->fetch_assoc();
     }
 
+    // ── DASHBOARD: recent activity feed (submissions, quizzes, finished modules) ──
+    public function getRecentActivity($studentId, $limit = 6)
+    {
+        if (!$studentId)
+            return [];
+
+        $stmt = $this->db->prepare("
+        SELECT activity_type, title, subject_name, created_at
+        FROM tbl_recent_activity
+        WHERE student_id = ?
+        ORDER BY created_at DESC
+        LIMIT ?
+    ");
+        $stmt->bind_param("ii", $studentId, $limit);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+
     public function getCompletedAssignments($studentId)
     {
         $stmt = $this->db->prepare("
-        SELECT a.id, a.task, a.due_date, a.due_time, s.subject_code, sub.submitted_at
-        FROM tbl_assignments a
-        JOIN tbl_assignment_submissions sub ON sub.assignment_id = a.id
-        JOIN tbl_subjects s ON a.subject_id = s.id
-        WHERE sub.student_id = ?
-        ORDER BY sub.submitted_at DESC
-    ");
+SELECT a.id, a.task, a.type, a.description, a.due_date, a.due_time, a.points AS total_points,
+       s.subject_code, s.subject_name, sub.submitted_at, sub.points_earned, sub.graded_at
+FROM tbl_assignments a
+JOIN tbl_assignment_submissions sub ON sub.assignment_id = a.id
+JOIN tbl_subjects s ON a.subject_id = s.id
+WHERE sub.student_id = ?
+ORDER BY sub.submitted_at DESC
+");
         $stmt->bind_param("i", $studentId);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
@@ -993,6 +1272,38 @@ class Students extends Model
         $stmt->bind_param("i", $interactiveModuleId);
         $stmt->execute();
         return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    // ============================================================
+// RECENT ACTIVITY LOG
+// ============================================================
+
+    // Logs one activity row, but skips if the same student did the exact
+// same thing in the last $dedupeMinutes — otherwise refreshing a lesson
+// page or re-opening the same module spams the feed.
+    public function logActivity($studentId, $type, $title, $subjectName = null, $dedupeMinutes = 5)
+    {
+        if (!$studentId || !$title)
+            return false;
+
+        $stmt = $this->db->prepare("
+        SELECT id FROM tbl_recent_activity
+        WHERE student_id = ? AND activity_type = ? AND title = ?
+        AND created_at >= DATE_SUB(NOW(), INTERVAL ? MINUTE)
+        LIMIT 1
+    ");
+        $stmt->bind_param("issi", $studentId, $type, $title, $dedupeMinutes);
+        $stmt->execute();
+        if ($stmt->get_result()->fetch_assoc()) {
+            return true; // already logged recently, don't duplicate
+        }
+
+        $stmt = $this->db->prepare("
+        INSERT INTO tbl_recent_activity (student_id, activity_type, title, subject_name, created_at)
+        VALUES (?, ?, ?, ?, NOW())
+    ");
+        $stmt->bind_param("isss", $studentId, $type, $title, $subjectName);
+        return $stmt->execute();
     }
 
     public function countIMvideos($interactiveModuleId)
@@ -1039,15 +1350,14 @@ class Students extends Model
     public function getPendingAssignments($studentId)
     {
         $stmt = $this->db->prepare("
-        SELECT a.id, a.task, a.due_date, a.due_time, s.subject_code, s.subject_name
-        FROM tbl_assignments a
-        JOIN tbl_subjects s ON a.subject_id = s.id
-        JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
-        WHERE a.id NOT IN (
-            SELECT assignment_id FROM tbl_assignment_submissions WHERE student_id = ?
-        )
-        AND (a.due_date IS NULL OR a.due_date >= CURDATE())
-        ORDER BY a.due_date ASC
+    SELECT a.id, a.task, a.type, a.description, a.due_date, a.due_time, a.points AS total_points,
+           s.subject_code, s.subject_name
+    FROM tbl_assignments a
+    JOIN tbl_subjects s ON a.subject_id = s.id
+    JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+    WHERE a.id NOT IN (SELECT assignment_id FROM tbl_assignment_submissions WHERE student_id = ?)
+    AND (a.due_date IS NULL OR a.due_date >= CURDATE())
+    ORDER BY a.due_date ASC
     ");
         $stmt->bind_param("ii", $studentId, $studentId);
         $stmt->execute();
@@ -1127,16 +1437,15 @@ class Students extends Model
     public function getMissingAssignments($studentId)
     {
         $stmt = $this->db->prepare("
-        SELECT a.id, a.task, a.due_date, a.due_time, s.subject_code
-        FROM tbl_assignments a
-        JOIN tbl_subjects s ON a.subject_id = s.id
-        JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
-        WHERE a.id NOT IN (
-            SELECT assignment_id FROM tbl_assignment_submissions WHERE student_id = ?
-        )
-        AND a.due_date IS NOT NULL AND a.due_date < CURDATE()
-        ORDER BY a.due_date ASC
-    ");
+SELECT a.id, a.task, a.type, a.description, a.due_date, a.due_time, a.points AS total_points,
+       s.subject_code, s.subject_name
+FROM tbl_assignments a
+JOIN tbl_subjects s ON a.subject_id = s.id
+JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+WHERE a.id NOT IN (SELECT assignment_id FROM tbl_assignment_submissions WHERE student_id = ?)
+AND a.due_date IS NOT NULL AND a.due_date < CURDATE()
+ORDER BY a.due_date ASC
+");
         $stmt->bind_param("ii", $studentId, $studentId);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);

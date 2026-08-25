@@ -6,14 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="../css_folder/admin.css">
+    <link rel="stylesheet" href="../css_folder/components.css">
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
     <style>
-        .dash-main {
-            padding: 24px 28px;
-            background: #f8fafc;
-            min-height: 100vh;
-        }
 
         .dash-header {
             margin-bottom: 24px;
@@ -392,7 +388,6 @@
         <?php include("../admin_folder/sidebar.php") ?>
 
         <div class="rightbar">
-            <?php include("../admin_folder/nav.php") ?>
 
             <?php
             function human_time_diff_dash($timestamp)

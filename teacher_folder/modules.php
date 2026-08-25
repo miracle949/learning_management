@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Modules</title>
     <link rel="stylesheet" href="../css_folder/modules_teacher.css">
+    <link rel="stylesheet" href="../css_folder/components.css">
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
 
@@ -93,29 +94,6 @@
             font-size: 14.5px;
         }
 
-        .container-fluid .sidebar {
-            width: 225px;
-            height: 100%;
-            background-color: #ffffff;
-            position: fixed;
-            left: 0;
-            top: 0;
-            border-right: 1px solid rgba(0, 0, 0, 0.1);
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .container-fluid .sidebar .sidebar-menu ul {
-            padding: 0.3px 1rem 0px 1rem;
-        }
-
-        .container-fluid .sidebar .sidebar-menu ul .sidebar-category h5 {
-            margin: 10px 6px;
-            font-size: 13px;
-            font-weight: 600;
-            text-transform: uppercase;
-            color: #808080;
-        }
-
         .container-fluid .sidebar .sidebar-menu ul li {
             list-style: none;
             line-height: 50px;
@@ -127,17 +105,6 @@
         .container-fluid .sidebar .sidebar-menu ul li:hover {
             background-color: #E7E8EB;
             border-radius: 10px;
-        }
-
-        .container-fluid .sidebar .sidebar-menu ul li a {
-            display: flex;
-            justify-content: left;
-            align-items: center;
-            gap: 1rem;
-            color: var(--green-text);
-            font-size: 15px;
-            font-weight: 600;
-            text-decoration: none;
         }
 
         .container-fluid .sidebar .sidebar-menu ul li a .fa {
@@ -174,12 +141,13 @@
         }
 
         .container-fluid .rightbar {
-            width: calc(100% - 235px);
+            width: calc(100% - 248px);
             height: 100vh;
             overflow-y: auto;
-            margin-left: 235px;
+            margin-left: 248px;
             border-left: 1px solid rgba(0, 0, 0, 0.1);
-            background-color: #F7F9F8;
+            /* background-color: #F7F9F8; */
+            padding: 1.8rem;
         }
 
         .container-fluid .sidebar-logo {
@@ -213,16 +181,6 @@
         .container-fluid .sidebar-logo .logo-icon .fa-solid {
             color: var(--green);
             font-size: 20px;
-        }
-
-        .container-fluid .sidebar .sidebar-menu {
-            margin-top: 1rem;
-        }
-
-        .container-fluid main {
-            background-color: #F7F9F8;
-            padding: 1.8rem 1.4rem 1.8rem 1.4rem;
-            margin-top: 68px;
         }
 
         /* ── BACK BREADCRUMB ── */
@@ -338,6 +296,7 @@
             width: 220px;
             min-width: 200px;
             flex-shrink: 0;
+            display: none;
         }
 
         .learning-catalog h4 {
@@ -514,7 +473,6 @@
         <?php include("sidebar.php") ?>
 
         <div class="rightbar">
-            <?php include("nav.php") ?>
             <main>
 
                 <?php if ($subjectInfo): ?>

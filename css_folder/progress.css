@@ -3,21 +3,22 @@
 }
 
 .container-fluid .rightbar {
-    width: calc(100% - 235px);
+    width: calc(100% - 248px);
     /* margin-top: 68px; */
-    margin-left: 235px;
+    margin-left: 248px;
     /* height: calc(100% - 68px); */
     /* width: calc(100% - 250px); */
     /* height: calc(100% - 83px); */
     /* height: 100%; */
     /* height: 100vh; */
     /* height: calc(100% - 68px); */
-    margin-top: 68px;
+    /* margin-top: 68px; */
     /* height: calc(100vh - 68px);
     overflow-y: auto; */
     /* height: calc(100vh - 68px);
     overflow-y: auto; */
-    padding: 1.8rem 1.4rem 1.8rem 1.4rem;
+    /* padding: 1.8rem 1.4rem 1.8rem 1.4rem; */
+    padding: 1.8rem;
     /* margin-bottom: 2rem; */
     /* height: 100vh; */
     /* height: 100vh;

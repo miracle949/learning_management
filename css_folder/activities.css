@@ -79,13 +79,14 @@
 }
 
 .container-fluid .rightbar {
-    width: calc(100% - 235px);
+    width: calc(100% - 248px);
     /* height: 100vh; */
-    margin-top: 68px;
+    /* margin-top: 68px; */
     /* overflow-y: auto; */
-    margin-left: 235px;
+    margin-left: 248px;
     border-left: 1px solid rgba(0, 0, 0, 0.1);
-    background-color: #F7F9F8;
+    /* background-color: #F7F9F8; */
+    padding: 1.8rem;
 }
 
 .container-fluid {
@@ -150,16 +151,6 @@
     font-size: 20px;
 }
 
-
-.container-fluid .sidebar .sidebar-menu {
-    margin-top: 1rem;
-}
-
-.container-fluid main {
-    /* background-color: #F2F3FF; */
-    background-color: #F7F9F8;
-    padding: 1.8rem 1.4rem 1.8rem 1.4rem;
-}
 
 .container-fluid main .header{
     display: flex;

@@ -52,8 +52,16 @@
 
                     <!-- <p>My Class <i class="fa fa-chevron-right"></i> <b>Computer System Servicing</b></p> -->
 
-                    <div class="bread-crambs">
-                        Dashboard <i class="fa fa-chevron-right"></i> <b>My Subject</b>
+                    <div class="navbar-bread">
+                        <div class="bread-crambs">
+                            Dashboard <i class="fa fa-chevron-right"></i> <b>My Subject</b>
+                        </div>
+
+                        <div class="notification">
+                            <button>
+                                <i class="fa fa-bell"></i>
+                            </button>
+                        </div>
                     </div>
                     <!-- <div class="subject-nav">
                         <div class="subject-text">

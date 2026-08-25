@@ -910,6 +910,8 @@ class Teacher extends Model
     public function insertInteractiveContent($lessonId, $type, $data = [])
     {
         $title = $data['title'] ?? null;
+        $body = $data['body'] ?? null;
+        $keyIdea = $data['key_idea'] ?? null;
         $instructions = $data['instructions'] ?? null;
         $question = $data['question'] ?? null;
         $questionType = $data['question_type'] ?? null;
@@ -930,7 +932,7 @@ class Teacher extends Model
 
         $stmt = $this->db->prepare("
         INSERT INTO tbl_interactive_contents (
-            lesson_id, type, title, instructions,
+            lesson_id, type, title, body, key_idea, instructions,
             question, question_type,
             choice_a, choice_b, choice_c, choice_d,
             correct_ans, model_answer,
@@ -939,7 +941,7 @@ class Teacher extends Model
             file_path, file_name, file_type,
             created_at
         ) VALUES (
-            ?, ?, ?, ?,
+            ?, ?, ?, ?, ?, ?,
             ?, ?,
             ?, ?, ?, ?,
             ?, ?,
@@ -950,11 +952,27 @@ class Teacher extends Model
         )
     ");
 
+        if (!$stmt) {
+            throw new \RuntimeException(
+                'insertInteractiveContent: prepare() failed — ' . $this->db->error
+            );
+        }
+
+        // lessonId(i), type(s), title(s), body(s), key_idea(s), instructions(s),
+        // question(s), question_type(s), choice_a(s), choice_b(s),
+        // choice_c(s), choice_d(s), correct_ans(s), model_answer(s)
+        //   -> 1 i + 13 s
+        // passing_score(i), total_points(i)              -> 2 i
+        // card_front(s), card_back(s), card_type(s),
+        // file_path(s), file_name(s), file_type(s)        -> 6 s
+        // Total: 22 params: "i" + "s"x13 + "i"x2 + "s"x6
         $stmt->bind_param(
-            "isssssssssssiiisssss",
+            "isssssssssssssiissssss",
             $lessonId,
             $type,
             $title,
+            $body,
+            $keyIdea,
             $instructions,
             $question,
             $questionType,
@@ -974,7 +992,12 @@ class Teacher extends Model
             $fileType
         );
 
-        $stmt->execute();
+        if (!$stmt->execute()) {
+            throw new \RuntimeException(
+                'insertInteractiveContent: execute() failed — ' . $stmt->error
+            );
+        }
+
         return $this->db->insert_id;
     }
 
