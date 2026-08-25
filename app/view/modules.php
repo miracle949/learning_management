@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,21 +12,27 @@
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
 </head>
 
+
 <body>
     <div class="container-fluid p-0">
+
 
         <?php include("../components/offcanvas.php"); ?>
         <?php include("../components/sidebar.php"); ?>
 
+
         <div class="rightbar">
+
 
             <?php
             $subject = $_GET['subject'] ?? $subject ?? null;
             $moduleProgress = $moduleProgress ?? [];
 
+
             if ($subject):
                 if ($subjectInfo):
                     ?>
+
 
                     <!-- ── TOP NAV ── -->
                     <div class="navbar-bread">
@@ -33,12 +40,14 @@
                             Dashboard <i class="fa fa-chevron-right"></i> <b>Modules</b>
                         </div>
 
+
                         <div class="notification">
                             <button>
                                 <i class="fa fa-bell"></i>
                             </button>
                         </div>
                     </div>
+
 
                     <div class="progress-banner">
                         <div class="progress-text">
@@ -51,11 +60,14 @@
                                 consistent and you'll finish the rest in no time.
                             </p>
 
+
                             <div class="continue-learning">
                                 <a href="#">Continue Learning <i class="fa fa-arrow-right"></i></a>
                             </div>
 
+
                         </div>
+
 
                         <?php
                         $ringRadius = 52;
@@ -66,7 +78,9 @@
                             <div class="speech-bubble">
                                 <strong>BonBon</strong>
 
+
                                 <p id="bonbonMessage"></p>
+
 
                             </div>
                             <img src="../images/robot-ai8.png" alt="">
@@ -94,6 +108,7 @@
                         </div>
                     </div>
 
+
                     <!-- ── STAT CARDS ── -->
                     <div class="card-box-parent">
                         <div class="card-box">
@@ -108,6 +123,7 @@
                             </div>
                         </div>
 
+
                         <div class="card-box">
                             <div class="card-icon card-icon--quiz"><i class="fa fa-pen-to-square"></i></div>
                             <div class="card-text">
@@ -117,6 +133,7 @@
                             </div>
                         </div>
 
+
                         <div class="card-box">
                             <div class="card-icon card-icon--progress"><i class="fa fa-spinner"></i></div>
                             <div class="card-text">
@@ -125,6 +142,7 @@
                                 <span class="card-badge card-badge--orange">where you left off</span>
                             </div>
                         </div>
+
 
                         <div class="card-box">
                             <div class="card-icon card-icon--percent"><i class="fa fa-chart-line"></i></div>
@@ -137,6 +155,7 @@
                             </div>
                         </div>
                     </div>
+
 
                     <!-- ── FILTER TABS + SEARCH ── -->
                     <div class="module-filter-bar">
@@ -160,6 +179,7 @@
                         </div>
                     </div>
 
+
                     <!-- ── MODULE CARDS GRID ── -->
                     <div class="modules-main">
                         <div class="learning-module" id="moduleGrid">
@@ -177,9 +197,11 @@
                                     $actCount = $activityCounts[$mod['id']] ?? 0;
                                     $qzCount = $quizCounts[$mod['id']] ?? 0;
 
+
                                     // ✅ Progress-aware status: completed > in-progress > not-started
                                     $prog = $moduleProgress[$mod['id']] ?? null;
                                     $isFinished = $prog && (int) $prog['is_finished'] === 1;
+
 
                                     $isStarted = in_array($mod['id'], $startedModuleIds);
                                     $pct = $prog ? (float) $prog['completion_percentage'] : 0;
@@ -207,6 +229,7 @@
                                     <div class="module-feed-card" data-status="<?= $statusAttr ?>"
                                         data-title="<?= htmlspecialchars(strtolower($mod['title'])) ?>">
 
+
                                         <div class="card-img" style="position:relative;">
                                             <div class="card-text">
                                                 <div class="module-banner-tag">CSS · Hardware</div>
@@ -222,6 +245,7 @@
                                             <?php endif; ?>
                                         </div>
 
+
                                         <div class="card-body">
                                             <h3><?= htmlspecialchars($mod['title']) ?></h3>
                                             <p><?= htmlspecialchars(
@@ -229,6 +253,7 @@
                                                 ? mb_strimwidth($mod['description'], 0, 100, '...')
                                                 : 'No description available.'
                                             ) ?></p>
+
 
                                             <!-- ── CONTENT TYPE BADGES ── -->
                                             <div class="module-content-badges">
@@ -264,6 +289,7 @@
                                                 <?php endif; ?>
                                             </div>
 
+
                                             <!-- ── PER-MODULE PROGRESS BAR ── -->
                                             <!-- ── PER-MODULE PROGRESS BAR (segmented/dash style) ── -->
                                             <?php if ($prog):
@@ -292,6 +318,7 @@
                                                 </div>
                                             <?php endif; ?>
 
+
                                             <button class="<?= $btnClass ?>" data-module-id="<?= (int) $mod['id'] ?>"
                                                 data-href="<?= htmlspecialchars($detailUrl) ?>" onclick="handleModuleStart(this)">
                                                 <?= $btnText ?> <i class="fa fa-arrow-right"></i>
@@ -302,11 +329,13 @@
                             <?php endif; ?>
                         </div>
 
+
                         <!-- Empty state for filtering -->
                         <div class="modules-empty filter-empty" id="filterEmpty" style="display:none;">
                             <i class="fa fa-filter"></i>
                             <p>No modules match this filter.</p>
                         </div>
+
 
                         <!-- ── PAGINATION ── -->
                         <div class="modules-pagination" id="modulesPagination" style="display:none;">
@@ -320,6 +349,7 @@
                         </div>
                     </div>
                 </div>
+
 
                 <?php
                 else:
@@ -339,8 +369,11 @@
             </div>
         <?php endif; ?>
 
+
     </div>
     </div>
+
+
 
 
     <script>
@@ -348,14 +381,17 @@
             const el = document.getElementById('bonbonMessage');
             if (!el) return;
 
+
             const message = "This is your overall progress you're doing better than you think! Keep completing modules and you'll reach 100%.";
             const speed = 28; // ms per character — lower = faster
             let i = 0;
+
 
             // cursor span that blinks while typing
             const cursor = document.createElement('span');
             cursor.className = 'typing-cursor';
             el.appendChild(cursor);
+
 
             function type() {
                 if (i < message.length) {
@@ -368,15 +404,18 @@
                 }
             }
 
+
             type();
         })();
     </script>
+
 
     <script>
         var currentFilter = 'all';
         var currentSearch = '';
         var currentPage = 1;
         var PER_PAGE = 10;
+
 
         document.querySelectorAll('.tab-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
@@ -388,11 +427,13 @@
             });
         });
 
+
         document.getElementById('moduleSearchInput').addEventListener('input', function () {
             currentSearch = this.value.trim().toLowerCase();
             currentPage = 1;
             applyFilters();
         });
+
 
         document.getElementById('pagePrevBtn').addEventListener('click', function () {
             if (currentPage > 1) {
@@ -401,21 +442,26 @@
             }
         });
 
+
         document.getElementById('pageNextBtn').addEventListener('click', function () {
             currentPage++;
             applyFilters();
         });
 
+
         function applyFilters() {
             var cards = document.querySelectorAll('.module-feed-card');
             var matching = [];
+
 
             cards.forEach(function (card) {
                 var status = card.dataset.status;
                 var title = card.dataset.title;
 
+
                 var matchesFilter = currentFilter === 'all' || status === currentFilter;
                 var matchesSearch = currentSearch === '' || title.indexOf(currentSearch) !== -1;
+
 
                 if (matchesFilter && matchesSearch) {
                     matching.push(card);
@@ -424,21 +470,27 @@
                 }
             });
 
+
             var totalPages = Math.max(1, Math.ceil(matching.length / PER_PAGE));
             if (currentPage > totalPages) currentPage = totalPages;
 
+
             var start = (currentPage - 1) * PER_PAGE;
             var end = start + PER_PAGE;
+
 
             matching.forEach(function (card, i) {
                 card.style.display = (i >= start && i < end) ? '' : 'none';
             });
 
+
             document.getElementById('filterEmpty').style.display = matching.length === 0 ? 'flex' : 'none';
             document.getElementById('moduleGrid').style.display = matching.length === 0 ? 'none' : '';
 
+
             renderPagination(totalPages, matching.length);
         }
+
 
         function renderPagination(totalPages, matchCount) {
             var pagBar = document.getElementById('modulesPagination');
@@ -446,14 +498,17 @@
             var prevBtn = document.getElementById('pagePrevBtn');
             var nextBtn = document.getElementById('pageNextBtn');
 
+
             if (matchCount === 0 || totalPages <= 1) {
                 pagBar.style.display = 'none';
                 return;
             }
 
+
             pagBar.style.display = 'flex';
             prevBtn.disabled = (currentPage === 1);
             nextBtn.disabled = (currentPage === totalPages);
+
 
             numsWrap.innerHTML = '';
             for (var p = 1; p <= totalPages; p++) {
@@ -471,7 +526,9 @@
             }
         }
 
+
         applyFilters();
+
 
         // Always logs the open — whether the module is not-started, in-progress,
         // or completed — so every module open shows up in "My Recent Activity"
@@ -483,12 +540,14 @@
             var href = btn.dataset.href;
             var isStarted = btn.classList.contains('btn-continue') || btn.classList.contains('btn-completed');
 
+
             // Only show the "Starting..." loading state for brand-new modules;
             // continue/review should feel instant.
             if (!isStarted) {
                 btn.disabled = true;
                 btn.innerHTML = 'Starting... <i class="fa fa-spinner fa-spin"></i>';
             }
+
 
             var fd = new FormData();
             fd.append('module_id', moduleId);
@@ -506,7 +565,9 @@
         }
     </script>
 
+
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
 </body>
+
 
 </html>

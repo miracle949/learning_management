@@ -908,11 +908,8 @@
     color: #fff; */
     /* background: linear-gradient(135deg, var(--green-dark), var(--green-mid)); */
     /* background-color: var(--neon-cyan); */
-<<<<<<< HEAD
     background:linear-gradient(90deg,#0099CC,#00CFFF);
-=======
     background: linear-gradient(90deg, #0099CC, #00CFFF);
->>>>>>> ff95f6b6155fc8ca851e63e07c15873fdcc2c077
     background: linear-gradient(135deg, #ffb347, #ff7a00);
     color: #fff;
 }

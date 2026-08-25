@@ -78,8 +78,8 @@ function handlePrevBtnClick(e, prevBtn) {
 ========================================================= */
 document.addEventListener('DOMContentLoaded', function () {
     try {
-        var cards = document.querySelectorAll('.unified-q-card');
-        UNIFIED_QZ.total = cards.length;
+        var qzBlocks = document.querySelectorAll('.qz-question-block');
+        UNIFIED_QZ.total = qzBlocks.length;
 
         // Wire up essay textarea tracking
         document.querySelectorAll('.activity-answer').forEach(function (textarea) {
@@ -97,6 +97,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         checkLessonComplete();
+
+        if (qzBlocks.length) {
+            qzRestoreSelection(qzBlocks[0]);
+            qzUpdateNav();
+        }
 
         var nextBtnEl = document.getElementById('nextBtn');
         console.log('[lessons.js] nextBtn found:', nextBtnEl ? nextBtnEl.tagName : 'NOT FOUND');
@@ -130,15 +135,18 @@ function pickMC(el) {
     checkLessonComplete();
 }
 
-/* ==========================
-   UNIFIED QUIZ PICKER
-========================== */
-function unifiedPick(el) {
+/* =========================================================
+   QUIZIZZ-STYLE QUIZ STAGE
+   -----------------------------------------------------------
+   One question shown at a time, inside a dark card, with four
+   colour-coded full-width answer buttons — similar to Quizizz.
+========================================================= */
+function qzPick(el) {
     var qid = el.dataset.qid;
     var key = el.dataset.key;
     var qzid = parseInt(el.dataset.qzid);
 
-    el.closest('.q-card').querySelectorAll('.q-choice').forEach(function (c) {
+    el.closest('.qz-question-block').querySelectorAll('.qz-choice-btn').forEach(function (c) {
         c.classList.remove('selected');
     });
     el.classList.add('selected');
@@ -150,21 +158,76 @@ function unifiedPick(el) {
     var cnt = document.getElementById('unified_status');
     if (cnt) cnt.textContent = Object.keys(UNIFIED_QZ.ans).length + ' / ' + UNIFIED_QZ.total + ' answered';
 
+    qzUpdateNav();
     checkLessonComplete();
 }
 
-function unifiedNav(dir) {
-    var cards = document.querySelectorAll('.unified-q-card');
-    if (!cards.length) return;
+function qzNav(dir) {
+    var blocks = document.querySelectorAll('.qz-question-block');
+    if (!blocks.length) return;
 
-    if (cards[UNIFIED_QZ.cur]) cards[UNIFIED_QZ.cur].style.display = 'none';
-    UNIFIED_QZ.cur = Math.max(0, Math.min(UNIFIED_QZ.total - 1, UNIFIED_QZ.cur + dir));
-    if (cards[UNIFIED_QZ.cur]) cards[UNIFIED_QZ.cur].style.display = 'block';
+    var newIdx = Math.max(0, Math.min(blocks.length - 1, UNIFIED_QZ.cur + dir));
+    if (newIdx === UNIFIED_QZ.cur) return;
 
-    var prev = document.getElementById('unified_prev');
-    var nxt = document.getElementById('unified_next');
-    if (prev) prev.style.display = UNIFIED_QZ.cur > 0 ? 'inline-flex' : 'none';
-    if (nxt) nxt.style.display = UNIFIED_QZ.cur === UNIFIED_QZ.total - 1 ? 'none' : 'inline-flex';
+    blocks[UNIFIED_QZ.cur].style.display = 'none';
+    UNIFIED_QZ.cur = newIdx;
+    blocks[UNIFIED_QZ.cur].style.display = 'block';
+
+    qzRestoreSelection(blocks[UNIFIED_QZ.cur]);
+    qzUpdateNav();
+}
+
+function qzRestoreSelection(block) {
+    if (!block) return;
+    block.querySelectorAll('.qz-choice-btn').forEach(function (btn) {
+        var qid = btn.dataset.qid;
+        var key = btn.dataset.key;
+        if (UNIFIED_QZ.ans[qid] === key) {
+            btn.classList.add('selected');
+        } else {
+            btn.classList.remove('selected');
+        }
+    });
+}
+
+function qzUpdateNav() {
+    var blocks = document.querySelectorAll('.qz-question-block');
+    var total = blocks.length;
+    if (!total) return;
+
+    var counter = document.getElementById('qzCounter');
+    if (counter) counter.textContent = 'Question ' + (UNIFIED_QZ.cur + 1) + ' of ' + total;
+
+    var fill = document.getElementById('qzProgressFill');
+    if (fill) fill.style.width = Math.round(((UNIFIED_QZ.cur + 1) / total) * 100) + '%';
+
+    var prevBtn = document.getElementById('qzPrevBtn');
+    if (prevBtn) prevBtn.style.visibility = UNIFIED_QZ.cur > 0 ? 'visible' : 'hidden';
+
+    var nextBtn = document.getElementById('qzNextBtn');
+    if (nextBtn) {
+        var curBlock = blocks[UNIFIED_QZ.cur];
+        var firstChoice = curBlock ? curBlock.querySelector('.qz-choice-btn') : null;
+        var curQid = firstChoice ? firstChoice.dataset.qid : null;
+        var answered = !!(curQid && UNIFIED_QZ.ans[curQid]);
+        nextBtn.disabled = !answered;
+
+        if (UNIFIED_QZ.cur === total - 1) {
+            nextBtn.innerHTML = 'Finish <i class="fa fa-check"></i>';
+            nextBtn.onclick = function () {
+                checkLessonComplete();
+                var lessonNextBtn = document.getElementById('nextBtn');
+                if (lessonNextBtn && !lessonNextBtn.classList.contains('disabled')) {
+                    lessonNextBtn.click();
+                } else {
+                    scrollToSection && scrollToSection('section-quizzes');
+                }
+            };
+        } else {
+            nextBtn.innerHTML = 'Next <i class="fa fa-arrow-right"></i>';
+            nextBtn.onclick = function () { qzNav(1); };
+        }
+    }
 }
 
 /* ==========================

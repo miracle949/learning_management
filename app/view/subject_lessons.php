@@ -2137,7 +2137,7 @@ function youtubeEmbed($url)
             font-size: 23px;
             font-weight: 700;
             color: var(--text-bright);
-            margin: 10px 0 8px;
+            margin: 10px 0 0;
         }
 
         .quiz-hero-desc {
@@ -2459,6 +2459,235 @@ function youtubeEmbed($url)
             font-size: 13.5px;
             color: var(--text-dim);
         }
+
+        /* =============================================
+           QUIZIZZ-STYLE QUIZ STAGE
+        ============================================= */
+        :root {
+            --qz-card-bg: #2b1b3d;
+            --qz-blue: #3a6ea5;
+            --qz-teal: #1f9e8f;
+            --qz-orange: #e8a13c;
+            --qz-pink: #d9506e;
+        }
+
+        .content-quiz-cta {
+            display: flex;
+            justify-content: start;
+            margin: 10px 0 26px;
+        }
+
+        .btn-take-quiz {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 10px 25px;
+            border-radius: 99px;
+            background-color: var(--neon-cyan);
+            transition: transform .18s ease, box-shadow .18s ease;
+        }
+
+        .btn-take-quiz:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 24px rgba(0, 119, 204, 0.3);
+        }
+
+        .btn-take-quiz i {
+            font-size: 12px;
+        }
+
+        .qz-stage {
+            /* max-width: 640px; */
+            margin: 0 auto;
+        }
+
+        .qz-counter {
+            text-align: center;
+            font-size: 12.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+        }
+
+        .qz-progress-track {
+            height: 15px;
+            border-radius: 99px;
+            background: rgba(0, 119, 204, 0.1);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .qz-progress-fill {
+            height: 100%;
+            border-radius: 99px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-cyan));
+            transition: width .35s ease;
+        }
+
+        .qz-card {
+            background: var(--qz-card-bg);
+            border-radius: 20px;
+            padding: 46px 36px;
+            min-height: 170px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            margin-bottom: 22px;
+            box-shadow: 0 12px 30px rgba(43, 27, 61, 0.25);
+        }
+
+        .qz-question-text {
+            color: #fff;
+            font-size: 21px;
+            font-weight: 700;
+            line-height: 1.45;
+        }
+
+        .qz-zoom-icon {
+            position: absolute;
+            right: 20px;
+            bottom: 16px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.14);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .qz-zoom-icon svg {
+            width: 15px;
+            height: 15px;
+        }
+
+        .qz-choices {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .qz-choice-btn {
+            display: flex;
+            align-items: center;
+            padding: 18px 22px;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 15.5px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+        }
+
+        .qz-choice-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.06);
+        }
+
+        .qz-choice-btn.selected {
+            border-color: #fff;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+        }
+
+        .qz-choice-btn[data-color="0"] {
+            background-color: var(--qz-blue);
+        }
+
+        .qz-choice-btn[data-color="1"] {
+            background-color: var(--qz-teal);
+        }
+
+        .qz-choice-btn[data-color="2"] {
+            background-color: var(--qz-orange);
+        }
+
+        .qz-choice-btn[data-color="3"] {
+            background-color: var(--qz-pink);
+        }
+
+        .qz-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 99998;
+            background: #ffffff;
+            overflow-y: auto;
+            padding: 30px 24px 30px;
+            /* background-color: var(--neon-cyan); */
+        }
+
+        .qz-overlay::before{
+            /* content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 26px);
+            pointer-events: none; */
+        }
+
+        .qz-overlay.open {
+            display: block;
+        }
+
+        .qz-overlay #section-quizzes {
+            /* max-width: 720px; */
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .btn-exit-quiz {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dim);
+            padding: 7px 14px;
+            border-radius: 8px;
+            border: 1.5px solid var(--panel-border);
+            background: #fff;
+            margin-bottom: 20px;
+            transition: border-color .15s ease, color .15s ease, transform .15s ease;
+        }
+
+        .btn-exit-quiz:hover {
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            transform: translateX(-2px);
+        }
+
+        .qz-nav-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 24px;
+        }
+
+        .qz-nav-row #qzPrevBtn {
+            display: inline-flex;
+        }
+
+        .qz-nav-row #qzNextBtn {
+            margin-left: auto;
+        }
+
+        @media (max-width: 600px) {
+            .qz-card {
+                padding: 34px 22px;
+            }
+
+            .qz-question-text {
+                font-size: 18px;
+            }
+        }
     </style>
 </head>
 
@@ -2747,314 +2976,339 @@ function youtubeEmbed($url)
                 <?php else:
                     $cleanTitle = preg_replace('/^Lesson\s*\d+\s*:\s*/i', '', $lesson['title']);
                     $isCurrentLessonDone = $lessonCompletion[$lessonId] ?? false;
+
+                    $firstQzDoneEarly = true;
+                    $allQzQuestions = [];
+                    $grandTotal = 0;
+                    $firstQz = null;
+                    $totalPages = 1;
+
+                    if (!empty($quizData)) {
+                        foreach ($quizData as $qzData) {
+                            if (!$qzData['result']) {
+                                $firstQzDoneEarly = false;
+                            }
+                        }
+                        foreach ($quizData as $qzId => $data) {
+                            foreach ($data['questions'] as $q) {
+                                $allQzQuestions[] = [
+                                    'q' => $q,
+                                    'qzId' => (int) $qzId,
+                                    'passing_score' => (int) $data['quiz']['passing_score'],
+                                    'result' => $data['result'],
+                                    'quiz' => $data['quiz'],
+                                ];
+                            }
+                        }
+                        $grandTotal = count($allQzQuestions);
+                        $firstData = reset($quizData);
+                        $firstQz = $firstData['quiz'];
+                        $questionsPerPage = 5;
+                        $totalPages = $grandTotal > 0 ? (int) ceil($grandTotal / $questionsPerPage) : 1;
+                    }
+
+                    $firstQzDone = $firstQzDoneEarly;
                     ?>
 
-                    <div class="lesson-title-row">
-                        <span class="lesson-num-badge">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11"
-                                height="11">
-                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                            </svg>
-                            Lesson <?= $currentIndex ?>
-                        </span>
-                        <h3 class="lesson-main-title" id="lesson-title">
-                            <?= htmlspecialchars($cleanTitle) ?>
-                        </h3>
-                    </div>
+                    <div class="lesson-body" id="lessonBody">
 
-                    <?php if (!empty($contentBlocks)): ?>
-                        <div class="ls-section" id="section-content">
-                            <?php if (!empty($lesson['topic'])): ?>
-                                <h4><?= htmlspecialchars($lesson['topic']) ?></h4>
+                        <div class="lesson-title-row">
+                            <span class="lesson-num-badge">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11"
+                                    height="11">
+                                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                                </svg>
+                                Lesson <?= $currentIndex ?>
+                            </span>
+                            <h3 class="lesson-main-title" id="lesson-title">
+                                <?= htmlspecialchars($cleanTitle) ?>
+                            </h3>
+                        </div>
+
+                        <?php if (!empty($contentBlocks)): ?>
+                            <div class="ls-section" id="section-content">
+                                <?php if (!empty($lesson['topic'])): ?>
+                                    <h4><?= htmlspecialchars($lesson['topic']) ?></h4>
+                                <?php endif; ?>
+
+                                <?php $inImgGrid = false; ?>
+                                <?php
+                                // Precompute image-group sizes so the grid can size itself dynamically
+                                $imgGroupSize = [];
+                                $runStart = null;
+                                $runCount = 0;
+                                foreach ($contentBlocks as $idx => $block) {
+                                    if ($block['type'] === 'image') {
+                                        if ($runStart === null) {
+                                            $runStart = $idx;
+                                        }
+                                        $runCount++;
+                                    } else {
+                                        if ($runStart !== null) {
+                                            $imgGroupSize[$runStart] = $runCount;
+                                        }
+                                        $runStart = null;
+                                        $runCount = 0;
+                                    }
+                                }
+                                if ($runStart !== null) {
+                                    $imgGroupSize[$runStart] = $runCount;
+                                }
+                                ?>
+                                <?php foreach ($contentBlocks as $idx => $block): ?>
+
+                                    <?php if ($block['type'] === 'text' && (trim($block['title'] ?? '') !== '' || trim($block['body'] ?? '') !== '')):
+                                        if ($inImgGrid) {
+                                            echo '</div></div>';
+                                            $inImgGrid = false;
+                                        }
+                                        ?>
+                                        <div class="lesson-text-card">
+                                            <div class="lesson-text-card">
+                                                <?php if (trim($block['body'] ?? '') !== ''): ?>
+                                                    <?= $block['body'] ?>
+                                                <?php endif; ?>
+                                            </div>
+
+                                            <?php if (!empty($block['key_idea'])): ?>
+                                                <div class="callout-idea info d-flex align-items-center">
+                                                    <div class="callout-icon">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                            <circle cx="12" cy="12" r="10" />
+                                                            <path d="M12 16v-4M12 8h.01" />
+                                                        </svg>
+                                                    </div>
+                                                    <div class="callout-body">
+                                                        <p class="m-0"><strong>Key idea:</strong>
+                                                            <?= nl2br(htmlspecialchars($block['key_idea'])) ?>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            <?php endif; ?>
+
+                                        <?php elseif ($block['type'] === 'image'):
+                                        if (!$inImgGrid) {
+                                            $groupTitle = trim($block['title'] ?? '');
+                                            $groupSize = $imgGroupSize[$idx] ?? 1;
+
+                                            $gridClass = 'img-grid';
+                                            if ($groupSize === 1) {
+                                                $gridClass .= ' img-grid-1';
+                                            } elseif ($groupSize === 2) {
+                                                $gridClass .= ' img-grid-2';
+                                            }
+
+                                            echo '<div class="img-grid-wrap">';
+                                            if ($groupTitle !== '') {
+                                                echo '<div class="img-grid-header">';
+                                                echo '<h3 class="img-grid-title">' . htmlspecialchars($groupTitle) . '</h3>';
+                                                echo '<div class="img-grid-meta">Reference gallery</div>';
+                                                echo '</div>';
+                                            }
+                                            echo '<div class="' . $gridClass . '">';
+                                            $inImgGrid = true;
+                                        }
+                                        ?>
+                                            <div class="img-item" onclick="dbLightbox('<?= htmlspecialchars($block['file_path']) ?>')">
+                                                <img src="<?= htmlspecialchars($block['file_path']) ?>"
+                                                    alt="<?= htmlspecialchars($block['title'] ?? '') ?>" loading="lazy">
+                                            </div>
+
+                                        <?php elseif ($block['type'] === 'video' && !empty($block['file_path'])):
+                                        if ($inImgGrid) {
+                                            echo '</div></div>';
+                                            $inImgGrid = false;
+                                        }
+                                        $embedUrl = youtubeEmbed($block['file_path']);
+                                        if (!empty($embedUrl)): ?>
+                                                <?php if (!empty($block['title'])): ?>
+                                                    <div class="video-card-info">
+                                                        <span class="video-card-title">
+                                                            <?= htmlspecialchars($block['title']) ?>
+                                                        </span>
+                                                    </div>
+                                                <?php endif; ?>
+                                                <div class="video-card">
+                                                    <div class="video-card-banner"></div>
+                                                    <iframe src="<?= htmlspecialchars($embedUrl) ?>" allowfullscreen loading="lazy"
+                                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+                                                    </iframe>
+                                                </div>
+                                            <?php endif;
+                                    endif; ?>
+
+                                    <?php endforeach; ?>
+
+                                    <?php if ($inImgGrid) {
+                                        echo '</div></div>';
+                                        $inImgGrid = false;
+                                    } ?>
+
+                                    <?php if (!empty($quizData)): ?>
+                                        <div class="quiz-hero-card">
+                                            <div class="quiz-hero-inner">
+                                                <div class="quiz-hero-tag">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                        width="11" height="11">
+                                                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                                                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                                                    </svg>
+                                                    Quiz
+                                                </div>
+                                                <div class="quiz-hero-title"><?= htmlspecialchars($firstQz['title']) ?></div>
+                                                <?php if (!empty($firstQz['instructions'])): ?>
+                                                    <div class="quiz-hero-desc"><?= htmlspecialchars($firstQz['instructions']) ?></div>
+                                                <?php endif; ?>
+                                                <div class="quiz-stats-strip">
+                                                    <div class="quiz-stat">
+                                                        <div class="qs-val"><?= $grandTotal ?></div>
+                                                        <div class="qs-lbl">Questions</div>
+                                                    </div>
+                                                    <div class="quiz-stat">
+                                                        <div class="qs-val"><?= (int) $firstQz['passing_score'] ?></div>
+                                                        <div class="qs-lbl">Passing Score</div>
+                                                    </div>
+                                                    <div class="quiz-stat">
+                                                        <div class="qs-val"><?= $totalPages ?></div>
+                                                        <div class="qs-lbl">Pages</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="content-quiz-cta" id="quizCta">
+                                            <button type="button" class="btn-take-quiz" onclick="openQuizStage()">
+                                                <i class="fa fa-bolt"></i>
+                                                <?= (isset($firstQzDoneEarly) && $firstQzDoneEarly) ? 'Review the Quiz' : 'Take the Quiz' ?>
+                                            </button>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
                             <?php endif; ?>
 
-                            <?php $inImgGrid = false; ?>
                             <?php
-                            // Precompute image-group sizes so the grid can size itself dynamically
-                            $imgGroupSize = [];
-                            $runStart = null;
-                            $runCount = 0;
-                            foreach ($contentBlocks as $idx => $block) {
-                                if ($block['type'] === 'image') {
-                                    if ($runStart === null) {
-                                        $runStart = $idx;
-                                    }
-                                    $runCount++;
-                                } else {
-                                    if ($runStart !== null) {
-                                        $imgGroupSize[$runStart] = $runCount;
-                                    }
-                                    $runStart = null;
-                                    $runCount = 0;
-                                }
-                            }
-                            if ($runStart !== null) {
-                                $imgGroupSize[$runStart] = $runCount;
-                            }
-                            ?>
-                            <?php foreach ($contentBlocks as $idx => $block): ?>
-
-                                <?php if ($block['type'] === 'text' && (trim($block['title'] ?? '') !== '' || trim($block['body'] ?? '') !== '')):
-                                    if ($inImgGrid) {
-                                        echo '</div></div>';
-                                        $inImgGrid = false;
-                                    }
-                                    ?>
-                                    <div class="lesson-text-card">
-                                        <div class="lesson-text-card">
-                                            <?php if (trim($block['body'] ?? '') !== ''): ?>
-                                                <?= $block['body'] ?>
-                                            <?php endif; ?>
-                                        </div>
-
-                                        <?php if (!empty($block['key_idea'])): ?>
-                                            <div class="callout-idea info d-flex align-items-center">
-                                                <div class="callout-icon">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                        <circle cx="12" cy="12" r="10" />
-                                                        <path d="M12 16v-4M12 8h.01" />
-                                                    </svg>
-                                                </div>
-                                                <div class="callout-body">
-                                                    <p class="m-0"><strong>Key idea:</strong>
-                                                        <?= nl2br(htmlspecialchars($block['key_idea'])) ?>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        <?php endif; ?>
-
-                                    <?php elseif ($block['type'] === 'image'):
-                                    if (!$inImgGrid) {
-                                        $groupTitle = trim($block['title'] ?? '');
-                                        $groupSize = $imgGroupSize[$idx] ?? 1;
-
-                                        $gridClass = 'img-grid';
-                                        if ($groupSize === 1) {
-                                            $gridClass .= ' img-grid-1';
-                                        } elseif ($groupSize === 2) {
-                                            $gridClass .= ' img-grid-2';
-                                        }
-
-                                        echo '<div class="img-grid-wrap">';
-                                        if ($groupTitle !== '') {
-                                            echo '<div class="img-grid-header">';
-                                            echo '<h3 class="img-grid-title">' . htmlspecialchars($groupTitle) . '</h3>';
-                                            echo '<div class="img-grid-meta">Reference gallery</div>';
-                                            echo '</div>';
-                                        }
-                                        echo '<div class="' . $gridClass . '">';
-                                        $inImgGrid = true;
-                                    }
-                                    ?>
-                                        <div class="img-item" onclick="dbLightbox('<?= htmlspecialchars($block['file_path']) ?>')">
-                                            <img src="<?= htmlspecialchars($block['file_path']) ?>"
-                                                alt="<?= htmlspecialchars($block['title'] ?? '') ?>" loading="lazy">
-                                        </div>
-
-                                    <?php elseif ($block['type'] === 'video' && !empty($block['file_path'])):
-                                    if ($inImgGrid) {
-                                        echo '</div></div>';
-                                        $inImgGrid = false;
-                                    }
-                                    $embedUrl = youtubeEmbed($block['file_path']);
-                                    if (!empty($embedUrl)): ?>
-                                            <?php if (!empty($block['title'])): ?>
-                                                <div class="video-card-info">
-                                                    <span class="video-card-title">
-                                                        <?= htmlspecialchars($block['title']) ?>
-                                                    </span>
-                                                </div>
-                                            <?php endif; ?>
-                                            <div class="video-card">
-                                                <div class="video-card-banner"></div>
-                                                <iframe src="<?= htmlspecialchars($embedUrl) ?>" allowfullscreen loading="lazy"
-                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-                                                </iframe>
-                                            </div>
-                                        <?php endif;
-                                endif; ?>
-
-                                <?php endforeach; ?>
-
-                                <?php if ($inImgGrid) {
-                                    echo '</div></div>';
-                                    $inImgGrid = false;
-                                } ?>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php
-                        if (!empty($flashcards)): ?>
-                            <div class="ls-section" id="section-flashcards">
-                                <div class="ls-section-head">
-                                    <div class="ls-section-icon icon-flash">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <rect x="2" y="5" width="20" height="14" rx="2" />
-                                            <path d="M2 10h20" />
-                                        </svg>
-                                    </div>
-                                    <span class="ls-section-title">Flashcards</span>
-                                    <div class="ls-section-divider"></div>
-                                    <span class="ls-section-count"><?= count($flashcards) ?> cards</span>
-                                </div>
-                                <div class="callout info">
-                                    <div class="callout-icon">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <circle cx="12" cy="12" r="10" />
-                                            <path d="M12 16v-4M12 8h.01" />
-                                        </svg>
-                                    </div>
-                                    <div class="callout-body">
-                                        <div class="flash-hero-tag">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                width="11" height="11">
-                                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                            if (!empty($flashcards)): ?>
+                                <div class="ls-section" id="section-flashcards">
+                                    <div class="ls-section-head">
+                                        <div class="ls-section-icon icon-flash">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <rect x="2" y="5" width="20" height="14" rx="2" />
+                                                <path d="M2 10h20" />
                                             </svg>
-                                            Flashcards
                                         </div>
-                                        <div class="cb-title">How to Use Flashcards</div>
-                                        <p>Click any card to flip it and reveal the answer. Click again to go back to the
-                                            question.
-                                        </p>
+                                        <span class="ls-section-title">Flashcards</span>
+                                        <div class="ls-section-divider"></div>
+                                        <span class="ls-section-count"><?= count($flashcards) ?> cards</span>
                                     </div>
-                                </div>
-                                <div class="fc-grid">
-                                    <?php foreach ($flashcards as $fc): ?>
-                                        <div class="fc-item" onclick="this.classList.toggle('flipped')">
-                                            <div class="fc-inner">
-                                                <div class="fc-front">
-                                                    <span class="fc-label">Question</span>
-                                                    <span class="fc-text"><?= htmlspecialchars($fc['card_front']) ?></span>
-                                                    <span class="fc-hint">Tap to reveal →</span>
-                                                </div>
-                                                <div class="fc-back">
-                                                    <span class="fc-label">Answer</span>
-                                                    <span class="fc-text"><?= htmlspecialchars($fc['card_back']) ?></span>
-                                                    <span class="fc-hint">← Tap to go back</span>
-                                                </div>
-                                            </div>
+                                    <div class="callout info">
+                                        <div class="callout-icon">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <circle cx="12" cy="12" r="10" />
+                                                <path d="M12 16v-4M12 8h.01" />
+                                            </svg>
                                         </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
-
-                        <?php endif; ?>
-
-
-
-                        <?php if (!empty($activityData)): ?>
-                            <div class="ls-section" id="section-activities">
-                                <div class="ls-section-head">
-                                    <div class="ls-section-icon icon-activity">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                                            <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                                        </svg>
-                                    </div>
-                                    <span class="ls-section-title">Activities</span>
-                                    <div class="ls-section-divider"></div>
-                                    <span class="ls-section-count"><?= count($activityData) ?></span>
-                                </div>
-
-                                <?php foreach ($activityData as $actId => $data):
-                                    $act = $data['activity'];
-                                    $questions = $data['questions'];
-                                    $isSubmitted = ($data['submission'] !== null);
-                                    ?>
-                                    <div class="activity-block">
-                                        <div class="activity-hero-card">
-                                            <div class="act-hero-tag">
+                                        <div class="callout-body">
+                                            <div class="flash-hero-tag">
                                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                                     width="11" height="11">
                                                     <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
                                                     <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
                                                 </svg>
-                                                Hands-On Activity
+                                                Flashcards
                                             </div>
-                                            <div class="act-hero-title"><?= htmlspecialchars($act['title']) ?></div>
-                                            <?php if (!empty($act['instructions'])): ?>
-                                                <div class="act-hero-desc"><?= nl2br(htmlspecialchars($act['instructions'])) ?></div>
-                                            <?php endif; ?>
-                                            <div class="act-meta-pills">
-                                                <span class="meta-pill pill-white"><?= count($questions) ?> Questions</span>
-                                                <span class="meta-pill pill-white">⭐ <?= (int) $act['total_points'] ?> pts</span>
-                                                <?php if ($isSubmitted): ?>
-                                                    <span class="meta-pill pill-white">✓ Submitted</span>
-                                                <?php else: ?>
-                                                    <span class="meta-pill pill-white">Answer Required</span>
-                                                <?php endif; ?>
-                                            </div>
+                                            <div class="cb-title">How to Use Flashcards</div>
+                                            <p>Click any card to flip it and reveal the answer. Click again to go back to the
+                                                question.
+                                            </p>
                                         </div>
-
-                                        <?php if ($isSubmitted): ?>
-                                            <div class="submitted-notice">
-                                                <div class="submitted-check">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                                        <path d="M22 4L12 14.01l-3-3" />
-                                                    </svg>
-                                                </div>
-                                                <div class="submitted-notice-text">
-                                                    <div class="sn-title">Activity Submitted</div>
-                                                    <div class="sn-sub">You have already completed this activity. Review your answers
-                                                        below.
+                                    </div>
+                                    <div class="fc-grid">
+                                        <?php foreach ($flashcards as $fc): ?>
+                                            <div class="fc-item" onclick="this.classList.toggle('flipped')">
+                                                <div class="fc-inner">
+                                                    <div class="fc-front">
+                                                        <span class="fc-label">Question</span>
+                                                        <span class="fc-text"><?= htmlspecialchars($fc['card_front']) ?></span>
+                                                        <span class="fc-hint">Tap to reveal →</span>
+                                                    </div>
+                                                    <div class="fc-back">
+                                                        <span class="fc-label">Answer</span>
+                                                        <span class="fc-text"><?= htmlspecialchars($fc['card_back']) ?></span>
+                                                        <span class="fc-hint">← Tap to go back</span>
                                                     </div>
                                                 </div>
                                             </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
 
-                                            <?php foreach ($questions as $qi => $q): ?>
-                                                <div class="question-card">
-                                                    <div class="q-num-label">Question <?= $qi + 1 ?></div>
-                                                    <div class="q-text"><?= htmlspecialchars($q['question']) ?></div>
-                                                    <?php if ($q['question_type'] === 'multiple_choice'):
-                                                        $ltrs = ['A', 'B', 'C', 'D'];
-                                                        $ch = ['a' => $q['choice_a'], 'b' => $q['choice_b'], 'c' => $q['choice_c'], 'd' => $q['choice_d']];
-                                                        $li = 0;
-                                                        foreach ($ch as $key => $val):
-                                                            if ($val === null)
-                                                                continue;
-                                                            $isCorrect = strtolower($key) === strtolower($q['correct_ans'] ?? '');
-                                                            ?>
-                                                            <div class="review-choice"
-                                                                style="<?= $isCorrect ? 'border-color:#22c55e;background:rgba(34,197,94,0.06);' : '' ?>">
-                                                                <span class="mc-letter"
-                                                                    style="<?= $isCorrect ? 'background:#22c55e;color:#fff;border-color:#22c55e;' : '' ?>"><?= $ltrs[$li++] ?></span>
-                                                                <?= htmlspecialchars($val) ?>
-                                                                <?php if ($isCorrect): ?>
-                                                                    <svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" width="14"
-                                                                        height="14" style="margin-left:auto">
-                                                                        <path d="M20 6L9 17l-5-5" />
-                                                                    </svg>
-                                                                <?php endif; ?>
-                                                            </div>
-                                                        <?php endforeach; ?>
+                            <?php endif; ?>
+
+
+
+                            <?php if (!empty($activityData)): ?>
+                                <div class="ls-section" id="section-activities">
+                                    <div class="ls-section-head">
+                                        <div class="ls-section-icon icon-activity">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                                <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                                            </svg>
+                                        </div>
+                                        <span class="ls-section-title">Activities</span>
+                                        <div class="ls-section-divider"></div>
+                                        <span class="ls-section-count"><?= count($activityData) ?></span>
+                                    </div>
+
+                                    <?php foreach ($activityData as $actId => $data):
+                                        $act = $data['activity'];
+                                        $questions = $data['questions'];
+                                        $isSubmitted = ($data['submission'] !== null);
+                                        ?>
+                                        <div class="activity-block">
+                                            <div class="activity-hero-card">
+                                                <div class="act-hero-tag">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                        width="11" height="11">
+                                                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                                                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                                                    </svg>
+                                                    Hands-On Activity
+                                                </div>
+                                                <div class="act-hero-title"><?= htmlspecialchars($act['title']) ?></div>
+                                                <?php if (!empty($act['instructions'])): ?>
+                                                    <div class="act-hero-desc"><?= nl2br(htmlspecialchars($act['instructions'])) ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                                <div class="act-meta-pills">
+                                                    <span class="meta-pill pill-white"><?= count($questions) ?> Questions</span>
+                                                    <span class="meta-pill pill-white">⭐ <?= (int) $act['total_points'] ?>
+                                                        pts</span>
+                                                    <?php if ($isSubmitted): ?>
+                                                        <span class="meta-pill pill-white">✓ Submitted</span>
                                                     <?php else: ?>
-                                                        <div
-                                                            style="background:var(--page-surface);border:1.5px solid var(--page-border);border-radius:9px;padding:12px 14px;font-size:13.5px;color:var(--page-muted);font-style:italic;">
-                                                            Essay question — written response recorded
-                                                        </div>
-                                                        <?php if (!empty($q['model_answer'])): ?>
-                                                            <div class="callout success" style="margin-top:8px;">
-                                                                <div class="callout-icon">
-                                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                                        <path
-                                                                            d="M9 18h6M10 22h4M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17H8v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z" />
-                                                                    </svg>
-                                                                </div>
-                                                                <div class="callout-body">
-                                                                    <div class="cb-title">Model Answer</div>
-                                                                    <p><?= nl2br(htmlspecialchars($q['model_answer'])) ?></p>
-                                                                </div>
-                                                            </div>
-                                                        <?php endif; ?>
+                                                        <span class="meta-pill pill-white">Answer Required</span>
                                                     <?php endif; ?>
                                                 </div>
-                                            <?php endforeach; ?>
+                                            </div>
 
-                                        <?php else: ?>
-                                            <div class="activity-answers-wrapper" data-activity-id="<?= (int) $actId ?>">
+                                            <?php if ($isSubmitted): ?>
+                                                <div class="submitted-notice">
+                                                    <div class="submitted-check">
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                                            <path d="M22 4L12 14.01l-3-3" />
+                                                        </svg>
+                                                    </div>
+                                                    <div class="submitted-notice-text">
+                                                        <div class="sn-title">Activity Submitted</div>
+                                                        <div class="sn-sub">You have already completed this activity. Review your
+                                                            answers
+                                                            below.
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                                 <?php foreach ($questions as $qi => $q): ?>
                                                     <div class="question-card">
                                                         <div class="q-num-label">Question <?= $qi + 1 ?></div>
@@ -3063,32 +3317,86 @@ function youtubeEmbed($url)
                                                             $ltrs = ['A', 'B', 'C', 'D'];
                                                             $ch = ['a' => $q['choice_a'], 'b' => $q['choice_b'], 'c' => $q['choice_c'], 'd' => $q['choice_d']];
                                                             $li = 0;
-                                                            ?>
-                                                            <input type="hidden" id="mc_hidden_<?= (int) $q['id'] ?>" value="">
-                                                            <?php foreach ($ch as $key => $val):
+                                                            foreach ($ch as $key => $val):
                                                                 if ($val === null)
                                                                     continue;
+                                                                $isCorrect = strtolower($key) === strtolower($q['correct_ans'] ?? '');
                                                                 ?>
-                                                                <div class="mc-choice" data-qid="<?= (int) $q['id'] ?>"
-                                                                    data-act-id="<?= (int) $actId ?>" data-key="<?= $key ?>" onclick="pickMC(this)">
-                                                                    <span class="mc-letter"><?= $ltrs[$li++] ?></span>
+                                                                <div class="review-choice"
+                                                                    style="<?= $isCorrect ? 'border-color:#22c55e;background:rgba(34,197,94,0.06);' : '' ?>">
+                                                                    <span class="mc-letter"
+                                                                        style="<?= $isCorrect ? 'background:#22c55e;color:#fff;border-color:#22c55e;' : '' ?>"><?= $ltrs[$li++] ?></span>
                                                                     <?= htmlspecialchars($val) ?>
+                                                                    <?php if ($isCorrect): ?>
+                                                                        <svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"
+                                                                            width="14" height="14" style="margin-left:auto">
+                                                                            <path d="M20 6L9 17l-5-5" />
+                                                                        </svg>
+                                                                    <?php endif; ?>
                                                                 </div>
                                                             <?php endforeach; ?>
                                                         <?php else: ?>
-                                                            <textarea class="activity-answer" data-qid="<?= (int) $q['id'] ?>"
-                                                                data-act-id="<?= (int) $actId ?>" placeholder="Type your answer here…"
-                                                                rows="4"></textarea>
+                                                            <div
+                                                                style="background:var(--page-surface);border:1.5px solid var(--page-border);border-radius:9px;padding:12px 14px;font-size:13.5px;color:var(--page-muted);font-style:italic;">
+                                                                Essay question — written response recorded
+                                                            </div>
+                                                            <?php if (!empty($q['model_answer'])): ?>
+                                                                <div class="callout success" style="margin-top:8px;">
+                                                                    <div class="callout-icon">
+                                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                            <path
+                                                                                d="M9 18h6M10 22h4M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17H8v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z" />
+                                                                        </svg>
+                                                                    </div>
+                                                                    <div class="callout-body">
+                                                                        <div class="cb-title">Model Answer</div>
+                                                                        <p><?= nl2br(htmlspecialchars($q['model_answer'])) ?></p>
+                                                                    </div>
+                                                                </div>
+                                                            <?php endif; ?>
                                                         <?php endif; ?>
                                                     </div>
                                                 <?php endforeach; ?>
-                                            </div>
-                                        <?php endif; ?>
 
-                                    </div><!-- /activity-block -->
-                                <?php endforeach; ?>
-                            </div>
-                        <?php endif; ?>
+                                            <?php else: ?>
+                                                <div class="activity-answers-wrapper" data-activity-id="<?= (int) $actId ?>">
+                                                    <?php foreach ($questions as $qi => $q): ?>
+                                                        <div class="question-card">
+                                                            <div class="q-num-label">Question <?= $qi + 1 ?></div>
+                                                            <div class="q-text"><?= htmlspecialchars($q['question']) ?></div>
+                                                            <?php if ($q['question_type'] === 'multiple_choice'):
+                                                                $ltrs = ['A', 'B', 'C', 'D'];
+                                                                $ch = ['a' => $q['choice_a'], 'b' => $q['choice_b'], 'c' => $q['choice_c'], 'd' => $q['choice_d']];
+                                                                $li = 0;
+                                                                ?>
+                                                                <input type="hidden" id="mc_hidden_<?= (int) $q['id'] ?>" value="">
+                                                                <?php foreach ($ch as $key => $val):
+                                                                    if ($val === null)
+                                                                        continue;
+                                                                    ?>
+                                                                    <div class="mc-choice" data-qid="<?= (int) $q['id'] ?>"
+                                                                        data-act-id="<?= (int) $actId ?>" data-key="<?= $key ?>"
+                                                                        onclick="pickMC(this)">
+                                                                        <span class="mc-letter"><?= $ltrs[$li++] ?></span>
+                                                                        <?= htmlspecialchars($val) ?>
+                                                                    </div>
+                                                                <?php endforeach; ?>
+                                                            <?php else: ?>
+                                                                <textarea class="activity-answer" data-qid="<?= (int) $q['id'] ?>"
+                                                                    data-act-id="<?= (int) $actId ?>" placeholder="Type your answer here…"
+                                                                    rows="4"></textarea>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            <?php endif; ?>
+
+                                        </div><!-- /activity-block -->
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+
+                        </div><!-- /lesson-body -->
 
                         <?php if (!empty($quizData)): ?>
                             <?php
@@ -3114,7 +3422,11 @@ function youtubeEmbed($url)
                             $totalPages = $grandTotal > 0 ? (int) ceil($grandTotal / $questionsPerPage) : 1;
                             ?>
 
-                            <div class="ls-section" id="section-quizzes">
+                            <div class="ls-section" id="section-quizzes" style="display:none;">
+                                <button type="button" class="btn-exit-quiz" onclick="closeQuizStage()">
+                                    <i class="fa fa-arrow-left"></i>
+                                    Back to Lesson
+                                </button>
                                 <div class="ls-section-head">
                                     <div class="ls-section-icon icon-quiz">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -3214,81 +3526,53 @@ function youtubeEmbed($url)
                                     <?php endforeach; ?>
 
                                 <?php else: ?>
-                                    <div class="quiz-hero-card">
-                                        <div class="quiz-hero-inner">
-                                            <div class="quiz-hero-tag">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                    width="11" height="11">
-                                                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                                                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                                                </svg>
-                                                Quiz
-                                            </div>
-                                            <div class="quiz-hero-title"><?= htmlspecialchars($firstQz['title']) ?></div>
-                                            <?php if (!empty($firstQz['instructions'])): ?>
-                                                <div class="quiz-hero-desc"><?= htmlspecialchars($firstQz['instructions']) ?></div>
-                                            <?php endif; ?>
-                                            <div class="quiz-stats-strip">
-                                                <div class="quiz-stat">
-                                                    <div class="qs-val"><?= $grandTotal ?></div>
-                                                    <div class="qs-lbl">Questions</div>
-                                                </div>
-                                                <div class="quiz-stat">
-                                                    <div class="qs-val"><?= (int) $firstQz['passing_score'] ?></div>
-                                                    <div class="qs-lbl">Passing Score</div>
-                                                </div>
-                                                <div class="quiz-stat">
-                                                    <div class="qs-val"><?= $totalPages ?></div>
-                                                    <div class="qs-lbl">Pages</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
 
-                                    <?php foreach ($allQzQuestions as $qi => $item):
-                                        $q = $item['q'];
-                                        $qLtrs = ['A', 'B', 'C', 'D'];
-                                        $ch = ['a' => $q['choice_a'], 'b' => $q['choice_b'], 'c' => $q['choice_c'], 'd' => $q['choice_d']];
-                                        $pageIdx = (int) floor($qi / $questionsPerPage);
-                                        ?>
-                                        <div class="q-card unified-q-card" id="unified_q<?= $qi ?>" data-qzid="<?= $item['qzId'] ?>"
-                                            data-page="<?= $pageIdx ?>" style="<?= $pageIdx > 0 ? 'display:none;' : '' ?>">
-                                            <p class="q-number">Question <?= $qi + 1 ?> of <?= $grandTotal ?></p>
-                                            <p class="q-question"><?= htmlspecialchars($q['question']) ?></p>
-                                            <div>
-                                                <?php $li = 0;
-                                                foreach ($ch as $key => $val):
-                                                    if ($val === null)
-                                                        continue;
-                                                    ?>
-                                                    <div class="q-choice unified-choice" data-qi="<?= $qi ?>"
-                                                        data-qid="<?= (int) $q['id'] ?>" data-key="<?= $key ?>"
-                                                        data-qzid="<?= $item['qzId'] ?>" onclick="unifiedPick(this)">
-                                                        <span class="choice-letter"><?= $qLtrs[$li++] ?></span>
-                                                        <?= htmlspecialchars($val) ?>
-                                                    </div>
-                                                <?php endforeach; ?>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
 
-                                    <div class="quiz-nav-bar">
-                                        <span class="quiz-status" id="unified_status">0 / <?= $grandTotal ?> answered</span>
-                                        <div class="quiz-nav-btns">
-                                            <button class="btn-qnav-prev" id="unified_prev" style="display:none;"
-                                                onclick="unifiedPageNav(-1)">
+                                    <div class="qz-stage" id="qzStage">
+                                        <div class="qz-counter" id="qzCounter">Question 1 of <?= $grandTotal ?></div>
+                                        <div class="qz-progress-track">
+                                            <div class="qz-progress-fill" id="qzProgressFill"
+                                                style="width: <?= $grandTotal ? round(100 / $grandTotal) : 0 ?>%"></div>
+                                        </div>
+
+                                        <?php foreach ($allQzQuestions as $qi => $item):
+                                            $q = $item['q'];
+                                            $ch = ['a' => $q['choice_a'], 'b' => $q['choice_b'], 'c' => $q['choice_c'], 'd' => $q['choice_d']];
+                                            ?>
+                                            <div class="qz-question-block" data-qi="<?= $qi ?>" data-qzid="<?= $item['qzId'] ?>"
+                                                style="<?= $qi > 0 ? 'display:none;' : '' ?>">
+                                                <div class="qz-card">
+                                                    <div class="qz-question-text"><?= htmlspecialchars($q['question']) ?></div>
+                                                </div>
+                                                <div class="qz-choices">
+                                                    <?php $ci = 0;
+                                                    foreach ($ch as $key => $val):
+                                                        if ($val === null)
+                                                            continue;
+                                                        ?>
+                                                        <div class="qz-choice-btn" data-color="<?= $ci ?>" data-qid="<?= (int) $q['id'] ?>"
+                                                            data-key="<?= $key ?>" data-qzid="<?= $item['qzId'] ?>" onclick="qzPick(this)">
+                                                            <?= htmlspecialchars($val) ?>
+                                                        </div>
+                                                        <?php $ci++; endforeach; ?>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+
+                                        <div class="qz-nav-row">
+                                            <button class="btn-qnav-prev" id="qzPrevBtn" style="visibility:hidden;"
+                                                onclick="qzNav(-1)">
                                                 <i class="fa fa-arrow-left"></i>
                                                 Prev
                                             </button>
-                                            <span class="page-indicator" id="unified_page_indicator">Page 1 of
-                                                <?= $totalPages ?></span>
-                                            <?php if ($grandTotal > 5): ?>
-                                                <button class="btn-qnav-next" id="unified_next" onclick="unifiedPageNav(1)">
-                                                    Next
-                                                    <i class="fa fa-arrow-right"></i>
-                                                </button>
-                                            <?php endif; ?>
+                                            <button class="btn-qnav-next" id="qzNextBtn" onclick="qzNav(1)" disabled>
+                                                Next
+                                                <i class="fa fa-arrow-right"></i>
+                                            </button>
                                         </div>
+
+                                        <div class="quiz-status" id="unified_status" style="text-align:center;margin-top:10px;">
+                                            0 / <?= $grandTotal ?> answered</div>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -3346,6 +3630,8 @@ function youtubeEmbed($url)
 
             </div><!-- /lessons-main -->
         </div><!-- /lessons-shell -->
+
+        <div class="qz-overlay" id="qzOverlay"></div>
 
         <div class="db-lightbox" id="dbLightbox" onclick="dbLightboxClose()">
             <button class="db-lightbox-close" onclick="dbLightboxClose()">
@@ -3492,7 +3778,7 @@ function youtubeEmbed($url)
             fetch('/learning_management/public/?url=mark_flashcards_viewed', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'lesson_id=' + currentLessonId
+                body: 'lesson_id=' + <?= (int) $lessonId ?>
             });
         </script>
 
@@ -3542,6 +3828,47 @@ function youtubeEmbed($url)
                 } else {
                     el.scrollIntoView({ behavior: 'smooth' });
                 }
+            }
+
+            function openQuizStage() {
+                var quizSection = document.getElementById('section-quizzes');
+                var overlay = document.getElementById('qzOverlay');
+                if (!quizSection || !overlay) return;
+
+                // Remember where the quiz section normally lives in the
+                // page so we can put it back exactly there on close —
+                // same re-parenting trick used by the image lightbox.
+                if (!document.getElementById('qzHomeMarker')) {
+                    var marker = document.createElement('div');
+                    marker.id = 'qzHomeMarker';
+                    marker.style.display = 'none';
+                    quizSection.parentNode.insertBefore(marker, quizSection);
+                }
+
+                overlay.appendChild(quizSection);
+                quizSection.style.display = 'block';
+                overlay.classList.add('open');
+                overlay.scrollTop = 0;
+
+                document.body.dataset.prevOverflow = document.body.style.overflow || '';
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeQuizStage() {
+                var quizSection = document.getElementById('section-quizzes');
+                var overlay = document.getElementById('qzOverlay');
+                var marker = document.getElementById('qzHomeMarker');
+                if (!quizSection) return;
+
+                if (marker && marker.parentNode) {
+                    marker.parentNode.insertBefore(quizSection, marker);
+                }
+                quizSection.style.display = 'none';
+                if (overlay) overlay.classList.remove('open');
+
+                document.body.style.overflow = document.body.dataset.prevOverflow || '';
+
+                scrollToSection('quizCta');
             }
         </script>
 
@@ -3620,48 +3947,11 @@ function youtubeEmbed($url)
         <?php $hasActiveQuiz = !empty($quizData) && isset($firstQzDone) && !$firstQzDone; ?>
         <?php if ($hasActiveQuiz): ?>
             <script>
-                (function () {
-                    const questionsPerPage = <?= (int) $questionsPerPage ?>;
-                    const grandTotal = <?= (int) $grandTotal ?>;
-                    const totalPages = <?= (int) $totalPages ?>;
-                    let currentPage = 0;
-
-                    function showPage(page) {
-                        document.querySelectorAll('.unified-q-card').forEach(el => el.style.display = 'none');
-                        document.querySelectorAll(`.unified-q-card[data-page="${page}"]`).forEach(el => el.style.display = 'block');
-                        var ind = document.getElementById('unified_page_indicator');
-                        if (ind) ind.textContent = `Page ${page + 1} of ${totalPages}`;
-                        var prev = document.getElementById('unified_prev');
-                        if (prev) prev.style.display = page > 0 ? 'inline-flex' : 'none';
-                        var next = document.getElementById('unified_next');
-                        if (next) {
-                            if (grandTotal > 5 && page < totalPages - 1) {
-                                next.style.display = 'inline-flex';
-                                next.innerHTML = 'Next <i class="fa fa-arrow-right"></i>';
-                                next.onclick = () => unifiedPageNav(1);
-                            } else {
-                                next.style.display = 'none';
-                            }
-                        }
-                        currentPage = page;
+                document.addEventListener('DOMContentLoaded', function () {
+                    if (typeof qzUpdateNav === 'function') {
+                        qzUpdateNav();
                     }
-
-                    window.unifiedPageNav = function (dir) {
-                        var newPage = currentPage + dir;
-                        if (newPage < 0 || newPage >= totalPages) return;
-                        document.querySelectorAll('.unified-q-card').forEach(el => el.style.display = 'none');
-                        document.querySelectorAll(`.unified-q-card[data-page="${newPage}"]`).forEach(el => el.style.display = 'block');
-                        var ind = document.getElementById('unified_page_indicator');
-                        if (ind) ind.textContent = `Page ${newPage + 1} of ${totalPages}`;
-                        var prev = document.getElementById('unified_prev');
-                        if (prev) prev.style.display = newPage > 0 ? 'inline-flex' : 'none';
-                        var next = document.getElementById('unified_next');
-                        if (next) next.style.display = (grandTotal > 5 && newPage < totalPages - 1) ? 'inline-flex' : 'none';
-                        currentPage = newPage;
-                    };
-
-                    showPage(0);
-                })();
+                });
             </script>
         <?php endif; ?>
 
