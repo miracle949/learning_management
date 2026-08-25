@@ -28,8 +28,16 @@
                     ?>
 
                     <!-- ── TOP NAV ── -->
-                    <div class="bread-crambs">
-                        Dashboard <i class="fa fa-chevron-right"></i> <b>Modules</b>
+                    <div class="navbar-bread">
+                        <div class="bread-crambs">
+                            Dashboard <i class="fa fa-chevron-right"></i> <b>Modules</b>
+                        </div>
+
+                        <div class="notification">
+                            <button>
+                                <i class="fa fa-bell"></i>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="progress-banner">
@@ -89,47 +97,43 @@
                     <!-- ── STAT CARDS ── -->
                     <div class="card-box-parent">
                         <div class="card-box">
-                            <div class="card-icon card-icon--modules">
-                                <i class="fa fa-layer-group"></i>
-                            </div>
+                            <div class="card-icon card-icon--modules"><i class="fa fa-layer-group"></i></div>
                             <div class="card-text">
-                                <p>9</p>
+                                <p><?= $totalModulesAll ?></p>
                                 <div class="data-head">Total Modules</div>
-                                <span class="card-badge card-badge--green"><i class="fa fa-arrow-up"></i> Across 5
-                                    classes</span>
+                                <span class="card-badge card-badge--green">
+                                    <i class="fa fa-arrow-up"></i> Across <?= $enrolledClassesCount ?>
+                                    class<?= $enrolledClassesCount !== 1 ? 'es' : '' ?>
+                                </span>
                             </div>
                         </div>
 
                         <div class="card-box">
-                            <div class="card-icon card-icon--quiz">
-                                <i class="fa fa-pen-to-square"></i>
-                            </div>
+                            <div class="card-icon card-icon--quiz"><i class="fa fa-pen-to-square"></i></div>
                             <div class="card-text">
-                                <p>14</p>
+                                <p><?= $totalQuizzesAll ?></p>
                                 <div class="data-head">Quizzes</div>
-                                <span class="card-badge card-badge--blue">11 Completed</span>
+                                <span class="card-badge card-badge--blue"><?= $completedQuizzesAll ?> Completed</span>
                             </div>
                         </div>
 
                         <div class="card-box">
-                            <div class="card-icon card-icon--progress">
-                                <i class="fa fa-spinner"></i>
-                            </div>
+                            <div class="card-icon card-icon--progress"><i class="fa fa-spinner"></i></div>
                             <div class="card-text">
-                                <p>3</p>
+                                <p><?= $inProgressModulesAll ?></p>
                                 <div class="data-head">Modules in progress</div>
                                 <span class="card-badge card-badge--orange">where you left off</span>
                             </div>
                         </div>
 
                         <div class="card-box">
-                            <div class="card-icon card-icon--percent">
-                                <i class="fa fa-chart-line"></i>
-                            </div>
+                            <div class="card-icon card-icon--percent"><i class="fa fa-chart-line"></i></div>
                             <div class="card-text">
-                                <p>4</p>
+                                <p><?= $totalActivitiesAll ?></p>
                                 <div class="data-head">Activities</div>
-                                <span class="card-badge card-badge--green"><i class="fa fa-arrow-up"></i> +6% this week</span>
+                                <span class="card-badge card-badge--green">
+                                    <i class="fa fa-arrow-up"></i> <?= $activitiesThisWeek ?> this week
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -176,7 +180,7 @@
                                     // ✅ Progress-aware status: completed > in-progress > not-started
                                     $prog = $moduleProgress[$mod['id']] ?? null;
                                     $isFinished = $prog && (int) $prog['is_finished'] === 1;
-                                    
+
                                     $isStarted = in_array($mod['id'], $startedModuleIds);
                                     $pct = $prog ? (float) $prog['completion_percentage'] : 0;
                                     $pct = max(0, min(100, $pct)); // clamp for safety
@@ -185,14 +189,19 @@
                                         $statusAttr = 'completed';
                                         $btnText = 'Review Module';
                                         $btnClass = 'start-now-btn btn-completed';
-                                    } elseif ($isStarted) {
+                                    } elseif ($pct > 0) {
+                                        // ✅ "In Progress" now means the student has actually made
+                                        // progress (pct > 0), not merely opened the module.
                                         $statusAttr = 'in-progress';
                                         $btnText = 'Continue Learning';
                                         $btnClass = 'start-now-btn btn-continue';
                                     } else {
+                                        // 0% — whether or not it was opened, it stays "Not Started"
+                                        // until real progress exists. Button still says "Continue"
+                                        // if they've opened it before, so it doesn't feel like a reset.
                                         $statusAttr = 'not-started';
-                                        $btnText = 'Start now';
-                                        $btnClass = 'start-now-btn';
+                                        $btnText = $isStarted ? 'Continue Learning' : 'Start Now';
+                                        $btnClass = $isStarted ? 'start-now-btn btn-continue' : 'start-now-btn';
                                     }
                                     ?>
                                     <div class="module-feed-card" data-status="<?= $statusAttr ?>"
@@ -298,27 +307,39 @@
                             <i class="fa fa-filter"></i>
                             <p>No modules match this filter.</p>
                         </div>
-                    </div>
 
-                    <?php
+                        <!-- ── PAGINATION ── -->
+                        <div class="modules-pagination" id="modulesPagination" style="display:none;">
+                            <button class="page-nav-btn" id="pagePrevBtn" type="button">
+                                <i class="fa fa-chevron-left"></i>
+                            </button>
+                            <div class="page-numbers" id="pageNumbers"></div>
+                            <button class="page-nav-btn" id="pageNextBtn" type="button">
+                                <i class="fa fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <?php
                 else:
                     ?>
-                    <div style="padding:2rem;">
-                        <h3>Subject not found.</h3>
-                        <p>The subject "<strong><?= htmlspecialchars($subject) ?></strong>" does not exist.</p>
-                        <a href="/learning_management/public/?url=classes">← Back to Courses</a>
-                    </div>
-                    <?php
+                <div style="padding:2rem;">
+                    <h3>Subject not found.</h3>
+                    <p>The subject "<strong><?= htmlspecialchars($subject) ?></strong>" does not exist.</p>
+                    <a href="/learning_management/public/?url=classes">← Back to Courses</a>
+                </div>
+                <?php
                 endif;
             else:
                 ?>
-                <div style="padding:2rem;">
-                    <h3>No subject selected.</h3>
-                    <a href="/learning_management/public/?url=classes">← Browse Courses</a>
-                </div>
-            <?php endif; ?>
+            <div style="padding:2rem;">
+                <h3>No subject selected.</h3>
+                <a href="/learning_management/public/?url=classes">← Browse Courses</a>
+            </div>
+        <?php endif; ?>
 
-        </div>
+    </div>
     </div>
 
 
@@ -354,24 +375,40 @@
     <script>
         var currentFilter = 'all';
         var currentSearch = '';
+        var currentPage = 1;
+        var PER_PAGE = 10;
 
         document.querySelectorAll('.tab-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
                 document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
                 btn.classList.add('active');
                 currentFilter = btn.dataset.filter;
+                currentPage = 1;
                 applyFilters();
             });
         });
 
         document.getElementById('moduleSearchInput').addEventListener('input', function () {
             currentSearch = this.value.trim().toLowerCase();
+            currentPage = 1;
+            applyFilters();
+        });
+
+        document.getElementById('pagePrevBtn').addEventListener('click', function () {
+            if (currentPage > 1) {
+                currentPage--;
+                applyFilters();
+            }
+        });
+
+        document.getElementById('pageNextBtn').addEventListener('click', function () {
+            currentPage++;
             applyFilters();
         });
 
         function applyFilters() {
             var cards = document.querySelectorAll('.module-feed-card');
-            var visibleCount = 0;
+            var matching = [];
 
             cards.forEach(function (card) {
                 var status = card.dataset.status;
@@ -381,33 +418,77 @@
                 var matchesSearch = currentSearch === '' || title.indexOf(currentSearch) !== -1;
 
                 if (matchesFilter && matchesSearch) {
-                    card.style.display = '';
-                    visibleCount++;
+                    matching.push(card);
                 } else {
                     card.style.display = 'none';
                 }
             });
 
-            document.getElementById('filterEmpty').style.display = visibleCount === 0 ? 'flex' : 'none';
-            document.getElementById('moduleGrid').style.display = visibleCount === 0 ? 'none' : '';
+            var totalPages = Math.max(1, Math.ceil(matching.length / PER_PAGE));
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            var start = (currentPage - 1) * PER_PAGE;
+            var end = start + PER_PAGE;
+
+            matching.forEach(function (card, i) {
+                card.style.display = (i >= start && i < end) ? '' : 'none';
+            });
+
+            document.getElementById('filterEmpty').style.display = matching.length === 0 ? 'flex' : 'none';
+            document.getElementById('moduleGrid').style.display = matching.length === 0 ? 'none' : '';
+
+            renderPagination(totalPages, matching.length);
         }
 
-        // ✅ This is the function called by onclick="handleModuleStart(this)"
-        function handleModuleStart(btn) {
-            var moduleId = btn.dataset.moduleId;
-            var href = btn.dataset.href;
-            // Completed modules behave like "continue" — just navigate,
-            // no need to re-mark as started.
-            var isStarted = btn.classList.contains('btn-continue') || btn.classList.contains('btn-completed');
+        function renderPagination(totalPages, matchCount) {
+            var pagBar = document.getElementById('modulesPagination');
+            var numsWrap = document.getElementById('pageNumbers');
+            var prevBtn = document.getElementById('pagePrevBtn');
+            var nextBtn = document.getElementById('pageNextBtn');
 
-            if (isStarted) {
-                window.location.href = href;
+            if (matchCount === 0 || totalPages <= 1) {
+                pagBar.style.display = 'none';
                 return;
             }
 
-            // Disable button while request is in-flight
-            btn.disabled = true;
-            btn.innerHTML = 'Starting... <i class="fa fa-spinner fa-spin"></i>';
+            pagBar.style.display = 'flex';
+            prevBtn.disabled = (currentPage === 1);
+            nextBtn.disabled = (currentPage === totalPages);
+
+            numsWrap.innerHTML = '';
+            for (var p = 1; p <= totalPages; p++) {
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'page-num-btn' + (p === currentPage ? ' active' : '');
+                btn.textContent = p;
+                btn.addEventListener('click', (function (page) {
+                    return function () {
+                        currentPage = page;
+                        applyFilters();
+                    };
+                })(p));
+                numsWrap.appendChild(btn);
+            }
+        }
+
+        applyFilters();
+
+        // Always logs the open — whether the module is not-started, in-progress,
+        // or completed — so every module open shows up in "My Recent Activity"
+        // on the dashboard, the same way lesson opens already do. The backend's
+        // 30-minute cooldown inside logActivity() stops duplicate spam if the
+        // student re-opens the same module repeatedly in a short window.
+        function handleModuleStart(btn) {
+            var moduleId = btn.dataset.moduleId;
+            var href = btn.dataset.href;
+            var isStarted = btn.classList.contains('btn-continue') || btn.classList.contains('btn-completed');
+
+            // Only show the "Starting..." loading state for brand-new modules;
+            // continue/review should feel instant.
+            if (!isStarted) {
+                btn.disabled = true;
+                btn.innerHTML = 'Starting... <i class="fa fa-spinner fa-spin"></i>';
+            }
 
             var fd = new FormData();
             fd.append('module_id', moduleId);
@@ -417,7 +498,6 @@
             })
                 .then(function (res) { return res.json(); })
                 .then(function () {
-                    // Navigate AFTER server confirms the write
                     window.location.href = href;
                 })
                 .catch(function () {

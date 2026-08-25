@@ -27,6 +27,7 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teachers</title>
     <link rel="stylesheet" href="../css_folder/teacher_users.css">
+    <link rel="stylesheet" href="../css_folder/components.css">
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
     <style>
@@ -510,8 +511,6 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
         <?php include("../admin_folder/sidebar.php") ?>
 
         <div class="rightbar">
-
-            <?php include("../admin_folder/nav.php") ?>
 
             <!-- MAIN -->
             <main class="main">

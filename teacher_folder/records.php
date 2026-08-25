@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= htmlspecialchars($classInfo['subject_name'] ?? 'Class') ?></title>
     <link rel="stylesheet" href="../css_folder/records.css">
+    <link rel="stylesheet" href="../css_folder/components.css">
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
     <style>
@@ -719,7 +720,6 @@
         <?php include("sidebar.php"); ?>
 
         <div class="rightbar">
-            <?php include("nav.php"); ?>
 
             <?php
             /* ── Helpers ── */

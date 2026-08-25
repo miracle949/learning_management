@@ -278,7 +278,7 @@ function saveAndGo(href, isFinish) {
 
         var payload = {
             lesson_id: lessonId,
-            activities: {},
+            activities: ANSWERS.activities,
             quizzes: buildQuizPayload()
         };
 
@@ -588,11 +588,28 @@ function switchTab(name, btn) {
    LIGHTBOX
 ========================== */
 function dbLightbox(src) {
+    var lb = document.getElementById('dbLightbox');
+
+    // Some ancestor (e.g. an offcanvas panel using CSS transform)
+    // can break position:fixed, causing the lightbox to scroll
+    // with the page instead of staying pinned to the viewport.
+    // Re-parenting to <body> guarantees it's never inside that
+    // ancestor when it opens.
+    if (lb.parentElement !== document.body) {
+        document.body.appendChild(lb);
+    }
+
     document.getElementById('dbLightboxImg').src = src;
-    document.getElementById('dbLightbox').classList.add('open');
+    lb.classList.add('open');
+
+    // Prevent the page behind the lightbox from scrolling
+    document.body.dataset.prevOverflow = document.body.style.overflow || '';
+    document.body.style.overflow = 'hidden';
 }
 function dbLightboxClose() {
-    document.getElementById('dbLightbox').classList.remove('open');
+    var lb = document.getElementById('dbLightbox');
+    lb.classList.remove('open');
+    document.body.style.overflow = document.body.dataset.prevOverflow || '';
 }
 document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') dbLightboxClose();

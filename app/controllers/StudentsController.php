@@ -197,6 +197,28 @@ class StudentsController
             $quizCounts[$mod['id']] = $studentModel->countIMquizzes($mod['id']);
         }
 
+        $totalModulesAll = $studentId ? $studentModel->countTotalModulesForStudent($studentId) : 0;
+        $enrolledClassesCount = $studentId ? $studentModel->countEnrolledClasses($studentId) : 0;
+        $totalQuizzesAll = $studentId ? $studentModel->countTotalQuizzesForStudent($studentId) : 0;
+        $completedQuizzesAll = $studentId ? $studentModel->countCompletedQuizzesForStudent($studentId) : 0;
+        $inProgressModulesAll = $studentId ? $studentModel->countModulesInProgressForStudent($studentId) : 0;
+        $upcomingDeadlines = $studentId ? $studentModel->getUpcomingDeadlines($studentId, 60) : [];
+        $totalActivitiesAll = $studentId ? $studentModel->countTotalActivitiesForStudent($studentId) : 0;
+        $activitiesThisWeek = $studentId ? $studentModel->countActivitiesCompletedThisWeek($studentId) : 0;
+
+        // Build a simple list of in-progress modules (for "Your Current Progress")
+        $inProgressModules = [];
+        foreach ($modules as $mod) {
+            $prog = $moduleProgress[$mod['id']] ?? null;
+            if ($prog && (int) $prog['is_finished'] !== 1 && (float) $prog['completion_percentage'] > 0) {
+                $inProgressModules[] = [
+                    'id' => $mod['id'],
+                    'title' => $mod['title'],
+                    'percentage' => (float) $prog['completion_percentage'],
+                ];
+            }
+        }
+
         require "../app/view/modules.php";
     }
 
@@ -219,6 +241,19 @@ class StudentsController
         if ($studentId && $moduleId) {
             $studentModel = new Students();
             $studentModel->markModuleStarted($moduleId, $studentId);
+
+            // ✅ NEW — log "opened a module" for the recent activity feed
+            $moduleInfo = $studentModel->getInteractiveModuleById($moduleId);
+            if ($moduleInfo) {
+                $studentModel->logActivity(
+                    $studentId,
+                    'module_opened',
+                    $moduleInfo['title'],
+                    $moduleInfo['subject_name'],
+                    30 // don't re-log the same module for 30 min
+                );
+            }
+
             echo json_encode(['ok' => true]);
         } else {
             echo json_encode(['ok' => false, 'student_id' => $studentId, 'module_id' => $moduleId]);
@@ -258,8 +293,20 @@ class StudentsController
             $studentModel->markModuleStarted($moduleId, $studentId);
         }
 
+        $isModuleStarted = ($studentId && $moduleId);
+
         // ... rest unchanged
         $lesson = $lessonId ? $studentModel->getIMLessonById($lessonId) : null;
+
+        // ✅ NEW — log "opened a lesson"
+        if ($studentId && $lesson) {
+            $studentModel->logActivity(
+                $studentId,
+                'lesson_opened',
+                $lesson['title'],
+                $lesson['subject_name']
+            );
+        }
 
         // Ordered text/image/video blocks (builder order via sort_order) —
         // replaces the old separate $lesson['content'] / $images / $videos
@@ -269,6 +316,15 @@ class StudentsController
         $flashcards = $lessonId ? $studentModel->getLessonFlashcards($lessonId) : [];
         $activities = $lessonId ? $studentModel->getLessonActivities($lessonId) : [];
         $quizzes = $lessonId ? $studentModel->getLessonQuizzes($lessonId) : [];
+
+        // ✅ Self-healing: resync tbl_module_progress every time this page
+        // loads, so the stored percentage can never drift from what
+        // isLessonCompleted() actually says. This is safe — it only
+        // recomputes from real completion state, it never marks anything
+        // as visited by itself.
+        if ($studentId && $moduleId) {
+            $studentModel->updateModuleProgress($moduleId, $studentId);
+        }
 
         $activityData = [];
         foreach ($activities as $act) {
@@ -539,7 +595,6 @@ class StudentsController
             exit;
         }
 
-        // ── Save activity answers ──────────────────────────────
         if (!empty($data['activities'])) {
             foreach ($data['activities'] as $actId => $answers) {
                 $actId = (int) $actId;
@@ -548,11 +603,14 @@ class StudentsController
                 $existing = $studentModel->getIMActivitySubmission($actId, $studentId);
                 if (!$existing) {
                     $studentModel->saveIMActivitySubmission($actId, $studentId, json_encode($answers));
+                    $actInfo = $studentModel->getIMActivityById($actId);
+                    if ($actInfo) {
+                        $studentModel->logActivity($studentId, 'activity_completed', $actInfo['title'], $actInfo['subject_name']);
+                    }
                 }
             }
         }
 
-        // ── Save quiz results ──────────────────────────────────
         if (!empty($data['quizzes'])) {
             foreach ($data['quizzes'] as $qzId => $info) {
                 $qzId = (int) $qzId;
@@ -573,18 +631,20 @@ class StudentsController
                             $score++;
                     }
                     $studentModel->saveIMQuizResult($qzId, $studentId, $score, $total, $passingScore, json_encode($answers));
+
+                    $quizTitle = $questions[0]['title'] ?? 'Quiz';
+                    $quizLessonId = (int) ($data['lesson_id'] ?? 0);
+                    $quizLessonRow = $quizLessonId ? $studentModel->getIMLessonById($quizLessonId) : null;
+                    $studentModel->logActivity($studentId, 'quiz_completed', $quizTitle, $quizLessonRow['subject_name'] ?? null);
                 }
             }
         }
 
-        // ── Mark lesson as visited ─────────────────────────────
         $lessonId = (int) ($data['lesson_id'] ?? 0);
         if ($lessonId) {
             $studentModel->markLessonVisited($lessonId, $studentId);
         }
 
-        // ✅ ADD THIS — keep tbl_module_progress in sync immediately,
-// not just when the student clicks Finish on the last lesson
         $moduleId = 0;
         if ($lessonId) {
             $lessonRow = $studentModel->getIMLessonById($lessonId);
@@ -594,11 +654,9 @@ class StudentsController
             }
         }
 
-        // ── Return updated progress counts ────────────────────
         $completedCount = 0;
         $totalLessons = 0;
         if ($lessonId) {
-            // Get module_id from the lesson
             $lesson = $studentModel->getIMLessonById($lessonId);
             if ($lesson) {
                 $moduleId = (int) $lesson['module_id'];
@@ -617,6 +675,31 @@ class StudentsController
             'completed_count' => $completedCount,
             'total_lessons' => $totalLessons,
         ]);
+        exit;
+    }
+
+    public function mark_flashcards_viewed()
+    {
+        header('Content-Type: application/json');
+        $studentId = $_SESSION['student_id'] ?? 0;
+        $lessonId = (int) ($_POST['lesson_id'] ?? 0);
+
+        if ($studentId && $lessonId) {
+            $studentModel = new Students();
+            $lesson = $studentModel->getIMLessonById($lessonId);
+            if ($lesson) {
+                $studentModel->logActivity(
+                    $studentId,
+                    'flashcards_viewed',
+                    $lesson['title'] . ' — Flashcards',
+                    $lesson['subject_name'],
+                    15
+                );
+            }
+            echo json_encode(['ok' => true]);
+        } else {
+            echo json_encode(['ok' => false]);
+        }
         exit;
     }
 
@@ -649,16 +732,24 @@ class StudentsController
 
         $studentModel = new Students();
 
-        // Only save if not already submitted
         $existing = $studentModel->getIMActivitySubmission($activityId, $studentId);
         if (!$existing) {
-            // answers posted as answers[qid] = value
             $answers = $_POST['answers'] ?? [];
-            $studentModel->saveIMActivitySubmission(
-                $activityId,
-                $studentId,
-                json_encode($answers)
-            );
+            $studentModel->saveIMActivitySubmission($activityId, $studentId, json_encode($answers));
+
+            // ✅ NEW — update progress right here, don't depend on save_lesson_answers()
+            $actInfo = $studentModel->getIMActivityById($activityId);
+            if ($actInfo) {
+                $studentModel->logActivity($studentId, 'activity_completed', $actInfo['title'], $actInfo['subject_name']);
+            }
+
+            if ($lessonId) {
+                $studentModel->markLessonVisited($lessonId, $studentId);
+                $lessonRow = $studentModel->getIMLessonById($lessonId);
+                if ($lessonRow) {
+                    $studentModel->updateModuleProgress((int) $lessonRow['module_id'], $studentId);
+                }
+            }
         }
 
         echo json_encode(['ok' => true]);
@@ -876,8 +967,30 @@ class StudentsController
         require_once "../app/view/module_view.php";
     }
 
+    public function getUpcomingDeadlines($studentId, $days = 30, $limit = 10)
+    {
+        $stmt = $this->db->prepare("
+        SELECT a.id, a.task, a.due_date, a.due_time, s.subject_code, s.subject_name
+        FROM tbl_assignments a
+        JOIN tbl_subjects s ON a.subject_id = s.id
+        JOIN tbl_student_enrollments e ON e.subject_id = s.id AND e.student_id = ?
+        WHERE a.id NOT IN (
+            SELECT assignment_id FROM tbl_assignment_submissions WHERE student_id = ?
+        )
+        AND a.due_date IS NOT NULL
+        AND a.due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL ? DAY)
+        ORDER BY a.due_date ASC, a.due_time ASC
+        LIMIT ?
+    ");
+        $stmt->bind_param("iiii", $studentId, $studentId, $days, $limit);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function dashboardView()
     {
+        date_default_timezone_set('Asia/Manila');
+
         $user_id = (int) ($_SESSION['user_id'] ?? 0);
 
         if (!$user_id) {
@@ -890,33 +1003,64 @@ class StudentsController
 
         if ($studentId) {
             $_SESSION['student_id'] = $studentId;
-
-            // NEW: resolve grade level + section labels and store in session
             $gradeSection = $studentModel->getStudentGradeAndSection($studentId);
             if ($gradeSection) {
-                $_SESSION['grade_level'] = $gradeSection['name']; // e.g. "Grade 12"
+                $_SESSION['grade_level'] = $gradeSection['name'];
                 $_SESSION['section'] = $gradeSection['section_name'];
             }
         }
 
         $pendingAssignments = $studentId ? $studentModel->getPendingAssignments($studentId) : [];
+        $missingAssignments = $studentId ? $studentModel->getMissingAssignments($studentId) : [];
+        $upcomingDeadlines = $studentId ? $studentModel->getUpcomingDeadlines($studentId, 60) : []; // ✅ ADDED — fixes empty "Upcoming deadlines" card
         $pendingCount = $studentId ? $studentModel->countPendingAssignments($studentId) : 0;
         $enrolledCount = $studentId ? $studentModel->countEnrolledClasses($studentId) : 0;
         $announcements = $studentId ? $studentModel->getDashboardAnnouncements($studentId) : [];
         $completedCount = $studentId ? $studentModel->countCompletedAssignments($studentId) : 0;
+
+        // ✅ NEW — this was never being fetched, so "My Recent Activity" was always empty
+        $recentActivities = $studentId ? $studentModel->getRecentActivity($studentId, 15) : [];
+
+        $dueSoonCount = $studentId ? $studentModel->countDueSoonAssignments($studentId) : 0;
+        $pendingDueThisWeek = $studentId ? $studentModel->countPendingDueThisWeek($studentId) : 0;
+        $completedThisWeek = $studentId ? $studentModel->countCompletedThisWeek($studentId) : 0;
+        $overallProgressPercent = $studentId ? $studentModel->getOverallProgressForStudent($studentId) : 0;
+        $overallProgressDelta = $studentId ? $studentModel->getOverallProgressDeltaThisWeek($studentId) : 0;
+
+        // ✅ NEW — was missing, this is why "Your Current Progress" was always empty
+        $inProgressModules = $studentId ? $studentModel->getInProgressModulesForStudent($studentId) : [];
+
+        // ✅ NEW — attach "next up" lesson info, and the current topic, for each in-progress module
+        foreach ($inProgressModules as &$ip) {
+            $completed = (int) ($ip['completed_lessons'] ?? 0);
+
+            // Next up = the lesson right after the last completed one
+            $nextLesson = $studentModel->getLessonByPosition((int) $ip['id'], $completed);
+            $rawNextTitle = $nextLesson['title'] ?? null;
+            $ip['next_lesson_title'] = $rawNextTitle
+                ? preg_replace('/^Lesson\s*\d+\s*:\s*/i', '', $rawNextTitle)
+                : null;
+            $ip['next_lesson_number'] = $completed + 1;
+
+            // Current topic = the topic of the last completed lesson (or the
+            // 1st lesson's topic if nothing is completed yet)
+            $currentOffset = $completed > 0 ? $completed - 1 : 0;
+            $currentLesson = $studentModel->getLessonByPosition((int) $ip['id'], $currentOffset);
+            $ip['current_topic'] = $currentLesson['topic'] ?? null;
+        }
+        unset($ip);
 
         require "../app/view/dashboard.php";
     }
 
     public function assignments_view()
     {
-        // Always resolve fresh — never trust session alone
-        $studentId = 0;
+        date_default_timezone_set('Asia/Manila');
 
+        $studentId = 0;
         if (!empty($_SESSION['student_id'])) {
             $studentId = (int) $_SESSION['student_id'];
         }
-
         if (!$studentId && !empty($_SESSION['user_id'])) {
             $subjectModel = new subjects();
             $studentRow = $subjectModel->getStudentByUserId((int) $_SESSION['user_id']);
@@ -927,14 +1071,143 @@ class StudentsController
         }
 
         $studentModel = new Students();
-        $completedAssignments = $studentId ? $studentModel->getCompletedAssignments($studentId) : [];
+
         $pendingAssignments = $studentId ? $studentModel->getPendingAssignments($studentId) : [];
         $missingAssignments = $studentId ? $studentModel->getMissingAssignments($studentId) : [];
-        $gradedAssignments = $studentId ? $studentModel->getGradedAssignments($studentId) : [];
-        $completedCount = $studentId ? $studentModel->countCompletedAssignments($studentId) : 0;
-        $pendingCount = $studentId ? $studentModel->countPendingAssignments($studentId) : 0;
-        $missingCount = $studentId ? $studentModel->countMissingAssignments($studentId) : 0;
-        $gradedCount = $studentId ? $studentModel->countGradedAssignments($studentId) : 0;
+        $completedAssignments = $studentId ? $studentModel->getCompletedAssignments($studentId) : [];
+
+        $pendingCount = count($pendingAssignments);
+        $missingCount = count($missingAssignments);
+        $completedCount = count($completedAssignments);
+        $gradedCount = 0;
+
+        // ---- Tag every assignment with one status ----
+        $allItems = [];
+
+        foreach ($pendingAssignments as $item) {
+            $daysLeft = !empty($item['due_date']) ? (int) ceil((strtotime($item['due_date']) - time()) / 86400) : null;
+            $urgency = 'normal';
+            if ($daysLeft !== null) {
+                if ($daysLeft <= 1)
+                    $urgency = 'urgent';
+                elseif ($daysLeft <= 3)
+                    $urgency = 'soon';
+            }
+            $allItems[] = array_merge($item, [
+                'status' => 'pending',
+                'urgency' => $urgency,
+                'days_left' => $daysLeft,
+                'points_earned' => null,
+            ]);
+        }
+
+        foreach ($missingAssignments as $item) {
+            $daysOverdue = null;
+            $overdueLabel = null;
+
+            if (!empty($item['due_date'])) {
+                $dueDateObj = new DateTime($item['due_date']);
+                $now = new DateTime();
+                $interval = $now->diff($dueDateObj); // calendar-aware — respects real month lengths
+
+                $daysOverdue = (int) $interval->days; // kept for anything else that still needs a raw day count
+
+                $parts = [];
+                if ($interval->y > 0) {
+                    $parts[] = $interval->y . ' year' . ($interval->y === 1 ? '' : 's');
+                }
+                if ($interval->m > 0) {
+                    $parts[] = $interval->m . ' month' . ($interval->m === 1 ? '' : 's');
+                }
+                // Only show days once we're below a month, or if nothing else applies
+                if ($interval->d > 0 && $interval->y === 0) {
+                    $parts[] = $interval->d . ' day' . ($interval->d === 1 ? '' : 's');
+                }
+                if (empty($parts)) {
+                    $parts[] = 'less than a day';
+                }
+
+                $overdueLabel = implode(', ', $parts) . ' overdue';
+            }
+
+            $allItems[] = array_merge($item, [
+                'status' => 'missing',
+                'urgency' => 'urgent',
+                'days_overdue' => $daysOverdue,
+                'overdue_label' => $overdueLabel,   // ✅ NEW
+                'points_earned' => null,
+            ]);
+        }
+
+        foreach ($completedAssignments as $item) {
+            $isGraded = isset($item['points_earned']) && $item['points_earned'] !== null;
+            if ($isGraded)
+                $gradedCount++;
+            $allItems[] = array_merge($item, [
+                'status' => $isGraded ? 'graded' : 'completed',
+                'urgency' => 'normal',
+            ]);
+        }
+
+        // ✅ ADD THIS — completed-but-not-yet-graded, separate from graded
+        $submittedOnlyCount = $completedCount - $gradedCount;
+
+        // ---- Group by subject ----
+        $subjectGroups = [];
+        foreach ($allItems as $item) {
+            $code = $item['subject_code'] ?? 'general';
+            if (!isset($subjectGroups[$code])) {
+                $subjectGroups[$code] = [
+                    'subject_code' => $code,
+                    'subject_name' => $item['subject_name'] ?? $code,
+                    'items' => [],
+                ];
+            }
+            $subjectGroups[$code]['items'][] = $item;
+        }
+
+        foreach ($subjectGroups as &$grp) {
+            usort($grp['items'], function ($a, $b) {
+                $rank = ['missing' => 0, 'pending' => 1, 'completed' => 2, 'graded' => 2];
+                $ra = $rank[$a['status']] ?? 3;
+                $rb = $rank[$b['status']] ?? 3;
+                if ($ra !== $rb)
+                    return $ra <=> $rb;
+                return strtotime($a['due_date'] ?? $a['submitted_at'] ?? 'now') <=> strtotime($b['due_date'] ?? $b['submitted_at'] ?? 'now');
+            });
+
+            $total = count($grp['items']);
+            $done = 0;
+            foreach ($grp['items'] as $it) {
+                if (in_array($it['status'], ['completed', 'graded'], true))
+                    $done++;
+            }
+            $grp['total'] = $total;
+            $grp['done'] = $done;
+            $grp['percentage'] = $total > 0 ? round(($done / $total) * 100) : 0;
+        }
+        unset($grp);
+
+        // ---- Top stats ----
+        $totalAssignments = count($allItems);
+        $urgentCount = 0;
+        $scoreSum = 0;
+        $scoreCount = 0;
+        $typeCounts = [];
+
+        foreach ($allItems as $it) {
+            if ($it['urgency'] === 'urgent' && in_array($it['status'], ['pending', 'missing'], true)) {
+                $urgentCount++;
+            }
+            if ($it['status'] === 'graded' && (int) $it['total_points'] > 0) {
+                $scoreSum += ($it['points_earned'] / $it['total_points']) * 100;
+                $scoreCount++;
+            }
+            $slug = strtolower(str_replace(' ', '-', trim((string) ($it['type'] ?? ''))));
+            if ($slug !== '')
+                $typeCounts[$slug] = ($typeCounts[$slug] ?? 0) + 1;
+        }
+        $avgScore = $scoreCount > 0 ? round($scoreSum / $scoreCount, 1) : null;
 
         require "../app/view/assignments.php";
     }

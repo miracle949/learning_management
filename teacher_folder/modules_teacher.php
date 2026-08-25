@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modules</title>
     <link rel="stylesheet" href="../css_folder/modules_teacher.css">
+    <link rel="stylesheet" href="../css_folder/components.css">
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
 </head>
@@ -16,7 +16,6 @@
         <?php include("sidebar.php") ?>
 
         <div class="rightbar">
-            <?php include("nav.php") ?>
             <main>
                 <div class="header">
                     <div>
@@ -29,8 +28,7 @@
                 <div class="grade-filter" style="margin: 2rem 0;">
                     <form method="GET" action="/learning_management/public/">
                         <input type="hidden" name="url" value="modules_teacher">
-                        <select name="grade_id" class="form-select"
-                            onchange="this.form.submit()">
+                        <select name="grade_id" class="form-select" onchange="this.form.submit()">
                             <option value="">All Grade Levels</option>
                             <?php foreach ($gradeLevels as $gl): ?>
                                 <option value="<?= $gl['id'] ?>" <?= (isset($selectedGrade) && $selectedGrade == $gl['id']) ? 'selected' : '' ?>>
@@ -72,13 +70,14 @@
                                         </span>
                                     </div>
                                     <div class="card-link">
-                                        <!-- <a class="<?= ($current_url ?? '') === 'modules_teacher' ? 'active' : '' ?>"
+                                        <a class="<?= ($current_url ?? '') === 'modules_teacher' ? 'active' : '' ?>"
                                             href="/learning_management/public/?url=create_module&subject_id=<?= (int) $subject['id'] ?>">
                                             <span>Create module</span>
                                             <i class="fa fa-arrow-right"></i>
-                                        </a> -->
-                                        <a class="<?= ($current_url ?? '') === 'modules_teacher' ? 'active' : '' ?>" href="/learning_management/public/?url=view_modules_teacher&subject_id=<?= (int) $subject['id'] ?>">
-                                            <span>View module</span> 
+                                        </a>
+                                        <a class="<?= ($current_url ?? '') === 'modules_teacher' ? 'active' : '' ?>"
+                                            href="/learning_management/public/?url=view_modules_teacher&subject_id=<?= (int) $subject['id'] ?>">
+                                            <span>View module</span>
                                             <i class="fa fa-arrow-right"></i>
                                         </a>
                                     </div>
@@ -91,6 +90,7 @@
         </div>
     </div>
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
+    <script src="../teacher_folder/create_module_folder/create_module.js"></script>
 </body>
 
 </html>

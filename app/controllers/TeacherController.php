@@ -499,7 +499,7 @@ class TeacherController
     //     header("Location: {$redirectBack}");
     //     exit;
     // }
-    
+
 
     public function send_invitation()
     {
@@ -740,15 +740,15 @@ class TeacherController
         $skipped = ['im_modules' => [], 'lessons' => []];
         $baseUpload = dirname(__DIR__, 2) . '/uploads/';
         $imageDir = $baseUpload . 'lessons/images/';
-        $videoDir = $baseUpload . 'lessons/videos/';
 
-        foreach ([$imageDir, $videoDir] as $dir) {
-            if (!is_dir($dir))
-                mkdir($dir, 0755, true);
+        if (!is_dir($imageDir)) {
+            mkdir($imageDir, 0755, true);
         }
 
         $moduleTitles = $_POST['module_title'] ?? [];
-        $moduleContents = $_POST['module_content'] ?? [];
+        $moduleDescriptions = $_POST['module_description'] ?? [];
+        $blocksData = $_POST['blocks'] ?? [];
+        $blockImages = $_FILES['block_image'] ?? null;
 
         foreach ($moduleTitles as $modIdx => $modTitle) {
             if (empty(trim($modTitle)))
@@ -761,7 +761,7 @@ class TeacherController
             $imResult = $teacherModel->insertInteractiveModule(
                 $subject_id,
                 $numberedIMTitle,
-                trim($moduleContents[$modIdx] ?? ''),
+                trim($moduleDescriptions[$modIdx] ?? ''),
                 $imModuleNumber,
                 $teacher_id
             );
@@ -773,7 +773,6 @@ class TeacherController
 
             $lessonTitles = $_POST['lesson_title'][$modIdx] ?? [];
             $lessonTopics = $_POST['lesson_topic'][$modIdx] ?? [];
-            $lessonContents = $_POST['lesson_content'][$modIdx] ?? [];
 
             foreach ($lessonTitles as $lesIdx => $lesTitle) {
                 if (empty(trim($lesTitle)))
@@ -783,11 +782,14 @@ class TeacherController
                 $lessonNumber = $existingLesCount + $lesIdx + 1;
                 $numberedLesTitle = 'Lesson ' . $lessonNumber . ': ' . trim($lesTitle);
 
+                // content is left blank here — the lesson's body is now
+                // made up of ordered "text" blocks stored in
+                // tbl_interactive_contents, not a single content column.
                 $lesResult = $teacherModel->insertLesson(
                     $interactiveModuleId,
                     $numberedLesTitle,
                     trim($lessonTopics[$lesIdx] ?? ''),
-                    trim($lessonContents[$lesIdx] ?? '')
+                    ''
                 );
                 $lessonId = $lesResult['id'] ?? null;
                 if (!$lessonId)
@@ -795,131 +797,145 @@ class TeacherController
                 if ($lesResult['existed'])
                     $skipped['lessons'][] = $numberedLesTitle . ' (in ' . $numberedIMTitle . ')';
 
-                // ── VIDEOS ──
-                $videoTitles = $_POST['video_title'][$modIdx][$lesIdx] ?? [];
-                $videoUrls = $_POST['video_url'][$modIdx][$lesIdx] ?? [];
-                foreach ($videoTitles as $vIdx => $vTitle) {
-                    if (empty(trim($vTitle)) || empty(trim($videoUrls[$vIdx] ?? '')))
-                        continue;
-                    $teacherModel->insertInteractiveContent($lessonId, 'video', [
-                        'title' => trim($vTitle),
-                        'file_path' => trim($videoUrls[$vIdx]),
-                        'file_type' => 'url',
-                    ]);
-                }
+                $lessonBlocks = $blocksData[$modIdx][$lesIdx] ?? [];
 
-                // ── IMAGES ──
-                $imageFiles = $_FILES['image_file'] ?? [];
-                $imageTitles = $_POST['image_title'][$modIdx][$lesIdx] ?? [];
-                $fileNames = $imageFiles['name'][$modIdx][$lesIdx] ?? [];
-                $fileTmps = $imageFiles['tmp_name'][$modIdx][$lesIdx] ?? [];
-                $fileErrors = $imageFiles['error'][$modIdx][$lesIdx] ?? [];
-                $fileSizes = $imageFiles['size'][$modIdx][$lesIdx] ?? [];
+                foreach ($lessonBlocks as $blockIdx => $block) {
+                    $type = $block['type'] ?? '';
+                    $sortOrder = (int) $blockIdx;
 
-                foreach ($fileNames as $iIdx => $imgFileName) {
-                    if (($fileErrors[$iIdx] ?? 1) !== UPLOAD_ERR_OK)
-                        continue;
-                    if (empty($imgFileName) || ($fileSizes[$iIdx] ?? 0) > 5 * 1024 * 1024)
-                        continue;
-                    $ext = strtolower(pathinfo($imgFileName, PATHINFO_EXTENSION));
-                    if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
-                        continue;
-                    $uniqueName = uniqid('img_') . '.' . $ext;
-                    if (move_uploaded_file($fileTmps[$iIdx], $imageDir . $uniqueName)) {
-                        $teacherModel->insertInteractiveContent($lessonId, 'image', [
-                            'title' => trim($imageTitles[$iIdx] ?? ''),
-                            'file_path' => '/learning_management/uploads/lessons/images/' . $uniqueName,
-                            'file_name' => $imgFileName,
-                            'file_type' => $ext,
-                        ]);
+                    switch ($type) {
+
+                        // ── TEXT ──
+                        case 'text':
+                            $text = trim($block['text'] ?? '');
+                            $heading = trim($block['heading'] ?? '');
+                            $keyIdea = trim($block['key_idea'] ?? '');
+                            if ($text === '' && $heading === '')
+                                break;
+                            $teacherModel->insertInteractiveContent($lessonId, 'text', [
+                                'title' => $heading !== '' ? $heading : null,
+                                'body' => $text !== '' ? $text : null,
+                                'key_idea' => $keyIdea !== '' ? $keyIdea : null,
+                                'sort_order' => $sortOrder,
+                            ]);
+                            break;
+
+                        // ── IMAGE ──
+                        case 'image':
+                            $groupTitle = trim($block['image_title'] ?? '');
+                            $imgNames = $blockImages['name'][$modIdx][$lesIdx][$blockIdx] ?? [];
+                            foreach ($imgNames as $imgIdx => $imgName) {
+                                $file = [
+                                    'name' => $blockImages['name'][$modIdx][$lesIdx][$blockIdx][$imgIdx] ?? null,
+                                    'tmp_name' => $blockImages['tmp_name'][$modIdx][$lesIdx][$blockIdx][$imgIdx] ?? null,
+                                    'error' => $blockImages['error'][$modIdx][$lesIdx][$blockIdx][$imgIdx] ?? UPLOAD_ERR_NO_FILE,
+                                    'size' => $blockImages['size'][$modIdx][$lesIdx][$blockIdx][$imgIdx] ?? 0,
+                                ];
+                                if (($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || empty($file['name']))
+                                    continue;
+                                if (($file['size'] ?? 0) > 5 * 1024 * 1024)
+                                    continue;
+                                $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+                                if (!in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']))
+                                    continue;
+                                $uniqueName = uniqid('img_') . '.' . $ext;
+                                if (move_uploaded_file($file['tmp_name'], $imageDir . $uniqueName)) {
+                                    $teacherModel->insertInteractiveContent($lessonId, 'image', [
+                                        'title' => $groupTitle !== '' ? $groupTitle : null,
+                                        'file_path' => '/learning_management/uploads/lessons/images/' . $uniqueName,
+                                        'file_name' => $file['name'],
+                                        'file_type' => $ext,
+                                        'sort_order' => $sortOrder,
+                                    ]);
+                                }
+                            }
+                            break;
+
+                        // ── VIDEO ──
+                        case 'video':
+                            $vTitle = trim($block['video_title'] ?? '');
+                            $vUrl = trim($block['video_url'] ?? '');
+                            if ($vTitle === '' || $vUrl === '')
+                                break;
+                            $teacherModel->insertInteractiveContent($lessonId, 'video', [
+                                'title' => $vTitle,
+                                'file_path' => $vUrl,
+                                'file_type' => 'url',
+                                'sort_order' => $sortOrder,
+                            ]);
+                            break;
+
+                        // ── QUIZ (one block = one quiz, N questions) ──
+                        case 'quiz':
+                            $qzTitle = trim($block['quiz_title'] ?? '');
+                            if ($qzTitle === '')
+                                break;
+                            $questions = $block['questions'] ?? [];
+                            foreach ($questions as $q) {
+                                $qText = trim($q['text'] ?? '');
+                                if ($qText === '')
+                                    continue;
+                                $teacherModel->insertInteractiveContent($lessonId, 'quiz', [
+                                    'title' => $qzTitle,
+                                    'instructions' => trim($block['quiz_instructions'] ?? ''),
+                                    'passing_score' => (int) ($block['quiz_passing_score'] ?? 75),
+                                    'question' => $qText,
+                                    'question_type' => 'multiple_choice',
+                                    'choice_a' => trim($q['choice_a'] ?? '') ?: null,
+                                    'choice_b' => trim($q['choice_b'] ?? '') ?: null,
+                                    'choice_c' => trim($q['choice_c'] ?? '') ?: null,
+                                    'choice_d' => trim($q['choice_d'] ?? '') ?: null,
+                                    'correct_ans' => strtolower($q['correct'] ?? 'a'),
+                                    'sort_order' => $sortOrder,
+                                ]);
+                            }
+                            break;
+
+                        // ── ACTIVITY (one block = one activity, N questions) ──
+                        case 'activity':
+                            $actTitle = trim($block['activity_title'] ?? '');
+                            if ($actTitle === '')
+                                break;
+                            $questions = $block['questions'] ?? [];
+                            foreach ($questions as $q) {
+                                $qText = trim($q['text'] ?? '');
+                                if ($qText === '')
+                                    continue;
+                                $qType = $q['type'] ?? 'essay';
+                                $teacherModel->insertInteractiveContent($lessonId, 'activity', [
+                                    'title' => $actTitle,
+                                    'instructions' => trim($block['activity_instructions'] ?? ''),
+                                    'total_points' => (int) ($block['activity_points'] ?? 0),
+                                    'question' => $qText,
+                                    'question_type' => $qType,
+                                    'model_answer' => $qType === 'essay' ? (trim($q['essay_answer'] ?? '') ?: null) : null,
+                                    'choice_a' => $qType === 'multiple_choice' ? (trim($q['choice_a'] ?? '') ?: null) : null,
+                                    'choice_b' => $qType === 'multiple_choice' ? (trim($q['choice_b'] ?? '') ?: null) : null,
+                                    'choice_c' => $qType === 'multiple_choice' ? (trim($q['choice_c'] ?? '') ?: null) : null,
+                                    'choice_d' => $qType === 'multiple_choice' ? (trim($q['choice_d'] ?? '') ?: null) : null,
+                                    'correct_ans' => $qType === 'multiple_choice' ? (strtolower($q['correct'] ?? 'a') ?: null) : null,
+                                    'sort_order' => $sortOrder,
+                                ]);
+                            }
+                            break;
+
+                        // ── FLASHCARD (one block = N cards) ──
+                        case 'flashcard':
+                            $cards = $block['cards'] ?? [];
+                            foreach ($cards as $c) {
+                                $front = trim($c['front'] ?? '');
+                                $back = trim($c['back'] ?? '');
+                                if ($front === '' || $back === '')
+                                    continue;
+                                $teacherModel->insertInteractiveContent($lessonId, 'flashcard', [
+                                    'card_type' => $c['card_type'] ?? 'term_definition',
+                                    'card_front' => $front,
+                                    'card_back' => $back,
+                                    'sort_order' => $sortOrder,
+                                ]);
+                            }
+                            break;
                     }
-                }
-
-                // ── ACTIVITIES ──
-                $actTitles = $_POST['activity_title'][$modIdx][$lesIdx] ?? [];
-                $actInstructions = $_POST['activity_instructions'][$modIdx][$lesIdx] ?? [];
-                $actPoints = $_POST['activity_points'][$modIdx][$lesIdx] ?? [];
-
-                foreach (array_keys($actTitles) as $aIdx) {
-                    $aTitle = $actTitles[$aIdx];
-                    if (empty(trim($aTitle)))
-                        continue;
-                    $qTypes = $_POST['activity_question_type'][$modIdx][$lesIdx][$aIdx] ?? [];
-                    $qTexts = $_POST['activity_question_text'][$modIdx][$lesIdx][$aIdx] ?? [];
-                    $qAnswers = $_POST['activity_essay_answer'][$modIdx][$lesIdx][$aIdx] ?? [];
-                    $qChoiceA = $_POST['activity_choice_a'][$modIdx][$lesIdx][$aIdx] ?? [];
-                    $qChoiceB = $_POST['activity_choice_b'][$modIdx][$lesIdx][$aIdx] ?? [];
-                    $qChoiceC = $_POST['activity_choice_c'][$modIdx][$lesIdx][$aIdx] ?? [];
-                    $qChoiceD = $_POST['activity_choice_d'][$modIdx][$lesIdx][$aIdx] ?? [];
-                    $qCorrect = $_POST['activity_correct_answer'][$modIdx][$lesIdx][$aIdx] ?? [];
-
-                    foreach ($qTexts as $qIdx => $qText) {
-                        if (empty(trim($qText)))
-                            continue;
-                        $qType = $qTypes[$qIdx] ?? 'essay';
-                        $teacherModel->insertInteractiveContent($lessonId, 'activity', [
-                            'title' => trim($aTitle),
-                            'instructions' => trim($actInstructions[$aIdx] ?? ''),
-                            'total_points' => (int) ($actPoints[$aIdx] ?? 0),
-                            'question' => trim($qText),
-                            'question_type' => $qType,
-                            'model_answer' => $qType === 'essay' ? (trim($qAnswers[$qIdx] ?? '') ?: null) : null,
-                            'choice_a' => $qType === 'multiple_choice' ? (trim($qChoiceA[$qIdx] ?? '') ?: null) : null,
-                            'choice_b' => $qType === 'multiple_choice' ? (trim($qChoiceB[$qIdx] ?? '') ?: null) : null,
-                            'choice_c' => $qType === 'multiple_choice' ? (trim($qChoiceC[$qIdx] ?? '') ?: null) : null,
-                            'choice_d' => $qType === 'multiple_choice' ? (trim($qChoiceD[$qIdx] ?? '') ?: null) : null,
-                            'correct_ans' => $qType === 'multiple_choice' ? (strtolower($qCorrect[$qIdx] ?? 'a') ?: null) : null,
-                        ]);
-                    }
-                }
-
-                // ── QUIZZES ──
-                $quizTitles = $_POST['quiz_title'][$modIdx][$lesIdx] ?? [];
-                $quizInstruct = $_POST['quiz_instructions'][$modIdx][$lesIdx] ?? [];
-                $quizPassing = $_POST['quiz_passing_score'][$modIdx][$lesIdx] ?? [];
-
-                foreach (array_keys($quizTitles) as $qzIdx) {
-                    $qzTitle = $quizTitles[$qzIdx];
-                    if (empty(trim($qzTitle)))
-                        continue;
-                    $qqTexts = $_POST['question_text'][$modIdx][$lesIdx][$qzIdx] ?? [];
-                    $qqChoiceA = $_POST['choice_a'][$modIdx][$lesIdx][$qzIdx] ?? [];
-                    $qqChoiceB = $_POST['choice_b'][$modIdx][$lesIdx][$qzIdx] ?? [];
-                    $qqChoiceC = $_POST['choice_c'][$modIdx][$lesIdx][$qzIdx] ?? [];
-                    $qqChoiceD = $_POST['choice_d'][$modIdx][$lesIdx][$qzIdx] ?? [];
-                    $qqCorrect = $_POST['correct_answer'][$modIdx][$lesIdx][$qzIdx] ?? [];
-
-                    foreach ($qqTexts as $qqIdx => $qqText) {
-                        if (empty(trim($qqText)))
-                            continue;
-                        $teacherModel->insertInteractiveContent($lessonId, 'quiz', [
-                            'title' => trim($qzTitle),
-                            'instructions' => trim($quizInstruct[$qzIdx] ?? ''),
-                            'passing_score' => (int) ($quizPassing[$qzIdx] ?? 75),
-                            'question' => trim($qqText),
-                            'question_type' => 'multiple_choice',
-                            'choice_a' => trim($qqChoiceA[$qqIdx] ?? '') ?: null,
-                            'choice_b' => trim($qqChoiceB[$qqIdx] ?? '') ?: null,
-                            'choice_c' => trim($qqChoiceC[$qqIdx] ?? '') ?: null,
-                            'choice_d' => trim($qqChoiceD[$qqIdx] ?? '') ?: null,
-                            'correct_ans' => strtolower($qqCorrect[$qqIdx] ?? 'a'),
-                        ]);
-                    }
-                }
-
-                // ── FLASHCARDS ──
-                $fcFronts = $_POST['flashcard_front'][$modIdx][$lesIdx] ?? [];
-                $fcBacks = $_POST['flashcard_back'][$modIdx][$lesIdx] ?? [];
-                $fcTypes = $_POST['flashcard_type'][$modIdx][$lesIdx] ?? [];
-
-                foreach ($fcFronts as $fcIdx => $fcFront) {
-                    if (empty(trim($fcFront)) || empty(trim($fcBacks[$fcIdx] ?? '')))
-                        continue;
-                    $teacherModel->insertInteractiveContent($lessonId, 'flashcard', [
-                        'card_type' => $fcTypes[$fcIdx] ?? 'term_definition',
-                        'card_front' => trim($fcFront),
-                        'card_back' => trim($fcBacks[$fcIdx]),
-                    ]);
                 }
             }
         }

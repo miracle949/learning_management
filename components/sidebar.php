@@ -19,7 +19,7 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'dashboard';
     <div class="sidebar-menu">
         <ul>
             <div class="sidebar-category">
-                <h5>Menu</h5>
+                <h5>main</h5>
             </div>
 
             <li class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">
@@ -100,11 +100,11 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'dashboard';
                 </a>
             </li>
 
-            <div class="sidebar-category">
+            <!-- <div class="sidebar-category">
                 <h5>Account</h5>
-            </div>
+            </div> -->
 
-            <li class="<?= $current_url === 'my_profile' ? 'active' : '' ?>">
+            <!-- <li class="<?= $current_url === 'my_profile' ? 'active' : '' ?>">
                 <a href="#" class="text-decoration-none">
                     <i class="fa fa-user"></i>
                     <span>My Profile</span>
@@ -123,7 +123,7 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'dashboard';
                     <i class="fa fa-gear"></i>
                     <span>Settings</span>
                 </a>
-            </li>
+            </li> -->
 
             <form action="?url=logout" method="post">
                 <li>

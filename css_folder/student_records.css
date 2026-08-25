@@ -193,14 +193,6 @@ select.form-select {
     --green-text: #4a6a58;
 }
 
-.container-fluid main {
-    /* background-color: #F2F3FF; */
-    background-color: #F7F9F8;
-    padding: 1.8rem 1.4rem 1.8rem 1.4rem;
-    height: calc(100vh - 68px);
-    overflow-y: auto;
-}
-
 .container-fluid .rightbar main h2 {
     font-size: 21px;
     margin: 0 0 8px;
@@ -529,18 +521,6 @@ select.form-select {
     /* margin-top: 1rem; */
 }
 
-.container-fluid .sidebar .sidebar-menu {
-    margin-top: 1rem;
-}
-
-.container-fluid .sidebar .sidebar-menu ul .sidebar-category h5 {
-    margin: 10px 6px;
-    font-size: 13px;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: #808080;
-}
-
 .container-fluid .sidebar .sidebar-menu ul li {
     list-style: none;
     line-height: 50px;
@@ -606,18 +586,15 @@ select.form-select {
 }
 
 .container-fluid .rightbar {
-    width: calc(100% - 235px);
+    width: calc(100% - 248px);
     /* height: 100vh; */
-    margin-top: 68px;
-    /* overflow-y: auto; */
-    margin-left: 235px;
-    border-left: 1px solid rgba(0, 0, 0, 0.1);
-    background-color: #F7F9F8;
-}
-
-.container-fluid {
+    /* margin-top: 68px; */
     height: 100vh;
-    /* overflow-y: auto; */
+    overflow-y: auto;
+    margin-left: 248px;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    /* background-color: #F7F9F8; */
+    padding: 1.8rem;
 }
 
 .container-fluid .sidebar-logo {
@@ -713,19 +690,6 @@ a.page-link{
     color: var(--green);
     /* font-size: 18px; */
     font-size: 20px;
-}
-
-.container-fluid {
-    height: 100vh;
-    overflow-y: auto;
-}
-
-.container-fluid main {
-    /* background-color: #F7F9F8; */
-    /* height: 100vh; */
-    /* overflow-y: auto; */
-    /* padding: 2rem 3rem 2rem 3rem; */
-    padding: 1.8rem 1.4rem 1.8rem 1.4rem;
 }
 
 #mainTabs {

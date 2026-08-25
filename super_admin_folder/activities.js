@@ -252,12 +252,14 @@ function blockFieldsMarkup(type) {
 
   if (type === 'image') {
     // Holds one or more .image-item rows — admin can attach several
-    // images to a single "Visual References" block.
+    // images to a single "Visual References" block. One shared
+    // title/caption applies to the whole group.
     return `
-      <div class="image-items-wrap"></div>
-      <button type="button" class="btn-add-question btn-add-image" onclick="addImageItem(this)">
-        <i class="fa fa-plus"></i> Add image
-      </button>`;
+    <input type="text" data-field="image_title" placeholder="Group title / caption (optional) — e.g. Visual References">
+    <div class="image-items-wrap"></div>
+    <button type="button" class="btn-add-question btn-add-image" onclick="addImageItem(this)">
+      <i class="fa fa-plus"></i> Add image
+    </button>`;
   }
 
   if (type === 'video') {
@@ -319,8 +321,7 @@ function addImageItem(btn) {
     <div class="image-preview" style="display:none;">
       <img src="" alt="Preview" class="preview-img">
       <button type="button" class="remove-preview-btn"><i class="fa fa-times"></i> Remove Image</button>
-    </div>
-    <input type="text" data-ifield="caption" placeholder="Caption (optional)">`;
+    </div>`;
   wrap.appendChild(row);
   wireImageItemUpload(row);
   renumberAll();
@@ -509,15 +510,13 @@ function renumberAll() {
         });
 
         // nested image items (one image block can hold several images)
+        // nested image items (one image block can hold several images)
         const imageItems = blockEl.querySelectorAll(':scope .image-item');
         imageItems.forEach((imgRow, imgIdx) => {
-          imgRow.querySelectorAll('[data-ifield]').forEach(input => {
-            if (input.dataset.ifield === 'image_file') {
-              input.name = `block_image[${modIdx}][${lesIdx}][${blockIdx}][${imgIdx}]`;
-            } else {
-              input.name = `${prefix}[images][${imgIdx}][${input.dataset.ifield}]`;
-            }
-          });
+          const fileInput = imgRow.querySelector('[data-ifield="image_file"]');
+          if (fileInput) {
+            fileInput.name = `block_image[${modIdx}][${lesIdx}][${blockIdx}][${imgIdx}]`;
+          }
         });
       });
     });

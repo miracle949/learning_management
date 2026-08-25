@@ -10,56 +10,78 @@
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
     <style>
-        .av-desc-card {
+        /* .av-desc-card {
             padding: 8px 0;
-        }
-
-        /* .av-desc-card p{
-            font-size: 14px;
         } */
+
+        .av-desc-card p {
+            font-size: 14.5px;
+            color: var(--text-dim);
+        }
 
         .mv-back-link {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--green);
+            font-size: 13.5px;
+            font-weight: 500;
+            color: var(--text-dim);
             text-decoration: none;
             margin-bottom: 1.2rem;
+            /* text-transform: uppercase;
+            letter-spacing: 1px; */
         }
 
-        .mv-back-link:hover {
+        /* .mv-back-link .fa {
+            font-size: 9px;
+        } */
+
+        /* .mv-back-link:hover {
             text-decoration: underline;
-        }
+        } */
 
         .mv-header-icon {
-            width: 52px;
-            height: 52px;
-            min-width: 52px;
-            border-radius: 50%;
-            background: #e8f5ee;
+            width: 54px;
+            height: 54px;
+            /* min-width: 52px; */
+            border-radius: 10px;
+            /* border-radius: 50%; */
+            /* background: #e8f5ee; */
+            /* background-color: var(--neon-cyan); */
+            background-color: #ffffff;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--green);
+            /* color: var(--green); */
+            /* color: #ffffff; */
+            color: var(--neon-cyan);
             font-size: 22px;
         }
 
         .mv-header-info small {
             font-size: 12px;
-            color: #aaa;
+            /* color: #aaa; */
+            /* color: var(--text-dim); */
+            /* color: var(--neon-cyan); */
+            color: #ffffff;
             /* color: #1a1a1a; */
-            font-weight: 600;
+            font-weight: 500;
             display: block;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
         }
 
         .mv-header-info h2 {
-            font-size: 20px;
+            font-size: 24px;
             font-weight: 800;
-            color: #1a1a1a;
-            margin: 0 0 6px;
+            font-family: "Orbitron", sans-serif;
+            /* color: #1a1a1a; */
+            color: #ffffff;
+            /* margin: 0 0 6px; */
+            margin: 0;
         }
 
         .mv-header-info p {
@@ -67,9 +89,9 @@
             /* color: #555; */
             /* color: #1a1a1a; */
             color: #444444;
-            margin: 0 0 2px;
+            /* margin: 0 0 2px; */
             border-left: 4px solid var(--green);
-            padding-left: 14px;
+            /* padding-left: 14px; */
         }
 
         /* .mv-header-info p::before{
@@ -83,27 +105,110 @@
         } */
 
         .mv-date {
-            font-size: 12px;
+            font-size: 13.5px;
             /* color: #aaa; */
-            color: #1a1a1a;
-            margin-top: 4px;
+            /* color: #1a1a1a; */
+            color: #ffffff;
+            margin-top: 6px;
             display: block;
+            /* text-transform: uppercase; */
         }
 
         .mv-attachments-card h5 {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 800;
-            color: #333;
-            margin-bottom: 1.2rem;
+            color: #1a1a1a;
+            /* margin-bottom: 1.2rem; */
+            margin: 0 0 16px;
+            font-family: "Orbitron", sans-serif;
+        }
+
+        .mv-attachments-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         .mv-att-card {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 8px;
+            gap: 14px;
+            padding: 12px 16px;
+            /* background: #eef1fb; */
+            background-color: var(--panel-alt);
+            border: 1px solid var(--border);
+            border-radius: 12px;
             cursor: pointer;
-            /* width: 140px; */
+            transition: background .18s, transform .18s;
+            /* max-width: 420px; */
+            max-width: 350px;
+        }
+
+        .mv-att-card:hover {
+            /* background: #e2e7fb; */
+            background-color: var(--panel-alt);
+            transform: translateY(-1px);
+        }
+
+        .mv-att-icon {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            border-radius: 10px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .mv-att-icon.pdf {
+            color: #dc2626;
+        }
+
+        .mv-att-icon.image {
+            color: #16a34a;
+        }
+
+        .mv-att-icon.video {
+            color: #2563eb;
+        }
+
+        .mv-att-icon.powerpoint {
+            color: #d95700;
+        }
+
+        .mv-att-icon.word {
+            color: #2b579a;
+        }
+
+        .mv-att-icon.other {
+            color: #555;
+        }
+
+        .mv-att-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            overflow: hidden;
+        }
+
+        .mv-att-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1a1a1a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .mv-att-meta {
+            font-size: 12px;
+            color: #8a8fa3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .mv-att-card:hover .mv-att-icon {
@@ -112,8 +217,10 @@
         }
 
         .mv-att-icon {
-            width: 140px;
-            height: 110px;
+            /* width: 140px;
+            height: 110px; */
+            width: 38px;
+            height: 38px;
             border-radius: 12px;
             display: flex;
             flex-direction: column;
@@ -125,8 +232,13 @@
         }
 
         .mv-att-icon.pdf {
-            background: #b0b0b0;
-            color: #fff;
+            /* background: #b0b0b0; */
+            background-color: #ffffff;
+            color: var(--neon-cyan);
+        }
+
+        .mv-att-icon .fa {
+            font-size: 17px;
         }
 
         .mv-att-icon.image {
@@ -381,9 +493,28 @@
 
                 <?php else: ?>
 
+                    <div class="navbar-bread">
+                        <div class="bread-crambs">
+                            Dashboard <i class="fa fa-chevron-right"></i>
+                            My Subject
+                            <i class="fa fa-chevron-right"></i>
+                            Stream
+                            <i class="fa fa-chevron-right"></i>
+                            <b><?= htmlspecialchars($module['title']) ?></b>
+                        </div>
+
+                        <div class="notification">
+                            <button>
+                                <i class="fa fa-bell"></i>
+                            </button>
+                        </div>
+                    </div>
+
                     <a href="/learning_management/public/?url=subjects&subject=<?= htmlspecialchars($module['subject_code']) ?>"
                         class="mv-back-link">
-                        <i class="fa fa-arrow-left"></i> Back to <?= htmlspecialchars($module['subject_name']) ?>
+                        <!-- <i class="fa fa-arrow-left"></i> Back to <?= htmlspecialchars($module['subject_name']) ?> -->
+                        <i class="fa fa-chevron-left"></i>
+
                     </a>
 
                     <div class="mv-header-card">
@@ -394,18 +525,34 @@
                             <div class="mv-header-info">
                                 <small>New Material</small>
                                 <h2><?= htmlspecialchars($module['title']) ?></h2>
-                                <div class="av-desc-card">
-                                    <p><?= htmlspecialchars($module['description']) ?></p>
-                                </div>
                                 <span class="mv-date">Date Received:
                                     <?= date('M j', strtotime($module['posted_at'])) ?></span>
                             </div>
                         </div>
 
                         <hr>
+                        <!-- <div class="mv-border"></div> -->
 
+                        <div class="av-desc-card">
+                            <p>
+                                <?= htmlspecialchars($module['description']) ?>
+                            </p>
+                        </div>
+
+                        <?php
+                        function formatFileSize($bytes)
+                        {
+                            if ($bytes >= 1073741824)
+                                return number_format($bytes / 1073741824, 1) . ' GB';
+                            if ($bytes >= 1048576)
+                                return number_format($bytes / 1048576, 1) . ' MB';
+                            if ($bytes >= 1024)
+                                return number_format($bytes / 1024, 1) . ' KB';
+                            return $bytes . ' B';
+                        }
+                        ?>
                         <div class="mv-attachments-card">
-                            <h5>Attachments</h5>
+                            <h5>Attached Files</h5>
                             <?php if (empty($attachments)): ?>
                                 <p style="color:#aaa;font-size:13px;padding-bottom:1rem;">No attachments yet.</p>
                             <?php else: ?>
@@ -421,23 +568,27 @@
                                             'other' => 'fa-file',
                                         ];
                                         $icon = $iconMap[$type] ?? 'fa-file';
+
+                                        // Optional metadata — only shown if present in $att
+                                        $sizeText = isset($att['file_size']) ? formatFileSize($att['file_size']) : null;
+                                        $sharedBy = $att['uploaded_by_name'] ?? null;
+                                        $metaParts = array_filter([$sizeText, $sharedBy ? "Shared by {$sharedBy}" : null]);
+                                        $metaText = implode(' · ', $metaParts);
                                         ?>
                                         <div class="mv-att-card" onclick="openModal(
-                                                '<?= htmlspecialchars($att['file_path']) ?>',
-                                                '<?= htmlspecialchars($att['file_name']) ?>',
-                                                '<?= $type ?>'
-                                            )">
+                '<?= htmlspecialchars($att['file_path']) ?>',
+                '<?= htmlspecialchars($att['file_name']) ?>',
+                '<?= $type ?>'
+            )">
                                             <div class="mv-att-icon <?= $type ?>">
                                                 <i class="fa <?= $icon ?>"></i>
-                                                <span><?= strtoupper($type) ?></span>
                                             </div>
-                                            <span class="mv-att-label">
-                                                <?= htmlspecialchars($att['file_name']) ?>
-                                            </span>
-                                            <span class="mv-att-badge <?= $type ?>">
-                                                <i class="fa <?= $icon ?>"></i>
-                                                <?= htmlspecialchars($att['file_name']) ?>
-                                            </span>
+                                            <div class="mv-att-info">
+                                                <span class="mv-att-name"><?= htmlspecialchars($att['file_name']) ?></span>
+                                                <?php if ($metaText): ?>
+                                                    <span class="mv-att-meta"><?= htmlspecialchars($metaText) ?></span>
+                                                <?php endif; ?>
+                                            </div>
                                         </div>
                                     <?php endforeach; ?>
                                 </div>

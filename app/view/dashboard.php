@@ -29,6 +29,31 @@
         $pendingCount = $pendingCount ?? 0;
         $pendingAssignments = $pendingAssignments ?? [];
         $announcements = $announcements ?? [];
+
+        if (!function_exists('shs_time_ago')) {
+            function shs_time_ago($datetime)
+            {
+                $timestamp = strtotime($datetime);
+                if (!$timestamp)
+                    return '';
+                $diff = time() - $timestamp;
+                if ($diff < 0)
+                    $diff = 0;                 // ✅ clamp — never show a negative "ago"
+                if ($diff < 60)
+                    return 'just now';
+                $mins = (int) floor($diff / 60);
+                if ($mins < 60)
+                    return $mins . ' minute' . ($mins == 1 ? '' : 's') . ' ago';
+                $hours = (int) floor($mins / 60);
+                if ($hours < 24)
+                    return $hours . ' hour' . ($hours == 1 ? '' : 's') . ' ago';
+                $days = (int) floor($hours / 24);
+                if ($days < 7)
+                    return $days . ' day' . ($days == 1 ? '' : 's') . ' ago';
+                return date('M j, Y', $timestamp);
+            }
+        }
+
         ?>
 
         <div class="rightbar">
@@ -140,186 +165,133 @@
 
                 <div class="card-parent-box">
                     <div class="card-box">
-                        <a href="/learning_management/public/?url=classes">
-                            <div class="data_icon">
-                                <i class="fa fa-book-open"></i>
-                            </div>
+                        <a href="/learning_management/public/?url=assignments">
                             <div class="data_text">
-                                <p>
-                                    <?= $enrolledCount ?>
-                                </p>
-                                <div class="data-head">Enrolled Classes</div>
-                                <div class="stat-data"><i class="fa fa-arrow-up"></i> All active</div>
+                                <div class="data-head">Pending Tasks</div>
+                                <p><?= $pendingCount ?></p>
+                                <div class="stat-data"><?= $pendingDueThisWeek ?> due this week</div>
                             </div>
+                            <div class="data_icon"><i class="fa fa-clock"></i></div>
                         </a>
                     </div>
 
                     <div class="card-box">
                         <a href="/learning_management/public/?url=assignments">
-                            <div class="data_icon">
-                                <i class="fa fa-clock"></i>
-                            </div>
                             <div class="data_text">
-                                <p>
-                                    <?= $pendingCount ?>
-                                </p>
-                                <div class="data-head">Pending Tasks</div>
-                                <div class="stat-data">Due this week</div>
+                                <div class="data-head">Due Soon</div>
+                                <p><?= $dueSoonCount ?></p>
+                                <div class="stat-data"><i class="fa fa-clock"></i> Next 7 days</div>
                             </div>
+                            <div class="data_icon"><i class="fa fa-book-open"></i></div>
                         </a>
                     </div>
 
                     <div class="card-box">
                         <a href="#">
-                            <div class="data_icon">
-                                <i class="fa fa-check-circle"></i>
-                            </div>
                             <div class="data_text">
-                                <p>
-                                    <?= $completedCount ?>
-                                </p>
                                 <div class="data-head">Completed Task</div>
-                                <div class="stat-data"><i class="fa fa-arrow-up"></i> +2 this week</div>
+                                <p><?= $completedCount ?></p>
+                                <div class="stat-data"><i class="fa fa-arrow-up"></i> +<?= $completedThisWeek ?> this week
+                                </div>
                             </div>
+                            <div class="data_icon"><i class="fa fa-check-circle"></i></div>
                         </a>
                     </div>
 
                     <div class="card-box">
-                        <div class="data_text">
-                            <a href="#">
-                                <div class="data_icon">
-                                    <i class="fa fa-line-chart"></i>
-                                </div>
-                                <div class="data_text">
-                                    <p>
-                                        62%
-                                    </p>
-                                    <div class="data-head">Overall Progress</div>
-                                    <div class="stat-data"><i class="fa fa-arrow-up"></i> +8 this week</div>
-                                </div>
-                            </a>
-                        </div>
-                        <!-- <div class="data_icon">
-                                    <i class="fa fa-check-circle"></i>
-                                </div> -->
+                        <a href="#">
+                            <div class="data_text">
+                                <div class="data-head">Overall Progress</div>
+                                <p><?= $overallProgressPercent ?>%</p>
+                                <div class="stat-data"><i class="fa fa-arrow-up"></i> +<?= $overallProgressDelta ?>% this
+                                    week</div>
+                            </div>
+                            <div class="data_icon"><i class="fa fa-line-chart"></i></div>
+                        </a>
                     </div>
                 </div>
 
                 <div class="main-parent">
-                    <div class="side-dashboard">
-                        <div class="parent-performance">
-
-                            <div class="update subject-performance">
-                                <div class="header">
-                                    <div class="header-icon">
-                                        <i class="fa fa-clock"></i>
-                                    </div>
-                                    <h3>Pending Tasks</h3>
-                                </div>
-                                <?php if (!empty($pendingAssignments)): ?>
-                                    <div class="body" style="height: 313px; overflow-y: auto;">
-
-                                        <?php foreach ($pendingAssignments as $item):
-                                            $daysLeft = '';
-                                            if (!empty($item['due_date'])) {
-                                                $now = new DateTime('today');
-                                                $due = new DateTime($item['due_date']);
-
-                                                if ($due < $now) {
-                                                    continue; // skip overdue
-                                                }
-
-                                                $interval = $now->diff($due);
-
-                                                if ($interval->days == 0) {
-                                                    $daysLeft = 'Due today';
-                                                } elseif ($interval->y == 0 && $interval->m == 0) {
-                                                    // Less than a month away — show in days
-                                                    $daysLeft = $interval->d . ' day' . ($interval->d > 1 ? 's' : '') . ' left';
-                                                } else {
-                                                    // A month or more away — show in months
-                                                    $months = ($interval->y * 12) + $interval->m;
-                                                    // round up if there are extra days left over (e.g. 1 month 20 days -> "2 months left")
-                                                    if ($interval->d >= 15) {
-                                                        $months++;
-                                                    }
-                                                    $daysLeft = $months . ' month' . ($months > 1 ? 's' : '') . ' left';
-                                                }
-                                            }
-                                            ?>
-                                            <div class="parent-update">
-                                                <div class="update-icon">
-                                                    <i class="fa fa-file-pen"></i>
+                    <div class="parent-recent-announcement">
+                        <div class="perform performance-trend">
+                            <div class="header">
+                                <h3>My Recent Activity</h3>
+                                <p>Your latest actions</p>
+                            </div>
+                            <?php if (!empty($recentActivities)): ?>
+                                <div class="body" style="height: 355px; overflow-y: auto;">
+                                    <?php foreach ($recentActivities as $act):
+                                        $typeMap = [
+                                            'module_opened' => ['fa-folder-open', 'Opened module', 'blue'],
+                                            'lesson_opened' => ['fa-book-open', 'Opened lesson', 'blue'],
+                                            'activity_completed' => ['fa-pencil', 'Completed activity', 'purple'],
+                                            'quiz_completed' => ['fa-clipboard-check', 'Completed quiz', 'green'],
+                                            'flashcards_viewed' => ['fa-layer-group', 'Reviewed flashcards', 'amber'],
+                                        ];
+                                        [$icon, $label, $tone] = $typeMap[$act['activity_type']] ?? ['fa-circle-check', 'Activity', 'blue'];
+                                        ?>
+                                        <div class="activity-row">
+                                            <div class="activity-icon activity-icon--<?= $tone ?>">
+                                                <i class="fa <?= $icon ?>"></i>
+                                            </div>
+                                            <div class="activity-content">
+                                                <div class="activity-top">
+                                                    <h4><?= htmlspecialchars($act['title']) ?></h4>
+                                                    <small><?= shs_time_ago($act['created_at']) ?></small>
                                                 </div>
-                                                <div class="update-box">
-                                                    <div class="update-text">
-                                                        <p>
-                                                            <?= htmlspecialchars($item['task']) ?>
-                                                        </p>
-                                                        <span>
-
-                                                            <?= htmlspecialchars($item['subject_name']) ?>
-
-                                                            ·
-
-                                                            Due:
-                                                            <?= !empty($item['due_date']) ? date('F j, Y', strtotime($item['due_date'])) : 'No due date' ?>
-                                                        </span>
+                                                <div class="activity-bottom">
+                                                    <span
+                                                        class="activity-label activity-label--<?= $tone ?>"><?= htmlspecialchars($label) ?></span>
+                                                    <div class="divider">
+                                                        |
                                                     </div>
-
-                                                    <div class="update-links">
-                                                        <?php if ($daysLeft): ?><span>
-                                                                <?= htmlspecialchars($daysLeft) ?>
-                                                            </span>
-                                                        <?php endif; ?>
-
-                                                        <a
-                                                            href="/learning_management/public/?url=assignment_view&subject=<?= urlencode($item['subject_code']) ?>&id=<?= $item['id'] ?>">
-                                                            View Task <i class="fa fa-arrow-right"></i>
-                                                        </a>
-                                                    </div>
+                                                    <?php if (!empty($act['subject_name'])): ?>
+                                                        <span
+                                                            class="activity-subject"><?= htmlspecialchars($act['subject_name']) ?></span>
+                                                    <?php endif; ?>
                                                 </div>
                                             </div>
-                                        <?php endforeach; ?>
-
-
-                                    </div>
-                                <?php else: ?>
-                                    <div class="body is-empty" style="height: 285px;">
-                                        <i class="fa fa-check-circle" style="font-size: 20px; color: var(--text-dim)"></i>
-                                        <p class="m-0" style="font-size: 14.5px; color: var(--text-dim);">No pending tasks.
-                                        </p>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-
-                            <div class="perform performance-trend">
-                                <div class="header">
-                                    <div class="header-icon">
-                                        <i class="fa fa-bullhorn"></i>
-                                    </div>
-                                    <h3>Announcements</h3>
+                                        </div>
+                                    <?php endforeach; ?>
                                 </div>
-                                <?php if (!empty($announcements)): ?>
-                                    <div class="body" style="height: 323px; overflow-y: auto;">
+                            <?php else: ?>
+                                <div class="body is-empty" style="height: 280px;">
+                                    <i class="fa fa-check-circle" style="font-size: 20px; color: var(--text-dim)"></i>
+                                    <p class="m-0" style="font-size:14px; color: var(--text-dim);">No recent activity yet.</p>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="perform performance-trend">
+                            <div class="header">
+                                <!-- <div class="header-icon">
+                                <i class="fa fa-bullhorn"></i>
+                            </div> -->
+                                <h3>Announcements</h3>
+                                <p>Latest Updates</p>
+                            </div>
+                            <?php if (!empty($announcements)): ?>
+                                <div class="body" style="height: 355px; overflow-y: auto;">
 
-                                        <?php foreach ($announcements as $ann): ?>
-                                            <div class="progress-box">
-                                                <div class="announcement-icon">
-                                                    <i class="fa fa-bell"></i>
-                                                </div>
-                                                <div class="announcement-box">
-                                                    <div class="title-announce">
+                                    <?php foreach ($announcements as $ann): ?>
+                                        <div class="progress-box">
+                                            <div class="announcement-icon">
+                                                <i class="fa fa-bell"></i>
+                                            </div>
+                                            <div class="announcement-box">
+                                                <div class="title-announce">
+                                                    <div class="title-parent">
                                                         <h4>
                                                             <?= htmlspecialchars($ann['title']) ?>
                                                         </h4>
                                                         <p>
                                                             <?= nl2br(htmlspecialchars($ann['message'])) ?>
                                                         </p>
-                                                        <span>
-                                                            <?= htmlspecialchars($ann['subject_name']) ?>
-                                                        </span>
                                                     </div>
+
+                                                    <!-- <span>
+                                                        <?= htmlspecialchars($ann['subject_name']) ?>
+                                                    </span> -->
+
                                                     <div class="view">
                                                         <small>
                                                             <?= date('F j, Y', strtotime($ann['created_at'])) ?>
@@ -327,189 +299,149 @@
                                                         </small>
                                                     </div>
                                                 </div>
+
                                             </div>
-                                        <?php endforeach; ?>
+                                        </div>
+                                    <?php endforeach; ?>
 
 
 
-                                    </div>
-                                <?php else: ?>
+                                </div>
+                            <?php else: ?>
 
-                                    <div class="body is-empty" style="height: 280px;">
-                                        <i class="fa fa-check-circle" style="font-size: 20px; color: var(--text-dim)"></i>
-                                        <p class="m-0" style="font-size:14.5px;">No announcements yet.</p>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-
+                                <div class="body is-empty" style="height: 280px;">
+                                    <i class="fa fa-check-circle" style="font-size: 20px; color: var(--text-dim)"></i>
+                                    <p class="m-0" style="font-size:14.5px;">No announcements yet.</p>
+                                </div>
+                            <?php endif; ?>
                         </div>
                     </div>
-                    <div class="right-dashboard parent-performance">
-                        <div class="update missing-task">
+                    <div class="parent-continue-upcoming">
+                        <div class="update continue-learning">
                             <div class="header">
-                                <div class="header-icon header-icon-danger">
-                                    <i class="fa fa-triangle-exclamation"></i>
-                                </div>
-                                <h3>Missing Task</h3>
+                                <h3>Your current progress</h3>
+                                <p>Pick up right where you left off</p>
                             </div>
-                            <div class="body is-empty" style="height: 285px;">
-                                <i class="fa fa-check-circle" style="font-size: 20px; color: var(--text-dim)"></i>
-                                <p class="m-0" style="font-size: 14.5px; color: var(--text-dim);">No missing tasks.</p>
-                            </div>
-                            <!-- Example populated state — mirror this markup per missing item:
-                            <div class="body" style="height: 190px; overflow-y: auto;">
-                                <div class="parent-update">
-                                    <div class="update-icon">
-                                        <i class="fa fa-file-circle-exclamation"></i>
-                                    </div>
-                                    <div class="update-box">
-                                        <div class="update-text">
-                                            <p>Quiz 2 - Subnetting</p>
-                                            <span>Networking · Was due: June 14, 2026</span>
+                            <?php if (!empty($inProgressModules)): ?>
+                                <div class="body" style="height: 355px; overflow-y: auto;">
+                                    <?php foreach ($inProgressModules as $ip):
+                                        $pct = (int) round($ip['completion_percentage']);
+                                        $circumference = 169.6; // 2 * π * r(27)
+                                        $offset = round($circumference * (1 - max(0, min(100, $pct)) / 100), 1);
+                                        ?>
+                                        <div class="parent-update">
+                                            <div class="parent-sub-update">
+                                                <div class="update-progress-ring">
+                                                    <svg viewBox="0 0 64 64">
+                                                        <defs>
+                                                            <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                                <stop offset="0%" stop-color="#ffb347" />
+                                                                <stop offset="100%" stop-color="#ff7a00" />
+                                                            </linearGradient>
+                                                        </defs>
+                                                        <circle class="ring-track" cx="32" cy="32" r="27" fill="none"
+                                                            stroke-width="7" />
+                                                        <circle class="ring-fill" cx="32" cy="32" r="27" fill="none"
+                                                            stroke-width="7" stroke-linecap="round" stroke="url(#ringGradient)"
+                                                            stroke-dasharray="<?= $circumference ?>"
+                                                            stroke-dashoffset="<?= $offset ?>" />
+                                                    </svg>
+                                                    <span class="ring-pct"><?= $pct ?>%</span>
+                                                </div>
+                                                <div class="update-box">
+                                                    <div class="update-text">
+                                                        <p><?= htmlspecialchars($ip['title']) ?></p>
+                                                        <span class="update-eyebrow">
+                                                            <?= !empty($ip['current_topic'])
+                                                                ? htmlspecialchars($ip['current_topic'])
+                                                                : htmlspecialchars($ip['subject_name']) ?>
+                                                        </span>
+
+
+                                                        <?php if (!empty($ip['next_lesson_title'])): ?>
+                                                            <span class="update-next">
+                                                                Next up: <?= htmlspecialchars($ip['next_lesson_title']) ?>
+                                                                — Lesson <?= (int) $ip['next_lesson_number'] ?> of
+                                                                <?= (int) $ip['total_lessons'] ?>
+                                                            </span>
+                                                        <?php endif; ?>
+
+                                                        <div class="update-submeta">
+                                                            <span class="update-submeta-item">
+                                                                <i class="fa fa-check"></i>
+                                                                <?= (int) $ip['completed_lessons'] ?> of
+                                                                <?= (int) $ip['total_lessons'] ?> lessons done
+                                                            </span>
+                                                            <?php if (!empty($ip['last_accessed_at'])): ?>
+                                                                <span class="update-submeta-item">
+                                                                    <i class="fa fa-rotate-right"></i>
+                                                                    Last opened <?= shs_time_ago($ip['last_accessed_at']) ?>
+                                                                </span>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="/learning_management/public/?url=subject_lessons&subject=<?= urlencode($ip['subject_code']) ?>&id=<?= (int) $ip['id'] ?>"
+                                                class="continue-link">
+                                                Continue <i class="fa fa-arrow-right"></i>
+                                            </a>
                                         </div>
-                                        <div class="update-links">
-                                            <span>3 days overdue</span>
-                                            <a href="#">View Task <i class="fa fa-arrow-right"></i></a>
-                                        </div>
-                                    </div>
+                                    <?php endforeach; ?>
                                 </div>
-                            </div>
-                            -->
+                            <?php else: ?>
+                                <div class="body is-empty" style="height: 220px;">
+                                    <i class="fa fa-check-circle" style="font-size: 20px; color: var(--text-dim)"></i>
+                                    <p class="m-0" style="font-size:14.5px; color: var(--text-dim);">No modules in progress
+                                        right now.</p>
+                                </div>
+                            <?php endif; ?>
                         </div>
 
                         <div class="update upcoming-deadlines">
                             <div class="header">
-                                <div class="header-icon">
-                                    <i class="fa fa-clock"></i>
-                                </div>
                                 <h3>Upcoming deadlines</h3>
+                                <p>Classworks due across your subjects</p>
                             </div>
-                            <div class="body" style="height: 280px; overflow-y: auto;">
-
-                                <div class="parent-update">
-                                    <div class="update-icon">
-                                        <i class="fa fa-calendar-days"></i>
-                                    </div>
-                                    <div class="update-box">
-                                        <div class="update-text">
-                                            <p>Quiz 3 - IP Addressing</p>
-                                            <span>Due: June 20, 2026 · 08:00 PM</span>
+                            <?php if (!empty($upcomingDeadlines)): ?>
+                                <div class="body" style="height: 355px; overflow-y: auto;">
+                                    <?php foreach ($upcomingDeadlines as $pending): ?>
+                                        <div class="parent-update">
+                                            <div class="parent-sub-update">
+                                                <div class="update-icon">
+                                                    <i class="fa fa-calendar-days"></i>
+                                                </div>
+                                                <div class="update-box">
+                                                    <div class="update-text">
+                                                        <p>
+                                                            <?= htmlspecialchars($pending['task']) ?>
+                                                        </p>
+                                                        <span>
+                                                            Due:
+                                                            <?= date('F j, Y', strtotime($pending['due_date'])) ?>
+                                                            <?php if (!empty($pending['due_time'])): ?>
+                                                                ·
+                                                                <?= date('h:i A', strtotime($pending['due_time'])) ?>
+                                                            <?php endif; ?>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="upcoming-icon">
+                                                Upcoming
+                                            </div>
                                         </div>
-                                    </div>
+                                    <?php endforeach; ?>
                                 </div>
-
-                                <div class="parent-update">
-                                    <div class="update-icon">
-                                        <i class="fa fa-calendar-days"></i>
-                                    </div>
-                                    <div class="update-box">
-                                        <div class="update-text">
-                                            <p>Quiz 3 - IP Addressing</p>
-                                            <span>Due: June 20, 2026 · 10:00 AM</span>
-                                        </div>
-                                    </div>
+                            <?php else: ?>
+                                <div class="body is-empty" style="height: 280px;">
+                                    <i class="fa fa-check-circle" style="font-size: 20px; color: var(--text-dim)"></i>
+                                    <p>No upcoming deadlines in the next 30 days.</p>
                                 </div>
-
-                                <div class="parent-update">
-                                    <div class="update-icon">
-                                        <i class="fa fa-calendar-days"></i>
-                                    </div>
-                                    <div class="update-box">
-                                        <div class="update-text">
-                                            <p>Quiz 3 - IP Addressing</p>
-                                            <span>Due: June 20, 2026 · 05:00 PM</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="parent-update">
-                                    <div class="update-icon">
-                                        <i class="fa fa-calendar-days"></i>
-                                    </div>
-                                    <div class="update-box">
-                                        <div class="update-text">
-                                            <p>Quiz 3 - IP Addressing</p>
-                                            <span>Due: June 20, 2026 · 06:00 PM</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="parent-update">
-                                    <div class="update-icon">
-                                        <i class="fa fa-calendar-days"></i>
-                                    </div>
-                                    <div class="update-box">
-                                        <div class="update-text">
-                                            <p>Quiz 3 - IP Addressing</p>
-                                            <span>Due: June 20, 2026 · 06:00 PM</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="parent-update">
-                                    <div class="update-icon">
-                                        <i class="fa fa-calendar-days"></i>
-                                    </div>
-                                    <div class="update-box">
-                                        <div class="update-text">
-                                            <p>Quiz 3 - IP Addressing</p>
-                                            <span>Due: June 20, 2026 · 06:00 PM</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
-                </div>
-                <div class="perform enrolled-subjects">
-                    <div class="header">
-                        <div class="header-icon">
-                            <i class="fa fa-book"></i>
-                        </div>
-                        <h3>My Modules</h3>
-                    </div>
 
-                    <div class="body modules-chart">
-
-                        <div class="chart-row">
-                            <div class="chart-yaxis">
-                                <span>100%</span>
-                                <span>75%</span>
-                                <span>50%</span>
-                                <span>25%</span>
-                                <span>0%</span>
-                            </div>
-                            <div class="chart-bars">
-                                <div class="chart-col" data-label="Module 1 · Hardware">
-                                    <span class="chart-val">70%</span>
-                                    <div class="chart-bar" style="height:70%; background: var(--neon-cyan);"></div>
-                                </div>
-                                <div class="chart-col" data-label="Module 2 · Software">
-                                    <span class="chart-val">50%</span>
-                                    <div class="chart-bar" style="height:50%; background: #5533CC;"></div>
-                                </div>
-                                <div class="chart-col" data-label="Module 3 · Networking">
-                                    <span class="chart-val">70%</span>
-                                    <div class="chart-bar" style="height:70%; background: #1A9E5C;"></div>
-                                </div>
-                                <div class="chart-col" data-label="Module 4 · Repair">
-                                    <span class="chart-val">70%</span>
-                                    <div class="chart-bar" style="height:70%; background: #CC7700;"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- <div class="chart-legend">
-                            <div class="chart-legend-spacer"></div>
-                            <div class="chart-legend-items">
-                                <a href="#"><i style="background: var(--neon-cyan);"></i>Module 1 · Hardware</a>
-                                <a href="#"><i style="background: #5533CC;"></i>Module 2 · Software</a>
-                                <a href="#"><i style="background: #1A9E5C;"></i>Module 3 · Networking</a>
-                                <a href="#"><i style="background: #CC7700;"></i>Module 4 · Repair</a>
-                            </div>
-                        </div> -->
-                    </div>
                 </div>
 
             <?php elseif (!empty($_SESSION['grade_level']) && $_SESSION['grade_level'] === 'Grade 11'): ?>
