@@ -768,11 +768,8 @@
 
 .module-feed-card:hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, .10);
-<<<<<<< HEAD
     border-color: var(--neon-cyan);
-=======
     border-color: var(--border);
->>>>>>> b4f529aae0021ed852837b04faff039ee4eb8d19
 }
 
 .module-feed-card .card-img {
@@ -908,13 +905,10 @@
 .start-now-btn.btn-continue {
     /* background: var(--green-dark, #065f46);
     color: #fff; */
-<<<<<<< HEAD
     /* background: linear-gradient(135deg, var(--green-dark), var(--green-mid)); */
     /* background-color: var(--neon-cyan); */
     background:linear-gradient(90deg,#0099CC,#00CFFF);
-=======
     background: linear-gradient(135deg, #ffb347, #ff7a00);
->>>>>>> b4f529aae0021ed852837b04faff039ee4eb8d19
     color: #fff;
 }
 
