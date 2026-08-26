@@ -610,6 +610,63 @@ function youtubeEmbed($url)
             border-radius: 3px;
         }
 
+        .bubble-quiz {
+            position: absolute;
+            left: 260px;
+            top: 3px;
+            /* width: 300px; */
+            width: 350px;
+            background-color: var(--bg-main);
+            color: var(--text-bright);
+            font-family: var(--font-body);
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            line-height: 1.4;
+            padding: 16px 19px;
+            border-radius: 14px;
+            z-index: 1;
+        }
+
+        .bubble-quiz strong {
+            display: block;
+            color: var(--neon-cyan);
+            font-family: "Orbitron", sans-serif;
+            font-weight: 700;
+            margin-bottom: 2px;
+            font-size: 14.5px;
+        }
+
+        .bubble-quiz p {
+            margin: 0;
+            font-size: 13.5px;
+            color: var(--text-dim);
+            line-height: 22px;
+        }
+
+        .bubble-quiz p .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 14px;
+            background: var(--neon-cyan);
+            margin-left: 2px;
+            vertical-align: middle;
+            animation: cursorBlink 0.8s step-end infinite;
+        }
+
+        .bubble-quiz::after {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border: 1px solid var(--border);
+            transform: rotate(-45deg);
+            z-index: -1;
+            display: none;
+        }
+
         /* =============================================
            MODULE OVERVIEW HERO (full-width top banner)
         ============================================= */
@@ -2098,7 +2155,7 @@ function youtubeEmbed($url)
         .quiz-hero-inner {
             position: relative;
             z-index: 1;
-            margin: 0 0 20px;
+            margin: 0 0 30px;
         }
 
         .quiz-hero-tag {
@@ -2255,7 +2312,7 @@ function youtubeEmbed($url)
         }
 
         .quiz-status {
-            font-size: 12.5px;
+            font-size: 14.5px;
             color: var(--page-muted, var(--text-dim));
         }
 
@@ -2296,7 +2353,7 @@ function youtubeEmbed($url)
             border-radius: 9px;
             background: linear-gradient(135deg, var(--blue-dark, var(--neon-blue)), var(--blue-mid, var(--neon-cyan)));
             color: #fff;
-            font-size: 13px;
+            font-size: 15.5px;
             font-weight: 600;
             transition: transform .18s, box-shadow .18s;
         }
@@ -2475,19 +2532,51 @@ function youtubeEmbed($url)
             display: flex;
             justify-content: start;
             margin: 10px 0 26px;
+            position: relative;
+        }
+
+        .content-quiz-cta img {
+            width: 240px;
+            height: 260px;
         }
 
         .btn-take-quiz {
             display: inline-flex;
             align-items: center;
-            gap: 9px;
+            /* gap: 9px; */
+            gap: 7px;
             color: #fff;
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 700;
-            padding: 10px 25px;
+            padding: 8px 18px;
             border-radius: 99px;
             background-color: var(--neon-cyan);
             transition: transform .18s ease, box-shadow .18s ease;
+            /* position: absolute;
+            top: 62%;
+            left: 5.3%; */
+            /* top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); */
+        }
+
+        .bubble-quiz .btn-take-quiz {
+            opacity: 0;
+            transform: translateY(6px);
+            pointer-events: none;
+            max-height: 0;
+            margin-top: 0;
+            overflow: hidden;
+            transition: opacity .3s ease, transform .3s ease, max-height .3s ease, margin-top .3s ease;
+        }
+
+        .bubble-quiz .btn-take-quiz.btn-visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            /* max-height: 60px; */
+            max-height: 40px;
+            margin-top: 7px;
         }
 
         .btn-take-quiz:hover {
@@ -2497,6 +2586,42 @@ function youtubeEmbed($url)
 
         .btn-take-quiz i {
             font-size: 12px;
+        }
+
+        .bubble-quiz .btn-quiz-continue {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: var(--neon-cyan);
+            font-size: 13.5px;
+            font-weight: 700;
+            padding: 8px 18px;
+            border-radius: 99px;
+            background: #fff;
+            border: 1.5px solid var(--neon-cyan);
+            opacity: 0;
+            transform: translateY(6px);
+            pointer-events: none;
+            max-height: 0;
+            margin-top: 0;
+            overflow: hidden;
+            transition: opacity .3s ease, transform .3s ease, max-height .3s ease, margin-top .3s ease, box-shadow .18s ease;
+        }
+
+        .bubble-quiz .btn-quiz-continue.btn-visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            max-height: 40px;
+            margin-top: 7px;
+        }
+
+        .bubble-quiz .btn-quiz-continue:hover {
+            box-shadow: 0 8px 20px rgba(0, 119, 204, 0.18);
+        }
+
+        .bubble-quiz .btn-quiz-continue i {
+            font-size: 11px;
         }
 
         .qz-stage {
@@ -2515,7 +2640,7 @@ function youtubeEmbed($url)
         }
 
         .qz-progress-track {
-            height: 15px;
+            height: 20px;
             border-radius: 99px;
             background: rgba(0, 119, 204, 0.1);
             overflow: hidden;
@@ -2525,12 +2650,15 @@ function youtubeEmbed($url)
         .qz-progress-fill {
             height: 100%;
             border-radius: 99px;
-            background: linear-gradient(90deg, var(--neon-blue), var(--neon-cyan));
+            /* background: linear-gradient(90deg, var(--neon-blue), var(--neon-cyan)); */
+            background-color: var(--neon-cyan);
             transition: width .35s ease;
         }
 
         .qz-card {
-            background: var(--qz-card-bg);
+            /* background: var(--qz-card-bg); */
+            background-color: var(--neon-cyan);
+            /* background-color: #380641; */
             border-radius: 20px;
             padding: 46px 36px;
             min-height: 170px;
@@ -2541,6 +2669,14 @@ function youtubeEmbed($url)
             position: relative;
             margin-bottom: 22px;
             box-shadow: 0 12px 30px rgba(43, 27, 61, 0.25);
+        }
+
+        .qz-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 26px);
+            pointer-events: none;
         }
 
         .qz-question-text {
@@ -2581,10 +2717,11 @@ function youtubeEmbed($url)
             padding: 18px 22px;
             border-radius: 14px;
             color: #fff;
+            /* color: var(--text-bright); */
             font-size: 15.5px;
             font-weight: 600;
             cursor: pointer;
-            border: 3px solid transparent;
+            border: 1px solid transparent;
             transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
         }
 
@@ -2600,6 +2737,9 @@ function youtubeEmbed($url)
 
         .qz-choice-btn[data-color="0"] {
             background-color: var(--qz-blue);
+            /* background: linear-gradient(135deg, rgba(0, 119, 204, 0.09), rgba(85, 51, 204, 0.05));
+            border-color: var(--neon-cyan);
+            box-shadow: 0 6px 18px rgba(0, 119, 204, 0.16); */
         }
 
         .qz-choice-btn[data-color="1"] {
@@ -2625,7 +2765,7 @@ function youtubeEmbed($url)
             /* background-color: var(--neon-cyan); */
         }
 
-        .qz-overlay::before{
+        .qz-overlay::before {
             /* content: '';
             position: absolute;
             inset: 0;
@@ -2639,7 +2779,8 @@ function youtubeEmbed($url)
 
         .qz-overlay #section-quizzes {
             /* max-width: 720px; */
-            max-width: 1000px;
+            /* max-width: 1000px; */
+            max-width: 700px;
             margin: 0 auto;
         }
 
@@ -2668,7 +2809,8 @@ function youtubeEmbed($url)
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-top: 24px;
+            /* margin-top: 24px; */
+            margin-top: 25px;
         }
 
         .qz-nav-row #qzPrevBtn {
@@ -2696,8 +2838,12 @@ function youtubeEmbed($url)
     <script>
         (function () {
             var moduleId = <?= (int) ($moduleId ?? 0) ?>;
-            var storageKey = 'splash_dismissed_module_' + moduleId;
-            var dismissed = sessionStorage.getItem(storageKey);
+            var lessonId = <?= (int) ($lessonId ?? 0) ?>;
+            var splashKey = 'splash_dismissed_module_' + moduleId;
+            var quizKey = 'quiz_open_lesson_' + lessonId;
+
+            var dismissed = sessionStorage.getItem(splashKey);
+            var quizWasOpen = sessionStorage.getItem(quizKey) === '1';
 
             var navType = 'navigate';
             try {
@@ -2711,12 +2857,16 @@ function youtubeEmbed($url)
 
             var cameFromWithinLessons = document.referrer.indexOf('url=subject_lessons') !== -1;
 
-            var shouldSkip = dismissed && (navType === 'reload' || navType === 'back_forward' || cameFromWithinLessons);
+            // If a quiz was open, ALWAYS skip the splash — reloading mid-quiz
+            // should land back on the quiz, not the welcome screen.
+            var shouldSkip = quizWasOpen ||
+                (dismissed && (navType === 'reload' || navType === 'back_forward' || cameFromWithinLessons));
 
             if (shouldSkip) {
                 document.documentElement.classList.add('skip-splash');
+                if (quizWasOpen) sessionStorage.setItem(splashKey, '1');
             } else {
-                sessionStorage.removeItem(storageKey);
+                sessionStorage.removeItem(splashKey);
             }
         })();
     </script>
@@ -2761,6 +2911,22 @@ function youtubeEmbed($url)
     }
 
     $bonbonLessonMessage = "Welcome! I'm your learning assistant, ready to guide you through your journey!";
+
+    $bonbonQuizGreeting = "Hi" . (!empty($splashFirstName) && $splashFirstName !== 'Student' ? ", {$splashFirstName}" : "") . "! I'm BonBon, your quiz buddy.";
+
+    $bonbonQuizMessage = "Ready when you are — let's test what you've learned! Tap \"Take the Quiz\" below when you're ready.";
+
+    if (!empty($quizData)) {
+        $firstQzForBubble = reset($quizData)['quiz'];
+        $quizTitleForBubble = $firstQzForBubble['title'] ?? 'this quiz';
+        $quizInstrForBubble = trim($firstQzForBubble['instructions'] ?? '');
+
+        if ($quizInstrForBubble !== '') {
+            $bonbonQuizMessage = "\"{$quizTitleForBubble}\" — {$quizInstrForBubble} Tap \"Take the Quiz\" below when you're ready.";
+        } else {
+            $bonbonQuizMessage = "Ready to take \"{$quizTitleForBubble}\"? Read each question carefully, give it your best shot, and tap \"Take the Quiz\" below when you're ready!";
+        }
+    }
 
     if (!empty($lesson)) {
         $bonbonCleanTitle = preg_replace('/^Lesson\s*\d+\s*:\s*/i', '', $lesson['title']);
@@ -3177,10 +3343,23 @@ function youtubeEmbed($url)
                                             </div>
                                         </div>
                                         <div class="content-quiz-cta" id="quizCta">
-                                            <button type="button" class="btn-take-quiz" onclick="openQuizStage()">
-                                                <i class="fa fa-bolt"></i>
-                                                <?= (isset($firstQzDoneEarly) && $firstQzDoneEarly) ? 'Review the Quiz' : 'Take the Quiz' ?>
-                                            </button>
+                                            <img src="../images/robot-ai5.png" alt="">
+                                            <div class="speech-bubble bubble-quiz">
+                                                <strong>BonBon</strong>
+                                                <div id="bonbonQuizGreetingStage">
+                                                    <p id="bonbonMessage-quiz-greeting"></p>
+                                                    <button type="button" class="btn-quiz-continue" id="btnQuizContinue">
+                                                        Continue <i class="fa fa-arrow-right"></i>
+                                                    </button>
+                                                </div>
+                                                <div id="bonbonQuizMessageStage" style="display:none;">
+                                                    <p id="bonbonMessage-quiz"></p>
+                                                    <button type="button" class="btn-take-quiz" onclick="openQuizStage()">
+                                                        <i class="fa fa-bolt"></i>
+                                                        <?= (isset($firstQzDoneEarly) && $firstQzDoneEarly) ? 'Review the Quiz' : 'Take the Quiz' ?>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     <?php endif; ?>
                                 </div>
@@ -3651,6 +3830,10 @@ function youtubeEmbed($url)
                 .lessons-shell {
                     opacity: 1;
                 }
+
+                .lessons-shell.shell-scroll-lock {
+                    overflow: hidden;
+                }
             </style>
         </noscript>
 
@@ -3681,6 +3864,81 @@ function youtubeEmbed($url)
             }
 
             document.addEventListener('DOMContentLoaded', startBonbonBubble3Typewriter);
+        </script>
+
+        <script>
+            function startBonbonQuizGreetingTypewriter() {
+                const el = document.getElementById('bonbonMessage-quiz-greeting');
+                if (!el || el.dataset.typed) return;
+                el.dataset.typed = '1';
+
+                const message = <?= json_encode($bonbonQuizGreeting) ?>;
+                const speed = 28;
+                let i = 0;
+
+                const cursor = document.createElement('span');
+                cursor.className = 'typing-cursor';
+                el.appendChild(cursor);
+
+                function type() {
+                    if (i < message.length) {
+                        cursor.insertAdjacentText('beforebegin', message.charAt(i));
+                        i++;
+                        setTimeout(type, speed);
+                    } else {
+                        setTimeout(() => {
+                            cursor.remove();
+                            const btn = document.getElementById('btnQuizContinue');
+                            if (btn) btn.classList.add('btn-visible');
+                        }, 200);
+                    }
+                }
+                type();
+            }
+
+            function startBonbonQuizTypewriter() {
+                const el = document.getElementById('bonbonMessage-quiz');
+                if (!el || el.dataset.typed) return;
+                el.dataset.typed = '1';
+
+                const message = <?= json_encode($bonbonQuizMessage) ?>;
+                const speed = 28;
+                let i = 0;
+
+                const cursor = document.createElement('span');
+                cursor.className = 'typing-cursor';
+                el.appendChild(cursor);
+
+                function type() {
+                    if (i < message.length) {
+                        cursor.insertAdjacentText('beforebegin', message.charAt(i));
+                        i++;
+                        setTimeout(type, speed);
+                    } else {
+                        setTimeout(() => {
+                            cursor.remove();
+                            const btn = document.querySelector('.bubble-quiz .btn-take-quiz');
+                            if (btn) btn.classList.add('btn-visible');
+                        }, 200);
+                    }
+                }
+                type();
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                startBonbonQuizGreetingTypewriter();
+
+                const continueBtn = document.getElementById('btnQuizContinue');
+                if (continueBtn) {
+                    continueBtn.addEventListener('click', function () {
+                        const greetingStage = document.getElementById('bonbonQuizGreetingStage');
+                        const messageStage = document.getElementById('bonbonQuizMessageStage');
+                        if (greetingStage) greetingStage.style.display = 'none';
+                        if (messageStage) messageStage.style.display = 'block';
+                        startBonbonQuizTypewriter();
+                    });
+                }
+            });
         </script>
 
         <script>
@@ -3775,6 +4033,10 @@ function youtubeEmbed($url)
         </script>
 
         <script>
+
+        </script>
+
+        <script>
             fetch('/learning_management/public/?url=mark_flashcards_viewed', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -3818,6 +4080,19 @@ function youtubeEmbed($url)
                 }, $quizData))) ?>
             };
 
+            (function () {
+                if (typeof LESSON_DATA === 'undefined' || !LESSON_DATA.lessonId) return;
+                var flagKey = 'quiz_open_lesson_' + LESSON_DATA.lessonId;
+
+                if (sessionStorage.getItem(flagKey) === '1') {
+                    document.addEventListener('DOMContentLoaded', function () {
+                        if (document.getElementById('section-quizzes')) {
+                            openQuizStage();
+                        }
+                    });
+                }
+            })();
+
             function scrollToSection(id) {
                 var el = document.getElementById(id);
                 if (!el) return;
@@ -3835,9 +4110,6 @@ function youtubeEmbed($url)
                 var overlay = document.getElementById('qzOverlay');
                 if (!quizSection || !overlay) return;
 
-                // Remember where the quiz section normally lives in the
-                // page so we can put it back exactly there on close —
-                // same re-parenting trick used by the image lightbox.
                 if (!document.getElementById('qzHomeMarker')) {
                     var marker = document.createElement('div');
                     marker.id = 'qzHomeMarker';
@@ -3852,6 +4124,14 @@ function youtubeEmbed($url)
 
                 document.body.dataset.prevOverflow = document.body.style.overflow || '';
                 document.body.style.overflow = 'hidden';
+
+                // NEW: remember that the quiz stage was open for this lesson
+                var shell = document.getElementById('lessonsShell');
+                if (shell) shell.classList.add('shell-scroll-lock');
+
+                if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+                    sessionStorage.setItem('quiz_open_lesson_' + LESSON_DATA.lessonId, '1');
+                }
             }
 
             function closeQuizStage() {
@@ -3868,7 +4148,15 @@ function youtubeEmbed($url)
 
                 document.body.style.overflow = document.body.dataset.prevOverflow || '';
 
+                // NEW: clear the flag when the user explicitly goes back
+                var shell = document.getElementById('lessonsShell');
+                if (shell) shell.classList.remove('shell-scroll-lock');
+
+                if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+                    sessionStorage.removeItem('quiz_open_lesson_' + LESSON_DATA.lessonId);
+                }
                 scrollToSection('quizCta');
+
             }
         </script>
 
@@ -3889,8 +4177,10 @@ function youtubeEmbed($url)
                     setTimeout(function () {
                         splash.style.display = 'none';
                         shell.classList.add('shell-visible');
+                        shell.classList.remove('shell-scroll-lock'); // NEW
                         startBonbonBubble2Typewriter();
                         startBonbonBubble3Typewriter();
+                        startBonbonQuizTypewriter();
                     }, 460);
                 });
             })();
@@ -3948,8 +4238,10 @@ function youtubeEmbed($url)
         <?php if ($hasActiveQuiz): ?>
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
-                    if (typeof qzUpdateNav === 'function') {
-                        qzUpdateNav();
+                    var shell = document.getElementById('lessonsShell');
+                    var isSkip = document.documentElement.classList.contains('skip-splash');
+                    if (shell && !isSkip) {
+                        shell.classList.add('shell-scroll-lock');
                     }
                 });
             </script>
