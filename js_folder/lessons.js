@@ -15,17 +15,17 @@ var UNIFIED_QZ = {
     ans: {}
 };
 
+/* ==========================
+   ACTIVITY STAGE STATE
+   (mirrors UNIFIED_QZ, but for the one-question-at-a-time
+   hands-on activity carousel)
+========================== */
+var ACT_STAGE = {
+    cur: 0
+};
+
 /* =========================================================
    NEXT / PREV / FINISH — DELEGATED CLICK HANDLER
-   -----------------------------------------------------------
-   This is registered immediately (NOT inside DOMContentLoaded,
-   NOT nested after other init code). That means:
-     - It works even if it loads before the button exists yet.
-     - It can never be skipped because some unrelated init code
-       (e.g. checkLessonComplete) threw an error first.
-     - It still works after nextBtn.innerHTML is replaced with
-       "Saving…", because the listener lives on `document`, not
-       on the button itself.
 ========================================================= */
 document.addEventListener('click', function (e) {
     var nextBtn = e.target.closest('#nextBtn');
@@ -44,7 +44,6 @@ function handleNextBtnClick(e, nextBtn) {
     e.preventDefault();
     console.log('[lessons.js] nextBtn clicked');
 
-    // Completed badge (rendered as <span>) — nothing to do
     if (nextBtn.tagName === 'SPAN') {
         console.log('[lessons.js] is completed span, ignoring');
         return;
@@ -58,7 +57,6 @@ function handleNextBtnClick(e, nextBtn) {
         return;
     }
 
-    // For <a> tags: get href. For <button>: href is null → isFinish = true
     var href = nextBtn.getAttribute('href') || '';
     var isFinish = (href === '#' || href === '' || href === null);
     console.log('[lessons.js] href:', href, '| isFinish:', isFinish);
@@ -78,10 +76,14 @@ function handlePrevBtnClick(e, prevBtn) {
 ========================================================= */
 document.addEventListener('DOMContentLoaded', function () {
     try {
-        var qzBlocks = document.querySelectorAll('.qz-question-block');
+        var qzBlocks = document.querySelectorAll('.qz-question-block:not(.act-question-block)');
         UNIFIED_QZ.total = qzBlocks.length;
 
-        // Wire up essay textarea tracking
+        var actBlocks = document.querySelectorAll('.act-question-block');
+
+        // Wire up essay/short-answer textarea tracking — this also
+        // covers the new activity-stage textareas since they share
+        // the .activity-answer class.
         document.querySelectorAll('.activity-answer').forEach(function (textarea) {
             var qid = textarea.dataset.qid;
             var actId = parseInt(textarea.dataset.actId);
@@ -93,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     delete ANSWERS.activities[actId][qid];
                 }
                 checkLessonComplete();
+                if (typeof actUpdateNav === 'function') actUpdateNav();
             });
         });
 
@@ -103,27 +106,36 @@ document.addEventListener('DOMContentLoaded', function () {
             qzUpdateNav();
         }
 
+        if (actBlocks.length) {
+            actRestoreSelection(actBlocks[0]);
+            actUpdateNav();
+        }
+
         var nextBtnEl = document.getElementById('nextBtn');
         console.log('[lessons.js] nextBtn found:', nextBtnEl ? nextBtnEl.tagName : 'NOT FOUND');
         console.log('[lessons.js] init complete — delegated click handler is active');
     } catch (err) {
-        // Even if something here breaks, it can no longer take the
-        // Next/Prev/Finish buttons down with it.
         console.error('[lessons.js] init error (buttons are unaffected):', err);
     }
 });
 
 /* ==========================
    ACTIVITY MC PICKER
+   -----------------------------------------------------------
+   Used both by the old inline activity form (.question-card)
+   and the new activity-stage carousel (.qz-question-block).
 ========================== */
 function pickMC(el) {
     var qid = el.dataset.qid;
     var actId = parseInt(el.dataset.actId);
     var key = el.dataset.key;
 
-    el.closest('.question-card').querySelectorAll('.mc-choice').forEach(function (c) {
-        c.classList.remove('selected');
-    });
+    var container = el.closest('.question-card') || el.closest('.qz-question-block');
+    if (container) {
+        container.querySelectorAll('.mc-choice, .qz-choice-btn').forEach(function (c) {
+            c.classList.remove('selected');
+        });
+    }
     el.classList.add('selected');
 
     if (!ANSWERS.activities[actId]) ANSWERS.activities[actId] = {};
@@ -133,13 +145,11 @@ function pickMC(el) {
     if (hidden) hidden.value = key;
 
     checkLessonComplete();
+    if (typeof actUpdateNav === 'function') actUpdateNav();
 }
 
 /* =========================================================
    QUIZIZZ-STYLE QUIZ STAGE
-   -----------------------------------------------------------
-   One question shown at a time, inside a dark card, with four
-   colour-coded full-width answer buttons — similar to Quizizz.
 ========================================================= */
 function qzPick(el) {
     var qid = el.dataset.qid;
@@ -163,7 +173,7 @@ function qzPick(el) {
 }
 
 function qzNav(dir) {
-    var blocks = document.querySelectorAll('.qz-question-block');
+    var blocks = document.querySelectorAll('.qz-question-block:not(.act-question-block)');
     if (!blocks.length) return;
 
     var newIdx = Math.max(0, Math.min(blocks.length - 1, UNIFIED_QZ.cur + dir));
@@ -182,6 +192,7 @@ function qzRestoreSelection(block) {
     block.querySelectorAll('.qz-choice-btn').forEach(function (btn) {
         var qid = btn.dataset.qid;
         var key = btn.dataset.key;
+        if (!qid || !key) return;
         if (UNIFIED_QZ.ans[qid] === key) {
             btn.classList.add('selected');
         } else {
@@ -191,7 +202,7 @@ function qzRestoreSelection(block) {
 }
 
 function qzUpdateNav() {
-    var blocks = document.querySelectorAll('.qz-question-block');
+    var blocks = document.querySelectorAll('.qz-question-block:not(.act-question-block)');
     var total = blocks.length;
     if (!total) return;
 
@@ -216,12 +227,7 @@ function qzUpdateNav() {
             nextBtn.innerHTML = 'Finish <i class="fa fa-check"></i>';
             nextBtn.onclick = function () {
                 checkLessonComplete();
-                var lessonNextBtn = document.getElementById('nextBtn');
-                if (lessonNextBtn && !lessonNextBtn.classList.contains('disabled')) {
-                    lessonNextBtn.click();
-                } else {
-                    scrollToSection && scrollToSection('section-quizzes');
-                }
+                showQuizResults();
             };
         } else {
             nextBtn.innerHTML = 'Next <i class="fa fa-chevron-right"></i>';
@@ -231,8 +237,177 @@ function qzUpdateNav() {
 }
 
 /* ==========================
+   QUIZ RESULTS SCREEN
+========================== */
+function showQuizResults() {
+    var stage = document.getElementById('qzStage');
+    var results = document.getElementById('qzResults');
+
+    if (!stage || !results) {
+        var lessonNextBtn = document.getElementById('nextBtn');
+        if (lessonNextBtn && !lessonNextBtn.classList.contains('disabled')) {
+            lessonNextBtn.click();
+        }
+        return;
+    }
+
+    var buttons = document.querySelectorAll('.qz-choice-btn[data-correct]');
+    var seen = {};
+    var total = 0;
+    var correct = 0;
+
+    buttons.forEach(function (btn) {
+        var qid = btn.dataset.qid;
+        if (!qid || seen[qid]) return;
+        seen[qid] = true;
+        total++;
+
+        var picked = UNIFIED_QZ.ans[qid];
+        var correctBtn = document.querySelector('.qz-choice-btn[data-qid="' + qid + '"][data-correct="1"]');
+        var correctKey = correctBtn ? correctBtn.dataset.key : null;
+
+        if (picked && correctKey && picked === correctKey) correct++;
+    });
+
+    var incorrect = total - correct;
+    var accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+    var countEl = document.getElementById('qzResultCount');
+    var pillCorrect = document.getElementById('qzPillCorrect');
+    var pillIncorrect = document.getElementById('qzPillIncorrect');
+    var fill = document.getElementById('qzAccuracyFill');
+    var pct = document.getElementById('qzAccuracyPct');
+
+    if (countEl) countEl.textContent = total + ' question' + (total === 1 ? '' : 's');
+    if (pillCorrect) pillCorrect.innerHTML = '<i class="fa fa-check"></i> ' + correct + ' Correct';
+    if (pillIncorrect) pillIncorrect.innerHTML = '<i class="fa fa-times"></i> ' + incorrect + ' Incorrect';
+    if (pct) pct.textContent = accuracy + '%';
+
+    stage.style.display = 'none';
+    results.style.display = 'block';
+
+    var exitBtn = document.querySelector('#section-quizzes .btn-exit-quiz');
+    if (exitBtn) exitBtn.style.display = 'none';
+
+    if (fill) {
+        fill.style.width = '0%';
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                fill.style.width = accuracy + '%';
+            });
+        });
+    }
+
+    var continueBtn = document.getElementById('qzResultsContinueBtn');
+    if (continueBtn) {
+        continueBtn.onclick = function () {
+            var lessonNextBtn = document.getElementById('nextBtn');
+            if (lessonNextBtn && !lessonNextBtn.classList.contains('disabled')) {
+                lessonNextBtn.click();
+            } else {
+                if (exitBtn) exitBtn.style.display = '';
+                closeQuizStage();
+            }
+        };
+    }
+}
+
+/* =========================================================
+   ACTIVITY STAGE — one question at a time, same visual
+   language as the quiz (dark card + choices, or a simple
+   fill-in-the-blank textarea for essay-style questions).
+   Answers are tracked in the same ANSWERS.activities store
+   used by the old inline form, so saving/submission logic
+   (saveAndGo / submitActivitiesSequentially) needs no changes.
+========================================================= */
+function actNav(dir) {
+    var blocks = document.querySelectorAll('.act-question-block');
+    if (!blocks.length) return;
+
+    var newIdx = Math.max(0, Math.min(blocks.length - 1, ACT_STAGE.cur + dir));
+    if (newIdx === ACT_STAGE.cur) return;
+
+    blocks[ACT_STAGE.cur].style.display = 'none';
+    ACT_STAGE.cur = newIdx;
+    blocks[ACT_STAGE.cur].style.display = 'block';
+
+    actRestoreSelection(blocks[ACT_STAGE.cur]);
+    actUpdateNav();
+}
+
+function actRestoreSelection(block) {
+    if (!block) return;
+
+    var textarea = block.querySelector('.qz-activity-textarea');
+    if (textarea) {
+        var actId = textarea.dataset.actId;
+        var qid = textarea.dataset.qid;
+        var stored = (actId && qid && ANSWERS.activities[actId]) ? ANSWERS.activities[actId][qid] : '';
+        textarea.value = stored || '';
+        return;
+    }
+
+    block.querySelectorAll('.qz-choice-btn').forEach(function (btn) {
+        var actId = btn.dataset.actId;
+        var qid = btn.dataset.qid;
+        var key = btn.dataset.key;
+        if (!actId || !qid || !key) return;
+        var stored = ANSWERS.activities[actId] ? ANSWERS.activities[actId][qid] : null;
+        if (stored === key) {
+            btn.classList.add('selected');
+        } else {
+            btn.classList.remove('selected');
+        }
+    });
+}
+
+function actUpdateNav() {
+    var blocks = document.querySelectorAll('.act-question-block');
+    var total = blocks.length;
+    if (!total) return;
+
+    var counter = document.getElementById('actCounter');
+    if (counter) counter.textContent = 'Question ' + (ACT_STAGE.cur + 1) + ' of ' + total;
+
+    var fill = document.getElementById('actProgressFill');
+    if (fill) fill.style.width = Math.round(((ACT_STAGE.cur + 1) / total) * 100) + '%';
+
+    var prevBtn = document.getElementById('actPrevBtn');
+    if (prevBtn) prevBtn.style.visibility = ACT_STAGE.cur > 0 ? 'visible' : 'hidden';
+
+    var nextBtn = document.getElementById('actNextBtn');
+    if (nextBtn) {
+        var curBlock = blocks[ACT_STAGE.cur];
+        var actId = curBlock ? curBlock.dataset.actId : null;
+        var answered = false;
+
+        var textarea = curBlock ? curBlock.querySelector('.qz-activity-textarea') : null;
+        if (textarea) {
+            var qid = textarea.dataset.qid;
+            answered = !!(actId && qid && ANSWERS.activities[actId] && ANSWERS.activities[actId][qid]);
+        } else {
+            var firstChoice = curBlock ? curBlock.querySelector('.qz-choice-btn') : null;
+            var cqid = firstChoice ? firstChoice.dataset.qid : null;
+            answered = !!(actId && cqid && ANSWERS.activities[actId] && ANSWERS.activities[actId][cqid]);
+        }
+
+        nextBtn.disabled = !answered;
+
+        if (ACT_STAGE.cur === total - 1) {
+            nextBtn.innerHTML = 'Finish <i class="fa fa-check"></i>';
+            nextBtn.onclick = function () {
+                checkLessonComplete();
+                closeActivityStage();
+            };
+        } else {
+            nextBtn.innerHTML = 'Next <i class="fa fa-chevron-right"></i>';
+            nextBtn.onclick = function () { actNav(1); };
+        }
+    }
+}
+
+/* ==========================
    QUIZ REVIEW NAVIGATION
-   (same carousel UI as the live quiz, read-only)
 ========================== */
 var QZ_REVIEW = { cur: 0 };
 
@@ -272,26 +447,43 @@ function qzReviewUpdateNav() {
 
     var nextBtn = document.getElementById('qzReviewNextBtn');
     if (nextBtn) {
-        // Last question: remove Next entirely instead of just disabling it
-        nextBtn.style.display = (QZ_REVIEW.cur === total - 1) ? 'none' : 'flex';
+        nextBtn.style.display = 'flex';
+
+        if (QZ_REVIEW.cur === total - 1) {
+            nextBtn.innerHTML = 'View Result <i class="fa fa-arrow-right"></i>';
+            nextBtn.onclick = function () { showReviewResults(); };
+        } else {
+            nextBtn.innerHTML = 'Next <i class="fa fa-chevron-right"></i>';
+            nextBtn.onclick = function () { qzReviewNav(1); };
+        }
+    }
+}
+
+/* ==========================
+   QUIZ REVIEW RESULTS SCREEN
+========================== */
+function showReviewResults() {
+    var stage = document.getElementById('qzReviewStage');
+    var results = document.getElementById('qzReviewResults');
+    if (!stage || !results) return;
+
+    stage.style.display = 'none';
+    results.style.display = 'block';
+
+    var exitBtn = document.querySelector('#section-quizzes .btn-exit-quiz');
+    if (exitBtn) exitBtn.style.display = 'none';
+
+    var backBtn = document.getElementById('qzReviewResultsBackBtn');
+    if (backBtn) {
+        backBtn.onclick = function () {
+            results.style.display = 'none';
+            stage.style.display = 'block';
+            if (exitBtn) exitBtn.style.display = '';
+        };
     }
 }
 
 document.addEventListener('DOMContentLoaded', qzReviewInit);
-
-function qzRestoreSelection(block) {
-    if (!block) return;
-    block.querySelectorAll('.qz-choice-btn').forEach(function (btn) {
-        var qid = btn.dataset.qid;
-        var key = btn.dataset.key;
-        if (!qid || !key) return; // skip buttons with no answer data (e.g. review mode)
-        if (UNIFIED_QZ.ans[qid] === key) {
-            btn.classList.add('selected');
-        } else {
-            btn.classList.remove('selected');
-        }
-    });
-}
 
 /* ==========================
    CHECK IF ALL ANSWERED
@@ -716,11 +908,6 @@ function switchTab(name, btn) {
 function dbLightbox(src) {
     var lb = document.getElementById('dbLightbox');
 
-    // Some ancestor (e.g. an offcanvas panel using CSS transform)
-    // can break position:fixed, causing the lightbox to scroll
-    // with the page instead of staying pinned to the viewport.
-    // Re-parenting to <body> guarantees it's never inside that
-    // ancestor when it opens.
     if (lb.parentElement !== document.body) {
         document.body.appendChild(lb);
     }
@@ -728,7 +915,6 @@ function dbLightbox(src) {
     document.getElementById('dbLightboxImg').src = src;
     lb.classList.add('open');
 
-    // Prevent the page behind the lightbox from scrolling
     document.body.dataset.prevOverflow = document.body.style.overflow || '';
     document.body.style.overflow = 'hidden';
 }

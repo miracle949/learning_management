@@ -53,8 +53,10 @@
             background-size: cover;
             background-position: center;
             position: relative;
-            margin-top: 1rem;
+            /* margin-top: 1rem; */
             position: relative;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
             z-index: 1;
         }
 
@@ -64,13 +66,16 @@
             inset: 0;
             pointer-events: none;
             background: rgba(0, 0, 0, .30);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
         }
 
         /* ── HERO INFO ── */
         .hero-info {
             background: #fff;
             padding: 16px 20px 0;
-            border-bottom: 1px solid #e4e7eb;
+            /* border-bottom: 1px solid #e4e7eb; */
+            border: 1px solid #e4e7eb;
             position: relative;
             z-index: 2;
         }
@@ -78,13 +83,15 @@
         .hero-info h2 {
             font-size: 18px;
             font-weight: 800;
-            color: #00a84a;
-            margin-bottom: 4px;
+            /* color: #00a84a; */
+            color: #1a1a1a;
+            margin-bottom: 5px;
         }
 
         .hero-meta {
-            font-size: 13px;
-            color: #6b7280;
+            font-size: 14.5px;
+            /* color: #6b7280; */
+            color: var(--text-dim);
             margin-bottom: 14px;
         }
 
@@ -95,7 +102,7 @@
             padding: 0;
             background: #fff;
             margin-top: .5rem;
-            border-bottom: 2px solid #e4e7eb;
+            /* border-bottom: 2px solid #e4e7eb; */
         }
 
         .tab-btn {
@@ -112,8 +119,10 @@
         }
 
         .tab-btn.active {
-            color: #009e3e;
-            border-bottom-color: #00C950;
+            /* color: #009e3e; */
+            color: var(--neon-cyan);
+            /* border-bottom-color: #00C950; */
+            border-bottom-color: var(--neon-cyan);
         }
 
         .tab-btn:hover:not(.active) {
@@ -148,11 +157,13 @@
 
         .stream-card {
             background: #fff;
-            border: 1px solid #e4e7eb;
+            /* border: 1px solid #e4e7eb; */
+            border: 1px solid var(--border);
             border-radius: 12px;
             height: 100%;
             /* margin-bottom: 14px; */
-            box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+            /* box-shadow: 0 1px 3px rgba(0, 0, 0, .05); */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
             overflow: hidden;
             transition: box-shadow .15s;
             margin-top: 0.5rem;
@@ -228,10 +239,10 @@
         }
 
         .stream-label {
-            font-size: 12px;
+            font-size: 14px;
             font-weight: 700;
-            color: #111827;
-            margin-bottom: 4px;
+            color: #1a1a1a;
+            margin-bottom: 5px;
         }
 
         .stream-line {
@@ -241,7 +252,9 @@
         }
 
         .stream-line strong {
-            font-weight: 700;
+            font-weight: 500;
+            font-size: 13px;
+            color: var(--text-dim);
         }
 
         .stream-anm-text {
@@ -592,7 +605,8 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: #00C950;
+            /* background: #00C950; */
+            background-color: var(--neon-cyan);
             color: #fff;
             border: none;
             border-radius: 50px;
@@ -601,7 +615,7 @@
             font-weight: 700;
             /* margin-right: 40%; */
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(0, 201, 80, .4);
+            /* box-shadow: 0 4px 20px rgba(0, 201, 80, .4); */
             text-decoration: none;
             transition: background .15s, transform .15s;
         }
@@ -711,6 +725,216 @@
             height: 100%;
             border: none;
         }
+
+        /* Hero overlay */
+        .hero-banner {
+            display: flex;
+            justify-content: start;
+            align-items: center;
+            /* align-items: flex-end; */
+            padding: 24px 28px;
+            height: 220px;
+        }
+
+        .hero-overlay-content {
+            position: relative;
+            z-index: 2;
+            color: #fff;
+        }
+
+        .class-badge {
+            display: inline-block;
+            background: #1447e6;
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .03em;
+            margin-bottom: 8px;
+        }
+
+        .hero-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .hero-subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, .85);
+            margin-bottom: 6px;
+        }
+
+        .hero-tagline {
+            font-size: 13px;
+            color: rgba(255, 255, 255, .7);
+            max-width: 520px;
+        }
+
+        /* Layout with sidebar */
+        .content-layout {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            /* border: 1px solid var(--border); */
+            background-color: #ffffff;
+            border: 1px solid #e4e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            padding: 1.5rem;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        .content-layout main {
+            flex: 1;
+            min-width: 0;
+            padding: 1.5rem 0 2rem;
+        }
+
+        .sidebar-col {
+            width: 300px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .info-card {
+            background: #fff;
+            /* border: 1px solid #e4e7eb; */
+            border-radius: 12px;
+            padding: 18px;
+            /* box-shadow: 0 1px 3px rgba(0, 0, 0, .05); */
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        .info-card-header {
+            font-size: 13px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .info-label {
+            color: #9ca3af;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .donut-wrap {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0 18px;
+        }
+
+        .donut {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .donut-hole {
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: #1447e6;
+        }
+
+        .legend-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .legend-row b {
+            margin-left: auto;
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot-blue {
+            background: #1447e6;
+        }
+
+        .dot-green {
+            background: #00c950;
+        }
+
+        .dot-orange {
+            background: #f59e0b;
+        }
+
+        .total-students {
+            border-top: 1px solid #f0f2f5;
+            margin-top: 10px;
+            padding-top: 12px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .total-students b {
+            color: #111827;
+        }
+
+        /* Icon variants + assignment due chip */
+        .icon-blue {
+            background: #dbeafe;
+        }
+
+        .icon-blue i {
+            color: #1447e6;
+        }
+
+        .icon-orange {
+            background: #ffedd4;
+        }
+
+        .icon-orange i {
+            color: #f54900;
+        }
+
+        .due-chip {
+            background: #fef3c7;
+            color: #b45309;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
     </style>
 </head>
 
@@ -761,7 +985,12 @@
             /* ── Fetch announcements, assignments, and submissions ── */
             $tid = $_SESSION['teacher_id'] ?? 0;
             $announcements = ($subject_id && $teacherModel) ? $teacherModel->getAnnouncements($subject_id, $tid, $section_id) : [];
+
             $assignments = ($subject_id && $teacherModel) ? $teacherModel->getAssignments($subject_id, $tid, $section_id) : [];
+
+            $progressStats = ($subject_id && $teacherModel)
+                ? $teacherModel->getClassProgressStats($subject_id, $tid, $section_id ?? 0)
+                : ['submitted' => 0, 'graded' => 0, 'pending' => 0, 'percentage' => 0, 'total_students' => 0];
 
             // For each assignment, load student submissions
             foreach ($assignments as &$asgn) {
@@ -928,16 +1157,26 @@
             <div class="invite-toast" id="inviteToast"></div>
 
             <!-- HERO BANNER -->
-            <div class="hero-banner" style="background-image:<?= $bannerBg ?>;"></div>
+            <div class="hero-banner" style="background-image:<?= $bannerBg ?>;">
+                <div class="hero-overlay-content">
+                    <?php if (!empty($classInfo['subject_code'])): ?>
+                        <span class="class-badge"><?= htmlspecialchars($classInfo['subject_code']) ?></span>
+                    <?php endif; ?>
+                    <h2 class="hero-title"><?= htmlspecialchars($classInfo['subject_name'] ?? '') ?></h2>
+                    <p class="hero-subtitle">
+                        <?= htmlspecialchars($classInfo['subject_code'] ?? '') ?>
+                        <?php if (!empty($classInfo['grade'])): ?> &middot;
+                            <?= htmlspecialchars($classInfo['grade']) ?><?php endif; ?>
+                        <?php if (!empty($classInfo['section'])): ?> &middot;
+                            <?= htmlspecialchars($classInfo['section']) ?><?php endif; ?>
+                    </p>
+                    <p class="hero-tagline">Manage your class content, engage with students, and track their learning
+                        progress.</p>
+                </div>
+            </div>
 
-            <!-- HERO INFO -->
+            <!-- HERO INFO (tabs only now) -->
             <div class="hero-info">
-                <h2><?= htmlspecialchars($classInfo['subject_name'] ?? '') ?></h2>
-                <p class="hero-meta">
-                    <?= htmlspecialchars($classInfo['section'] ?? '') ?>
-                </p>
-
-                <!-- TABS -->
                 <div class="tabs">
                     <button class="tab-btn active" data-tab="stream">Stream</button>
                     <button class="tab-btn" data-tab="classwork">Classwork</button>
@@ -945,27 +1184,31 @@
                 </div>
             </div>
 
-            <main>
+            <div class="content-layout">
+                <main>
 
-                <!-- ════════════ STREAM TAB ════════════ -->
-                <div class="tab-pane active" id="tab-stream">
+                    <!-- ════════════ STREAM TAB ════════════ -->
+                    <div class="tab-pane active" id="tab-stream">
 
-                    <?php
-                    // Merge modules + announcements into chronological feed (newest first)
-                    $feed = [];
-                    foreach ($cfModules ?? [] as $m) {
-                        $feed[] = ['type' => 'module', 'data' => $m, 'time' => strtotime($m['posted_at'])];
-                    }
-                    foreach ($announcements as $a) {
-                        $feed[] = ['type' => 'announcement', 'data' => $a, 'time' => strtotime($a['posted_at'])];
-                    }
-                    usort($feed, fn($a, $b) => $b['time'] - $a['time']);
-                    usort($feed, fn($a, $b) => $b['time'] - $a['time']);
-                    ?>
+                        <?php
+                        // Merge modules + announcements into chronological feed (newest first)
+                        $feed = [];
+                        foreach ($cfModules ?? [] as $m) {
+                            $feed[] = ['type' => 'module', 'data' => $m, 'time' => strtotime($m['posted_at'])];
+                        }
+                        foreach ($assignments as $asg) {
+                            $feed[] = ['type' => 'assignment', 'data' => $asg, 'time' => strtotime($asg['created_at'])];
+                        }
+                        foreach ($announcements as $a) {
+                            $feed[] = ['type' => 'announcement', 'data' => $a, 'time' => strtotime($a['posted_at'])];
+                        }
+                        usort($feed, fn($a, $b) => $b['time'] - $a['time']);
+                        usort($feed, fn($a, $b) => $b['time'] - $a['time']);
+                        ?>
 
-                    <div class="create-wrap">
-                        <div class="create-menu" id="createMenu">
-                            <!-- <a
+                        <div class="create-wrap">
+                            <div class="create-menu" id="createMenu">
+                                <!-- <a
                                 href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
                                 <i class="fa fa-layer-group"></i> Module
                             </a>
@@ -973,384 +1216,448 @@
                                 href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
                                 <i class="fa fa-bullhorn"></i> Announcement
                             </a> -->
-                            <!-- <a
+                                <!-- <a
                                 href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
                                 <i class="fa fa-clipboard-list"></i> Assignment
                             </a> -->
-                        </div>
-                        <!-- <button class="btn-create" onclick="toggleCreateMenu()" id="createBtn">
+                            </div>
+                            <!-- <button class="btn-create" onclick="toggleCreateMenu()" id="createBtn">
                             <i class="fa fa-plus"></i> Create
                         </button> -->
-                        <!-- Stream tab Create button -->
-                        <a class="btn-create"
-                            href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>&tab=stream">
-                            <i class="fa fa-plus"></i> Create
-                        </a>
-                    </div>
-
-                    <?php if (empty($feed)): ?>
-                        <div class="empty-state">
-                            <i class="fa fa-layer-group"></i>
-                            <p>No materials posted yet.<br>Click <strong>+ Create</strong> to start.</p>
+                            <!-- Stream tab Create button -->
+                            <a class="btn-create"
+                                href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>&tab=stream">
+                                <i class="fa fa-plus"></i> Create
+                            </a>
                         </div>
-                    <?php endif; ?>
 
-                    <?php foreach ($feed as $item):
-                        $d = $item['data'];
-                        ?>
-
-                        <?php if ($item['type'] === 'announcement'): ?>
-                            <!-- ANNOUNCEMENT CARD -->
-                            <div class="stream-card">
-                                <div class="stream-card-inner">
-                                    <div class="anm-avatar"><?= $initials ?></div>
-                                    <div class="stream-body">
-                                        <div class="stream-label">Announcement</div>
-                                        <div class="stream-line">
-                                            <strong><?= htmlspecialchars($d['title'] ?? '') ?></strong>
-                                        </div>
-                                    </div>
-                                    <button class="stream-menu">⋮</button>
-                                </div>
-                                <div class="stream-footer">
-                                    Date: <?= date('M d', strtotime($d['posted_at'])) ?>
-                                </div>
+                        <?php if (empty($feed)): ?>
+                            <div class="empty-state">
+                                <i class="fa fa-layer-group"></i>
+                                <p>No materials posted yet.<br>Click <strong>+ Create</strong> to start.</p>
                             </div>
+                        <?php endif; ?>
 
-                        <?php else: ?>
-                            <!-- MODULE CARD -->
-                            <div class="stream-card">
-                                <div class="stream-card-inner">
-                                    <div class="stream-icon">
-                                        <div class="stack-lines"><span></span><span></span><span></span></div>
-                                    </div>
-                                    <div class="stream-body">
-                                        <div class="stream-label">New Material</div>
-                                        <div class="stream-line">
-                                            <strong>Title :</strong> <?= htmlspecialchars($d['title']) ?>
-                                        </div>
-                                        <?php if (!empty($d['description'])): ?>
+                        <?php foreach ($feed as $item):
+                            $d = $item['data'];
+                            ?>
+
+                            <?php if ($item['type'] === 'announcement'): ?>
+                                <!-- ANNOUNCEMENT CARD -->
+                                <div class="stream-card">
+                                    <div class="stream-card-inner">
+                                        <div class="anm-avatar"><?= $initials ?></div>
+                                        <div class="stream-body">
+                                            <div class="stream-label">Announcement</div>
                                             <div class="stream-line">
-                                                <strong>Description:</strong> <?= htmlspecialchars($d['description']) ?>
+                                                <strong><?= htmlspecialchars($d['title'] ?? '') ?></strong>
                                             </div>
+                                        </div>
+                                        <button class="stream-menu">⋮</button>
+                                    </div>
+                                    <div class="stream-footer">
+                                        Date: <?= date('M d', strtotime($d['posted_at'])) ?>
+                                    </div>
+                                </div>
+
+                            <?php elseif ($item['type'] === 'assignment'): ?>
+                                <!-- ASSIGNMENT CARD (orange) -->
+                                <div class="stream-card">
+                                    <div class="stream-card-inner">
+                                        <div class="stream-icon icon-orange"><i class="fa fa-clipboard-list"></i></div>
+                                        <div class="stream-body">
+                                            <div class="stream-label" style="color:#f54900;">New Assignment</div>
+                                            <div class="stream-line"><strong><?= htmlspecialchars($d['title']) ?></strong></div>
+                                            <?php if (!empty($d['description'])): ?>
+                                                <div class="stream-anm-text"><?= htmlspecialchars($d['description']) ?></div>
+                                            <?php endif; ?>
+                                        </div>
+                                        <button class="stream-menu">⋮</button>
+                                    </div>
+                                    <div class="stream-footer"
+                                        style="display:flex;justify-content:space-between;align-items:center;">
+                                        <span>Date: <?= date('M d', $item['time']) ?></span>
+                                        <?php if (!empty($d['due_date'])): ?>
+                                            <span class="due-chip">Due: <?= date('M d, Y', strtotime($d['due_date'])) ?></span>
                                         <?php endif; ?>
                                     </div>
-                                    <button class="stream-menu">⋮</button>
                                 </div>
 
-                                <?php if (!empty($d['materials'])): ?>
-                                    <div class="stream-files">
-                                        <?php foreach ($d['materials'] as $mat):
-                                            if (empty($mat['file_name']) || empty($mat['file_path']))
-                                                continue;
-                                            $ext = strtolower(pathinfo($mat['file_name'], PATHINFO_EXTENSION));
+                                <!-- MODULE CARD -->
+                                <div class="stream-card">
+                                    <div class="stream-card-inner">
+                                        <div class="stream-icon">
+                                            <div class="stack-lines"><span></span><span></span><span></span></div>
+                                        </div>
+                                        <div class="stream-body">
+                                            <div class="stream-label">New Material</div>
+                                            <div class="stream-line">
+                                                <strong>Title :</strong> <?= htmlspecialchars($d['title']) ?>
+                                            </div>
+                                            <?php if (!empty($d['description'])): ?>
+                                                <div class="stream-line">
+                                                    <strong>Description:</strong> <?= htmlspecialchars($d['description']) ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                        <button class="stream-menu">⋮</button>
+                                    </div>
 
-                                            // Pick icon + color based on extension
-                                            if (in_array($ext, ['ppt', 'pptx'])) {
-                                                $ico = 'fa-file-powerpoint';
-                                                $icoColor = '#d04423';
-                                            } elseif (in_array($ext, ['doc', 'docx'])) {
-                                                $ico = 'fa-file-word';
-                                                $icoColor = '#1e5ebb';
-                                            } else {
-                                                $ico = 'fa-file-pdf';
-                                                $icoColor = '#e53e3e';
-                                            }
+                                    <?php if (!empty($d['materials'])): ?>
+                                        <div class="stream-files">
+                                            <?php foreach ($d['materials'] as $mat):
+                                                if (empty($mat['file_name']) || empty($mat['file_path']))
+                                                    continue;
+                                                $ext = strtolower(pathinfo($mat['file_name'], PATHINFO_EXTENSION));
 
-                                            $sizeKb = $mat['file_size'] > 0 ? round($mat['file_size'] / 1024, 1) . ' KB' : '';
-                                            ?>
+                                                // Pick icon + color based on extension
+                                                if (in_array($ext, ['ppt', 'pptx'])) {
+                                                    $ico = 'fa-file-powerpoint';
+                                                    $icoColor = '#d04423';
+                                                } elseif (in_array($ext, ['doc', 'docx'])) {
+                                                    $ico = 'fa-file-word';
+                                                    $icoColor = '#1e5ebb';
+                                                } else {
+                                                    $ico = 'fa-file-pdf';
+                                                    $icoColor = '#e53e3e';
+                                                }
+
+                                                $sizeKb = $mat['file_size'] > 0 ? round($mat['file_size'] / 1024, 1) . ' KB' : '';
+                                                ?>
+                                                <div class="stream-file"
+                                                    onclick="openFileViewer('<?= htmlspecialchars($mat['file_path']) ?>', '<?= htmlspecialchars($mat['file_name']) ?>', '<?= $ext ?>')"
+                                                    style="cursor:pointer;">
+                                                    <i class="fa <?= $ico ?>" style="color:<?= $icoColor ?>"></i>
+                                                    <span class="sf-name"><?= htmlspecialchars($mat['file_name']) ?></span>
+                                                    <?php if ($sizeKb): ?>
+                                                        <span class="sf-meta"><?= strtoupper($ext) ?> · <?= $sizeKb ?></span>
+                                                    <?php endif; ?>
+                                                    <a class="sf-dl" href="<?= htmlspecialchars($mat['file_path']) ?>"
+                                                        download="<?= htmlspecialchars($mat['file_name']) ?>" target="_blank"
+                                                        onclick="event.stopPropagation()" title="Download">
+                                                        <i class="fa fa-download"></i>
+                                                    </a>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <div class="stream-footer">
+                                        Date: <?= date('M d', $item['time']) ?>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+
+                        <?php endforeach; ?>
+
+                        <!-- CREATE DROPDOWN -->
+
+
+                    </div><!-- /stream -->
+
+
+                    <!-- ════════════ CLASSWORK TAB ════════════ -->
+                    <!-- Shows ASSIGNMENTS and STUDENT SUBMISSIONS — not uploads -->
+                    <div class="tab-pane" id="tab-classwork">
+
+                        <!-- CREATE DROPDOWN -->
+                        <div class="create-wrap">
+                            <div class="create-menu" id="createMenu2">
+                                <!-- <a
+                                href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
+                                <i class="fa fa-layer-group"></i> Module
+                            </a>
+                            <a
+                                href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
+                                <i class="fa fa-bullhorn"></i> Announcement
+                            </a> -->
+                                <!-- <a
+                                href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
+                                <i class="fa fa-clipboard-list"></i> Assignment
+                            </a> -->
+                            </div>
+                            <!-- <button class="btn-create" onclick="toggleCreateMenu2()" id="createBtn2">
+                            <i class="fa fa-plus"></i> Create
+                        </button> -->
+                            <!-- <a class="btn-create" href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>" id="createBtn">
+                            <i class="fa fa-plus"></i> Create
+                        </a> -->
+
+                            <!-- Classwork tab Create button -->
+                            <a class="btn-create"
+                                href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>&tab=classwork">
+                                <i class="fa fa-plus"></i> Create
+                            </a>
+                        </div>
+
+                        <?php if (empty($assignments)): ?>
+                            <div class="empty-state">
+                                <i class="fa fa-clipboard-list"></i>
+                                <p>No assignments yet.<br>Click <strong>+ Create</strong> to add one.</p>
+                            </div>
+                        <?php else: ?>
+
+                            <!-- <p class="cw-section-title"><i class="fa fa-clipboard-list me-1"></i> Assignments</p> -->
+
+                            <?php foreach ($assignments as $asgn):
+                                $subCount = count($asgn['submissions'] ?? []);
+                                ?>
+                                <div class="assign-card"
+                                    onclick="window.location.href='/learning_management/public/?url=student_works&assignment_id=<?= $asgn['id'] ?>&subject_id=<?= $subject_id ?>'">
+                                    <!-- Assignment header — click to toggle submissions -->
+                                    <div class="assign-inner">
+                                        <div class="assign-icon">
+                                            <div class="stack-lines"><span></span><span></span><span></span></div>
+                                        </div>
+                                        <div class="assign-body">
+                                            <div class="assign-label">
+                                                New Assignment
+                                                <!-- Add this line below -->
+                                                <span style="font-size:11px;font-weight:500;color:#6b7280;margin-left:8px;">
+                                                    <?= htmlspecialchars($classInfo['subject_name'] ?? '') ?>
+                                                </span>
+                                            </div>
+                                            <div class="assign-line">
+                                                <strong>Title:</strong> <?= htmlspecialchars($asgn['title']) ?>
+                                            </div>
+                                            <?php if (!empty($asgn['description'])): ?>
+                                                <div class="assign-line">
+                                                    <strong>Description:</strong> <?= htmlspecialchars($asgn['description']) ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+                                        <button class="stream-menu" onclick="event.stopPropagation()">⋮</button>
+                                    </div>
+                                    <?php if (!empty($asgn['file_name']) && !empty($asgn['file_path'])): ?>
+                                        <?php
+                                        $ext = strtolower(pathinfo($asgn['file_name'], PATHINFO_EXTENSION));
+                                        if (in_array($ext, ['ppt', 'pptx'])) {
+                                            $ico = 'fa-file-powerpoint';
+                                            $icoColor = '#d04423';
+                                        } elseif (in_array($ext, ['doc', 'docx'])) {
+                                            $ico = 'fa-file-word';
+                                            $icoColor = '#1e5ebb';
+                                        } else {
+                                            $ico = 'fa-file-pdf';
+                                            $icoColor = '#e53e3e';
+                                        }
+                                        $sizeKb = !empty($asgn['file_size']) && $asgn['file_size'] > 0
+                                            ? round($asgn['file_size'] / 1024, 1) . ' KB' : '';
+                                        ?>
+                                        <div class="stream-files">
                                             <div class="stream-file"
-                                                onclick="openFileViewer('<?= htmlspecialchars($mat['file_path']) ?>', '<?= htmlspecialchars($mat['file_name']) ?>', '<?= $ext ?>')"
+                                                onclick="event.stopPropagation(); openFileViewer('<?= htmlspecialchars($asgn['file_path']) ?>', '<?= htmlspecialchars($asgn['file_name']) ?>', '<?= $ext ?>')"
                                                 style="cursor:pointer;">
                                                 <i class="fa <?= $ico ?>" style="color:<?= $icoColor ?>"></i>
-                                                <span class="sf-name"><?= htmlspecialchars($mat['file_name']) ?></span>
+                                                <span class="sf-name">
+                                                    <?= htmlspecialchars($asgn['file_name']) ?>
+                                                </span>
                                                 <?php if ($sizeKb): ?>
-                                                    <span class="sf-meta"><?= strtoupper($ext) ?> · <?= $sizeKb ?></span>
+                                                    <span class="sf-meta">
+                                                        <?= strtoupper($ext) ?> ·
+                                                        <?= $sizeKb ?>
+                                                    </span>
                                                 <?php endif; ?>
-                                                <a class="sf-dl" href="<?= htmlspecialchars($mat['file_path']) ?>"
-                                                    download="<?= htmlspecialchars($mat['file_name']) ?>" target="_blank"
+                                                <a class="sf-dl" href="<?= htmlspecialchars($asgn['file_path']) ?>"
+                                                    download="<?= htmlspecialchars($asgn['file_name']) ?>"
                                                     onclick="event.stopPropagation()" title="Download">
                                                     <i class="fa fa-download"></i>
                                                 </a>
                                             </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                <?php endif; ?>
-
-                                <div class="stream-footer">
-                                    Date: <?= date('M d', $item['time']) ?>
-                                </div>
-                            </div>
-                        <?php endif; ?>
-
-                    <?php endforeach; ?>
-
-                    <!-- CREATE DROPDOWN -->
-
-
-                </div><!-- /stream -->
-
-
-                <!-- ════════════ CLASSWORK TAB ════════════ -->
-                <!-- Shows ASSIGNMENTS and STUDENT SUBMISSIONS — not uploads -->
-                <div class="tab-pane" id="tab-classwork">
-
-                    <!-- CREATE DROPDOWN -->
-                    <div class="create-wrap">
-                        <div class="create-menu" id="createMenu2">
-                            <!-- <a
-                                href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
-                                <i class="fa fa-layer-group"></i> Module
-                            </a>
-                            <a
-                                href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
-                                <i class="fa fa-bullhorn"></i> Announcement
-                            </a> -->
-                            <!-- <a
-                                href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>">
-                                <i class="fa fa-clipboard-list"></i> Assignment
-                            </a> -->
-                        </div>
-                        <!-- <button class="btn-create" onclick="toggleCreateMenu2()" id="createBtn2">
-                            <i class="fa fa-plus"></i> Create
-                        </button> -->
-                        <!-- <a class="btn-create" href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>" id="createBtn">
-                            <i class="fa fa-plus"></i> Create
-                        </a> -->
-
-                        <!-- Classwork tab Create button -->
-                        <a class="btn-create"
-                            href="/learning_management/public/?url=lessons&id=<?= $subject_id ?>&grade_id=<?= $grade_level_id ?>&section_id=<?= $section_id ?? 0 ?>&tab=classwork">
-                            <i class="fa fa-plus"></i> Create
-                        </a>
-                    </div>
-
-                    <?php if (empty($assignments)): ?>
-                        <div class="empty-state">
-                            <i class="fa fa-clipboard-list"></i>
-                            <p>No assignments yet.<br>Click <strong>+ Create</strong> to add one.</p>
-                        </div>
-                    <?php else: ?>
-
-                        <!-- <p class="cw-section-title"><i class="fa fa-clipboard-list me-1"></i> Assignments</p> -->
-
-                        <?php foreach ($assignments as $asgn):
-                            $subCount = count($asgn['submissions'] ?? []);
-                            ?>
-                            <div class="assign-card"
-                                onclick="window.location.href='/learning_management/public/?url=student_works&assignment_id=<?= $asgn['id'] ?>&subject_id=<?= $subject_id ?>'">
-                                <!-- Assignment header — click to toggle submissions -->
-                                <div class="assign-inner">
-                                    <div class="assign-icon">
-                                        <div class="stack-lines"><span></span><span></span><span></span></div>
-                                    </div>
-                                    <div class="assign-body">
-                                        <div class="assign-label">
-                                            New Assignment
-                                            <!-- Add this line below -->
-                                            <span style="font-size:11px;font-weight:500;color:#6b7280;margin-left:8px;">
-                                                <?= htmlspecialchars($classInfo['subject_name'] ?? '') ?>
-                                            </span>
                                         </div>
-                                        <div class="assign-line">
-                                            <strong>Title:</strong> <?= htmlspecialchars($asgn['title']) ?>
-                                        </div>
-                                        <?php if (!empty($asgn['description'])): ?>
-                                            <div class="assign-line">
-                                                <strong>Description:</strong> <?= htmlspecialchars($asgn['description']) ?>
-                                            </div>
-                                        <?php endif; ?>
-                                    </div>
-                                    <button class="stream-menu" onclick="event.stopPropagation()">⋮</button>
-                                </div>
-                                <?php if (!empty($asgn['file_name']) && !empty($asgn['file_path'])): ?>
-                                    <?php
-                                    $ext = strtolower(pathinfo($asgn['file_name'], PATHINFO_EXTENSION));
-                                    if (in_array($ext, ['ppt', 'pptx'])) {
-                                        $ico = 'fa-file-powerpoint';
-                                        $icoColor = '#d04423';
-                                    } elseif (in_array($ext, ['doc', 'docx'])) {
-                                        $ico = 'fa-file-word';
-                                        $icoColor = '#1e5ebb';
-                                    } else {
-                                        $ico = 'fa-file-pdf';
-                                        $icoColor = '#e53e3e';
-                                    }
-                                    $sizeKb = !empty($asgn['file_size']) && $asgn['file_size'] > 0
-                                        ? round($asgn['file_size'] / 1024, 1) . ' KB' : '';
-                                    ?>
-                                    <div class="stream-files">
-                                        <div class="stream-file"
-                                            onclick="event.stopPropagation(); openFileViewer('<?= htmlspecialchars($asgn['file_path']) ?>', '<?= htmlspecialchars($asgn['file_name']) ?>', '<?= $ext ?>')"
-                                            style="cursor:pointer;">
-                                            <i class="fa <?= $ico ?>" style="color:<?= $icoColor ?>"></i>
-                                            <span class="sf-name">
-                                                <?= htmlspecialchars($asgn['file_name']) ?>
-                                            </span>
-                                            <?php if ($sizeKb): ?>
-                                                <span class="sf-meta">
-                                                    <?= strtoupper($ext) ?> ·
-                                                    <?= $sizeKb ?>
-                                                </span>
-                                            <?php endif; ?>
-                                            <a class="sf-dl" href="<?= htmlspecialchars($asgn['file_path']) ?>"
-                                                download="<?= htmlspecialchars($asgn['file_name']) ?>"
-                                                onclick="event.stopPropagation()" title="Download">
-                                                <i class="fa fa-download"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                <?php endif; ?>
-                                <div class="assign-footer">
-                                    <span>Due Date:
-                                        <?= !empty($asgn['due_date']) ? date('M d', strtotime($asgn['due_date'])) : '—' ?>
-                                        <?= !empty($asgn['due_time']) ? ' at ' . date('h:i A', strtotime($asgn['due_time'])) : '' ?>
-                                    </span>
-
-                                    <div class="submit-points">
-                                        <?php if ($subCount > 0): ?>
-                                            <span class="sub-count-badge"><?= $subCount ?> submitted</span>
-                                        <?php endif; ?>
-
-                                        <span class="assign-pts"><?= (int) ($asgn['points'] ?? 100) ?> pts</span>
-                                    </div>
-                                </div>
-
-                                <!-- Student submissions (accordion) -->
-                                <div class="assign-submissions">
-                                    <?php if (empty($asgn['submissions'])): ?>
-                                        <p style="font-size:12px;color:#9ca3af;text-align:center;padding:.75rem 0;">
-                                            <i class="fa fa-inbox me-1"></i> No submissions yet.
-                                        </p>
-                                    <?php else: ?>
-                                        <?php foreach ($asgn['submissions'] as $sub):
-                                            $stuInitials = getInitials($sub['student_name'] ?? 'S');
-                                            $status = $sub['status'] ?? 'submitted';
-                                            $statusLabel = ucfirst($status);
-
-                                            $subExt = '';
-                                            $subFilePath = '';
-                                            $subFileName = '';
-                                            $subOriginalName = '';
-                                            if (!empty($sub['file_path'])) {
-                                                $subFilePath = $sub['file_path'];
-                                                if (!str_starts_with($subFilePath, '/') && !str_starts_with($subFilePath, 'http')) {
-                                                    $subFilePath = '/learning_management/' . $subFilePath;
-                                                }
-                                                $subFileName = basename($sub['file_path']);
-                                                $subExt = strtolower(pathinfo($subFileName, PATHINFO_EXTENSION));
-
-                                                // Strip the unique prefix (e.g. "69cf73c9475c0_") to get the original name
-                                                $subOriginalName = preg_replace('/^[a-f0-9]+_/', '', $subFileName);
-                                            }
-
-                                            // Pick icon based on extension
-                                            if (in_array($subExt, ['ppt', 'pptx'])) {
-                                                $subIco = 'fa-file-powerpoint';
-                                                $subIcoColor = '#d04423';
-                                            } elseif (in_array($subExt, ['doc', 'docx'])) {
-                                                $subIco = 'fa-file-word';
-                                                $subIcoColor = '#1e5ebb';
-                                            } elseif ($subExt === 'pdf') {
-                                                $subIco = 'fa-file-pdf';
-                                                $subIcoColor = '#e53e3e';
-                                            } else {
-                                                $subIco = 'fa-file-arrow-down';
-                                                $subIcoColor = '#6b7280';
-                                            }
-
-                                            // Format submitted time — show time if today, otherwise date + time
-                                            $submittedAt = '';
-                                            $submittedTime = '';
-                                            if (!empty($sub['submitted_at'])) {
-                                                $ts = strtotime($sub['submitted_at']);
-                                                $submittedAt = date('M d', $ts);
-                                                $submittedTime = date('h:i A', $ts); // e.g. 02:35 PM
-                                            }
-                                            ?>
-                                            <div class="sub-row">
-                                                <div class="sub-avatar"><?= $stuInitials ?></div>
-
-                                                <!-- Student name -->
-                                                <span class="sub-name"><?= htmlspecialchars($sub['student_name'] ?? '—') ?></span>
-
-                                                <!-- File chip — shows cleaned original filename, clickable to open viewer -->
-                                                <?php if (!empty($sub['file_path'])): ?>
-                                                    <a class="sub-file-chip" href="javascript:void(0)"
-                                                        onclick="openFileViewer('<?= htmlspecialchars($subFilePath) ?>', '<?= htmlspecialchars($subFileName) ?>', '<?= $subExt ?>')"
-                                                        title="View <?= htmlspecialchars($subOriginalName) ?>">
-                                                        <i class="fa <?= $subIco ?>" style="color:<?= $subIcoColor ?>;"></i>
-                                                        <span><?= htmlspecialchars($subOriginalName) ?></span>
-                                                    </a>
-                                                <?php else: ?>
-                                                    <span style="flex:1;"></span>
-                                                <?php endif; ?>
-
-                                                <!-- Submitted date + time instead of download icon -->
-                                                <?php if ($submittedAt): ?>
-                                                    <span class="sub-date">
-                                                        <?= $submittedAt ?> · <span
-                                                            style="color:#374151;font-weight:600;"><?= $submittedTime ?></span>
-                                                    </span>
-                                                <?php endif; ?>
-
-                                                <span class="sub-status <?= $status ?>"><?= $statusLabel ?></span>
-                                            </div>
-                                        <?php endforeach; ?>
                                     <?php endif; ?>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
+                                    <div class="assign-footer">
+                                        <span>Due Date:
+                                            <?= !empty($asgn['due_date']) ? date('M d', strtotime($asgn['due_date'])) : '—' ?>
+                                            <?= !empty($asgn['due_time']) ? ' at ' . date('h:i A', strtotime($asgn['due_time'])) : '' ?>
+                                        </span>
 
+                                        <div class="submit-points">
+                                            <?php if ($subCount > 0): ?>
+                                                <span class="sub-count-badge"><?= $subCount ?> submitted</span>
+                                            <?php endif; ?>
 
-
-                    <?php endif; ?>
-
-                </div><!-- /classwork -->
-
-                <div class="tab-pane" id="tab-people">
-                    <div class="people-header">
-                        <div>
-                            <h4 style="font-size:16px;font-weight:800;color:#111827;margin:0;">
-                                <?= count($enrolledStudents ?? []) ?> students
-                            </h4>
-                            <!-- <p style="font-size:13px;color:#6b7280;margin:0;"><?= count($enrolledStudents ?? []) ?>
-                                Students</p> -->
-                        </div>
-                        <button onclick="openInviteModal()" style="background:#00C950;color:#fff;border:none;border-radius:50px;
-   padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;
-   display:flex;align-items:center;gap:8px;">
-                            <i class="fa fa-envelope"></i> Invite Student
-                        </button>
-                    </div>
-                    <div class="list-people">
-                        <?php if (empty($enrolledStudents)): ?>
-                            <div class="empty-state">
-                                <i class="fa fa-users"></i>
-                                <p>No students enrolled yet.</p>
-                            </div>
-                        <?php else: ?>
-                            <?php foreach ($enrolledStudents as $stu):
-                                $stuInitial = strtoupper(substr($stu['name'], 0, 1));
-                                $sectionLabel = $stu['section_name'];
-                                ?>
-                                <div class="student">
-                                    <div class="student-header">
-                                        <div class="icon">
-                                            <span><?= $stuInitial ?></span>
+                                            <span class="assign-pts"><?= (int) ($asgn['points'] ?? 100) ?> pts</span>
                                         </div>
-                                        <p><?= htmlspecialchars($stu['name']) ?></p>
                                     </div>
-                                    <div class="student-section">
-                                        <p><?= htmlspecialchars($sectionLabel) ?></p>
+
+                                    <!-- Student submissions (accordion) -->
+                                    <div class="assign-submissions">
+                                        <?php if (empty($asgn['submissions'])): ?>
+                                            <p style="font-size:12px;color:#9ca3af;text-align:center;padding:.75rem 0;">
+                                                <i class="fa fa-inbox me-1"></i> No submissions yet.
+                                            </p>
+                                        <?php else: ?>
+                                            <?php foreach ($asgn['submissions'] as $sub):
+                                                $stuInitials = getInitials($sub['student_name'] ?? 'S');
+                                                $status = $sub['status'] ?? 'submitted';
+                                                $statusLabel = ucfirst($status);
+
+                                                $subExt = '';
+                                                $subFilePath = '';
+                                                $subFileName = '';
+                                                $subOriginalName = '';
+                                                if (!empty($sub['file_path'])) {
+                                                    $subFilePath = $sub['file_path'];
+                                                    if (!str_starts_with($subFilePath, '/') && !str_starts_with($subFilePath, 'http')) {
+                                                        $subFilePath = '/learning_management/' . $subFilePath;
+                                                    }
+                                                    $subFileName = basename($sub['file_path']);
+                                                    $subExt = strtolower(pathinfo($subFileName, PATHINFO_EXTENSION));
+
+                                                    // Strip the unique prefix (e.g. "69cf73c9475c0_") to get the original name
+                                                    $subOriginalName = preg_replace('/^[a-f0-9]+_/', '', $subFileName);
+                                                }
+
+                                                // Pick icon based on extension
+                                                if (in_array($subExt, ['ppt', 'pptx'])) {
+                                                    $subIco = 'fa-file-powerpoint';
+                                                    $subIcoColor = '#d04423';
+                                                } elseif (in_array($subExt, ['doc', 'docx'])) {
+                                                    $subIco = 'fa-file-word';
+                                                    $subIcoColor = '#1e5ebb';
+                                                } elseif ($subExt === 'pdf') {
+                                                    $subIco = 'fa-file-pdf';
+                                                    $subIcoColor = '#e53e3e';
+                                                } else {
+                                                    $subIco = 'fa-file-arrow-down';
+                                                    $subIcoColor = '#6b7280';
+                                                }
+
+                                                // Format submitted time — show time if today, otherwise date + time
+                                                $submittedAt = '';
+                                                $submittedTime = '';
+                                                if (!empty($sub['submitted_at'])) {
+                                                    $ts = strtotime($sub['submitted_at']);
+                                                    $submittedAt = date('M d', $ts);
+                                                    $submittedTime = date('h:i A', $ts); // e.g. 02:35 PM
+                                                }
+                                                ?>
+                                                <div class="sub-row">
+                                                    <div class="sub-avatar"><?= $stuInitials ?></div>
+
+                                                    <!-- Student name -->
+                                                    <span class="sub-name"><?= htmlspecialchars($sub['student_name'] ?? '—') ?></span>
+
+                                                    <!-- File chip — shows cleaned original filename, clickable to open viewer -->
+                                                    <?php if (!empty($sub['file_path'])): ?>
+                                                        <a class="sub-file-chip" href="javascript:void(0)"
+                                                            onclick="openFileViewer('<?= htmlspecialchars($subFilePath) ?>', '<?= htmlspecialchars($subFileName) ?>', '<?= $subExt ?>')"
+                                                            title="View <?= htmlspecialchars($subOriginalName) ?>">
+                                                            <i class="fa <?= $subIco ?>" style="color:<?= $subIcoColor ?>;"></i>
+                                                            <span><?= htmlspecialchars($subOriginalName) ?></span>
+                                                        </a>
+                                                    <?php else: ?>
+                                                        <span style="flex:1;"></span>
+                                                    <?php endif; ?>
+
+                                                    <!-- Submitted date + time instead of download icon -->
+                                                    <?php if ($submittedAt): ?>
+                                                        <span class="sub-date">
+                                                            <?= $submittedAt ?> · <span
+                                                                style="color:#374151;font-weight:600;"><?= $submittedTime ?></span>
+                                                        </span>
+                                                    <?php endif; ?>
+
+                                                    <span class="sub-status <?= $status ?>"><?= $statusLabel ?></span>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
-                        <?php endif; ?>
-                    </div>
-                </div>
 
-            </main>
+
+
+                        <?php endif; ?>
+
+                    </div><!-- /classwork -->
+
+                    <div class="tab-pane" id="tab-people">
+                        <div class="people-header">
+                            <div>
+                                <h4 style="font-size:16px;font-weight:800;color:#111827;margin:0;">
+                                    <?= count($enrolledStudents ?? []) ?> students
+                                </h4>
+                                <!-- <p style="font-size:13px;color:#6b7280;margin:0;"><?= count($enrolledStudents ?? []) ?>
+                                Students</p> -->
+                            </div>
+                            <button onclick="openInviteModal()" style="background:#00C950;color:#fff;border:none;border-radius:50px;
+   padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;
+   display:flex;align-items:center;gap:8px;">
+                                <i class="fa fa-envelope"></i> Invite Student
+                            </button>
+                        </div>
+                        <div class="list-people">
+                            <?php if (empty($enrolledStudents)): ?>
+                                <div class="empty-state">
+                                    <i class="fa fa-users"></i>
+                                    <p>No students enrolled yet.</p>
+                                </div>
+                            <?php else: ?>
+                                <?php foreach ($enrolledStudents as $stu):
+                                    $stuInitial = strtoupper(substr($stu['name'], 0, 1));
+                                    $sectionLabel = $stu['section_name'];
+                                    ?>
+                                    <div class="student">
+                                        <div class="student-header">
+                                            <div class="icon">
+                                                <span><?= $stuInitial ?></span>
+                                            </div>
+                                            <p><?= htmlspecialchars($stu['name']) ?></p>
+                                        </div>
+                                        <div class="student-section">
+                                            <p><?= htmlspecialchars($sectionLabel) ?></p>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                </main>
+                <aside class="sidebar-col">
+                    <div class="info-card">
+                        <div class="info-card-header"><i class="fa fa-circle-info"></i> About this class</div>
+                        <div class="info-row">
+                            <span class="info-label">Subject Code</span>
+                            <span class="info-value">
+                                <?= htmlspecialchars($classInfo['subject_code'] ?? '—') ?>
+                            </span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Teacher</span>
+                            <span class="info-value">
+                                <?= htmlspecialchars($teacherName) ?>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-card-header"><i class="fa fa-chart-line"></i> Class Progress Overview</div>
+                        <div class="donut-wrap">
+                            <div class="donut"
+                                style="background: conic-gradient(#1447e6 <?= $progressStats['percentage'] * 3.6 ?>deg, #e9ecf1 0deg);">
+                                <div class="donut-hole">
+                                    <?= $progressStats['percentage'] ?>%
+                                </div>
+                            </div>
+                        </div>
+                        <div class="legend-row"><span class="dot dot-blue"></span> Submitted <b>
+                                <?= $progressStats['submitted'] ?>
+                            </b></div>
+                        <div class="legend-row"><span class="dot dot-green"></span> Graded <b>
+                                <?= $progressStats['graded'] ?>
+                            </b></div>
+                        <div class="legend-row"><span class="dot dot-orange"></span> Pending <b>
+                                <?= $progressStats['pending'] ?>
+                            </b></div>
+                        <div class="total-students">Total Students: <b>
+                                <?= $progressStats['total_students'] ?>
+                            </b></div>
+                    </div>
+                </aside>
+            </div>
 
             <!-- ANNOUNCEMENT MODAL -->
             <div class="modal fade" id="announceModal" tabindex="-1" aria-hidden="true">

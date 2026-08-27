@@ -12,10 +12,10 @@
     <style>
         /* ── CLASSES PAGE — Figma match ── */
         .tc-page-title {
-            font-size: 21px;
+            font-size: 24px;
             font-weight: 600;
             /* color: #1a1a2e; */
-            color: #212529;
+            color: #1a1a1a;
             margin: 0 0 8px;
             font-family: 'Poppins', sans-serif;
         }
@@ -23,8 +23,9 @@
         .tc-page-sub {
             font-size: 14.5px;
             /* color: #6b7280; */
-            color: #808080;
-            font-weight: 600;
+            /* color: #808080; */
+            color: var(--text-dim);
+            font-weight: 500;
             margin: 0 0 1.2rem;
         }
 
@@ -41,8 +42,10 @@
             gap: 6px;
             padding: 7px 16px;
             border-radius: 20px;
-            border: 1.5px solid var(--green, #4caf82);
-            background: var(--green, #4caf82);
+            /* border: 1.5px solid var(--green, #4caf82); */
+            border: 1px solid var(--neon-cyan);
+            /* background: var(--green, #4caf82); */
+            background-color: var(--neon-cyan);
             color: #fff;
             font-size: 13px;
             font-weight: 600;
@@ -65,17 +68,20 @@
 
         .tc-card {
             background: #fff;
-            border: 1px solid #e5e7eb;
-            border-radius: 14px;
+            /* border: 1px solid #e5e7eb; */
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+            /* box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); */
             transition: box-shadow .2s, border-color .2s;
             animation: tcFadeUp .35s ease both;
         }
 
         .tc-card:hover {
             box-shadow: 0 6px 24px rgba(0, 0, 0, 0.09);
-            border-color: var(--green, #4caf82);
+            /* border-color: var(--green, #4caf82); */
+            border-color: var(--border);
         }
 
         @keyframes tcFadeUp {
@@ -169,16 +175,18 @@
         }
 
         .tc-info h3 {
-            font-size: 16px;
+            font-size: 15.5px;
             font-weight: 700;
-            color: var(--green-dark, #065f46);
-            margin: 0 0 4px;
+            /* color: var(--green-dark, #065f46); */
+            color: #1a1a1a;
+            margin: 0 0 5px;
             font-family: 'Poppins', sans-serif;
         }
 
         .tc-schedule {
-            font-size: 12.5px;
-            color: #6b7280;
+            font-size: 13px;
+            /* color: #6b7280; */
+            color: var(--text-dim);
             margin: 0 0 10px;
             display: flex;
             align-items: center;
@@ -187,7 +195,9 @@
 
         .tc-schedule i {
             font-size: 11px;
-            color: var(--green, #4caf82);
+            /* color: var(--green, #4caf82); */
+            /* color: var(--neon-cyan); */
+            color: var(--text-dim);
         }
 
         .tc-students {
@@ -242,7 +252,8 @@
             align-items: center;
             gap: 8px;
             padding: 10px 26px;
-            background: var(--green, #4caf82);
+            /* background: var(--green, #4caf82); */
+            background-color: var(--neon-cyan);
             color: #fff;
             border-radius: 28px;
             font-size: 14px;
@@ -528,8 +539,10 @@
         }
 
         .tc-dropdown-item.active {
-            background: #ecfdf5;
-            color: var(--green, #4caf82);
+            /* background: #ecfdf5; */
+            background: rgba(0, 119, 204, 0.08);
+            /* color: var(--green, #4caf82); */
+            color: var(--neon-cyan);
             font-weight: 600;
         }
 

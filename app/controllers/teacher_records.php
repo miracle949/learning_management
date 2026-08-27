@@ -64,11 +64,18 @@ class teacher_records
         $totalStudents = array_sum(array_column($classes, 'student_count'));
         $submittedCount = $this->teacherModel->getTotalSubmittedAssignments($teacher_id);
         $submittedAssignments = $this->teacherModel->getSubmittedAssignmentsByTeacher($teacher_id);
+        $progressTrend = $this->teacherModel->getWeeklyProgressTrend($teacher_id);   // ← ADD
+        $progressStats = $this->teacherModel->getProgressStats($teacher_id);        // ← ADD
+        $pendingReviews = $this->teacherModel->getPendingReviewSubmissions($teacher_id); // ← ADD
+        $pendingReviews = $this->teacherModel->getPendingReviewSubmissions($teacher_id); // keep or remove, your call
+        $recentMaterials = $this->teacherModel->getRecentLearningMaterials($teacher_id); // ← ADD THIS
+        $progressOverview = $this->teacherModel->getClassProgressOverview($teacher_id);
         $teacherInfo = ['name' => $_SESSION['teacher_name'] ?? $_SESSION['name'] ?? 'Teacher'];
 
         // ── NEW: replace enrolled students list + submitted assignments ──
         $upcomingAssignments = $this->teacherModel->getUpcomingAssignments($teacher_id);
         $teacherAnnouncements = $this->teacherModel->getAnnouncementsByTeacher($teacher_id);
+
 
         require_once "../app/view/teacher.php";
     }

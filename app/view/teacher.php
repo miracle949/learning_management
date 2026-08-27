@@ -143,137 +143,239 @@
                 </div>
 
 
-                <div class="parent-box-classes">
-                    <div class="sub-student">
-                        <div class="student-assignment">
-                            <div class="header">
-                                <i class="fa fa-hourglass-half"></i>
-                                <p>Upcoming Deadlines</p>
-                            </div>
-                            <div class="student-names">
-                                <?php if (empty($upcomingAssignments)): ?>
-                                    <p style="font-size:13px;color:#9ca3af;text-align:center;padding:1rem 0;">
-                                        No upcoming assignments.
-                                    </p>
-                                <?php else: ?>
-                                    <?php foreach ($upcomingAssignments as $asgn): ?>
-                                        <div class="student-box">
-                                            <p>
-                                                <?= htmlspecialchars($asgn['subject_name']) ?> -
-                                                (<?= htmlspecialchars($asgn['type'] ?? 'Assignment') ?>)
-                                            </p>
-                                            <p><?= htmlspecialchars($asgn['title']) ?></p>
-                                            <div class="grade-section">
-                                                <!-- Show actual section name from teacher_assignments join -->
-                                                <span><?= htmlspecialchars($asgn['section_name'] ?? '') ?></span>
+                <div class="dashboard-grid">
 
-                                                <?php if (!empty($asgn['due_date'])): ?>
-                                                    <?php
-                                                    $dueDateFormatted = date('M d, Y', strtotime($asgn['due_date']));
-                                                    $dueTimeRaw = !empty($asgn['due_time']) ? $asgn['due_time'] : '23:59:00';
-                                                    $dueTimeFormatted = date('h:i A', strtotime($dueTimeRaw));
-                                                    ?>
-                                                    <span style="color:#ef4444;font-weight:600;">
-                                                        Due: <?= $dueDateFormatted ?> at <?= $dueTimeFormatted ?>
-                                                    </span>
-                                                <?php else: ?>
-                                                    <span style="color:#9ca3af;">No due date</span>
-                                                <?php endif; ?>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; ?>
+                    <!-- STUDENT PROGRESS OVERVIEW -->
+                    <div class="dashboard-card">
+                        <div class="dc-header">
+                            <div class="dc-text">
+                                <h3>Student Progress Overview</h3>
+                                <p>Track your students' learning progress</p>
+                            </div>
+                            <select class="class-filter">
+                                <option>All Classes</option>
+                            </select>
+                        </div>
+                        <div class="progress-chart-body">
+                            <?php
+                            $trend = $progressTrend ?? [];
+                            $count = count($trend);
+                            ?>
+                            <div class="progress-chart-svg-wrap">
+                                <?php if ($count < 2): ?>
+                                    <p class="dc-empty">Not enough graded data yet.</p>
+                                <?php else: ?>
+                                    <?php
+                                    $w = 400;
+                                    $h = 160;
+                                    $padX = 20;
+                                    $padTop = 15;
+                                    $padBottom = 15;
+                                    $chartH = $h - $padTop - $padBottom;
+                                    $step = ($w - $padX * 2) / ($count - 1);
+
+                                    $points = [];
+                                    foreach ($trend as $i => $pt) {
+                                        $x = $padX + $i * $step;
+                                        $val = max(0, min(100, (float) $pt['avg_percentage']));
+                                        $y = $padTop + $chartH - ($val / 100 * $chartH);
+                                        $points[] = ['x' => $x, 'y' => $y];
+                                    }
+                                    $linePoints = implode(' ', array_map(fn($p) => round($p['x'], 1) . ',' . round($p['y'], 1), $points));
+                                    $areaPoints = $linePoints
+                                        . ' ' . round($points[$count - 1]['x'], 1) . ',' . ($padTop + $chartH)
+                                        . ' ' . round($points[0]['x'], 1) . ',' . ($padTop + $chartH);
+                                    ?>
+                                    <svg viewBox="0 0 <?= $w ?> <?= $h ?>" xmlns="http://www.w3.org/2000/svg">
+                                        <defs>
+                                            <linearGradient id="progressFill" x1="0" y1="0" x2="0" y2="1">
+                                                <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.25" />
+                                                <stop offset="100%" stop-color="#3b82f6" stop-opacity="0" />
+                                            </linearGradient>
+                                        </defs>
+                                        <!-- gridlines -->
+                                        <?php foreach ([0, 25, 50, 75, 100] as $g):
+                                            $gy = $padTop + $chartH - ($g / 100 * $chartH); ?>
+                                            <line x1="<?= $padX ?>" y1="<?= $gy ?>" x2="<?= $w - $padX ?>" y2="<?= $gy ?>"
+                                                stroke="#f1f3f5" stroke-width="1" />
+                                        <?php endforeach; ?>
+                                        <polygon points="<?= $areaPoints ?>" fill="url(#progressFill)" />
+                                        <polyline points="<?= $linePoints ?>" fill="none" stroke="#3b82f6"
+                                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                                        <?php foreach ($points as $p): ?>
+                                            <circle cx="<?= $p['x'] ?>" cy="<?= $p['y'] ?>" r="3.5" fill="#ffffff"
+                                                stroke="#3b82f6" stroke-width="2" />
+                                        <?php endforeach; ?>
+                                    </svg>
+                                    <div class="progress-chart-labels">
+                                        <?php foreach ($trend as $pt): ?>
+                                            <span><?= date('M d', strtotime($pt['week_start'])) ?></span>
+                                        <?php endforeach; ?>
+                                    </div>
                                 <?php endif; ?>
                             </div>
-                        </div>
 
-                        <div class="sub-assignment">
-                            <div class="header">
-                                <i class="fa fa-question-circle"></i>
-                                <p>Announcements</p>
+                            <div class="progress-stats">
+                                <div class="progress-stat-item">
+                                    <span class="stat-label">Average Progress</span>
+                                    <span class="stat-value avg"><?= (int) ($progressStats['avg_pct'] ?? 0) ?>%</span>
+                                </div>
+                                <div class="progress-stat-item">
+                                    <span class="stat-label">Highest Progress</span>
+                                    <span class="stat-value high"><?= (int) ($progressStats['max_pct'] ?? 0) ?>%</span>
+                                </div>
+                                <div class="progress-stat-item">
+                                    <span class="stat-label">Lowest Progress</span>
+                                    <span class="stat-value low"><?= (int) ($progressStats['min_pct'] ?? 0) ?>%</span>
+                                </div>
                             </div>
-                            <div class="assignment-complete">
-                                <?php if (empty($teacherAnnouncements)): ?>
-                                    <p style="font-size:13px;color:#9ca3af;text-align:center;padding:1rem 0;">
-                                        No announcements yet.
-                                    </p>
-                                <?php else: ?>
-                                    <?php foreach ($teacherAnnouncements as $ann): ?>
-                                        <div class="assignment-box">
-                                            <!-- <p>
-                                                <?= htmlspecialchars($ann['teacher_name']) ?>
-                                            </p> -->
-                                            <p><?= htmlspecialchars($ann['subject_name']) ?>
+                        </div>
+                    </div>
+
+                    <!-- RECENT SUBMISSIONS -->
+                    <div class="dashboard-card">
+                        <div class="dc-header">
+                            <div class="dc-text">
+                                <h3>Recent Submissions</h3>
+                                <p>Review the latest student submissions</p>
+                            </div>
+                            <a class="view-all" href="/learning_management/public/?url=works">View All</a>
+                        </div>
+                        <div class="dc-body">
+                            <?php if (empty($submittedAssignments)): ?>
+                                <p class="dc-empty">No recent submissions.</p>
+                            <?php else: ?>
+                                <?php
+                                $typeIcon = ['seatwork' => ['fa-file-alt', 'blue'], 'activity' => ['fa-tasks', 'orange'], 'quiz' => ['fa-circle-question', 'purple'], 'project' => ['fa-diagram-project', 'pink']];
+                                ?>
+                                <?php foreach (array_slice($submittedAssignments, 0, 5) as $sub): ?>
+                                    <?php [$icon, $color] = $typeIcon[strtolower($sub['type'] ?? '')] ?? ['fa-file-alt', 'blue']; ?>
+                                    <div class="dc-list-item">
+                                        <div class="dc-list-icon <?= $color ?>"><i class="fa <?= $icon ?>"></i></div>
+                                        <div class="dc-list-body">
+                                            <div class="dc-list-title">
+                                                <p><?= htmlspecialchars($sub['assignment_title']) ?></p>
+                                                <span class="status-badge submitted">Submitted</span>
+                                            </div>
+                                            <p class="dc-list-sub">
+                                                <?= htmlspecialchars($sub['task']) ?>
                                             </p>
-                                            <p>Title: <?= htmlspecialchars($ann['title']) ?></p>
+                                            <div class="dc-list-meta">
+                                                <span><?= htmlspecialchars($sub['section_name']) ?> ·
+                                                    <?= htmlspecialchars($sub['student_name']) ?></span>
+                                                <span><?= date('M d, Y g:i A', strtotime($sub['submitted_at'])) ?></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
 
-                                            <p><?= nl2br(htmlspecialchars($ann['message'])) ?></p>
+                    <!-- RECENT LEARNING MATERIALS -->
+                    <div class="dashboard-card">
+                        <div class="dc-header">
+                            <div class="dc-text">
+                                <h3>Recent Learning Materials</h3>
+                                <p>View your recently added learning materials</p>
+                            </div>
+                            <a class="view-all" href="/learning_management/public/?url=modules">View All</a>
+                        </div>
+                        <div class="dc-body">
+                            <?php if (empty($recentMaterials)): ?>
+                                <p class="dc-empty">No learning materials yet.</p>
+                            <?php else: ?>
+                                <?php
+                                $materialIcon = [
+                                    'pdf' => ['fa-file-pdf', 'blue'],
+                                    'video' => ['fa-video', 'pink'],
+                                    'image' => ['fa-image', 'orange'],
+                                    'module' => ['fa-file-alt', 'green'],
+                                ];
+                                ?>
+                                <?php foreach ($recentMaterials as $mat): ?>
+                                    <?php
+                                    $ft = strtolower($mat['file_type'] ?? '');
+                                    if (str_contains($ft, 'pdf')) {
+                                        $matType = 'PDF Material';
+                                        [$icon, $color] = $materialIcon['pdf'];
+                                    } elseif (str_contains($ft, 'video') || in_array($ft, ['mp4', 'mov', 'avi'])) {
+                                        $matType = 'Video';
+                                        [$icon, $color] = $materialIcon['video'];
+                                    } elseif (in_array($ft, ['jpg', 'jpeg', 'png', 'gif'])) {
+                                        $matType = 'Image';
+                                        [$icon, $color] = $materialIcon['image'];
+                                    } else {
+                                        $matType = 'Module';
+                                        [$icon, $color] = $materialIcon['module'];
+                                    }
+                                    ?>
+                                    <div class="dc-list-item">
+                                        <div class="dc-list-icon <?= $color ?>"><i class="fa <?= $icon ?>"></i></div>
+                                        <div class="dc-list-body">
+                                            <div class="dc-list-title">
+                                                <p><?= htmlspecialchars($mat['title']) ?></p>
+                                            </div>
+                                            <p class="dc-list-sub">
+                                                <?= htmlspecialchars($matType) ?> ·
+                                                <?= htmlspecialchars(($mat['grade_level'] ?? '') . ' - ' . ($mat['section_name'] ?? '')) ?>
+                                            </p>
+                                            <div class="dc-list-meta">
+                                                <span></span>
+                                                <span>Uploaded on <?= date('M d, Y', strtotime($mat['posted_at'])) ?></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
 
-                                            <div class="announcement-footer">
-                                                <p>
-                                                    <?= htmlspecialchars($ann['section_name']) ?>
-                                                </p>
-                                                <span>Date Posted:
-                                                    <?= date('F j, Y', strtotime($ann['created_at'])) ?>
+                    <!-- ANNOUNCEMENTS -->
+                    <div class="dashboard-card">
+                        <div class="dc-header">
+                            <div class="dc-text">
+                                <h3>Announcements</h3>
+                                <p>Share and manage important class updates</p>
+                            </div>
+                            <a class="view-all" href="/learning_management/public/?url=classes_teacher">View All</a>
+                        </div>
+                        <div class="dc-body">
+                            <?php if (empty($teacherAnnouncements)): ?>
+                                <p class="dc-empty">No announcements yet.</p>
+                            <?php else: ?>
+                                <?php foreach (array_slice($teacherAnnouncements, 0, 5) as $i => $ann): ?>
+                                    <div class="dc-list-item">
+                                        <div class="dc-list-icon <?= $i % 2 === 0 ? 'blue' : 'orange' ?>"><i
+                                                class="fa fa-bullhorn"></i></div>
+                                        <div class="dc-list-body">
+                                            <p class="dc-list-title">
+                                                <?= htmlspecialchars($ann['title']) ?>
+                                            </p>
+                                            <p class="dc-list-message">
+                                                <?= nl2br(htmlspecialchars($ann['message'])) ?>
+                                            </p>
+                                            <div class="dc-list-meta">
+                                                <span>
+                                                    <?= htmlspecialchars($ann['subject_name'] . ' · ' . $ann['section_name']) ?>
+                                                </span>
+                                                <span>
+                                                    <?= date('M d, Y', strtotime($ann['created_at'])) ?>
                                                 </span>
                                             </div>
                                         </div>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
-                    <div class="classes-assignment">
-                        <div class="sub-classes">
-                            <h5>Your Classes</h5>
-                            <div class="parent-classes">
-                                <?php if (empty($classes)): ?>
-                                    <p>No classes assigned yet. Please contact your administrator.</p>
-                                <?php else: ?>
 
-                                    <?php foreach ($classes as $index => $class):
-                                        $delay = $index * 0.1;
-                                        ?>
-
-                                        <div class="classes" style="animation-delay: <?= $delay ?>">
-                                            <div class="class-accent"></div>
-
-                                            <div class="classes-name">
-                                                <h3><?= htmlspecialchars($class['subject_name']) ?></h3>
-                                                <p>
-                                                    <!-- <?= htmlspecialchars($class['grade_name'] ?? '') ?>
-                                                    <?php if (!empty($class['section'])): ?>
-                                                        · <?= htmlspecialchars($class['section']) ?>
-                                                    <?php endif; ?> -->
-
-                                                    <!-- <?= htmlspecialchars($class['grade_name'] ?? '') ?> -->
-                                                    <?php if (!empty($class['section'])): ?>
-                                                        <?= htmlspecialchars($class['section']) ?>
-                                                    <?php endif; ?>
-                                                </p>
-                                            </div>
-
-                                            <div class="classes-student-module">
-                                                <div class="students">
-                                                    <h4><?= (int) ($class['student_count'] ?? 0) ?></h4>
-                                                    <p>Students</p>
-                                                </div>
-                                                <div class="modules">
-                                                    <h4><?= (int) ($class['module_count'] ?? 0) ?></h4>
-                                                    <p>Modules</p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                    <?php endforeach; ?>
-
-                                <?php endif; ?>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
-            </main>
         </div>
+
+        </main>
+    </div>
     </div>
 
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>

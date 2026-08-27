@@ -52,11 +52,9 @@ function youtubeEmbed($url)
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
 
     <style>
-        /* =============================================
-           ILEARN-CSS DESIGN TOKENS
-        ============================================= */
         :root {
             --neon-cyan: #0077cc;
+            --neon-light: #33e6ff;
             --neon-blue: #0055aa;
             --electric-purple: #5533cc;
             --deep-navy: #ffffff;
@@ -69,8 +67,16 @@ function youtubeEmbed($url)
             --danger-red: #cc2244;
             --bg-main: #ffffff;
             --bg-section-alt: #f0f5fc;
+            --panel-edge: #1c2a63;
             --panel-bg: #f5f7fb;
             --hero-height: 100px;
+            --bg-deep: #0a0e27;
+            --bg-mid: #151b3d;
+            --arcade-cyan: #33e6ff;
+            --arcade-pink: #ff2e97;
+            --panel: #0f1a45;
+            --text-light: #eaf3ff;
+            --neon-green: #39ff9e;
         }
 
         *,
@@ -103,10 +109,6 @@ function youtubeEmbed($url)
             border: none;
             background: none;
         }
-
-        /* =============================================
-           WELCOME / MODULE SPLASH SCREEN
-        ============================================= */
 
         .back-module {
             position: fixed;
@@ -218,7 +220,6 @@ function youtubeEmbed($url)
             padding: 16px 19px;
             border-radius: 14px;
         }
-
 
         .speech-bubble strong {
             display: block;
@@ -413,7 +414,6 @@ function youtubeEmbed($url)
 
         .splash-btn:hover {
             transform: translateY(-2px);
-            /* box-shadow: 0 14px 30px rgba(0, 119, 204, 0.38); */
         }
 
         .splash-btn i {
@@ -588,9 +588,6 @@ function youtubeEmbed($url)
             transform: rotate(-45deg);
         }
 
-        /* =============================================
-           LESSON LIST (TOP SECTION)
-        ============================================= */
         .lessons-sidebar {
             width: 100%;
             min-height: auto;
@@ -614,7 +611,6 @@ function youtubeEmbed($url)
             position: absolute;
             left: 260px;
             top: 3px;
-            /* width: 300px; */
             width: 350px;
             background-color: var(--bg-main);
             color: var(--text-bright);
@@ -667,9 +663,6 @@ function youtubeEmbed($url)
             display: none;
         }
 
-        /* =============================================
-           MODULE OVERVIEW HERO (full-width top banner)
-        ============================================= */
         .ov-hero {
             padding: 34px 30px;
             color: #fff;
@@ -1201,9 +1194,6 @@ function youtubeEmbed($url)
             padding: 10px 22px;
         }
 
-        /* =============================================
-           TOP NAV BAR
-        ============================================= */
         .lessons-topbar {
             background: var(--page-card, #fff);
             border-bottom: 1px solid var(--page-border, var(--panel-border));
@@ -1349,17 +1339,12 @@ function youtubeEmbed($url)
 
         .btn-completed-top {
             background: var(--page-surface, #fff);
-            /* border: 1.5px solid rgba(0, 137, 74, 0.3); */
             border: 1.5px solid var(--neon-cyan);
-            /* color: var(--green-dark, #0a8f4f); */
             color: var(--neon-cyan);
             cursor: default;
             opacity: 0.85;
         }
 
-        /* =============================================
-           MODULE HERO
-        ============================================= */
         .module-hero {
             margin: 24px 28px 0;
             border-radius: 16px;
@@ -1455,13 +1440,9 @@ function youtubeEmbed($url)
             color: var(--page-text, var(--text-bright));
         }
 
-        /* =============================================
-           CONTENT WRAPPER
-        ============================================= */
         .lessons-content-wrap {
             padding: 55px 28px 35px;
-            margin: 0 180px;
-
+            margin: 0 150px;
         }
 
         .lesson-title-row {
@@ -1523,9 +1504,6 @@ function youtubeEmbed($url)
             border: 1px solid rgba(204, 119, 0, 0.25);
         }
 
-        /* =============================================
-           SECTIONS
-        ============================================= */
         .ls-section {
             margin-bottom: 28px;
         }
@@ -1625,7 +1603,6 @@ function youtubeEmbed($url)
             border-radius: 14px;
             overflow: hidden;
             margin: 20px 0 20px;
-            /* margin-bottom: 16px; */
             box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
             transition: box-shadow .2s, transform .2s;
         }
@@ -1647,14 +1624,6 @@ function youtubeEmbed($url)
             border: none;
         }
 
-        .video-card-info {
-            /* padding: 14px 18px;
-            display: flex;
-            align-items: center;
-            gap: 10px; */
-
-        }
-
         .video-type-icon {
             width: 30px;
             height: 30px;
@@ -1673,9 +1642,6 @@ function youtubeEmbed($url)
         }
 
         .video-card-title {
-            /* font-weight: 600; */
-            /* font-size: 14px;
-            color: var(--page-text, var(--text-bright)); */
             font-size: 23px;
             color: var(--text-bright);
             font-weight: 700;
@@ -1922,9 +1888,7 @@ function youtubeEmbed($url)
             content: "";
             position: absolute;
             inset: 0;
-            background-image:
-                linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+            background-image: linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
             background-size: 22px 22px;
         }
 
@@ -2326,13 +2290,11 @@ function youtubeEmbed($url)
         .btn-qnav-prev {
             padding: 9px 18px;
             border-radius: 9px;
-            /* border: 1.5px solid var(--page-border, var(--panel-border)); */
-            border: 1px solid var(--border);
-            background: var(--page-card, #fff);
+            background: var(--panel);
+            border: 1px solid var(--panel-edge);
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-            /* color: var(--page-text, var(--text-bright)); */
             color: var(--text-dim);
-            font-size: 15.5px;
+            font-size: 14.5px;
             font-weight: 600;
             transition: border-color .18s;
             display: flex;
@@ -2355,21 +2317,25 @@ function youtubeEmbed($url)
         .btn-submit-quiz {
             padding: 9px 20px;
             border-radius: 9px;
-            background: linear-gradient(135deg, var(--blue-dark, var(--neon-blue)), var(--blue-mid, var(--neon-cyan)));
-            color: #fff;
-            font-size: 15.5px;
-            font-weight: 600;
+            color: #04121c;
+            letter-spacing: .04em;
+            background: linear-gradient(90deg, var(--neon-light), var(--neon-green));
+            box-shadow: 0 8px 24px rgba(51, 230, 255, .35);
+            font-size: 14.5px;
+            font-weight: 700;
             transition: transform .18s, box-shadow .18s;
+            font-family: "Orbitron", sans-serif;
+            text-transform: uppercase;
         }
 
         .btn-qnav-next:hover,
         .btn-submit-quiz:hover {
             transform: translateY(-1px);
-            /* box-shadow: 0 6px 18px rgba(0, 153, 204, 0.3); */
         }
 
         .btn-qnav-next:disabled {
-            background: #d1d5db;
+            opacity: .4;
+            box-shadow: 0 8px 24px rgba(51, 230, 255, .35);
             cursor: not-allowed;
         }
 
@@ -2521,9 +2487,6 @@ function youtubeEmbed($url)
             color: var(--text-dim);
         }
 
-        /* =============================================
-           QUIZIZZ-STYLE QUIZ STAGE
-        ============================================= */
         :root {
             --qz-card-bg: #2b1b3d;
             --qz-blue: #3a6ea5;
@@ -2547,7 +2510,6 @@ function youtubeEmbed($url)
         .btn-take-quiz {
             display: inline-flex;
             align-items: center;
-            /* gap: 9px; */
             gap: 7px;
             color: #fff;
             font-size: 13.5px;
@@ -2556,12 +2518,6 @@ function youtubeEmbed($url)
             border-radius: 99px;
             background-color: var(--neon-cyan);
             transition: transform .18s ease, box-shadow .18s ease;
-            /* position: absolute;
-            top: 62%;
-            left: 5.3%; */
-            /* top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%); */
         }
 
         .bubble-quiz .btn-take-quiz {
@@ -2578,7 +2534,6 @@ function youtubeEmbed($url)
             opacity: 1;
             transform: translateY(0);
             pointer-events: auto;
-            /* max-height: 60px; */
             max-height: 40px;
             margin-top: 7px;
         }
@@ -2634,11 +2589,29 @@ function youtubeEmbed($url)
         }
 
         .bubble-quiz .btn-quiz-continue i {
-            font-size: 11px;
+            font-size: 12.5px;
+        }
+
+        .bb-skip-typing {
+            display: none;
+            margin-top: 6px;
+            font-size: 12.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--text-dim);
+            opacity: 0.55;
+            cursor: pointer;
+            transition: opacity .15s ease, color .15s ease;
+            justify-content: end;
+        }
+
+        .bb-skip-typing:hover {
+            opacity: 1;
+            color: var(--neon-cyan);
         }
 
         .qz-stage {
-            /* max-width: 640px; */
             margin: 0 auto;
         }
 
@@ -2655,7 +2628,7 @@ function youtubeEmbed($url)
         .qz-progress-track {
             height: 20px;
             border-radius: 99px;
-            background: rgba(0, 119, 204, 0.1);
+            background: rgba(51, 230, 255, 0.12);
             overflow: hidden;
             margin-bottom: 24px;
         }
@@ -2663,15 +2636,13 @@ function youtubeEmbed($url)
         .qz-progress-fill {
             height: 100%;
             border-radius: 99px;
-            /* background: linear-gradient(90deg, var(--neon-blue), var(--neon-cyan)); */
-            background-color: var(--neon-cyan);
+            background-color: var(--arcade-cyan);
             transition: width .35s ease;
         }
 
         .qz-card {
-            /* background: var(--qz-card-bg); */
-            background-color: var(--neon-cyan);
-            /* background-color: #380641; */
+            background: linear-gradient(160deg, var(--panel), #0a1230);
+            border: 1px solid var(--panel-edge);
             border-radius: 20px;
             padding: 46px 36px;
             min-height: 170px;
@@ -2681,14 +2652,22 @@ function youtubeEmbed($url)
             text-align: center;
             position: relative;
             margin-bottom: 22px;
-            /* box-shadow: 0 12px 30px rgba(43, 27, 61, 0.25); */
         }
 
         .qz-card::before {
-            content: '';
+            content: "";
             position: absolute;
-            inset: 0;
-            background: repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 26px);
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 18px;
+            padding: 2px;
+            background: linear-gradient(120deg, var(--neon-cyan), transparent 30%, transparent 70%, var(--neon-pink));
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: .6;
             pointer-events: none;
         }
 
@@ -2729,9 +2708,7 @@ function youtubeEmbed($url)
             align-items: center;
             padding: 20px 22px;
             border-radius: 14px;
-            /* color: #fff; */
             color: var(--text-dim);
-            /* color: var(--text-bright); */
             border: 1px solid var(--border);
             font-size: 15.5px;
             font-weight: 600;
@@ -2739,11 +2716,8 @@ function youtubeEmbed($url)
             border: 1px solid transparent;
             transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-        }
-
-        .qz-choice-btn {
+            background-color: #ffffff;
             justify-content: space-between;
-            /* room for the check/x icon on the right */
         }
 
         .qz-choice-btn.qz-review-choice {
@@ -2753,15 +2727,11 @@ function youtubeEmbed($url)
 
         .qz-choice-btn.qz-correct {
             border-color: #22c55e;
-            /* border-color: var(--border); */
             background: rgba(34, 197, 94, 0.08);
-            /* background: rgba(0, 119, 204, 0.08); */
             color: #15803d;
-            /* color: var(--neon-cyan); */
         }
 
         .qz-choice-btn.qz-wrong {
-            /* border-color: #ef4444; */
             background: rgba(239, 68, 68, 0.08);
             color: #b91c1c;
         }
@@ -2772,43 +2742,77 @@ function youtubeEmbed($url)
         }
 
         .qz-choice-btn.selected {
-            /* border-color: #fff; */
-            /* background-color: var(--neon-cyan); */
             background: rgba(0, 119, 204, 0.08);
-            /* border: 1px solid var(--panel-border); */
             color: var(--neon-cyan);
-            /* box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35); */
         }
 
         .qz-choice-btn[data-color="0"] {
-            /* background-color: var(--qz-blue); */
-            /* background-color: #ffffff; */
-
-            /* background: linear-gradient(135deg, rgba(0, 119, 204, 0.09), rgba(85, 51, 204, 0.05));
-            border-color: var(--neon-cyan);
-            box-shadow: 0 6px 18px rgba(0, 119, 204, 0.16); */
             border: 1px solid var(--border);
         }
 
         .qz-choice-btn[data-color="1"] {
-            /* background-color: var(--qz-teal); */
-            /* background-color: #ffffff; */
             border: 1px solid var(--border);
-
         }
 
         .qz-choice-btn[data-color="2"] {
-            /* background-color: var(--qz-orange); */
-            /* background-color: #ffffff; */
             border: 1px solid var(--border);
-
         }
 
         .qz-choice-btn[data-color="3"] {
-            /* background-color: var(--qz-pink); */
-            /* background-color: #ffffff; */
             border: 1px solid var(--border);
+        }
 
+        .qz-choice-inner {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .qz-choice-letter {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--panel-edge, var(--border));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--text-dim);
+            flex-shrink: 0;
+            transition: background .18s ease, color .18s ease, border-color .18s ease;
+        }
+
+        .qz-choice-btn.selected .qz-choice-letter {
+            background-color: var(--neon-cyan);
+            color: #fff;
+            border-color: var(--neon-cyan);
+        }
+
+        .qz-choice-btn.qz-correct .qz-choice-letter {
+            background-color: #22c55e;
+            color: #fff;
+            border-color: #22c55e;
+        }
+
+        .qz-choice-btn.qz-wrong .qz-choice-letter {
+            background-color: #ef4444;
+            color: #fff;
+            border-color: #ef4444;
+        }
+
+        .qz-overlay.open .qz-choice-letter {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: var(--panel-edge);
+            color: var(--text-light);
+        }
+
+        .qz-overlay.open .qz-choice-btn.selected .qz-choice-letter {
+            background-color: var(--arcade-cyan);
+            color: var(--bg-deep);
+            border-color: var(--arcade-cyan);
         }
 
         .qz-overlay {
@@ -2822,17 +2826,21 @@ function youtubeEmbed($url)
             opacity: 0;
         }
 
-        .qz-overlay::before {
-            /* content: '';
-            position: absolute;
-            inset: 0;
-            background: repeating-linear-gradient(120deg, rgba(255, 255, 255, 0.05) 0 2px, transparent 2px 26px);
-            pointer-events: none; */
-        }
-
         .qz-overlay.open {
             display: block;
             animation: qzOverlayIn .42s cubic-bezier(.2, .8, .2, 1) forwards;
+            background: radial-gradient(circle at 15% 10%, rgba(51, 230, 255, 0.10), transparent 40%), radial-gradient(circle at 85% 90%, rgba(255, 46, 151, 0.10), transparent 40%), linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-mid) 100%);
+        }
+
+        .qz-overlay.open::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(51, 230, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(51, 230, 255, 0.05) 1px, transparent 1px);
+            background-size: 36px 36px;
+            mask-image: radial-gradient(circle at 50% 40%, black 10%, transparent 75%);
+            pointer-events: none;
+            z-index: 0;
         }
 
         .qz-overlay.qz-closing {
@@ -2864,8 +2872,6 @@ function youtubeEmbed($url)
         }
 
         .qz-overlay #section-quizzes {
-            /* max-width: 720px; */
-            /* max-width: 1000px; */
             max-width: 800px;
             margin: 0 auto;
         }
@@ -2888,16 +2894,17 @@ function youtubeEmbed($url)
 
         .btn-exit-quiz {
             display: inline-flex;
-            align-items: center;
             gap: 7px;
-            /* font-size: 13px; */
-            font-size: 18px;
+            font-size: 14px;
             font-weight: 600;
-            color: var(--text-dim);
-            /* padding: 7px 14px; */
-            /* border-radius: 8px; */
-            /* border: 1.5px solid var(--panel-border); */
-            background: #fff;
+            background: var(--panel);
+            border: 1px solid var(--panel-edge);
+            color: var(--neon-cyan);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            justify-content: center;
+            align-items: center;
             margin-bottom: 20px;
             transition: border-color .15s ease, color .15s ease, transform .15s ease;
         }
@@ -2912,15 +2919,119 @@ function youtubeEmbed($url)
             display: flex;
             align-items: center;
             justify-content: space-between;
-            /* margin-top: 24px; */
-            margin-top: 25px;
+            margin-top: 26px;
+        }
+
+        .qz-results {
+            max-width: 800px;
+            margin: 40px auto 0;
+        }
+
+        .qz-results h2 {
+            font-size: 21px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .qz-result-card {
+            background-color: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px 22px;
+            margin: 25px 0 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        .qz-result-label {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 14px;
+        }
+
+        .qz-accuracy-row {
+            position: relative;
+        }
+
+        .qz-accuracy-track {
+            height: 22px;
+            border-radius: 99px;
+            background: rgba(51, 230, 255, 0.12);
+            overflow: hidden;
+        }
+
+        .qz-accuracy-fill {
+            height: 100%;
+            border-radius: 99px;
+            background-color: var(--arcade-cyan);
+            transition: width .8s ease;
+        }
+
+        .qz-accuracy-pct {
+            position: absolute;
+            top: 50%;
+            right: -6px;
+            transform: translateY(-50%);
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--neon-cyan);
+            background: #fff;
+            border: 1px solid var(--border);
+            padding: 3px 10px;
+            border-radius: 99px;
+        }
+
+        .qz-result-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .qz-result-count {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        .qz-stat-pills {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .qz-stat-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12.5px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 99px;
+        }
+
+        .qz-stat-pill.pill-correct {
+            border: 2px solid var(--neon-green);
+            background: rgba(57, 255, 158, .10);
+            color: var(--neon-green);
+        }
+
+        .qz-stat-pill.pill-incorrect {
+            border: 2px solid #ff4d6d;
+            background: rgba(255, 77, 109, .10);
+            color: #ff4d6d;
+        }
+
+        .qz-results-actions {
+            display: flex;
+            justify-content: end;
+            margin-top: 20px;
         }
 
         .qz-nav-row #qzPrevBtn {
             display: inline-flex;
         }
-        
-        .qz-nav-row #qzPrevBtn .fa{
+
+        .btn-qnav-prev .fa {
             font-size: 13.5px;
         }
 
@@ -2928,8 +3039,103 @@ function youtubeEmbed($url)
             margin-left: auto;
         }
 
-        .qz-nav-row #qzNextBtn .fa {
+        .btn-qnav-next .fa {
             font-size: 13.5px;
+        }
+
+        .qz-overlay.open .btn-exit-quiz {
+            color: var(--arcade-cyan);
+            position: relative;
+            z-index: 1;
+        }
+
+        .qz-overlay.open .qz-counter {
+            color: var(--arcade-cyan);
+            position: relative;
+            z-index: 1;
+        }
+
+        .qz-overlay.open .qz-stage,
+        .qz-overlay.open .qz-results {
+            position: relative;
+            z-index: 1;
+        }
+
+        .qz-overlay.open .qz-choice-btn {
+            color: var(--text-light);
+            background: var(--panel);
+            border: 1px solid var(--panel-edge);
+        }
+
+        .qz-overlay.open .qz-choice-btn.selected {
+            background: rgba(51, 230, 255, 0.12);
+            color: var(--arcade-cyan);
+            border-color: var(--arcade-cyan);
+        }
+
+        .qz-overlay.open .btn-qnav-prev {
+            color: #d8e6f5;
+            background: var(--panel);
+            border: 1px solid var(--panel-edge);
+            font-family: "Orbitron", sans-serif;
+            text-transform: uppercase;
+        }
+
+        .qz-overlay.open .quiz-status {
+            color: #d8e6f5;
+        }
+
+        .qz-overlay.open .qz-result-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(51, 230, 255, 0.2);
+        }
+
+        .qz-overlay.open .qz-result-label,
+        .qz-overlay.open .qz-results h2 {
+            color: #ffffff;
+        }
+
+        .qz-overlay.open .qz-result-count {
+            color: #d8e6f5;
+        }
+
+        .qz-overlay.open .qz-accuracy-pct {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--arcade-cyan);
+            border-color: rgba(51, 230, 255, 0.3);
+        }
+
+        .qz-activity-textarea {
+            width: 100%;
+            max-width: 560px;
+            min-height: 130px;
+            margin: 0 auto;
+            display: block;
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 14.5px;
+            resize: vertical;
+            border: 1.5px solid var(--page-border, var(--panel-border));
+            background: var(--page-card, #fff);
+            color: var(--page-text, var(--text-bright));
+            outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .qz-activity-textarea:focus {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 0 3px rgba(0, 119, 204, 0.12);
+        }
+
+        .qz-overlay.open .qz-activity-textarea {
+            background: var(--panel);
+            border-color: var(--panel-edge);
+            color: var(--text-light);
+        }
+
+        .qz-overlay.open .qz-activity-textarea:focus {
+            border-color: var(--arcade-cyan);
+            box-shadow: 0 0 0 3px rgba(51, 230, 255, 0.15);
         }
 
         @media (max-width: 600px) {
@@ -2964,12 +3170,10 @@ function youtubeEmbed($url)
                 } else if (performance.navigation) {
                     navType = performance.navigation.type === 1 ? 'reload' : 'navigate';
                 }
-            } catch (e) { /* ignore, default to 'navigate' */ }
+            } catch (e) { }
 
             var cameFromWithinLessons = document.referrer.indexOf('url=subject_lessons') !== -1;
 
-            // If a quiz was open, ALWAYS skip the splash — reloading mid-quiz
-            // should land back on the quiz, not the welcome screen.
             var shouldSkip = quizWasOpen ||
                 (dismissed && (navType === 'reload' || navType === 'back_forward' || cameFromWithinLessons));
 
@@ -2990,15 +3194,6 @@ function youtubeEmbed($url)
     $sbFilledSegments = (int) round(($progressPct / 100) * $sbTotalSegments);
     $sbIsFinished = ($progressPct >= 100);
 
-    // $isModuleStarted = $completedCount > 0;
-    
-    // foreach ($lessonCompletion as $done) {
-    //     if ($done) {
-    //         $isModuleStarted = true;
-    //         break;
-    //     }
-    // }
-    
     if ($progressPct >= 100) {
         $moduleState = 'review';
         $splashBtnLabel = 'Module Review';
@@ -3023,8 +3218,6 @@ function youtubeEmbed($url)
 
     $bonbonLessonMessage = "Welcome! I'm your learning assistant, ready to guide you through your journey!";
 
-    // Determine up front whether the quiz is already completed,
-// so both bubble messages can react to it.
     $quizAlreadyDone = false;
     if (!empty($quizData)) {
         $quizAlreadyDone = true;
@@ -3292,6 +3485,28 @@ function youtubeEmbed($url)
                     }
 
                     $firstQzDone = $firstQzDoneEarly;
+
+                    // Precompute a flat list of NOT-YET-SUBMITTED activity
+                    // questions across all activities in this lesson, so
+                    // they can be answered one-at-a-time in the same
+                    // fullscreen stage style as the quiz.
+                    $pendingActivityQuestions = [];
+                    $anyPendingActivity = false;
+                    if (!empty($activityData)) {
+                        foreach ($activityData as $pendActId => $pendData) {
+                            if ($pendData['submission'] === null) {
+                                $anyPendingActivity = true;
+                                foreach ($pendData['questions'] as $pq) {
+                                    $pendingActivityQuestions[] = [
+                                        'q' => $pq,
+                                        'actId' => (int) $pendActId,
+                                        'activity' => $pendData['activity'],
+                                    ];
+                                }
+                            }
+                        }
+                    }
+                    $actGrandTotal = count($pendingActivityQuestions);
                     ?>
 
                     <div class="lesson-body" id="lessonBody">
@@ -3318,7 +3533,6 @@ function youtubeEmbed($url)
 
                                 <?php $inImgGrid = false; ?>
                                 <?php
-                                // Precompute image-group sizes so the grid can size itself dynamically
                                 $imgGroupSize = [];
                                 $runStart = null;
                                 $runCount = 0;
@@ -3464,14 +3678,18 @@ function youtubeEmbed($url)
                                             <img src="../images/robot-ai5.png" alt="">
                                             <div class="speech-bubble bubble-quiz">
                                                 <strong>BonBon</strong>
-                                                <div id="bonbonQuizGreetingStage">
+                                                <div id="bonbonQuizGreetingStage" <?= $quizAlreadyDone ? ' style="display:none;"' : '' ?>>
                                                     <p id="bonbonMessage-quiz-greeting"></p>
+                                                    <span class="bb-skip-typing" id="skipGreetingTyping"
+                                                        onclick="skipBonbonGreeting()">Skip »</span>
                                                     <button type="button" class="btn-quiz-continue" id="btnQuizContinue">
                                                         Continue
                                                     </button>
                                                 </div>
-                                                <div id="bonbonQuizMessageStage" style="display:none;">
+                                                <div id="bonbonQuizMessageStage" <?= $quizAlreadyDone ? '' : ' style="display:none;"' ?>>
                                                     <p id="bonbonMessage-quiz"></p>
+                                                    <span class="bb-skip-typing" id="skipQuizMsgTyping"
+                                                        onclick="skipBonbonQuizMsg()">Skip »</span>
                                                     <button type="button" class="btn-take-quiz" onclick="openQuizStage()">
                                                         <i class="fa fa-bolt"></i>
                                                         <?= (isset($firstQzDoneEarly) && $firstQzDoneEarly) ? 'Review the Quiz' : 'Take the Quiz' ?>
@@ -3561,6 +3779,8 @@ function youtubeEmbed($url)
                                         $act = $data['activity'];
                                         $questions = $data['questions'];
                                         $isSubmitted = ($data['submission'] !== null);
+                                        if (!$isSubmitted)
+                                            continue; // handled by the activity stage below
                                         ?>
                                         <div class="activity-block">
                                             <div class="activity-hero-card">
@@ -3581,115 +3801,173 @@ function youtubeEmbed($url)
                                                     <span class="meta-pill pill-white"><?= count($questions) ?> Questions</span>
                                                     <span class="meta-pill pill-white">⭐ <?= (int) $act['total_points'] ?>
                                                         pts</span>
-                                                    <?php if ($isSubmitted): ?>
-                                                        <span class="meta-pill pill-white">✓ Submitted</span>
-                                                    <?php else: ?>
-                                                        <span class="meta-pill pill-white">Answer Required</span>
-                                                    <?php endif; ?>
+                                                    <span class="meta-pill pill-white">✓ Submitted</span>
                                                 </div>
                                             </div>
 
-                                            <?php if ($isSubmitted): ?>
-                                                <div class="submitted-notice">
-                                                    <div class="submitted-check">
-                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                                            <path d="M22 4L12 14.01l-3-3" />
-                                                        </svg>
+                                            <div class="submitted-notice">
+                                                <div class="submitted-check">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                                        <path d="M22 4L12 14.01l-3-3" />
+                                                    </svg>
+                                                </div>
+                                                <div class="submitted-notice-text">
+                                                    <div class="sn-title">Activity Submitted</div>
+                                                    <div class="sn-sub">You have already completed this activity. Review your
+                                                        answers
+                                                        below.
                                                     </div>
-                                                    <div class="submitted-notice-text">
-                                                        <div class="sn-title">Activity Submitted</div>
-                                                        <div class="sn-sub">You have already completed this activity. Review your
-                                                            answers
-                                                            below.
+                                                </div>
+                                            </div>
+
+                                            <?php foreach ($questions as $qi => $q): ?>
+                                                <div class="question-card">
+                                                    <div class="q-num-label">Question <?= $qi + 1 ?></div>
+                                                    <div class="q-text"><?= htmlspecialchars($q['question']) ?></div>
+                                                    <?php if ($q['question_type'] === 'multiple_choice'):
+                                                        $ltrs = ['A', 'B', 'C', 'D'];
+                                                        $ch = ['a' => $q['choice_a'], 'b' => $q['choice_b'], 'c' => $q['choice_c'], 'd' => $q['choice_d']];
+                                                        $li = 0;
+                                                        foreach ($ch as $key => $val):
+                                                            if ($val === null)
+                                                                continue;
+                                                            $isCorrect = strtolower($key) === strtolower($q['correct_ans'] ?? '');
+                                                            ?>
+                                                            <div class="review-choice"
+                                                                style="<?= $isCorrect ? 'border-color:#22c55e;background:rgba(34,197,94,0.06);' : '' ?>">
+                                                                <span class="mc-letter"
+                                                                    style="<?= $isCorrect ? 'background:#22c55e;color:#fff;border-color:#22c55e;' : '' ?>"><?= $ltrs[$li++] ?></span>
+                                                                <?= htmlspecialchars($val) ?>
+                                                                <?php if ($isCorrect): ?>
+                                                                    <svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"
+                                                                        width="14" height="14" style="margin-left:auto">
+                                                                        <path d="M20 6L9 17l-5-5" />
+                                                                    </svg>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                        <?php endforeach; ?>
+                                                    <?php else: ?>
+                                                        <div
+                                                            style="background:var(--page-surface);border:1.5px solid var(--page-border);border-radius:9px;padding:12px 14px;font-size:13.5px;color:var(--page-muted);font-style:italic;">
+                                                            Essay question — written response recorded
                                                         </div>
+                                                        <?php if (!empty($q['model_answer'])): ?>
+                                                            <div class="callout success" style="margin-top:8px;">
+                                                                <div class="callout-icon">
+                                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                                        <path
+                                                                            d="M9 18h6M10 22h4M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17H8v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z" />
+                                                                    </svg>
+                                                                </div>
+                                                                <div class="callout-body">
+                                                                    <div class="cb-title">Model Answer</div>
+                                                                    <p><?= nl2br(htmlspecialchars($q['model_answer'])) ?></p>
+                                                                </div>
+                                                            </div>
+                                                        <?php endif; ?>
+                                                    <?php endif; ?>
+                                                </div>
+                                            <?php endforeach; ?>
+
+                                        </div><!-- /activity-block -->
+                                    <?php endforeach; ?>
+
+                                    <?php if ($anyPendingActivity): ?>
+                                        <div class="activity-hero-card">
+                                            <div class="act-hero-tag">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                    width="11" height="11">
+                                                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                                                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                                                </svg>
+                                                Hands-On Activity
+                                            </div>
+                                            <div class="act-hero-title">Ready to practice?</div>
+                                            <div class="act-hero-desc"><?= $actGrandTotal ?>
+                                                question<?= $actGrandTotal === 1 ? '' : 's' ?> waiting for you below.</div>
+                                        </div>
+
+                                        <div class="content-quiz-cta" id="activityCta">
+                                            <img src="../images/robot-ai5.png" alt="">
+                                            <div class="speech-bubble bubble-quiz">
+                                                <strong>BonBon</strong>
+                                                <p>Time to put what you learned into practice! Answer each question one at a
+                                                    time — tap the button below when you're ready.</p>
+                                                <button type="button" class="btn-take-quiz btn-visible"
+                                                    onclick="openActivityStage()">
+                                                    <i class="fa fa-pencil"></i>
+                                                    Take the Activity
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="ls-section" id="section-activity-stage" style="display:none;">
+                                            <button type="button" class="btn-exit-quiz" onclick="closeActivityStage()">
+                                                <i class="fa fa-arrow-left"></i>
+                                            </button>
+                                            <div class="qz-stage" id="actStage">
+                                                <div class="qz-counter" id="actCounter">Question 1 of <?= $actGrandTotal ?></div>
+                                                <div class="qz-progress-track">
+                                                    <div class="qz-progress-fill" id="actProgressFill"
+                                                        style="width: <?= $actGrandTotal ? round(100 / $actGrandTotal) : 0 ?>%">
                                                     </div>
                                                 </div>
 
-                                                <?php foreach ($questions as $qi => $q): ?>
-                                                    <div class="question-card">
-                                                        <div class="q-num-label">Question <?= $qi + 1 ?></div>
-                                                        <div class="q-text"><?= htmlspecialchars($q['question']) ?></div>
-                                                        <?php if ($q['question_type'] === 'multiple_choice'):
-                                                            $ltrs = ['A', 'B', 'C', 'D'];
-                                                            $ch = ['a' => $q['choice_a'], 'b' => $q['choice_b'], 'c' => $q['choice_c'], 'd' => $q['choice_d']];
-                                                            $li = 0;
-                                                            foreach ($ch as $key => $val):
-                                                                if ($val === null)
-                                                                    continue;
-                                                                $isCorrect = strtolower($key) === strtolower($q['correct_ans'] ?? '');
-                                                                ?>
-                                                                <div class="review-choice"
-                                                                    style="<?= $isCorrect ? 'border-color:#22c55e;background:rgba(34,197,94,0.06);' : '' ?>">
-                                                                    <span class="mc-letter"
-                                                                        style="<?= $isCorrect ? 'background:#22c55e;color:#fff;border-color:#22c55e;' : '' ?>"><?= $ltrs[$li++] ?></span>
-                                                                    <?= htmlspecialchars($val) ?>
-                                                                    <?php if ($isCorrect): ?>
-                                                                        <svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"
-                                                                            width="14" height="14" style="margin-left:auto">
-                                                                            <path d="M20 6L9 17l-5-5" />
-                                                                        </svg>
-                                                                    <?php endif; ?>
-                                                                </div>
-                                                            <?php endforeach; ?>
-                                                        <?php else: ?>
-                                                            <div
-                                                                style="background:var(--page-surface);border:1.5px solid var(--page-border);border-radius:9px;padding:12px 14px;font-size:13.5px;color:var(--page-muted);font-style:italic;">
-                                                                Essay question — written response recorded
+                                                <?php foreach ($pendingActivityQuestions as $qi => $item):
+                                                    $pq = $item['q'];
+                                                    $pActId = $item['actId'];
+                                                    $isMc = ($pq['question_type'] === 'multiple_choice');
+                                                    $pch = ['a' => $pq['choice_a'], 'b' => $pq['choice_b'], 'c' => $pq['choice_c'], 'd' => $pq['choice_d']];
+                                                    ?>
+                                                    <div class="qz-question-block act-question-block" data-qi="<?= $qi ?>"
+                                                        data-act-id="<?= $pActId ?>" style="<?= $qi > 0 ? 'display:none;' : '' ?>">
+                                                        <div class="qz-card">
+                                                            <div class="qz-question-text"><?= htmlspecialchars($pq['question']) ?></div>
+                                                        </div>
+                                                        <?php if ($isMc):
+                                                            $pLtrs = ['A', 'B', 'C', 'D'];
+                                                            $pci = 0;
+                                                            ?>
+                                                            <div class="qz-choices">
+                                                                <?php foreach ($pch as $pkey => $pval):
+                                                                    if ($pval === null)
+                                                                        continue;
+                                                                    ?>
+                                                                    <div class="qz-choice-btn" data-color="<?= $pci ?>"
+                                                                        data-qid="<?= (int) $pq['id'] ?>" data-act-id="<?= $pActId ?>"
+                                                                        data-key="<?= $pkey ?>" onclick="pickMC(this)">
+                                                                        <span class="qz-choice-inner">
+                                                                            <span class="qz-choice-letter"><?= $pLtrs[$pci] ?></span>
+                                                                            <span class="qz-choice-text"><?= htmlspecialchars($pval) ?></span>
+                                                                        </span>
+                                                                    </div>
+                                                                    <?php $pci++; endforeach; ?>
                                                             </div>
-                                                            <?php if (!empty($q['model_answer'])): ?>
-                                                                <div class="callout success" style="margin-top:8px;">
-                                                                    <div class="callout-icon">
-                                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                                            <path
-                                                                                d="M9 18h6M10 22h4M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17H8v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7z" />
-                                                                        </svg>
-                                                                    </div>
-                                                                    <div class="callout-body">
-                                                                        <div class="cb-title">Model Answer</div>
-                                                                        <p><?= nl2br(htmlspecialchars($q['model_answer'])) ?></p>
-                                                                    </div>
-                                                                </div>
-                                                            <?php endif; ?>
+                                                        <?php else: ?>
+                                                            <div class="qz-fill-blank">
+                                                                <textarea class="activity-answer qz-activity-textarea"
+                                                                    data-qid="<?= (int) $pq['id'] ?>" data-act-id="<?= $pActId ?>"
+                                                                    placeholder="Type your answer here…" rows="4"></textarea>
+                                                            </div>
                                                         <?php endif; ?>
                                                     </div>
                                                 <?php endforeach; ?>
 
-                                            <?php else: ?>
-                                                <div class="activity-answers-wrapper" data-activity-id="<?= (int) $actId ?>">
-                                                    <?php foreach ($questions as $qi => $q): ?>
-                                                        <div class="question-card">
-                                                            <div class="q-num-label">Question <?= $qi + 1 ?></div>
-                                                            <div class="q-text"><?= htmlspecialchars($q['question']) ?></div>
-                                                            <?php if ($q['question_type'] === 'multiple_choice'):
-                                                                $ltrs = ['A', 'B', 'C', 'D'];
-                                                                $ch = ['a' => $q['choice_a'], 'b' => $q['choice_b'], 'c' => $q['choice_c'], 'd' => $q['choice_d']];
-                                                                $li = 0;
-                                                                ?>
-                                                                <input type="hidden" id="mc_hidden_<?= (int) $q['id'] ?>" value="">
-                                                                <?php foreach ($ch as $key => $val):
-                                                                    if ($val === null)
-                                                                        continue;
-                                                                    ?>
-                                                                    <div class="mc-choice" data-qid="<?= (int) $q['id'] ?>"
-                                                                        data-act-id="<?= (int) $actId ?>" data-key="<?= $key ?>"
-                                                                        onclick="pickMC(this)">
-                                                                        <span class="mc-letter"><?= $ltrs[$li++] ?></span>
-                                                                        <?= htmlspecialchars($val) ?>
-                                                                    </div>
-                                                                <?php endforeach; ?>
-                                                            <?php else: ?>
-                                                                <textarea class="activity-answer" data-qid="<?= (int) $q['id'] ?>"
-                                                                    data-act-id="<?= (int) $actId ?>" placeholder="Type your answer here…"
-                                                                    rows="4"></textarea>
-                                                            <?php endif; ?>
-                                                        </div>
-                                                    <?php endforeach; ?>
+                                                <div class="qz-nav-row">
+                                                    <button class="btn-qnav-prev" id="actPrevBtn" style="visibility:hidden;"
+                                                        onclick="actNav(-1)">
+                                                        <i class="fa fa-chevron-left"></i>
+                                                        Prev
+                                                    </button>
+                                                    <button class="btn-qnav-next" id="actNextBtn" onclick="actNav(1)" disabled>
+                                                        Next
+                                                        <i class="fa fa-chevron-right"></i>
+                                                    </button>
                                                 </div>
-                                            <?php endif; ?>
-
-                                        </div><!-- /activity-block -->
-                                    <?php endforeach; ?>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             <?php endif; ?>
 
@@ -3720,10 +3998,6 @@ function youtubeEmbed($url)
                             ?>
 
                             <div class="ls-section" id="section-quizzes" style="display:none;">
-                                <!-- <button type="button" class="btn-exit-quiz" onclick="closeQuizStage()">
-                                    <i class="fa fa-arrow-left"></i>
-                                    Back to Lesson
-                                </button> -->
                                 <button type="button" class="btn-exit-quiz" onclick="closeQuizStage()">
                                     <i class="fa fa-arrow-left"></i>
 
@@ -3743,8 +4017,6 @@ function youtubeEmbed($url)
                                 <?php if ($firstQzDone): ?>
 
                                     <?php
-                                    // Build one flat list of questions across all quizzes, same idea as
-                                    // the active-quiz $allQzQuestions, but carrying the student's answer.
                                     $allQzReviewQuestions = [];
                                     foreach ($quizData as $qzId => $data) {
                                         if (!$data['result'])
@@ -3762,6 +4034,16 @@ function youtubeEmbed($url)
                                         }
                                     }
                                     $reviewGrandTotal = count($allQzReviewQuestions);
+
+                                    $reviewCorrect = 0;
+                                    foreach ($allQzReviewQuestions as $reviewItem) {
+                                        $reviewCorrectAns = strtolower($reviewItem['q']['correct_ans'] ?? '');
+                                        if ($reviewItem['studentAnswer'] === $reviewCorrectAns) {
+                                            $reviewCorrect++;
+                                        }
+                                    }
+                                    $reviewIncorrect = $reviewGrandTotal - $reviewCorrect;
+                                    $reviewAccuracy = $reviewGrandTotal > 0 ? round(($reviewCorrect / $reviewGrandTotal) * 100) : 0;
                                     ?>
 
 
@@ -3786,6 +4068,7 @@ function youtubeEmbed($url)
                                                 </div>
                                                 <div class="qz-choices">
                                                     <?php $ci = 0;
+                                                    $qzLetters = ['A', 'B', 'C', 'D'];
                                                     foreach ($ch as $key => $val):
                                                         if ($val === null)
                                                             continue;
@@ -3796,7 +4079,10 @@ function youtubeEmbed($url)
                                                         ?>
                                                         <div class="qz-choice-btn qz-review-choice <?= $stateClass ?>"
                                                             data-color="<?= $ci ?>">
-                                                            <span><?= htmlspecialchars($val) ?></span>
+                                                            <span class="qz-choice-inner">
+                                                                <span class="qz-choice-letter"><?= $qzLetters[$ci] ?></span>
+                                                                <span class="qz-choice-text"><?= htmlspecialchars($val) ?></span>
+                                                            </span>
                                                             <?php if ($isCorrect): ?>
                                                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                                                                     width="16" height="16">
@@ -3827,6 +4113,38 @@ function youtubeEmbed($url)
                                         </div>
                                     </div>
 
+                                    <div class="qz-results" id="qzReviewResults" style="display:none;">
+                                        <h2>Quiz Results</h2>
+                                        <div class="qz-result-card">
+                                            <div class="qz-result-label">Accuracy</div>
+                                            <div class="qz-accuracy-row">
+                                                <div class="qz-accuracy-track">
+                                                    <div class="qz-accuracy-fill" style="width:<?= $reviewAccuracy ?>%"></div>
+                                                </div>
+                                                <span class="qz-accuracy-pct"><?= $reviewAccuracy ?>%</span>
+                                            </div>
+                                        </div>
+                                        <div class="qz-result-card">
+                                            <div class="qz-result-row">
+                                                <div class="qz-result-label">Performance Stats</div>
+                                                <span class="qz-result-count"><?= $reviewGrandTotal ?> questions</span>
+                                            </div>
+                                            <div class="qz-stat-pills">
+                                                <span class="qz-stat-pill pill-correct">
+                                                    <i class="fa fa-check"></i> <?= $reviewCorrect ?> Correct
+                                                </span>
+                                                <span class="qz-stat-pill pill-incorrect">
+                                                    <i class="fa fa-times"></i> <?= $reviewIncorrect ?> Incorrect
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="qz-results-actions">
+                                            <button type="button" class="btn-qnav-next" id="qzReviewResultsBackBtn">
+                                                <i class="fa fa-arrow-left"></i> Back to Quiz Review
+                                            </button>
+                                        </div>
+                                    </div>
+
                                 <?php else: ?>
 
 
@@ -3848,13 +4166,19 @@ function youtubeEmbed($url)
                                                 </div>
                                                 <div class="qz-choices">
                                                     <?php $ci = 0;
+                                                    $qzLetters = ['A', 'B', 'C', 'D'];
                                                     foreach ($ch as $key => $val):
                                                         if ($val === null)
                                                             continue;
                                                         ?>
                                                         <div class="qz-choice-btn" data-color="<?= $ci ?>" data-qid="<?= (int) $q['id'] ?>"
-                                                            data-key="<?= $key ?>" data-qzid="<?= $item['qzId'] ?>" onclick="qzPick(this)">
-                                                            <?= htmlspecialchars($val) ?>
+                                                            data-key="<?= $key ?>" data-qzid="<?= $item['qzId'] ?>"
+                                                            data-correct="<?= ($key === strtolower($q['correct_ans'] ?? '')) ? '1' : '0' ?>"
+                                                            onclick="qzPick(this)">
+                                                            <span class="qz-choice-inner">
+                                                                <span class="qz-choice-letter"><?= $qzLetters[$ci] ?></span>
+                                                                <span class="qz-choice-text"><?= htmlspecialchars($val) ?></span>
+                                                            </span>
                                                         </div>
                                                         <?php $ci++; endforeach; ?>
                                                 </div>
@@ -3875,6 +4199,38 @@ function youtubeEmbed($url)
 
                                         <div class="quiz-status" id="unified_status" style="text-align:center;margin-top:10px;">
                                             0 / <?= $grandTotal ?> answered</div>
+                                    </div>
+
+                                    <div class="qz-results" id="qzResults" style="display:none;">
+                                        <h2>Quiz Results</h2>
+                                        <div class="qz-result-card">
+                                            <div class="qz-result-label">Accuracy</div>
+                                            <div class="qz-accuracy-row">
+                                                <div class="qz-accuracy-track">
+                                                    <div class="qz-accuracy-fill" id="qzAccuracyFill" style="width:0%"></div>
+                                                </div>
+                                                <span class="qz-accuracy-pct" id="qzAccuracyPct">0%</span>
+                                            </div>
+                                        </div>
+                                        <div class="qz-result-card">
+                                            <div class="qz-result-row">
+                                                <div class="qz-result-label">Performance Stats</div>
+                                                <span class="qz-result-count" id="qzResultCount">0 questions</span>
+                                            </div>
+                                            <div class="qz-stat-pills">
+                                                <span class="qz-stat-pill pill-correct" id="qzPillCorrect">
+                                                    <i class="fa fa-check"></i> 0 Correct
+                                                </span>
+                                                <span class="qz-stat-pill pill-incorrect" id="qzPillIncorrect">
+                                                    <i class="fa fa-times"></i> 0 Incorrect
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="qz-results-actions">
+                                            <button type="button" class="btn-qnav-next" id="qzResultsContinueBtn">
+                                                Continue <i class="fa fa-arrow-right"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -3935,6 +4291,8 @@ function youtubeEmbed($url)
 
         <div class="qz-overlay" id="qzOverlay"></div>
 
+        <div class="qz-overlay" id="actOverlay"></div>
+
         <div class="db-lightbox" id="dbLightbox" onclick="dbLightboxClose()">
             <button class="db-lightbox-close" onclick="dbLightboxClose()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
@@ -3966,6 +4324,10 @@ function youtubeEmbed($url)
                 var overlay = document.getElementById('qzOverlay');
                 if (!quizSection || !overlay) return;
 
+                if (overlay.parentElement !== document.body) {
+                    document.body.appendChild(overlay);
+                }
+
                 if (!document.getElementById('qzHomeMarker')) {
                     var marker = document.createElement('div');
                     marker.id = 'qzHomeMarker';
@@ -3996,7 +4358,6 @@ function youtubeEmbed($url)
                 var marker = document.getElementById('qzHomeMarker');
                 if (!quizSection || !overlay) return;
 
-                // play the exit animation, then actually tear it down
                 overlay.classList.add('qz-closing');
 
                 setTimeout(function () {
@@ -4015,7 +4376,64 @@ function youtubeEmbed($url)
                         sessionStorage.removeItem('quiz_open_lesson_' + LESSON_DATA.lessonId);
                     }
                     scrollToSection('quizCta');
-                }, 280); // must match .qz-overlay.qz-closing animation duration
+                }, 280);
+            }
+        </script>
+
+        <script>
+            function openActivityStage() {
+                var stage = document.getElementById('section-activity-stage');
+                var overlay = document.getElementById('actOverlay');
+                if (!stage || !overlay) return;
+
+                if (overlay.parentElement !== document.body) {
+                    document.body.appendChild(overlay);
+                }
+
+                if (!document.getElementById('actHomeMarker')) {
+                    var marker = document.createElement('div');
+                    marker.id = 'actHomeMarker';
+                    marker.style.display = 'none';
+                    stage.parentNode.insertBefore(marker, stage);
+                }
+
+                overlay.appendChild(stage);
+                stage.style.display = 'block';
+                overlay.classList.remove('qz-closing');
+                overlay.classList.add('open');
+                overlay.scrollTop = 0;
+
+                document.body.dataset.prevOverflow = document.body.style.overflow || '';
+                document.body.style.overflow = 'hidden';
+
+                var shell = document.getElementById('lessonsShell');
+                if (shell) shell.classList.add('shell-scroll-lock');
+
+                if (typeof actUpdateNav === 'function') actUpdateNav();
+            }
+
+            function closeActivityStage() {
+                var stage = document.getElementById('section-activity-stage');
+                var overlay = document.getElementById('actOverlay');
+                var marker = document.getElementById('actHomeMarker');
+                if (!stage || !overlay) return;
+
+                overlay.classList.add('qz-closing');
+
+                setTimeout(function () {
+                    if (marker && marker.parentNode) {
+                        marker.parentNode.insertBefore(stage, marker);
+                    }
+                    stage.style.display = 'none';
+                    overlay.classList.remove('open', 'qz-closing');
+
+                    document.body.style.overflow = document.body.dataset.prevOverflow || '';
+
+                    var shell = document.getElementById('lessonsShell');
+                    if (shell) shell.classList.remove('shell-scroll-lock');
+
+                    scrollToSection('activityCta');
+                }, 280);
             }
         </script>
 
@@ -4049,6 +4467,9 @@ function youtubeEmbed($url)
         </script>
 
         <script>
+            var _bbGreetingFinish = null;
+            var _bbQuizMsgFinish = null;
+
             function startBonbonQuizGreetingTypewriter() {
                 const el = document.getElementById('bonbonMessage-quiz-greeting');
                 if (!el || el.dataset.typed) return;
@@ -4057,25 +4478,41 @@ function youtubeEmbed($url)
                 const message = <?= json_encode($bonbonQuizGreeting) ?>;
                 const speed = 28;
                 let i = 0;
+                let done = false;
 
                 const cursor = document.createElement('span');
                 cursor.className = 'typing-cursor';
                 el.appendChild(cursor);
 
+                const skipEl = document.getElementById('skipGreetingTyping');
+                if (skipEl) skipEl.style.display = 'flex';
+
+                function finish() {
+                    if (done) return;
+                    done = true;
+                    cursor.remove();
+                    el.textContent = message;
+                    if (skipEl) skipEl.style.display = 'none';
+                    const btn = document.getElementById('btnQuizContinue');
+                    if (btn) btn.classList.add('btn-visible');
+                }
+                _bbGreetingFinish = finish;
+
                 function type() {
+                    if (done) return;
                     if (i < message.length) {
                         cursor.insertAdjacentText('beforebegin', message.charAt(i));
                         i++;
                         setTimeout(type, speed);
                     } else {
-                        setTimeout(() => {
-                            cursor.remove();
-                            const btn = document.getElementById('btnQuizContinue');
-                            if (btn) btn.classList.add('btn-visible');
-                        }, 200);
+                        setTimeout(finish, 200);
                     }
                 }
                 type();
+            }
+
+            function skipBonbonGreeting() {
+                if (_bbGreetingFinish) _bbGreetingFinish();
             }
 
             function startBonbonQuizTypewriter() {
@@ -4086,28 +4523,51 @@ function youtubeEmbed($url)
                 const message = <?= json_encode($bonbonQuizMessage) ?>;
                 const speed = 28;
                 let i = 0;
+                let done = false;
 
                 const cursor = document.createElement('span');
                 cursor.className = 'typing-cursor';
                 el.appendChild(cursor);
 
+                const skipEl = document.getElementById('skipQuizMsgTyping');
+                if (skipEl) skipEl.style.display = 'flex';
+
+                function finish() {
+                    if (done) return;
+                    done = true;
+                    cursor.remove();
+                    el.textContent = message;
+                    if (skipEl) skipEl.style.display = 'none';
+                    const btn = document.querySelector('.bubble-quiz .btn-take-quiz');
+                    if (btn) btn.classList.add('btn-visible');
+                }
+                _bbQuizMsgFinish = finish;
+
                 function type() {
+                    if (done) return;
                     if (i < message.length) {
                         cursor.insertAdjacentText('beforebegin', message.charAt(i));
                         i++;
                         setTimeout(type, speed);
                     } else {
-                        setTimeout(() => {
-                            cursor.remove();
-                            const btn = document.querySelector('.bubble-quiz .btn-take-quiz');
-                            if (btn) btn.classList.add('btn-visible');
-                        }, 200);
+                        setTimeout(finish, 200);
                     }
                 }
                 type();
             }
 
+            function skipBonbonQuizMsg() {
+                if (_bbQuizMsgFinish) _bbQuizMsgFinish();
+            }
+
             document.addEventListener('DOMContentLoaded', function () {
+                var quizAlreadyDone = <?= json_encode($quizAlreadyDone) ?>;
+
+                if (quizAlreadyDone) {
+                    startBonbonQuizTypewriter();
+                    return;
+                }
+
                 startBonbonQuizGreetingTypewriter();
 
                 const continueBtn = document.getElementById('btnQuizContinue');
@@ -4215,10 +4675,6 @@ function youtubeEmbed($url)
         </script>
 
         <script>
-
-        </script>
-
-        <script>
             fetch('/learning_management/public/?url=mark_flashcards_viewed', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -4286,60 +4742,6 @@ function youtubeEmbed($url)
                     el.scrollIntoView({ behavior: 'smooth' });
                 }
             }
-
-            function openQuizStage() {
-                var quizSection = document.getElementById('section-quizzes');
-                var overlay = document.getElementById('qzOverlay');
-                if (!quizSection || !overlay) return;
-
-                if (!document.getElementById('qzHomeMarker')) {
-                    var marker = document.createElement('div');
-                    marker.id = 'qzHomeMarker';
-                    marker.style.display = 'none';
-                    quizSection.parentNode.insertBefore(marker, quizSection);
-                }
-
-                overlay.appendChild(quizSection);
-                quizSection.style.display = 'block';
-                overlay.classList.add('open');
-                overlay.scrollTop = 0;
-
-                document.body.dataset.prevOverflow = document.body.style.overflow || '';
-                document.body.style.overflow = 'hidden';
-
-                // NEW: remember that the quiz stage was open for this lesson
-                var shell = document.getElementById('lessonsShell');
-                if (shell) shell.classList.add('shell-scroll-lock');
-
-                if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
-                    sessionStorage.setItem('quiz_open_lesson_' + LESSON_DATA.lessonId, '1');
-                }
-            }
-
-            function closeQuizStage() {
-                var quizSection = document.getElementById('section-quizzes');
-                var overlay = document.getElementById('qzOverlay');
-                var marker = document.getElementById('qzHomeMarker');
-                if (!quizSection) return;
-
-                if (marker && marker.parentNode) {
-                    marker.parentNode.insertBefore(quizSection, marker);
-                }
-                quizSection.style.display = 'none';
-                if (overlay) overlay.classList.remove('open');
-
-                document.body.style.overflow = document.body.dataset.prevOverflow || '';
-
-                // NEW: clear the flag when the user explicitly goes back
-                var shell = document.getElementById('lessonsShell');
-                if (shell) shell.classList.remove('shell-scroll-lock');
-
-                if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
-                    sessionStorage.removeItem('quiz_open_lesson_' + LESSON_DATA.lessonId);
-                }
-                scrollToSection('quizCta');
-
-            }
         </script>
 
         <script>
@@ -4359,7 +4761,7 @@ function youtubeEmbed($url)
                     setTimeout(function () {
                         splash.style.display = 'none';
                         shell.classList.add('shell-visible');
-                        shell.classList.remove('shell-scroll-lock'); // NEW
+                        shell.classList.remove('shell-scroll-lock');
                         startBonbonBubble2Typewriter();
                         startBonbonBubble3Typewriter();
                         startBonbonQuizTypewriter();

@@ -69,17 +69,18 @@ class Teacher extends Model
     public function getClassInfo($subjectId, $gradeLevelId, $sectionId = 0)
     {
         $sql = "
-            SELECT
-                s.subject_name,
-                gl.name          AS grade,
-                sec.section_name AS section,
-                sec.id           AS section_id,
-                gl.id            AS grade_level_id
-            FROM tbl_subjects s
-            JOIN tbl_grade_level gl  ON gl.id  = s.grade_level_id
-            JOIN tbl_sections    sec ON sec.grade_level_id = gl.id
-            WHERE s.id = ? AND gl.id = ?
-        ";
+        SELECT
+            s.subject_name,
+            s.subject_code,
+            gl.name          AS grade,
+            sec.section_name AS section,
+            sec.id           AS section_id,
+            gl.id            AS grade_level_id
+        FROM tbl_subjects s
+        JOIN tbl_grade_level gl  ON gl.id  = s.grade_level_id
+        JOIN tbl_sections    sec ON sec.grade_level_id = gl.id
+        WHERE s.id = ? AND gl.id = ?
+    ";
         $params = [$subjectId, $gradeLevelId];
         $types = "ii";
 
@@ -94,6 +95,47 @@ class Teacher extends Model
         $stmt->bind_param($types, ...$params);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
+    }
+
+    // ============================================================
+// Class progress overview (Submitted / Graded / Pending / %)
+// ============================================================
+    public function getClassProgressStats($subjectId, $teacherId, $sectionId = 0)
+    {
+        $sql = "
+        SELECT
+            COUNT(*) AS total_submitted,
+            SUM(CASE WHEN asub.points_earned IS NOT NULL THEN 1 ELSE 0 END) AS total_graded
+        FROM tbl_assignment_submissions asub
+        JOIN tbl_assignments a ON a.id = asub.assignment_id
+        WHERE a.subject_id = ? AND a.teacher_id = ?
+    ";
+        $params = [$subjectId, $teacherId];
+        $types = "ii";
+
+        if ($sectionId > 0) {
+            $sql .= " AND (a.section_id = 0 OR a.section_id = ?)";
+            $params[] = $sectionId;
+            $types .= "i";
+        }
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc() ?: ['total_submitted' => 0, 'total_graded' => 0];
+
+        $submitted = (int) ($row['total_submitted'] ?? 0);
+        $graded = (int) ($row['total_graded'] ?? 0);
+        $pending = max(0, $submitted - $graded);
+        $percentage = $submitted > 0 ? (int) round(($graded / $submitted) * 100) : 0;
+
+        return [
+            'submitted' => $submitted,
+            'graded' => $graded,
+            'pending' => $pending,
+            'percentage' => $percentage,
+            'total_students' => $this->getStudentCountBySection($subjectId, $sectionId),
+        ];
     }
 
     // ============================================================
@@ -816,6 +858,136 @@ class Teacher extends Model
         return (int) $stmt->get_result()->fetch_assoc()['total'];
     }
 
+    public function getClassProgressOverview($teacher_id)
+    {
+        $sql = "
+        SELECT
+            s.subject_name,
+            ROUND(AVG(asub.points_earned / a.points * 100), 1) AS avg_percentage,
+            COUNT(asub.id) AS submission_count
+        FROM tbl_assignment_submissions asub
+        JOIN tbl_assignments a ON a.id = asub.assignment_id
+        JOIN tbl_subjects s ON s.id = a.subject_id
+        WHERE a.teacher_id = ?
+          AND asub.points_earned IS NOT NULL
+          AND a.points > 0
+        GROUP BY s.subject_name
+        ORDER BY s.subject_name ASC
+    ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $teacher_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // ============================================================
+// DASHBOARD — Progress trend (for line chart)
+// ============================================================
+    public function getWeeklyProgressTrend($teacher_id, $weeks = 6)
+    {
+        $sql = "
+        SELECT
+            YEARWEEK(asub.submitted_at, 1) AS yw,
+            MIN(DATE(asub.submitted_at)) AS week_start,
+            ROUND(AVG(asub.points_earned / a.points * 100), 1) AS avg_percentage
+        FROM tbl_assignment_submissions asub
+        JOIN tbl_assignments a ON a.id = asub.assignment_id
+        WHERE a.teacher_id = ?
+          AND asub.points_earned IS NOT NULL
+          AND a.points > 0
+        GROUP BY yw
+        ORDER BY yw DESC
+        LIMIT ?
+    ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("ii", $teacher_id, $weeks);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        return array_reverse($rows); // chronological order
+    }
+
+    public function getProgressStats($teacher_id)
+    {
+        $sql = "
+        SELECT
+            ROUND(AVG(asub.points_earned / a.points * 100), 0) AS avg_pct,
+            ROUND(MAX(asub.points_earned / a.points * 100), 0) AS max_pct,
+            ROUND(MIN(asub.points_earned / a.points * 100), 0) AS min_pct
+        FROM tbl_assignment_submissions asub
+        JOIN tbl_assignments a ON a.id = asub.assignment_id
+        WHERE a.teacher_id = ?
+          AND asub.points_earned IS NOT NULL
+          AND a.points > 0
+    ";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $teacher_id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc() ?: ['avg_pct' => 0, 'max_pct' => 0, 'min_pct' => 0];
+    }
+
+    // ============================================================
+// DASHBOARD — Pending reviews (ungraded submissions)
+// ============================================================
+    public function getPendingReviewSubmissions($teacher_id, $limit = 5)
+    {
+        $stmt = $this->db->prepare("
+        SELECT
+            asub.id AS submission_id,
+            a.id AS assignment_id,
+            a.title AS assignment_title,
+            a.type,
+            s.id AS subject_id,
+            s.subject_name,
+            u.name AS student_name,
+            sec.section_name,
+            gl.name AS grade_level,
+            asub.submitted_at
+        FROM tbl_assignment_submissions asub
+        JOIN tbl_assignments a ON a.id = asub.assignment_id
+        JOIN tbl_subjects s ON s.id = a.subject_id
+        JOIN tbl_students st ON st.id = asub.student_id
+        JOIN tbl_users u ON u.id = st.user_id
+        JOIN tbl_sections sec ON sec.id = st.section_id
+        JOIN tbl_grade_level gl ON gl.id = st.grade_level_id
+        WHERE a.teacher_id = ? AND asub.points_earned IS NULL
+        ORDER BY asub.submitted_at ASC
+        LIMIT ?
+    ");
+        $stmt->bind_param("ii", $teacher_id, $limit);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // ============================================================
+// DASHBOARD — Recent learning materials (modules/pdf/video)
+// ============================================================
+    public function getRecentLearningMaterials($teacher_id, $limit = 5)
+    {
+        $stmt = $this->db->prepare("
+        SELECT
+            m.id,
+            m.title,
+            m.file_type,
+            m.posted_at,
+            s.subject_name,
+            gl.name AS grade_level,
+            sec.section_name
+        FROM tbl_modules m
+        JOIN tbl_subjects s ON s.id = m.subject_id
+        JOIN tbl_teacher_assignments ta
+            ON ta.subject_id = m.subject_id AND ta.teacher_id = m.teacher_id
+        JOIN tbl_sections sec ON sec.id = ta.section_id
+        JOIN tbl_grade_level gl ON gl.id = ta.grade_level_id
+        WHERE m.teacher_id = ?
+        GROUP BY m.id
+        ORDER BY m.posted_at DESC
+        LIMIT ?
+    ");
+        $stmt->bind_param("ii", $teacher_id, $limit);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function getModuleByTitle($subjectId, $title)
     {
         $stmt = $this->db->prepare("SELECT id FROM tbl_modules WHERE subject_id = ? AND title = ? LIMIT 1");
@@ -1042,6 +1214,7 @@ class Teacher extends Model
         $stmt = $this->db->prepare("
         SELECT
             a.title AS assignment_title,
+            a.task,                    
             s.subject_name,
             u.name AS student_name,
             gl.name AS grade_level,
