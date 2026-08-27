@@ -224,10 +224,73 @@ function qzUpdateNav() {
                 }
             };
         } else {
-            nextBtn.innerHTML = 'Next <i class="fa fa-arrow-right"></i>';
+            nextBtn.innerHTML = 'Next <i class="fa fa-chevron-right"></i>';
             nextBtn.onclick = function () { qzNav(1); };
         }
     }
+}
+
+/* ==========================
+   QUIZ REVIEW NAVIGATION
+   (same carousel UI as the live quiz, read-only)
+========================== */
+var QZ_REVIEW = { cur: 0 };
+
+function qzReviewInit() {
+    var blocks = document.querySelectorAll('.qz-review-block');
+    if (!blocks.length) return;
+    qzReviewUpdateNav();
+}
+
+function qzReviewNav(dir) {
+    var blocks = document.querySelectorAll('.qz-review-block');
+    if (!blocks.length) return;
+
+    var newIdx = Math.max(0, Math.min(blocks.length - 1, QZ_REVIEW.cur + dir));
+    if (newIdx === QZ_REVIEW.cur) return;
+
+    blocks[QZ_REVIEW.cur].style.display = 'none';
+    QZ_REVIEW.cur = newIdx;
+    blocks[QZ_REVIEW.cur].style.display = 'block';
+
+    qzReviewUpdateNav();
+}
+
+function qzReviewUpdateNav() {
+    var blocks = document.querySelectorAll('.qz-review-block');
+    var total = blocks.length;
+    if (!total) return;
+
+    var counter = document.getElementById('qzReviewCounter');
+    if (counter) counter.textContent = 'Question ' + (QZ_REVIEW.cur + 1) + ' of ' + total;
+
+    var fill = document.getElementById('qzReviewProgressFill');
+    if (fill) fill.style.width = Math.round(((QZ_REVIEW.cur + 1) / total) * 100) + '%';
+
+    var prevBtn = document.getElementById('qzReviewPrevBtn');
+    if (prevBtn) prevBtn.style.visibility = QZ_REVIEW.cur > 0 ? 'visible' : 'hidden';
+
+    var nextBtn = document.getElementById('qzReviewNextBtn');
+    if (nextBtn) {
+        // Last question: remove Next entirely instead of just disabling it
+        nextBtn.style.display = (QZ_REVIEW.cur === total - 1) ? 'none' : 'flex';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', qzReviewInit);
+
+function qzRestoreSelection(block) {
+    if (!block) return;
+    block.querySelectorAll('.qz-choice-btn').forEach(function (btn) {
+        var qid = btn.dataset.qid;
+        var key = btn.dataset.key;
+        if (!qid || !key) return; // skip buttons with no answer data (e.g. review mode)
+        if (UNIFIED_QZ.ans[qid] === key) {
+            btn.classList.add('selected');
+        } else {
+            btn.classList.remove('selected');
+        }
+    });
 }
 
 /* ==========================

@@ -2314,6 +2314,7 @@ function youtubeEmbed($url)
         .quiz-status {
             font-size: 14.5px;
             color: var(--page-muted, var(--text-dim));
+            display: none;
         }
 
         .quiz-nav-btns {
@@ -2325,9 +2326,12 @@ function youtubeEmbed($url)
         .btn-qnav-prev {
             padding: 9px 18px;
             border-radius: 9px;
-            border: 1.5px solid var(--page-border, var(--panel-border));
+            /* border: 1.5px solid var(--page-border, var(--panel-border)); */
+            border: 1px solid var(--border);
             background: var(--page-card, #fff);
-            color: var(--page-text, var(--text-bright));
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            /* color: var(--page-text, var(--text-bright)); */
+            color: var(--text-dim);
             font-size: 13px;
             font-weight: 600;
             transition: border-color .18s;
@@ -2361,7 +2365,7 @@ function youtubeEmbed($url)
         .btn-qnav-next:hover,
         .btn-submit-quiz:hover {
             transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(0, 153, 204, 0.3);
+            /* box-shadow: 0 6px 18px rgba(0, 153, 204, 0.3); */
         }
 
         .btn-qnav-next:disabled {
@@ -2584,28 +2588,37 @@ function youtubeEmbed($url)
             box-shadow: 0 10px 24px rgba(0, 119, 204, 0.3);
         }
 
+        .btn-take-quiz:active,
+        .btn-quiz-continue:active {
+            transform: scale(.94);
+        }
+
         .btn-take-quiz i {
             font-size: 12px;
         }
 
         .bubble-quiz .btn-quiz-continue {
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 7px;
+            justify-content: flex-end;
+            width: 100%;
+            gap: 5px;
             color: var(--neon-cyan);
             font-size: 13.5px;
             font-weight: 700;
-            padding: 8px 18px;
-            border-radius: 99px;
-            background: #fff;
-            border: 1.5px solid var(--neon-cyan);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            padding: 0;
+            border-radius: 0;
+            background: none;
+            border: none;
             opacity: 0;
             transform: translateY(6px);
             pointer-events: none;
             max-height: 0;
             margin-top: 0;
             overflow: hidden;
-            transition: opacity .3s ease, transform .3s ease, max-height .3s ease, margin-top .3s ease, box-shadow .18s ease;
+            transition: opacity .3s ease, transform .3s ease, max-height .3s ease, margin-top .3s ease, color .18s ease;
         }
 
         .bubble-quiz .btn-quiz-continue.btn-visible {
@@ -2617,7 +2630,7 @@ function youtubeEmbed($url)
         }
 
         .bubble-quiz .btn-quiz-continue:hover {
-            box-shadow: 0 8px 20px rgba(0, 119, 204, 0.18);
+            color: var(--neon-blue);
         }
 
         .bubble-quiz .btn-quiz-continue i {
@@ -2668,7 +2681,7 @@ function youtubeEmbed($url)
             text-align: center;
             position: relative;
             margin-bottom: 22px;
-            box-shadow: 0 12px 30px rgba(43, 27, 61, 0.25);
+            /* box-shadow: 0 12px 30px rgba(43, 27, 61, 0.25); */
         }
 
         .qz-card::before {
@@ -2714,15 +2727,43 @@ function youtubeEmbed($url)
         .qz-choice-btn {
             display: flex;
             align-items: center;
-            padding: 18px 22px;
+            padding: 20px 22px;
             border-radius: 14px;
-            color: #fff;
+            /* color: #fff; */
+            color: var(--text-dim);
             /* color: var(--text-bright); */
+            border: 1px solid var(--border);
             font-size: 15.5px;
             font-weight: 600;
             cursor: pointer;
             border: 1px solid transparent;
             transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+
+        .qz-choice-btn {
+            justify-content: space-between;
+            /* room for the check/x icon on the right */
+        }
+
+        .qz-choice-btn.qz-review-choice {
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .qz-choice-btn.qz-correct {
+            border-color: #22c55e;
+            /* border-color: var(--border); */
+            background: rgba(34, 197, 94, 0.08);
+            /* background: rgba(0, 119, 204, 0.08); */
+            color: #15803d;
+            /* color: var(--neon-cyan); */
+        }
+
+        .qz-choice-btn.qz-wrong {
+            /* border-color: #ef4444; */
+            background: rgba(239, 68, 68, 0.08);
+            color: #b91c1c;
         }
 
         .qz-choice-btn:hover {
@@ -2731,27 +2772,43 @@ function youtubeEmbed($url)
         }
 
         .qz-choice-btn.selected {
-            border-color: #fff;
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35);
+            /* border-color: #fff; */
+            /* background-color: var(--neon-cyan); */
+            background: rgba(0, 119, 204, 0.08);
+            /* border: 1px solid var(--panel-border); */
+            color: var(--neon-cyan);
+            /* box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.35); */
         }
 
         .qz-choice-btn[data-color="0"] {
-            background-color: var(--qz-blue);
+            /* background-color: var(--qz-blue); */
+            /* background-color: #ffffff; */
+
             /* background: linear-gradient(135deg, rgba(0, 119, 204, 0.09), rgba(85, 51, 204, 0.05));
             border-color: var(--neon-cyan);
             box-shadow: 0 6px 18px rgba(0, 119, 204, 0.16); */
+            border: 1px solid var(--border);
         }
 
         .qz-choice-btn[data-color="1"] {
-            background-color: var(--qz-teal);
+            /* background-color: var(--qz-teal); */
+            /* background-color: #ffffff; */
+            border: 1px solid var(--border);
+
         }
 
         .qz-choice-btn[data-color="2"] {
-            background-color: var(--qz-orange);
+            /* background-color: var(--qz-orange); */
+            /* background-color: #ffffff; */
+            border: 1px solid var(--border);
+
         }
 
         .qz-choice-btn[data-color="3"] {
-            background-color: var(--qz-pink);
+            /* background-color: var(--qz-pink); */
+            /* background-color: #ffffff; */
+            border: 1px solid var(--border);
+
         }
 
         .qz-overlay {
@@ -2762,7 +2819,7 @@ function youtubeEmbed($url)
             background: #ffffff;
             overflow-y: auto;
             padding: 30px 24px 30px;
-            /* background-color: var(--neon-cyan); */
+            opacity: 0;
         }
 
         .qz-overlay::before {
@@ -2775,25 +2832,71 @@ function youtubeEmbed($url)
 
         .qz-overlay.open {
             display: block;
+            animation: qzOverlayIn .42s cubic-bezier(.2, .8, .2, 1) forwards;
+        }
+
+        .qz-overlay.qz-closing {
+            animation: qzOverlayOut .28s ease forwards;
+        }
+
+        @keyframes qzOverlayIn {
+            from {
+                opacity: 0;
+                transform: translateY(28px) scale(.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes qzOverlayOut {
+            from {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(20px) scale(.97);
+            }
         }
 
         .qz-overlay #section-quizzes {
             /* max-width: 720px; */
             /* max-width: 1000px; */
-            max-width: 700px;
+            max-width: 800px;
             margin: 0 auto;
+        }
+
+        .qz-overlay.open #section-quizzes {
+            animation: qzContentUp .45s cubic-bezier(.2, .8, .2, 1) .05s both;
+        }
+
+        @keyframes qzContentUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .btn-exit-quiz {
             display: inline-flex;
             align-items: center;
             gap: 7px;
-            font-size: 13px;
+            /* font-size: 13px; */
+            font-size: 18px;
             font-weight: 600;
             color: var(--text-dim);
-            padding: 7px 14px;
-            border-radius: 8px;
-            border: 1.5px solid var(--panel-border);
+            /* padding: 7px 14px; */
+            /* border-radius: 8px; */
+            /* border: 1.5px solid var(--panel-border); */
             background: #fff;
             margin-bottom: 20px;
             transition: border-color .15s ease, color .15s ease, transform .15s ease;
@@ -2819,6 +2922,10 @@ function youtubeEmbed($url)
 
         .qz-nav-row #qzNextBtn {
             margin-left: auto;
+        }
+
+        .qz-nav-row #qzNextBtn .fa {
+            font-size: 13.5px;
         }
 
         @media (max-width: 600px) {
@@ -2912,20 +3019,27 @@ function youtubeEmbed($url)
 
     $bonbonLessonMessage = "Welcome! I'm your learning assistant, ready to guide you through your journey!";
 
-    $bonbonQuizGreeting = "Hi" . (!empty($splashFirstName) && $splashFirstName !== 'Student' ? ", {$splashFirstName}" : "") . "! I'm BonBon, your quiz buddy.";
-
-    $bonbonQuizMessage = "Ready when you are — let's test what you've learned! Tap \"Take the Quiz\" below when you're ready.";
-
+    // Determine up front whether the quiz is already completed,
+// so both bubble messages can react to it.
+    $quizAlreadyDone = false;
     if (!empty($quizData)) {
-        $firstQzForBubble = reset($quizData)['quiz'];
-        $quizTitleForBubble = $firstQzForBubble['title'] ?? 'this quiz';
-        $quizInstrForBubble = trim($firstQzForBubble['instructions'] ?? '');
-
-        if ($quizInstrForBubble !== '') {
-            $bonbonQuizMessage = "\"{$quizTitleForBubble}\" — {$quizInstrForBubble} Tap \"Take the Quiz\" below when you're ready.";
-        } else {
-            $bonbonQuizMessage = "Ready to take \"{$quizTitleForBubble}\"? Read each question carefully, give it your best shot, and tap \"Take the Quiz\" below when you're ready!";
+        $quizAlreadyDone = true;
+        foreach ($quizData as $qzData) {
+            if (!$qzData['result']) {
+                $quizAlreadyDone = false;
+                break;
+            }
         }
+    }
+
+    $bonbonGreetName = (!empty($splashFirstName) && $splashFirstName !== 'Student') ? ", {$splashFirstName}" : "";
+
+    if ($quizAlreadyDone) {
+        $bonbonQuizGreeting = "Hi{$bonbonGreetName}! I'm BonBon, your quiz buddy. You've already completed this quiz — nice work!";
+        $bonbonQuizMessage = "Want a refresher? Reviewing your answers is a great way to lock in what you've learned. Tap \"Review the Quiz\" below whenever you're ready.";
+    } else {
+        $bonbonQuizGreeting = "Hi{$bonbonGreetName}! I'm BonBon, your quiz buddy. Quick reminder — there's a short quiz ahead so you can check how well you understood this lesson.";
+        $bonbonQuizMessage = "Take your time and answer honestly — it's the best way to see what's clicking and what could use another look. Tap \"Take the Quiz\" below when you're ready.";
     }
 
     if (!empty($lesson)) {
@@ -3349,7 +3463,7 @@ function youtubeEmbed($url)
                                                 <div id="bonbonQuizGreetingStage">
                                                     <p id="bonbonMessage-quiz-greeting"></p>
                                                     <button type="button" class="btn-quiz-continue" id="btnQuizContinue">
-                                                        Continue <i class="fa fa-arrow-right"></i>
+                                                        Continue
                                                     </button>
                                                 </div>
                                                 <div id="bonbonQuizMessageStage" style="display:none;">
@@ -3602,9 +3716,13 @@ function youtubeEmbed($url)
                             ?>
 
                             <div class="ls-section" id="section-quizzes" style="display:none;">
-                                <button type="button" class="btn-exit-quiz" onclick="closeQuizStage()">
+                                <!-- <button type="button" class="btn-exit-quiz" onclick="closeQuizStage()">
                                     <i class="fa fa-arrow-left"></i>
                                     Back to Lesson
+                                </button> -->
+                                <button type="button" class="btn-exit-quiz" onclick="closeQuizStage()">
+                                    <i class="fa fa-arrow-left"></i>
+
                                 </button>
                                 <div class="ls-section-head">
                                     <div class="ls-section-icon icon-quiz">
@@ -3619,90 +3737,91 @@ function youtubeEmbed($url)
                                 </div>
 
                                 <?php if ($firstQzDone): ?>
-                                    <?php foreach ($quizData as $qzId => $data):
+
+                                    <?php
+                                    // Build one flat list of questions across all quizzes, same idea as
+                                    // the active-quiz $allQzQuestions, but carrying the student's answer.
+                                    $allQzReviewQuestions = [];
+                                    foreach ($quizData as $qzId => $data) {
                                         if (!$data['result'])
                                             continue;
-                                        ?>
-                                        <div class="quiz-hero-card">
-                                            <div class="quiz-hero-inner">
-                                                <div class="quiz-hero-tag">
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                        width="11" height="11">
-                                                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                                                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                                                    </svg>
-                                                    Quiz
-                                                </div>
-                                                <div class="quiz-hero-title"><?= htmlspecialchars($firstQz['title']) ?></div>
-                                                <?php if (!empty($firstQz['instructions'])): ?>
-                                                    <div class="quiz-hero-desc"><?= htmlspecialchars($firstQz['instructions']) ?></div>
-                                                <?php endif; ?>
-                                                <div class="quiz-stats-strip">
-                                                    <div class="quiz-stat">
-                                                        <div class="qs-val"><?= (int) $data['result']['score'] ?></div>
-                                                        <div class="qs-lbl">Your Score</div>
-                                                    </div>
-                                                    <div class="quiz-stat">
-                                                        <div class="qs-val"><?= (int) $data['result']['total'] ?></div>
-                                                        <div class="qs-lbl">Total Points</div>
-                                                    </div>
-                                                    <div class="quiz-stat">
-                                                        <div class="qs-val"><?= (int) $firstQz['passing_score'] ?></div>
-                                                        <div class="qs-lbl">Passing Score</div>
-                                                    </div>
-                                                    <div class="quiz-stat">
-                                                        <div class="qs-val"><?= $grandTotal ?></div>
-                                                        <div class="qs-lbl">Questions</div>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        $studentAnswers = [];
+                                        if (!empty($data['result']['answers_json'])) {
+                                            $studentAnswers = json_decode($data['result']['answers_json'], true) ?? [];
+                                        }
+                                        foreach ($data['questions'] as $q) {
+                                            $allQzReviewQuestions[] = [
+                                                'q' => $q,
+                                                'qzId' => (int) $qzId,
+                                                'studentAnswer' => strtolower($studentAnswers[$q['id']] ?? ''),
+                                            ];
+                                        }
+                                    }
+                                    $reviewGrandTotal = count($allQzReviewQuestions);
+                                    ?>
+
+
+
+                                    <div class="qz-stage" id="qzReviewStage">
+                                        <div class="qz-counter" id="qzReviewCounter">Question 1 of <?= $reviewGrandTotal ?></div>
+                                        <div class="qz-progress-track">
+                                            <div class="qz-progress-fill" id="qzReviewProgressFill"
+                                                style="width: <?= $reviewGrandTotal ? round(100 / $reviewGrandTotal) : 0 ?>%"></div>
                                         </div>
 
-                                        <?php
-                                        $studentAnswers = [];
-                                        if (!empty($data['result']['answers_json']))
-                                            $studentAnswers = json_decode($data['result']['answers_json'], true) ?? [];
-                                        ?>
-                                        <?php foreach ($data['questions'] as $qi => $q):
+                                        <?php foreach ($allQzReviewQuestions as $qi => $item):
+                                            $q = $item['q'];
                                             $ch = ['a' => $q['choice_a'], 'b' => $q['choice_b'], 'c' => $q['choice_c'], 'd' => $q['choice_d']];
-                                            $qLtrs = ['A', 'B', 'C', 'D'];
-                                            $studentPicked = strtolower($studentAnswers[$q['id']] ?? '');
+                                            $correctAns = strtolower($q['correct_ans']);
+                                            $studentPicked = $item['studentAnswer'];
                                             ?>
-                                            <div class="q-card">
-                                                <p class="q-number">Question <?= $qi + 1 ?></p>
-                                                <p class="q-question"><?= htmlspecialchars($q['question']) ?></p>
-                                                <div>
-                                                    <?php $li = 0;
+                                            <div class="qz-question-block qz-review-block" data-qi="<?= $qi ?>"
+                                                style="<?= $qi > 0 ? 'display:none;' : '' ?>">
+                                                <div class="qz-card">
+                                                    <div class="qz-question-text"><?= htmlspecialchars($q['question']) ?></div>
+                                                </div>
+                                                <div class="qz-choices">
+                                                    <?php $ci = 0;
                                                     foreach ($ch as $key => $val):
                                                         if ($val === null)
                                                             continue;
-                                                        $isCorrect = strtolower($key) === strtolower($q['correct_ans']);
+                                                        $isCorrect = ($key === $correctAns);
                                                         $isPicked = ($key === $studentPicked);
                                                         $isWrong = ($isPicked && !$isCorrect);
-                                                        if ($isCorrect) {
-                                                            $bs = 'border-color:#22c55e;background:rgba(34,197,94,0.06);';
-                                                            $ls = 'background:#22c55e;color:#fff;border-color:#22c55e;';
-                                                            $ic = '<svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" width="14" height="14" style="margin-left:auto"><path d="M20 6L9 17l-5-5"/></svg>';
-                                                        } elseif ($isWrong) {
-                                                            $bs = 'border-color:#ef4444;background:rgba(239,68,68,0.06);';
-                                                            $ls = 'background:#ef4444;color:#fff;border-color:#ef4444;';
-                                                            $ic = '<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" width="14" height="14" style="margin-left:auto"><path d="M18 6L6 18M6 6l12 12"/></svg>';
-                                                        } else {
-                                                            $bs = 'border-color:var(--page-border);';
-                                                            $ls = '';
-                                                            $ic = '';
-                                                        }
+                                                        $stateClass = $isCorrect ? 'qz-correct' : ($isWrong ? 'qz-wrong' : '');
                                                         ?>
-                                                        <div class="q-choice" style="pointer-events:none;<?= $bs ?>">
-                                                            <span class="choice-letter" style="<?= $ls ?>"><?= $qLtrs[$li++] ?></span>
-                                                            <?= htmlspecialchars($val) ?>
-                                                            <?= $ic ?>
+                                                        <div class="qz-choice-btn qz-review-choice <?= $stateClass ?>"
+                                                            data-color="<?= $ci ?>">
+                                                            <span><?= htmlspecialchars($val) ?></span>
+                                                            <?php if ($isCorrect): ?>
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                                                    width="16" height="16">
+                                                                    <path d="M20 6L9 17l-5-5" />
+                                                                </svg>
+                                                            <?php elseif ($isWrong): ?>
+                                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                                                                    width="16" height="16">
+                                                                    <path d="M18 6L6 18M6 6l12 12" />
+                                                                </svg>
+                                                            <?php endif; ?>
                                                         </div>
-                                                    <?php endforeach; ?>
+                                                        <?php $ci++; endforeach; ?>
                                                 </div>
                                             </div>
                                         <?php endforeach; ?>
-                                    <?php endforeach; ?>
+
+                                        <div class="qz-nav-row">
+                                            <button class="btn-qnav-prev" id="qzReviewPrevBtn" style="visibility:hidden;"
+                                                onclick="qzReviewNav(-1)">
+                                                <i class="fa fa-chevron-left"></i>
+                                                Prev
+                                            </button>
+                                            <button class="btn-qnav-next" id="qzReviewNextBtn" onclick="qzReviewNav(1)">
+                                                Next
+                                                <i class="fa fa-chevron-right"></i>
+                                            </button>
+                                        </div>
+                                    </div>
 
                                 <?php else: ?>
 
@@ -3741,12 +3860,12 @@ function youtubeEmbed($url)
                                         <div class="qz-nav-row">
                                             <button class="btn-qnav-prev" id="qzPrevBtn" style="visibility:hidden;"
                                                 onclick="qzNav(-1)">
-                                                <i class="fa fa-arrow-left"></i>
+                                                <i class="fa fa-chevron-left"></i>
                                                 Prev
                                             </button>
                                             <button class="btn-qnav-next" id="qzNextBtn" onclick="qzNav(1)" disabled>
                                                 Next
-                                                <i class="fa fa-arrow-right"></i>
+                                                <i class="fa fa-chevron-right"></i>
                                             </button>
                                         </div>
 
@@ -3836,6 +3955,65 @@ function youtubeEmbed($url)
                 }
             </style>
         </noscript>
+
+        <script>
+            function openQuizStage() {
+                var quizSection = document.getElementById('section-quizzes');
+                var overlay = document.getElementById('qzOverlay');
+                if (!quizSection || !overlay) return;
+
+                if (!document.getElementById('qzHomeMarker')) {
+                    var marker = document.createElement('div');
+                    marker.id = 'qzHomeMarker';
+                    marker.style.display = 'none';
+                    quizSection.parentNode.insertBefore(marker, quizSection);
+                }
+
+                overlay.appendChild(quizSection);
+                quizSection.style.display = 'block';
+                overlay.classList.remove('qz-closing');
+                overlay.classList.add('open');
+                overlay.scrollTop = 0;
+
+                document.body.dataset.prevOverflow = document.body.style.overflow || '';
+                document.body.style.overflow = 'hidden';
+
+                var shell = document.getElementById('lessonsShell');
+                if (shell) shell.classList.add('shell-scroll-lock');
+
+                if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+                    sessionStorage.setItem('quiz_open_lesson_' + LESSON_DATA.lessonId, '1');
+                }
+            }
+
+            function closeQuizStage() {
+                var quizSection = document.getElementById('section-quizzes');
+                var overlay = document.getElementById('qzOverlay');
+                var marker = document.getElementById('qzHomeMarker');
+                if (!quizSection || !overlay) return;
+
+                // play the exit animation, then actually tear it down
+                overlay.classList.add('qz-closing');
+
+                setTimeout(function () {
+                    if (marker && marker.parentNode) {
+                        marker.parentNode.insertBefore(quizSection, marker);
+                    }
+                    quizSection.style.display = 'none';
+                    overlay.classList.remove('open', 'qz-closing');
+
+                    document.body.style.overflow = document.body.dataset.prevOverflow || '';
+
+                    var shell = document.getElementById('lessonsShell');
+                    if (shell) shell.classList.remove('shell-scroll-lock');
+
+                    if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+                        sessionStorage.removeItem('quiz_open_lesson_' + LESSON_DATA.lessonId);
+                    }
+                    scrollToSection('quizCta');
+                }, 280); // must match .qz-overlay.qz-closing animation duration
+            }
+        </script>
 
         <script>
             function startBonbonBubble3Typewriter() {
