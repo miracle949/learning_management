@@ -2332,7 +2332,7 @@ function youtubeEmbed($url)
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
             /* color: var(--page-text, var(--text-bright)); */
             color: var(--text-dim);
-            font-size: 13px;
+            font-size: 15.5px;
             font-weight: 600;
             transition: border-color .18s;
             display: flex;
@@ -2918,6 +2918,10 @@ function youtubeEmbed($url)
 
         .qz-nav-row #qzPrevBtn {
             display: inline-flex;
+        }
+        
+        .qz-nav-row #qzPrevBtn .fa{
+            font-size: 13.5px;
         }
 
         .qz-nav-row #qzNextBtn {
