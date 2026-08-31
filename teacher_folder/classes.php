@@ -16,7 +16,7 @@
             font-weight: 600;
             /* color: #1a1a2e; */
             color: #1a1a1a;
-            margin: 0 0 8px;
+            margin: 0 0 5px;
             font-family: 'Poppins', sans-serif;
         }
 
@@ -26,7 +26,7 @@
             /* color: #808080; */
             color: var(--text-dim);
             font-weight: 500;
-            margin: 0 0 1.2rem;
+            margin: 0 0 1.5rem;
         }
 
         .tc-filters {

@@ -188,6 +188,7 @@ class StudentsController
         $videoCounts = [];
         $activityCounts = [];
         $quizCounts = [];
+        $dragDropCounts = []; 
 
         foreach ($modules as $mod) {
             $lessonCounts[$mod['id']] = $studentModel->countIMlessons($mod['id']);
@@ -195,6 +196,7 @@ class StudentsController
             $videoCounts[$mod['id']] = $studentModel->countIMvideos($mod['id']);
             $activityCounts[$mod['id']] = $studentModel->countIMactivities($mod['id']);
             $quizCounts[$mod['id']] = $studentModel->countIMquizzes($mod['id']);
+            $dragDropCounts[$mod['id']] = $studentModel->countIMdragdrops($mod['id']);
         }
 
         $totalModulesAll = $studentId ? $studentModel->countTotalModulesForStudent($studentId) : 0;
@@ -332,6 +334,17 @@ class StudentsController
                 'activity' => $act,
                 'questions' => $studentModel->getIMActivityQuestions($act['id']),
                 'submission' => $studentId ? $studentModel->getIMActivitySubmission($act['id'], $studentId) : null,
+            ];
+        }
+
+        $dragDropGames = $lessonId ? $studentModel->getLessonDragDrops($lessonId) : [];
+        $dragDropData = [];
+        foreach ($dragDropGames as $title => $game) {
+            $dragDropData[$title] = [
+                'game' => $game['game'],
+                'categories' => $game['categories'],
+                'items' => $game['items'],
+                'submission' => $studentId ? $studentModel->getDragDropSubmission($lessonId, $title, $studentId) : null,
             ];
         }
 
@@ -1356,6 +1369,48 @@ class StudentsController
             'subject_name' => $subject['subject_name'],
             'redirect_url' => '/learning_management/public/?url=subjects&subject=' . urlencode($subject['subject_code']),
         ]);
+        exit;
+    }
+
+    public function submit_dragdrop()
+    {
+        header('Content-Type: application/json');
+
+        $studentId = $_SESSION['student_id'] ?? 0;
+        if (!$studentId && !empty($_SESSION['user_id'])) {
+            $subjectModel = new subjects();
+            $studentRow = $subjectModel->getStudentByUserId($_SESSION['user_id']);
+            if ($studentRow) {
+                $studentId = (int) $studentRow['id'];
+                $_SESSION['student_id'] = $studentId;
+            }
+        }
+        if (!$studentId) {
+            echo json_encode(['ok' => false, 'msg' => 'not logged in']);
+            exit;
+        }
+
+        $lessonId = (int) ($_POST['lesson_id'] ?? 0);
+        $gameTitle = trim($_POST['game_title'] ?? '');
+        $answers = $_POST['answers'] ?? [];
+
+        if (!$lessonId || !$gameTitle) {
+            echo json_encode(['ok' => false, 'msg' => 'missing data']);
+            exit;
+        }
+
+        $studentModel = new Students();
+        $existing = $studentModel->getDragDropSubmission($lessonId, $gameTitle, $studentId);
+        if (!$existing) {
+            $studentModel->saveDragDropSubmission($lessonId, $gameTitle, $studentId, json_encode($answers));
+            $studentModel->logActivity($studentId, 'dragdrop_completed', $gameTitle);
+            $studentModel->markLessonVisited($lessonId, $studentId);
+            $lessonRow = $studentModel->getIMLessonById($lessonId);
+            if ($lessonRow) {
+                $studentModel->updateModuleProgress((int) $lessonRow['module_id'], $studentId);
+            }
+        }
+        echo json_encode(['ok' => true]);
         exit;
     }
 }

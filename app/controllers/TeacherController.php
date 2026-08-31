@@ -264,6 +264,162 @@ class TeacherController
         exit;
     }
 
+    public function update_announcement()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        $teacherModel = new Teacher();
+        $id = (int) ($_POST['announcement_id'] ?? 0);
+        $subject_id = (int) ($_POST['subject_id'] ?? 0);
+        $grade_level_id = (int) ($_POST['grade_level_id'] ?? 0);
+        $section_id = (int) ($_POST['section_id'] ?? 0);
+        $title = trim($_POST['title'] ?? '');
+        $body = trim($_POST['body'] ?? '');
+
+        if ($id && $title && $body) {
+            $teacherModel->updateAnnouncement($id, $_SESSION['user_id'], $title, $body);
+        }
+
+        header("Location: /learning_management/public/?url=teacher_class&id={$subject_id}&grade_id={$grade_level_id}&section_id={$section_id}&saved=stream");
+        exit;
+    }
+
+    public function update_cf_module()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        $teacherModel = new Teacher();
+        $id = (int) ($_POST['module_id'] ?? 0);
+        $subject_id = (int) ($_POST['subject_id'] ?? 0);
+        $grade_level_id = (int) ($_POST['grade_level_id'] ?? 0);
+        $section_id = (int) ($_POST['section_id'] ?? 0);
+        $title = trim($_POST['title'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $removeFile = !empty($_POST['remove_file']);
+
+        $teacher_id = $_SESSION['teacher_id'] ?? 0;
+        if (!$teacher_id) {
+            $result = $teacherModel->getTeacherIdByUserId($_SESSION['user_id'] ?? 0);
+            $teacher_id = (int) ($result['teacher_id'] ?? 0);
+            $_SESSION['teacher_id'] = $teacher_id;
+        }
+
+        $fileName = $filePath = $fileType = null;
+        $fileSize = 0;
+
+        if (!empty($_FILES['material_file']['tmp_name']) && $_FILES['material_file']['error'] === UPLOAD_ERR_OK) {
+            $originalName = basename($_FILES['material_file']['name']);
+            $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+            $uploadDir = dirname(__DIR__, 2) . '/uploads/modules/';
+            if (!is_dir($uploadDir))
+                mkdir($uploadDir, 0755, true);
+
+            $uniqueName = uniqid() . '_' . $originalName;
+            $destPath = $uploadDir . $uniqueName;
+
+            if (move_uploaded_file($_FILES['material_file']['tmp_name'], $destPath)) {
+                $fileName = $originalName;
+                $filePath = 'uploads/modules/' . $uniqueName;
+                $fileType = $ext;
+                $fileSize = $_FILES['material_file']['size'] ?? 0;
+            }
+        }
+
+        if ($id && $title) {
+            $teacherModel->updateCFModule(
+                $id,
+                $teacher_id,
+                $title,
+                $description,
+                $fileName,
+                $filePath,
+                $fileType,
+                $fileSize,
+                $removeFile
+            );
+        }
+
+        header("Location: /learning_management/public/?url=teacher_class&id={$subject_id}&grade_id={$grade_level_id}&section_id={$section_id}&saved=stream");
+        exit;
+    }
+
+    public function update_assignment_details()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        $teacherModel = new Teacher();
+        $id = (int) ($_POST['assignment_id'] ?? 0);
+        $subject_id = (int) ($_POST['subject_id'] ?? 0);
+        $grade_level_id = (int) ($_POST['grade_level_id'] ?? 0);
+        $section_id = (int) ($_POST['section_id'] ?? 0);
+        $title = trim($_POST['title'] ?? '');
+        $description = trim($_POST['description'] ?? '');
+        $task = trim($_POST['task'] ?? '');
+        $instructions = trim($_POST['instructions'] ?? '');
+        $type = trim($_POST['type'] ?? 'Seatwork');
+        $due_date = trim($_POST['due_date'] ?? '') ?: null;
+        $due_time = !empty($_POST['due_time']) ? $_POST['due_time'] . ':00' : '23:59:00';
+        $points = (int) ($_POST['points'] ?? 100);
+        $removeFile = !empty($_POST['remove_file']);
+
+        $teacher_id = $_SESSION['teacher_id'] ?? 0;
+        if (!$teacher_id) {
+            $result = $teacherModel->getTeacherIdByUserId($_SESSION['user_id'] ?? 0);
+            $teacher_id = (int) ($result['teacher_id'] ?? 0);
+            $_SESSION['teacher_id'] = $teacher_id;
+        }
+
+        $fileName = $filePath = $fileType = null;
+
+        if (!empty($_FILES['assignment_edit_file']['tmp_name']) && $_FILES['assignment_edit_file']['error'] === UPLOAD_ERR_OK) {
+            $originalName = basename($_FILES['assignment_edit_file']['name']);
+            $ext = strtolower(pathinfo($originalName, PATHINFO_EXTENSION));
+            $uploadDir = dirname(__DIR__, 2) . '/uploads/assignments/';
+            if (!is_dir($uploadDir))
+                mkdir($uploadDir, 0755, true);
+
+            $uniqueName = uniqid() . '_' . $originalName;
+            $destPath = $uploadDir . $uniqueName;
+
+            if (move_uploaded_file($_FILES['assignment_edit_file']['tmp_name'], $destPath)) {
+                $fileName = $originalName;
+                $filePath = 'uploads/assignments/' . $uniqueName;
+                $fileType = $_FILES['assignment_edit_file']['type'] ?? $ext;
+            }
+        }
+
+        if ($id && $title) {
+            $teacherModel->updateAssignmentDetails(
+                $id,
+                $teacher_id,
+                $title,
+                $description,
+                $task,
+                $instructions,
+                $type,
+                $due_date,
+                $due_time,
+                $points,
+                $fileName,
+                $filePath,
+                $fileType,
+                $removeFile
+            );
+        }
+
+        header("Location: /learning_management/public/?url=teacher_class&id={$subject_id}&grade_id={$grade_level_id}&section_id={$section_id}&saved=classwork");
+        exit;
+    }
+
     public function upload()
     {
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
@@ -749,6 +905,7 @@ class TeacherController
         $moduleDescriptions = $_POST['module_description'] ?? [];
         $blocksData = $_POST['blocks'] ?? [];
         $blockImages = $_FILES['block_image'] ?? null;
+        $dragDropItemImages = $_FILES['dragdrop_item_image'] ?? null;
 
         foreach ($moduleTitles as $modIdx => $modTitle) {
             if (empty(trim($modTitle)))
@@ -935,6 +1092,101 @@ class TeacherController
                                 ]);
                             }
                             break;
+
+                        // ── DRAG & DROP (one block = one matching game) ──
+                        case 'drag_drop':
+                            $gameTitle = trim($block['dragdrop_title'] ?? '');
+                            if ($gameTitle === '')
+                                break;
+                            $gameInstructions = trim($block['dragdrop_instructions'] ?? '');
+
+                            // cat_id -> label lookup
+                            $catMap = [];
+                            foreach (($block['categories'] ?? []) as $cat) {
+                                $label = trim($cat['label'] ?? '');
+                                $catId = $cat['cat_id'] ?? '';
+                                if ($label === '' || $catId === '')
+                                    continue;
+                                $catMap[$catId] = $label;
+                            }
+
+                            foreach (($block['items'] ?? []) as $item) {
+                                $itemLabel = trim($item['label'] ?? '');
+                                if ($itemLabel === '')
+                                    continue;
+                                $catId = $item['cat_id'] ?? '';
+                                $categoryLabel = $catMap[$catId] ?? null;
+                                if ($categoryLabel === null)
+                                    continue; // item pointing at a deleted/unnamed category — skip
+
+                                $itemSubtitle = trim($item['subtitle'] ?? '');
+
+                                $teacherModel->insertInteractiveContent($lessonId, 'drag_drop', [
+                                    'title' => $gameTitle,
+                                    'instructions' => $gameInstructions !== '' ? $gameInstructions : null,
+                                    'dragdrop_item_label' => $itemLabel,
+                                    'dragdrop_item_subtitle' => $itemSubtitle !== '' ? $itemSubtitle : null,
+                                    'dragdrop_category' => $categoryLabel,
+                                    'sort_order' => $sortOrder,
+                                ]);
+                            }
+                            break;
+
+                        case 'drag_drop':
+                            $gameTitle = trim($block['dragdrop_title'] ?? '');
+                            if ($gameTitle === '')
+                                break;
+                            $gameInstructions = trim($block['dragdrop_instructions'] ?? '');
+
+                            // cat_id -> label lookup
+                            $catMap = [];
+                            foreach (($block['categories'] ?? []) as $cat) {
+                                $label = trim($cat['label'] ?? '');
+                                $catId = $cat['cat_id'] ?? '';
+                                if ($label === '' || $catId === '')
+                                    continue;
+                                $catMap[$catId] = $label;
+                            }
+
+                            foreach (($block['items'] ?? []) as $itemIdx => $item) {
+                                $itemLabel = trim($item['label'] ?? '');
+                                if ($itemLabel === '')
+                                    continue;
+                                $catId = $item['cat_id'] ?? '';
+                                $categoryLabel = $catMap[$catId] ?? null;
+                                if ($categoryLabel === null)
+                                    continue; // item pointing at a deleted/unnamed category — skip
+
+                                $itemSubtitle = trim($item['subtitle'] ?? '');
+
+                                // ── handle optional item image ──
+                                $itemImagePath = null;
+                                $imgErr = $dragDropItemImages['error'][$modIdx][$lesIdx][$blockIdx][$itemIdx] ?? UPLOAD_ERR_NO_FILE;
+                                if ($imgErr === UPLOAD_ERR_OK) {
+                                    $imgFileName = $dragDropItemImages['name'][$modIdx][$lesIdx][$blockIdx][$itemIdx] ?? '';
+                                    $imgTmpName = $dragDropItemImages['tmp_name'][$modIdx][$lesIdx][$blockIdx][$itemIdx] ?? '';
+                                    $imgSize = $dragDropItemImages['size'][$modIdx][$lesIdx][$blockIdx][$itemIdx] ?? 0;
+                                    $imgExt = strtolower(pathinfo($imgFileName, PATHINFO_EXTENSION));
+
+                                    if ($imgSize <= 5 * 1024 * 1024 && in_array($imgExt, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                                        $uniqueImgName = uniqid('ddi_') . '.' . $imgExt;
+                                        if (move_uploaded_file($imgTmpName, $imageDir . $uniqueImgName)) {
+                                            $itemImagePath = '/learning_management/uploads/lessons/images/' . $uniqueImgName;
+                                        }
+                                    }
+                                }
+
+                                $teacherModel->insertInteractiveContent($lessonId, 'drag_drop', [
+                                    'title' => $gameTitle,
+                                    'instructions' => $gameInstructions !== '' ? $gameInstructions : null,
+                                    'dragdrop_item_label' => $itemLabel,
+                                    'dragdrop_item_subtitle' => $itemSubtitle !== '' ? $itemSubtitle : null,
+                                    'dragdrop_item_image' => $itemImagePath,        // NEW
+                                    'dragdrop_category' => $categoryLabel,
+                                    'sort_order' => $sortOrder,
+                                ]);
+                            }
+                            break;
                     }
                 }
             }
@@ -945,7 +1197,7 @@ class TeacherController
             $_SESSION['save_skipped'] = $skipped;
         $_SESSION['save_success'] = true;
 
-        header("Location: /learning_management/public/?url=modules_teacher");
+        header("Location: /learning_management/public/?url=view_modules_teacher&subject_id={$subject_id}&saved=1");
         exit;
     }
 
@@ -1003,6 +1255,7 @@ class TeacherController
         $flashcards = $lessonId ? $teacherModel->getLessonFlashcards($lessonId) : [];
         $activityData = $lessonId ? $teacherModel->getLessonActivityData($lessonId, 0) : [];
         $quizData = $lessonId ? $teacherModel->getLessonQuizData($lessonId, 0) : [];
+        $dragDropData = $lessonId ? $teacherModel->getLessonDragDropData($lessonId) : [];
         $totalLessons = count($lessons);
 
         $subjectInfo = $teacherModel->getSubjectWithGrade($subjectId);
@@ -1394,6 +1647,7 @@ class TeacherController
         $flashcards = $lessonId ? $teacherModel->getLessonFlashcards($lessonId) : [];
         $activityData = $lessonId ? $teacherModel->getLessonActivityData($lessonId, 0) : [];
         $quizData = $lessonId ? $teacherModel->getLessonQuizData($lessonId, 0) : [];
+        $dragDropData = $lessonId ? $teacherModel->getLessonDragDropData($lessonId) : [];
         $totalLessons = count($lessons);
 
         // Attach subject name to module array

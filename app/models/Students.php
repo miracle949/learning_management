@@ -413,6 +413,67 @@ class Students extends Model
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function getLessonDragDrops($lessonId)
+    {
+        $stmt = $this->db->prepare("
+    SELECT title, instructions,
+           COALESCE(dragdrop_item_label, card_front)     AS item_label,
+           COALESCE(dragdrop_item_subtitle, key_idea)     AS item_subtitle,
+           COALESCE(dragdrop_category, card_back)         AS category
+    FROM tbl_interactive_contents
+    WHERE lesson_id = ? AND type = 'drag_drop'
+    ORDER BY id ASC
+");
+        $stmt->bind_param("i", $lessonId);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $grouped = [];
+        foreach ($rows as $row) {
+            $key = $row['title'];
+            if (!isset($grouped[$key])) {
+                $grouped[$key] = [
+                    'game' => ['title' => $row['title'], 'instructions' => $row['instructions']],
+                    'categories' => [],
+                    'items' => [],
+                ];
+            }
+            if ($row['category'] !== null && !in_array($row['category'], $grouped[$key]['categories'], true)) {
+                $grouped[$key]['categories'][] = $row['category'];
+            }
+            $grouped[$key]['items'][] = [
+                'label' => $row['item_label'],
+                'subtitle' => $row['item_subtitle'],
+                'category' => $row['category'],
+            ];
+        }
+        return $grouped;
+    }
+
+    public function getDragDropSubmission($lessonId, $gameTitle, $studentId)
+    {
+        if (!$studentId)
+            return null;
+        $stmt = $this->db->prepare("
+        SELECT id, answers_json, completed_at
+        FROM tbl_dragdrop_results
+        WHERE lesson_id = ? AND game_title = ? AND student_id = ? LIMIT 1
+    ");
+        $stmt->bind_param("isi", $lessonId, $gameTitle, $studentId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function saveDragDropSubmission($lessonId, $gameTitle, $studentId, $answersJson)
+    {
+        $stmt = $this->db->prepare("
+        INSERT IGNORE INTO tbl_dragdrop_results (lesson_id, game_title, student_id, answers_json, completed_at)
+        VALUES (?, ?, ?, ?, NOW())
+    ");
+        $stmt->bind_param("isis", $lessonId, $gameTitle, $studentId, $answersJson);
+        return $stmt->execute();
+    }
+
     public function isLessonCompleted($lessonId, $studentId)
     {
         if (!$studentId)
@@ -466,7 +527,36 @@ class Students extends Model
                 return false;
         }
 
+        $dragDropGames = $this->getLessonDragDrops($lessonId);
+
+        // update this line:
+        if (empty($quizGroups) && $acount === 0 && empty($dragDropGames)) {
+            return $this->isLessonVisitedViaProgress($lessonId, $studentId);
+        }
+
+        // ...after the activity check block, add:
+        foreach ($dragDropGames as $ddTitle => $ddData) {
+            if (!$this->getDragDropSubmission($lessonId, $ddTitle, $studentId)) {
+                return false;
+            }
+        }
+
         return true;
+    }
+
+    public function countIMdragdrops($interactiveModuleId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(DISTINCT ic.title) AS total
+        FROM tbl_interactive_contents ic
+        INNER JOIN tbl_lessons l ON l.id = ic.lesson_id
+        WHERE l.interactive_module_id = ?
+        AND ic.type = 'drag_drop'
+    ");
+        $stmt->bind_param("i", $interactiveModuleId);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        return (int) $row['total'];
     }
 
     // ============================================================

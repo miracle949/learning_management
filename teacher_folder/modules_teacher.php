@@ -22,6 +22,13 @@
                         <h4>Interactive Modules</h4>
                         <p>Upload, manage and distribute learning content</p>
                     </div>
+                    <!-- <div>
+                        <a class="<?= ($current_url ?? '') === 'modules_teacher' ? 'active' : '' ?>"
+                            href="/learning_management/public/?url=create_module&subject_id=<?= (int) $subject['id'] ?>">
+                            <i class="fa fa-plus"></i>
+                            <span>Create module</span>
+                        </a>
+                    </div> -->
                 </div>
 
                 <!-- Grade Level Filter -->
@@ -50,31 +57,30 @@
                                     <?php if (!empty($subject['subject_image'])): ?>
                                         <img src="/learning_management/<?= htmlspecialchars($subject['subject_image']) ?>"
                                             alt="subject image"
-                                            style="width:100%;height:100%;object-fit:cover;border-radius:8px 8px 0 0;">
+                                            style="width:100%;height:100%;object-fit:cover;border-radius: 20px 20px 0 0;">
                                     <?php endif; ?>
                                 </div>
                                 <div class="card-body">
                                     <div class="card-text">
                                         <h4><?= htmlspecialchars($subject['subject_name']) ?></h4>
-                                        <?php if (!empty($subject['grade_name'])): ?>
-                                            <small
-                                                style="color:#16a34a;font-weight:600;font-size:14.5px;display:block;margin-bottom:4px;">
-                                                <i class="fa fa-layer-group"></i>
-                                                <?= htmlspecialchars($subject['grade_name']) ?>
-                                            </small>
-                                        <?php endif; ?>
-                                        <span style="display:block;">
+                                        <span>
                                             <?= htmlspecialchars(!empty($subject['subject_description'])
                                                 ? $subject['subject_description']
                                                 : 'Lorem ipsum dolor sit amet consectetur adipisicing elit.') ?>
                                         </span>
+                                        <?php if (!empty($subject['grade_name'])): ?>
+                                            <small>
+                                                <i class="fa fa-layer-group"></i>
+                                                <?= htmlspecialchars($subject['grade_name']) ?>
+                                            </small>
+                                        <?php endif; ?>
                                     </div>
                                     <div class="card-link">
-                                        <a class="<?= ($current_url ?? '') === 'modules_teacher' ? 'active' : '' ?>"
+                                        <!-- <a class="<?= ($current_url ?? '') === 'modules_teacher' ? 'active' : '' ?>"
                                             href="/learning_management/public/?url=create_module&subject_id=<?= (int) $subject['id'] ?>">
+                                            <i class="fa fa-plus"></i>
                                             <span>Create module</span>
-                                            <i class="fa fa-arrow-right"></i>
-                                        </a>
+                                        </a> -->
                                         <a class="<?= ($current_url ?? '') === 'modules_teacher' ? 'active' : '' ?>"
                                             href="/learning_management/public/?url=view_modules_teacher&subject_id=<?= (int) $subject['id'] ?>">
                                             <span>View module</span>

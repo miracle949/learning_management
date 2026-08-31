@@ -92,6 +92,12 @@
     pointer-events: none;
 }
 
+/* .content-badge.badge--dragdrop {
+    background: rgba(155, 93, 229, 0.10);
+    color: #7c3aed;
+    border: 1px solid rgba(155, 93, 229, 0.25);
+} */
+
 /* .progress-banner::before {
     content: '';
     position: absolute;
@@ -643,6 +649,17 @@
 }
 
 .badge--lesson {
+    /* background: rgba(0, 200, 100, 0.10);
+    color: var(--green-dark);
+    border: 1px solid rgba(0, 200, 100, 0.25); */
+    color: var(--neon-cyan);
+    /* background: rgba(255, 255, 255, 0.03); */
+    /* background-color: var(--bg-page-surface); */
+    background: rgba(0, 119, 204, 0.08);
+    border: 1px solid var(--panel-border);
+}
+
+.badge--dragdrop{
     /* background: rgba(0, 200, 100, 0.10);
     color: var(--green-dark);
     border: 1px solid rgba(0, 200, 100, 0.25); */

@@ -185,6 +185,173 @@ class Teacher extends Model
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    // ============================================================
+// EDIT — Announcement
+// ============================================================
+    public function getAnnouncementById($id)
+    {
+        $stmt = $this->db->prepare("
+        SELECT id, title, message AS body, subject_id, section_id, sender_id
+        FROM tbl_notifications
+        WHERE id = ? AND type = 'announcement'
+        LIMIT 1
+    ");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function updateAnnouncement($id, $userId, $title, $body)
+    {
+        $stmt = $this->db->prepare("
+        UPDATE tbl_notifications
+        SET title = ?, message = ?
+        WHERE id = ? AND sender_id = ? AND type = 'announcement'
+    ");
+        $stmt->bind_param("ssii", $title, $body, $id, $userId);
+        return $stmt->execute();
+    }
+
+    // ============================================================
+// EDIT — CF Module (Stream material), with file support
+// ============================================================
+    public function updateCFModule(
+        $id,
+        $teacherId,
+        $title,
+        $description,
+        $fileName = null,
+        $filePath = null,
+        $fileType = null,
+        $fileSize = null,
+        $removeFile = false
+    ) {
+        if ($fileName !== null) {
+            // New file uploaded — replace
+            $stmt = $this->db->prepare("
+            UPDATE tbl_modules
+            SET title = ?, description = ?, file_name = ?, file_path = ?, file_type = ?, file_size = ?
+            WHERE id = ? AND teacher_id = ?
+        ");
+            $stmt->bind_param(
+                "sssssiii",
+                $title,
+                $description,
+                $fileName,
+                $filePath,
+                $fileType,
+                $fileSize,
+                $id,
+                $teacherId
+            );
+        } elseif ($removeFile) {
+            // Explicitly cleared the attached file
+            $stmt = $this->db->prepare("
+            UPDATE tbl_modules
+            SET title = ?, description = ?, file_name = NULL, file_path = NULL, file_type = NULL, file_size = 0
+            WHERE id = ? AND teacher_id = ?
+        ");
+            $stmt->bind_param("ssii", $title, $description, $id, $teacherId);
+        } else {
+            // Keep existing file untouched
+            $stmt = $this->db->prepare("
+            UPDATE tbl_modules
+            SET title = ?, description = ?
+            WHERE id = ? AND teacher_id = ?
+        ");
+            $stmt->bind_param("ssii", $title, $description, $id, $teacherId);
+        }
+        return $stmt->execute();
+    }
+
+    // ============================================================
+// EDIT — Assignment, with file support
+// ============================================================
+    public function updateAssignmentDetails(
+        $id,
+        $teacherId,
+        $title,
+        $description,
+        $task,
+        $instructions,
+        $type,
+        $dueDate,
+        $dueTime,
+        $points,
+        $fileName = null,
+        $filePath = null,
+        $fileType = null,
+        $removeFile = false
+    ) {
+        if ($fileName !== null) {
+            $stmt = $this->db->prepare("
+            UPDATE tbl_assignments
+            SET title = ?, description = ?, task = ?, instructions = ?, type = ?,
+                due_date = ?, due_time = ?, points = ?,
+                file_name = ?, file_path = ?, file_type = ?
+            WHERE id = ? AND teacher_id = ?
+        ");
+            $stmt->bind_param(
+                "sssssssisssii",
+                $title,
+                $description,
+                $task,
+                $instructions,
+                $type,
+                $dueDate,
+                $dueTime,
+                $points,
+                $fileName,
+                $filePath,
+                $fileType,
+                $id,
+                $teacherId
+            );
+        } elseif ($removeFile) {
+            $stmt = $this->db->prepare("
+            UPDATE tbl_assignments
+            SET title = ?, description = ?, task = ?, instructions = ?, type = ?,
+                due_date = ?, due_time = ?, points = ?,
+                file_name = NULL, file_path = NULL, file_type = NULL
+            WHERE id = ? AND teacher_id = ?
+        ");
+            $stmt->bind_param(
+                "sssssssiii",
+                $title,
+                $description,
+                $task,
+                $instructions,
+                $type,
+                $dueDate,
+                $dueTime,
+                $points,
+                $id,
+                $teacherId
+            );
+        } else {
+            $stmt = $this->db->prepare("
+            UPDATE tbl_assignments
+            SET title = ?, description = ?, task = ?, instructions = ?, type = ?,
+                due_date = ?, due_time = ?, points = ?
+            WHERE id = ? AND teacher_id = ?
+        ");
+            $stmt->bind_param(
+                "sssssssiii",
+                $title,
+                $description,
+                $task,
+                $instructions,
+                $type,
+                $dueDate,
+                $dueTime,
+                $points,
+                $id,
+                $teacherId
+            );
+        }
+        return $stmt->execute();
+    }
+
     public function getRecentStudents($limit = 5)
     {
         $sql = "
@@ -609,10 +776,10 @@ class Teacher extends Model
     // ============================================================
     public function getAssignments($subjectId, $teacherId, $sectionId = 0)
     {
-        $sql = "SELECT id, title, description, due_date, due_time, points, created_at,
-                   file_name, file_path, file_type
-            FROM tbl_assignments 
-            WHERE subject_id = ? AND teacher_id = ?";
+        $sql = "SELECT id, title, description, task, instructions, type, due_date, due_time, points, created_at,
+               file_name, file_path, file_type
+        FROM tbl_assignments 
+        WHERE subject_id = ? AND teacher_id = ?";
 
         $params = [$subjectId, $teacherId];
         $types = "ii";
@@ -682,6 +849,7 @@ class Teacher extends Model
         $stmt->execute();
         return $this->db->insert_id;
     }
+
 
     // ============================================================
     // STUDENT SUBMISSIONS
@@ -811,17 +979,62 @@ class Teacher extends Model
     public function getInteractiveModulesWithCount($subjectId)
     {
         $sql = "
-        SELECT im.id, im.title, im.description, im.created_at,
-               COUNT(l.id) AS lesson_count
+        SELECT 
+            im.id, im.title, im.description, im.created_at,
+            COUNT(DISTINCT l.id) AS lesson_count,
+            COUNT(DISTINCT CASE WHEN ic.type = 'video' THEN ic.id END) AS video_count,
+            COUNT(DISTINCT CASE WHEN ic.type = 'image' THEN ic.id END) AS image_count,
+            COUNT(DISTINCT CASE WHEN ic.type = 'activity' THEN CONCAT(ic.lesson_id, '-', ic.title) END) AS activity_count,
+            COUNT(DISTINCT CASE WHEN ic.type = 'quiz' THEN CONCAT(ic.lesson_id, '-', ic.title) END) AS quiz_count
         FROM tbl_interactive_modules im
         LEFT JOIN tbl_lessons l ON l.interactive_module_id = im.id
+        LEFT JOIN tbl_interactive_contents ic ON ic.lesson_id = l.id
         WHERE im.subject_id = ?
-        GROUP BY im.id ORDER BY im.created_at ASC
+        GROUP BY im.id
+        ORDER BY im.created_at ASC
     ";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("i", $subjectId);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getLessonDragDropData($lessonId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT title, instructions, dragdrop_item_label, dragdrop_item_subtitle, dragdrop_item_image, dragdrop_category
+        FROM tbl_interactive_contents
+        WHERE lesson_id = ? AND type = 'drag_drop'
+        ORDER BY id ASC
+    ");
+        $stmt->bind_param("i", $lessonId);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $grouped = [];
+        foreach ($rows as $row) {
+            $key = $row['title'];
+            if (!isset($grouped[$key])) {
+                $grouped[$key] = [
+                    'game' => [
+                        'title' => $row['title'],
+                        'instructions' => $row['instructions'],
+                    ],
+                    'categories' => [],
+                    'items' => [],
+                ];
+            }
+            if (!in_array($row['dragdrop_category'], $grouped[$key]['categories'], true)) {
+                $grouped[$key]['categories'][] = $row['dragdrop_category'];
+            }
+            $grouped[$key]['items'][] = [
+                'label' => $row['dragdrop_item_label'],
+                'subtitle' => $row['dragdrop_item_subtitle'],
+                'image' => $row['dragdrop_item_image'],   // NEW
+                'category' => $row['dragdrop_category'],
+            ];
+        }
+        return $grouped;
     }
 
     public function getSectionsByTeacherSubject($subject_id, $teacher_id)
@@ -879,6 +1092,7 @@ class Teacher extends Model
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
+
 
     // ============================================================
 // DASHBOARD — Progress trend (for line chart)
@@ -1101,9 +1315,13 @@ class Teacher extends Model
         $filePath = $data['file_path'] ?? null;
         $fileName = $data['file_name'] ?? null;
         $fileType = $data['file_type'] ?? null;
+        $dragdropCategory = $data['dragdrop_category'] ?? null;
+        $dragdropItemLabel = $data['dragdrop_item_label'] ?? null;
+        $dragdropItemSubtitle = $data['dragdrop_item_subtitle'] ?? null;
+        $dragdropItemImage = $data['dragdrop_item_image'] ?? null;
 
         $stmt = $this->db->prepare("
-        INSERT INTO tbl_interactive_contents (
+            INSERT INTO tbl_interactive_contents (
             lesson_id, type, title, body, key_idea, instructions,
             question, question_type,
             choice_a, choice_b, choice_c, choice_d,
@@ -1111,6 +1329,7 @@ class Teacher extends Model
             passing_score, total_points,
             card_front, card_back, card_type,
             file_path, file_name, file_type,
+            dragdrop_category, dragdrop_item_label, dragdrop_item_subtitle, dragdrop_item_image,
             created_at
         ) VALUES (
             ?, ?, ?, ?, ?, ?,
@@ -1120,6 +1339,7 @@ class Teacher extends Model
             ?, ?,
             ?, ?, ?,
             ?, ?, ?,
+            ?, ?, ?, ?,
             NOW()
         )
     ");
@@ -1130,16 +1350,10 @@ class Teacher extends Model
             );
         }
 
-        // lessonId(i), type(s), title(s), body(s), key_idea(s), instructions(s),
-        // question(s), question_type(s), choice_a(s), choice_b(s),
-        // choice_c(s), choice_d(s), correct_ans(s), model_answer(s)
-        //   -> 1 i + 13 s
-        // passing_score(i), total_points(i)              -> 2 i
-        // card_front(s), card_back(s), card_type(s),
-        // file_path(s), file_name(s), file_type(s)        -> 6 s
-        // Total: 22 params: "i" + "s"x13 + "i"x2 + "s"x6
+        // 1 i (lessonId) + 22 s (type..dragdrop_item_subtitle, with 2 ints
+        // for passing_score/total_points mixed in) -> "i" + "s"x13 + "i"x2 + "s"x9
         $stmt->bind_param(
-            "isssssssssssssiissssss",
+            "isssssssssssssiisssssssss" . "s",   // add one more 's' for dragdropItemImage
             $lessonId,
             $type,
             $title,
@@ -1161,7 +1375,11 @@ class Teacher extends Model
             $cardType,
             $filePath,
             $fileName,
-            $fileType
+            $fileType,
+            $dragdropCategory,
+            $dragdropItemLabel,
+            $dragdropItemSubtitle,
+            $dragdropItemImage   // NEW
         );
 
         if (!$stmt->execute()) {

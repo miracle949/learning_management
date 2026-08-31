@@ -24,6 +24,252 @@ var ACT_STAGE = {
     cur: 0
 };
 
+var DD_STAGE = {};
+var _ddDraggedEl = null;
+
+function ddInitState(gameTitle) {
+    if (!DD_STAGE[gameTitle]) DD_STAGE[gameTitle] = { ans: {}, streak: 0, score: 0 };
+    return DD_STAGE[gameTitle];
+}
+
+function ddUpdateHud(section, gameTitle) {
+    var state = ddInitState(gameTitle);
+    var streakEl = section.querySelector('.dd-streak-val');
+    var scoreEl = section.querySelector('.dd-score-val');
+    if (streakEl) streakEl.textContent = state.streak;
+    if (scoreEl) scoreEl.textContent = state.score;
+}
+
+function ddSetFeedback(section, message, cssClass) {
+    var el = section.querySelector('.dd-feedback');
+    if (!el) return;
+    el.textContent = message;
+    el.classList.remove('is-correct', 'is-wrong');
+    if (cssClass) el.classList.add(cssClass);
+}
+
+function ddSpawnParticles(targetCard, emoji) {
+    if (!targetCard) return;
+    var particle = document.createElement('span');
+    particle.textContent = emoji || '✨';
+    particle.style.cssText = [
+        'position:absolute',
+        'top:50%',
+        'left:50%',
+        'transform:translate(-50%,-50%)',
+        'font-size:22px',
+        'pointer-events:none',
+        'opacity:1',
+        'transition:transform .6s ease, opacity .6s ease',
+        'z-index:5'
+    ].join(';');
+    targetCard.style.position = targetCard.style.position || 'relative';
+    targetCard.appendChild(particle);
+
+    requestAnimationFrame(function () {
+        particle.style.transform = 'translate(-50%, -140%) scale(1.4)';
+        particle.style.opacity = '0';
+    });
+
+    setTimeout(function () {
+        particle.remove();
+    }, 650);
+}
+
+function ddFindSection(gameTitle) {
+    return document.querySelector('.dd-stage-section[data-game-title="' + CSS.escape(gameTitle) + '"]');
+}
+
+function ddWireBoard(section) {
+    if (section.dataset.wired) return;
+    section.dataset.wired = '1';
+
+    var gameTitle = section.dataset.gameTitle;
+    var board = section.querySelector('.dd-puzzle-board');
+    var bank = board.querySelector('.dd-item-row');
+
+    board.querySelectorAll('.dd-card').forEach(function (item) {
+        item.addEventListener('dragstart', function (e) {
+            if (item.classList.contains('locked')) { e.preventDefault(); return; }
+            _ddDraggedEl = item;
+            item.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', item.dataset.item);
+        });
+        item.addEventListener('dragend', function () {
+            item.classList.remove('dragging');
+            _ddDraggedEl = null;
+        });
+    });
+
+    board.querySelectorAll('.dd-target-card').forEach(function (card) {
+        card.addEventListener('dragover', function (e) {
+            if (card.classList.contains('solved')) return;
+            e.preventDefault();
+            card.classList.add('drag-over');
+        });
+        card.addEventListener('dragleave', function () {
+            card.classList.remove('drag-over');
+        });
+        card.addEventListener('drop', function (e) {
+            e.preventDefault();
+            card.classList.remove('drag-over');
+            if (card.classList.contains('solved')) return;
+            var socket = card.querySelector('.dd-socket');
+            ddDropInto(gameTitle, socket, bank);
+        });
+    });
+}
+
+function ddDropInto(gameTitle, socket, bank) {
+    if (!_ddDraggedEl) return;
+    var section = ddFindSection(gameTitle);
+    var state = ddInitState(gameTitle);
+    var slot = socket.querySelector('.dd-socket-slot');
+    var targetCard = socket.closest('.dd-target-card');
+    var item = _ddDraggedEl;
+    var isCorrect = item.dataset.category === socket.dataset.category;
+
+    if (isCorrect) {
+        slot.innerHTML = '';
+        slot.appendChild(item);
+        item.classList.add('locked');
+        item.setAttribute('draggable', 'false');
+        targetCard.classList.add('solved');
+        state.ans[item.dataset.item] = socket.dataset.category;
+        state.streak += 1;
+        state.score += 10 + Math.max(0, (state.streak - 1) * 2);
+
+        ddSpawnParticles(targetCard, '✨');
+        ddSetFeedback(section, 'Correct! ' + socket.dataset.category + ' matched.', 'is-correct');
+        ddUpdateHud(section, gameTitle);
+        ddUpdateBoardNav(gameTitle);
+        ddCheckWin(section, gameTitle);
+    } else {
+        state.streak = 0;
+        ddUpdateHud(section, gameTitle);
+        ddSetFeedback(section, 'Not quite — try a different card.', 'is-wrong');
+
+        targetCard.classList.add('zone-shake');
+        item.classList.add('shake-wrong');
+        setTimeout(function () {
+            targetCard.classList.remove('zone-shake');
+            item.classList.remove('shake-wrong');
+        }, 450);
+    }
+}
+
+function ddUpdateBoardNav(gameTitle) {
+    var section = ddFindSection(gameTitle);
+    if (!section) return;
+    var state = ddInitState(gameTitle);
+    var board = section.querySelector('.dd-puzzle-board');
+    var total = board.querySelectorAll('.dd-card').length;
+    var placed = Object.keys(state.ans).length;
+
+    var counter = section.querySelector('.dd-counter');
+    if (counter) counter.textContent = placed + ' of ' + total + ' placed';
+
+    var fill = section.querySelector('.dd-progress-fill');
+    if (fill) fill.style.width = Math.round((placed / total) * 100) + '%';
+
+    var finishBtn = section.querySelector('.dd-finish-btn');
+    if (finishBtn) finishBtn.disabled = (placed < total);
+}
+
+function ddCheckWin(section, gameTitle) {
+    var state = ddInitState(gameTitle);
+    var board = section.querySelector('.dd-board');
+    var total = board.querySelectorAll('.dd-item').length;
+    if (Object.keys(state.ans).length >= total) {
+        var banner = section.querySelector('.dd-win-banner');
+        if (banner) banner.style.display = 'flex';
+        ddSetFeedback(section, 'All items placed correctly!', 'is-correct');
+    }
+}
+
+function openDragDropStage(gameTitle) {
+    var section = ddFindSection(gameTitle);
+    var overlay = document.getElementById('ddOverlay');
+    if (!section || !overlay) return;
+
+    if (overlay.parentElement !== document.body) document.body.appendChild(overlay);
+
+    if (!section.dataset.homeMarked) {
+        var marker = document.createElement('div');
+        marker.className = 'dd-home-marker';
+        marker.style.display = 'none';
+        marker.dataset.gameTitle = gameTitle;
+        section.parentNode.insertBefore(marker, section);
+        section.dataset.homeMarked = '1';
+    }
+
+    overlay.appendChild(section);
+    section.style.display = 'block';
+    overlay.classList.remove('qz-closing');
+    overlay.classList.add('open');
+    overlay.scrollTop = 0;
+
+    document.body.dataset.prevOverflow = document.body.style.overflow || '';
+    document.body.style.overflow = 'hidden';
+
+    ddInitState(gameTitle);
+    ddWireBoard(section);
+    ddUpdateBoardNav(gameTitle);
+    ddUpdateHud(section, gameTitle);
+
+    if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+        sessionStorage.setItem('dragdrop_open_lesson_' + LESSON_DATA.lessonId, gameTitle);
+    }
+    if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.moduleId) {
+        sessionStorage.setItem('lessons_view_module_' + LESSON_DATA.moduleId, 'lesson');
+    }
+}
+
+function closeDragDropStage(gameTitle) {
+    var section = ddFindSection(gameTitle);
+    var overlay = document.getElementById('ddOverlay');
+    var marker = document.querySelector('.dd-home-marker[data-game-title="' + CSS.escape(gameTitle) + '"]');
+    if (!section || !overlay) return;
+
+    overlay.classList.add('qz-closing');
+    setTimeout(function () {
+        if (marker && marker.parentNode) marker.parentNode.insertBefore(section, marker);
+        section.style.display = 'none';
+        overlay.classList.remove('open', 'qz-closing');
+        document.body.style.overflow = document.body.dataset.prevOverflow || '';
+
+        if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+            sessionStorage.removeItem('dragdrop_open_lesson_' + LESSON_DATA.lessonId);
+        }
+    }, 280);
+}
+
+function ddSubmit(gameTitle) {
+    var state = ddInitState(gameTitle);
+    var lessonId = LESSON_DATA ? LESSON_DATA.lessonId : 0;
+
+    var fd = new FormData();
+    fd.append('lesson_id', lessonId);
+    fd.append('game_title', gameTitle);
+    Object.keys(state.ans).forEach(function (item) {
+        fd.append('answers[' + item + ']', state.ans[item]);
+    });
+
+    fetch('/learning_management/public/?url=submit_dragdrop', { method: 'POST', body: fd })
+        .then(function (r) { return r.json().catch(function () { return {}; }); })
+        .then(function () {
+            if (LESSON_DATA && LESSON_DATA.dragdrops) {
+                LESSON_DATA.dragdrops.forEach(function (dd) {
+                    if (dd.title === gameTitle) dd.done = true;
+                });
+            }
+            checkLessonComplete();
+            setTimeout(function () { closeDragDropStage(gameTitle); }, 900);
+        })
+        .catch(function () { closeDragDropStage(gameTitle); });
+}
+
 /* =========================================================
    NEXT / PREV / FINISH — DELEGATED CLICK HANDLER
 ========================================================= */
@@ -75,6 +321,11 @@ function handlePrevBtnClick(e, prevBtn) {
    PAGE INIT (everything non-click-related)
 ========================================================= */
 document.addEventListener('DOMContentLoaded', function () {
+    if (typeof LESSON_DATA === 'undefined' || !LESSON_DATA.lessonId) return;
+    var ddFlag = sessionStorage.getItem('dragdrop_open_lesson_' + LESSON_DATA.lessonId);
+    if (ddFlag) {
+        openDragDropStage(ddFlag);
+    }
     try {
         var qzBlocks = document.querySelectorAll('.qz-question-block:not(.act-question-block)');
         UNIFIED_QZ.total = qzBlocks.length;
@@ -118,6 +369,7 @@ document.addEventListener('DOMContentLoaded', function () {
         console.error('[lessons.js] init error (buttons are unaffected):', err);
     }
 });
+
 
 /* ==========================
    ACTIVITY MC PICKER
@@ -505,6 +757,7 @@ function checkLessonComplete() {
         var hasPending = false;
         (LESSON_DATA.activities || []).forEach(function (act) { if (!act.done) hasPending = true; });
         (LESSON_DATA.quizzes || []).forEach(function (qz) { if (!qz.done) hasPending = true; });
+        (LESSON_DATA.dragdrops || []).forEach(function (dd) { if (!dd.done) hasPending = true; });
 
         if (!hasPending) {
             _unlock(nextBtn, lockNotice);
@@ -524,6 +777,12 @@ function checkLessonComplete() {
             (LESSON_DATA.quizzes || []).forEach(function (qz) { if (!qz.done) totalRequired += qz.required; });
             if (Object.keys(UNIFIED_QZ.ans).length < totalRequired) allDone = false;
         }
+
+        (LESSON_DATA.dragdrops || []).forEach(function (dd) {
+            if (dd.done) return;
+            var state = DD_STAGE[dd.title];
+            if (!state || Object.keys(state.ans).length < dd.required) allDone = false;
+        });
 
         if (allDone) {
             _unlock(nextBtn, lockNotice);

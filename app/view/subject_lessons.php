@@ -38,6 +38,28 @@ function youtubeEmbed($url)
     return 'https://www.youtube.com/embed/' . $videoId;
 }
 
+function ddIconForLabel($label)
+{
+    $l = strtolower($label);
+    if (strpos($l, 'cpu') !== false || strpos($l, 'processor') !== false)
+        return 'fa-microchip';
+    if (strpos($l, 'ram') !== false || strpos($l, 'memory') !== false)
+        return 'fa-memory';
+    if (strpos($l, 'gpu') !== false || strpos($l, 'graphics') !== false)
+        return 'fa-tv';
+    if (strpos($l, 'psu') !== false || strpos($l, 'power') !== false)
+        return 'fa-bolt';
+    if (strpos($l, 'hdd') !== false || strpos($l, 'hard drive') !== false)
+        return 'fa-hdd';
+    if (strpos($l, 'ssd') !== false)
+        return 'fa-save';
+    if (strpos($l, 'motherboard') !== false)
+        return 'fa-sitemap';
+    if (strpos($l, 'cooler') !== false || strpos($l, 'fan') !== false)
+        return 'fa-snowflake';
+    return 'fa-cube';
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -1923,7 +1945,7 @@ function youtubeEmbed($url)
             font-size: 14.5px;
             color: var(--text-bright);
             line-height: 1.55;
-            margin-bottom: 12px;
+            /* margin-bottom: 12px; */
         }
 
         .act-meta-pills {
@@ -2708,15 +2730,18 @@ function youtubeEmbed($url)
             align-items: center;
             padding: 20px 22px;
             border-radius: 14px;
-            color: var(--text-dim);
-            border: 1px solid var(--border);
+            /* color: var(--text-dim);
+            border: 1px solid var(--border); */
             font-size: 15.5px;
             font-weight: 600;
             cursor: pointer;
             border: 1px solid transparent;
             transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-            background-color: #ffffff;
+            /* background-color: #ffffff; */
+            color: var(--text-light);
+            background: var(--panel);
+            border: 1px solid var(--panel-edge);
             justify-content: space-between;
         }
 
@@ -2726,14 +2751,31 @@ function youtubeEmbed($url)
         }
 
         .qz-choice-btn.qz-correct {
-            border-color: #22c55e;
+            /* border-color: #22c55e;
             background: rgba(34, 197, 94, 0.08);
-            color: #15803d;
+            color: #15803d; */
+            border: 2px solid var(--neon-green);
+            background: rgba(57, 255, 158, .10);
+            color: var(--neon-green);
+        }
+
+        .qz-choice-btn.qz-correct .qz-choice-letter {
+            border: 2px solid var(--neon-green);
+            background: rgba(57, 255, 158, .10);
+            color: var(--neon-green);
         }
 
         .qz-choice-btn.qz-wrong {
-            background: rgba(239, 68, 68, 0.08);
-            color: #b91c1c;
+            /* background: rgba(239, 68, 68, 0.08);
+            color: #b91c1c; */
+            border: 2px solid #ff4d6d;
+            background: rgba(255, 77, 109, .10);
+            color: #ff4d6d;
+        }
+
+        .qz-choice-btn.qz-wrong .qz-choice-letter {
+            border: 2px solid #ff4d6d;
+            color: #ff4d6d;
         }
 
         .qz-choice-btn:hover {
@@ -2747,19 +2789,19 @@ function youtubeEmbed($url)
         }
 
         .qz-choice-btn[data-color="0"] {
-            border: 1px solid var(--border);
+            /* border: 1px solid var(--border); */
         }
 
         .qz-choice-btn[data-color="1"] {
-            border: 1px solid var(--border);
+            /* border: 1px solid var(--border); */
         }
 
         .qz-choice-btn[data-color="2"] {
-            border: 1px solid var(--border);
+            /* border: 1px solid var(--border); */
         }
 
         .qz-choice-btn[data-color="3"] {
-            border: 1px solid var(--border);
+            /* border: 1px solid var(--border); */
         }
 
         .qz-choice-inner {
@@ -2792,18 +2834,27 @@ function youtubeEmbed($url)
         }
 
         .qz-choice-btn.qz-correct .qz-choice-letter {
-            background-color: #22c55e;
-            color: #fff;
-            border-color: #22c55e;
+            /* background-color: #22c55e; */
+            /* color: #fff; */
+            /* color: #22c55e; */
+            /* border-color: #22c55e; */
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
         }
 
-        .qz-choice-btn.qz-wrong .qz-choice-letter {
+        /* .qz-choice-btn.qz-wrong .qz-choice-letter {
             background-color: #ef4444;
             color: #fff;
             border-color: #ef4444;
-        }
+        } */
 
         .qz-overlay.open .qz-choice-letter {
+            /* background: rgba(255, 255, 255, 0.04);
+            border-color: var(--panel-edge);
+            color: var(--text-light); */
+        }
+
+        .qz-overlay .qz-choice-letter {
             background: rgba(255, 255, 255, 0.04);
             border-color: var(--panel-edge);
             color: var(--text-light);
@@ -2827,10 +2878,214 @@ function youtubeEmbed($url)
         }
 
         .qz-overlay.open {
-            display: block;
+            display: flex;
+            flex-direction: row-reverse;
+            /* BonBon (first in HTML) ends up on the right */
+            align-items: flex-start;
+            justify-content: center;
+            gap: 50px;
+            padding: 40px 60px;
             animation: qzOverlayIn .42s cubic-bezier(.2, .8, .2, 1) forwards;
             background: radial-gradient(circle at 15% 10%, rgba(51, 230, 255, 0.10), transparent 40%), radial-gradient(circle at 85% 90%, rgba(255, 46, 151, 0.10), transparent 40%), linear-gradient(180deg, var(--bg-deep) 0%, var(--bg-mid) 100%);
         }
+
+        .BonBon-parent {
+            position: static;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 260px;
+            margin-top: 60px;
+            align-self: stretch;
+            /* NEW — lets it fill the overlay's full height */
+            height: auto;
+        }
+
+        .bonbon-pole-wrap {
+            order: 3;
+            flex: 1 1 auto;
+            /* fills remaining vertical space in BonBon-parent */
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            /* NEW — was defaulting to row, which stretched the pole full-width */
+            align-items: center;
+            /* NEW — centers the pole horizontally instead of stretching it */
+            justify-content: center;
+            /* min-height: 40px; */
+            margin: 10px 0 0;
+            /* padding-bottom: 8px; */
+        }
+
+        .bonbon-pole {
+            /* width: 14px; */
+            width: 100%;
+            height: 100%;
+            flex: 1 1 auto;
+            /* now grows along the column's main axis (vertically) */
+            align-self: stretch;
+            /* NEW — makes it fill the wrap's height top-to-bottom */
+            border-radius: 99px;
+            background: linear-gradient(180deg, rgba(51, 230, 255, .55), rgba(51, 230, 255, .12));
+            border: 1.5px solid rgba(51, 230, 255, .5);
+            box-shadow: inset 0 0 10px rgba(51, 230, 255, .25), 0 0 14px rgba(51, 230, 255, .15);
+        }
+
+        .bonbon-spring-wrap {
+            order: 3;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            margin-top: -6px;
+            animation: bonbonSpringSquash 2.4s ease-in-out infinite;
+            transform-origin: top center;
+        }
+
+        .bonbon-spring-wrap span {
+            display: block;
+            width: 70px;
+            height: 8px;
+            border-radius: 50%;
+            background: linear-gradient(180deg, rgba(51, 230, 255, .5), rgba(51, 230, 255, .15));
+            border: 1.5px solid rgba(51, 230, 255, .5);
+        }
+
+        .bonbon-spring-wrap span:nth-child(2) {
+            width: 58px;
+        }
+
+        .bonbon-spring-wrap span:nth-child(3) {
+            width: 46px;
+        }
+
+        /* @keyframes bonbonSpringSquash {
+
+            0%,
+            100% {
+                transform: scaleY(1);
+            }
+
+            50% {
+                transform: scaleY(0.5);
+            }
+        } */
+
+        .BonBon-parent img {
+            width: 200px;
+            height: auto;
+            pointer-events: none;
+            order: 2;
+            /* image now comes after the bubble */
+            animation: bonbonSpring 2.4s ease-in-out infinite;
+        }
+
+        /* 
+        @keyframes bonbonSpring {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-14px) scale(1.03);
+            }
+        } */
+
+        .speech-bubble.drop-drag {
+            position: relative;
+            left: auto;
+            right: auto;
+            top: auto;
+            width: 100%;
+            order: 1;
+            /* bubble renders first, on top */
+            margin-top: 0;
+            /* margin-bottom: 16px; */
+            margin-bottom: 30px;
+            /* space now goes below instead of above */
+            pointer-events: auto;
+        }
+
+        /* Flip the little arrow to point DOWN toward the robot, since the bubble is now above it */
+        .speech-bubble.drop-drag::after {
+            right: auto;
+            left: 50%;
+            top: auto;
+            bottom: -6px;
+            transform: translateX(-50%) rotate(45deg);
+        }
+
+        /* @keyframes bonbonSpring {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-14px) scale(1.03);
+            }
+        } */
+
+        .qz-overlay #section-quizzes,
+        .qz-overlay #section-activity-stage {
+            max-width: 700px;
+            width: 100%;
+            margin: 0;
+        }
+
+        /* #ddOverlay {
+            position: relative;
+        } */
+
+        /* .speech-bubble.drop-drag {
+            position: absolute;
+            left: auto;
+            top: auto;
+            width: 100%;
+            margin-top: 16px;
+            pointer-events: auto;
+        } */
+
+        /* .BonBon-parent {
+            position: absolute;
+            left: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 260px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .BonBon-parent img {
+            width: 200px;
+            height: auto;
+            pointer-events: none;
+        }
+
+        .speech-bubble.drop-drag {
+            position: relative;
+            left: auto;
+            top: auto;
+            width: 100%;
+            margin-top: 16px;
+            pointer-events: auto;
+        }
+
+        .speech-bubble.drop-drag::after {
+            right: auto;
+            left: 50%;
+            top: -6px;
+            transform: translateX(-50%) rotate(45deg);
+        } */
 
         .qz-overlay.open::before {
             content: "";
@@ -2875,6 +3130,26 @@ function youtubeEmbed($url)
             max-width: 800px;
             margin: 0 auto;
         }
+
+        .dd-nav-back {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .dd-footer {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .dd-parent-header {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* .qz-overlay #drop-drag{
+            max-width: 800px;
+            margin: 0 auto;
+        } */
 
         .qz-overlay.open #section-quizzes {
             animation: qzContentUp .45s cubic-bezier(.2, .8, .2, 1) .05s both;
@@ -3061,11 +3336,11 @@ function youtubeEmbed($url)
             z-index: 1;
         }
 
-        .qz-overlay.open .qz-choice-btn {
+        /* .qz-overlay.open .qz-choice-btn {
             color: var(--text-light);
             background: var(--panel);
             border: 1px solid var(--panel-edge);
-        }
+        } */
 
         .qz-overlay.open .qz-choice-btn.selected {
             background: rgba(51, 230, 255, 0.12);
@@ -3107,9 +3382,9 @@ function youtubeEmbed($url)
 
         .qz-activity-textarea {
             width: 100%;
-            max-width: 560px;
-            min-height: 130px;
-            margin: 0 auto;
+            /* max-width: 560px; */
+            min-height: 150px;
+            /* margin: 0 auto; */
             display: block;
             border-radius: 12px;
             padding: 14px 16px;
@@ -3138,19 +3413,321 @@ function youtubeEmbed($url)
             box-shadow: 0 0 0 3px rgba(51, 230, 255, 0.15);
         }
 
-        @media (max-width: 600px) {
-            .qz-card {
-                padding: 34px 22px;
+        .qz-overlay.open #section-activity-stage {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* ============ GAME-STYLE DRAG & DROP ============ */
+        .dd-board {
+            /* max-width: 1000px; */
+            /* margin: 0 auto; */
+            position: relative;
+        }
+
+        .dd-hud {
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .dd-hud-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: "Orbitron", sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-light);
+            letter-spacing: .03em;
+        }
+
+        .dd-hud-title i {
+            color: var(--arcade-cyan);
+            font-size: 18px;
+        }
+
+        .dd-hud-stats {
+            display: flex;
+            gap: 10px;
+        }
+
+        .dd-hud-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-size: 12.5px;
+            font-weight: 700;
+            font-family: "Orbitron", sans-serif;
+        }
+
+        .dd-hud-pill.streak {
+            background: rgba(255, 170, 0, 0.12);
+            border: 1.5px solid rgba(255, 170, 0, 0.35);
+            color: #ffb020;
+        }
+
+        .dd-hud-pill.score {
+            background: rgba(57, 255, 158, 0.1);
+            border: 1.5px solid rgba(57, 255, 158, 0.3);
+            color: var(--neon-green);
+        }
+
+        .dd-board-header {
+            margin-bottom: 20px;
+        }
+
+        .dd-puzzle-board {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .dd-target-row,
+        .dd-item-row {
+            display: flex;
+            flex-wrap: wrap;
+            /* display: grid; */
+            /* grid-template-columns: repeat(5, 1fr); */
+            /* justify-content: center; */
+            /* align-items: center; */
+            gap: 16px;
+            justify-content: center;
+        }
+
+        .dd-item-row {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .dd-target-card {
+            width: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            transition: transform .15s ease;
+        }
+
+        .dd-target-card.drag-over {
+            transform: scale(1.03);
+        }
+
+        .dd-target-visual {
+            height: 100px;
+            border-radius: 14px 14px 0 0;
+            background: var(--panel);
+            border: 1.5px solid var(--panel-edge);
+            border-bottom: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .dd-target-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .dd-target-visual i {
+            font-size: 32px;
+            color: var(--arcade-cyan);
+        }
+
+        .dd-target-label {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-light);
+            padding: 6px 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-left: 1.5px solid var(--panel-edge);
+            border-right: 1.5px solid var(--panel-edge);
+        }
+
+        .dd-socket {
+            min-height: 64px;
+            border: 1.5px dashed var(--panel-edge);
+            border-radius: 0 0 14px 14px;
+            background: rgba(255, 255, 255, 0.015);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px;
+            transition: border-color .18s ease, background .18s ease;
+        }
+
+        .dd-target-card.drag-over .dd-socket {
+            border-color: var(--arcade-cyan);
+            background: rgba(51, 230, 255, 0.08);
+        }
+
+        .dd-socket-slot {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .dd-socket-slot:empty::before {
+            content: attr(data-placeholder);
+            font-size: 11.5px;
+            font-style: italic;
+            color: var(--text-dim);
+            opacity: 0.55;
+        }
+
+        .dd-target-card.solved .dd-target-visual,
+        .dd-target-card.solved .dd-socket {
+            border-color: var(--neon-green);
+        }
+
+        .dd-target-card.solved .dd-target-label {
+            color: var(--neon-green);
+        }
+
+        .dd-target-card.zone-shake {
+            animation: ddZoneShake .4s ease;
+        }
+
+        @keyframes ddZoneShake {
+
+            0%,
+            100% {
+                transform: translateX(0);
             }
 
-            .qz-question-text {
-                font-size: 18px;
+            25% {
+                transform: translateX(-6px);
             }
+
+            50% {
+                transform: translateX(6px);
+            }
+
+            75% {
+                transform: translateX(-4px);
+            }
+        }
+
+        .dd-card {
+            width: 110px;
+            display: flex;
+            flex-direction: column;
+            border: 1.5px solid var(--panel-edge);
+            border-radius: 14px;
+            overflow: hidden;
+            cursor: grab;
+            background: var(--panel);
+            transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, opacity .18s ease;
+            user-select: none;
+        }
+
+        .dd-card:active {
+            cursor: grabbing;
+        }
+
+        .dd-card:hover {
+            border-color: var(--arcade-cyan);
+            box-shadow: 0 6px 16px rgba(51, 230, 255, .2);
+            transform: translateY(-2px);
+        }
+
+        .dd-card.dragging {
+            opacity: .25;
+        }
+
+        .dd-card.locked {
+            cursor: default;
+            border-color: var(--neon-green);
+            width: 100px;
+        }
+
+        .dd-card.locked:hover {
+            transform: none;
+        }
+
+        .dd-card.shake-wrong {
+            animation: ddShakeWrong .45s ease;
+            border-color: #ff4d6d !important;
+        }
+
+        @keyframes ddShakeWrong {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-8px);
+            }
+
+            40% {
+                transform: translateX(7px);
+            }
+
+            60% {
+                transform: translateX(-5px);
+            }
+
+            80% {
+                transform: translateX(3px);
+            }
+        }
+
+        .dd-card-visual {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.03);
+            overflow: hidden;
+        }
+
+        .dd-card-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .dd-card-visual i {
+            font-size: 26px;
+            color: var(--arcade-cyan);
+        }
+
+        .dd-card-label {
+            text-align: center;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--text-light);
+            padding: 5px 4px;
+        }
+
+        .dd-card.locked .dd-card-visual i,
+        .dd-card.locked .dd-card-label {
+            color: var(--neon-green);
         }
     </style>
 </head>
 
 <body>
+    <script>
+        function onDomReady(fn) {
+            if (document.readyState === 'interactive' || document.readyState === 'complete') {
+                fn();
+            } else {
+                document.addEventListener('DOMContentLoaded', fn);
+            }
+        }
+    </script>
 
     <script>
         (function () {
@@ -3158,9 +3735,13 @@ function youtubeEmbed($url)
             var lessonId = <?= (int) ($lessonId ?? 0) ?>;
             var splashKey = 'splash_dismissed_module_' + moduleId;
             var quizKey = 'quiz_open_lesson_' + lessonId;
+            var activityKey = 'activity_open_lesson_' + lessonId; // NEW
+            var dragdropKey = 'dragdrop_open_lesson_' + lessonId; // NEW
 
             var dismissed = sessionStorage.getItem(splashKey);
             var quizWasOpen = sessionStorage.getItem(quizKey) === '1';
+            var activityWasOpen = sessionStorage.getItem(activityKey) === '1'; // NEW
+            var dragdropWasOpen = !!sessionStorage.getItem(dragdropKey); // NEW
 
             var navType = 'navigate';
             try {
@@ -3174,12 +3755,12 @@ function youtubeEmbed($url)
 
             var cameFromWithinLessons = document.referrer.indexOf('url=subject_lessons') !== -1;
 
-            var shouldSkip = quizWasOpen ||
+            var shouldSkip = quizWasOpen || activityWasOpen || dragdropWasOpen ||
                 (dismissed && (navType === 'reload' || navType === 'back_forward' || cameFromWithinLessons));
 
             if (shouldSkip) {
                 document.documentElement.classList.add('skip-splash');
-                if (quizWasOpen) sessionStorage.setItem(splashKey, '1');
+                if (quizWasOpen || activityWasOpen || dragdropWasOpen) sessionStorage.setItem(splashKey, '1');
             } else {
                 sessionStorage.removeItem(splashKey);
             }
@@ -3231,6 +3812,9 @@ function youtubeEmbed($url)
 
     $bonbonGreetName = (!empty($splashFirstName) && $splashFirstName !== 'Student') ? ", {$splashFirstName}" : "";
 
+    $bonbonDragDropGreeting = "Hi{$bonbonGreetName}! I'm BonBon, your matching buddy. Let's see if you can drag each item into the right category!";
+    $bonbonDragDropMessage = "Drag each item's card and drop it into the category it belongs to. Tap \"Take the Activity\" below when you're ready.";
+
     if ($quizAlreadyDone) {
         $bonbonQuizGreeting = "Hi{$bonbonGreetName}! I'm BonBon, your quiz buddy. You've already completed this quiz — nice work!";
         $bonbonQuizMessage = "Want a refresher? Reviewing your answers is a great way to lock in what you've learned. Tap \"Review the Quiz\" below whenever you're ready.";
@@ -3238,6 +3822,10 @@ function youtubeEmbed($url)
         $bonbonQuizGreeting = "Hi{$bonbonGreetName}! I'm BonBon, your quiz buddy. Quick reminder — there's a short quiz ahead so you can check how well you understood this lesson.";
         $bonbonQuizMessage = "Take your time and answer honestly — it's the best way to see what's clicking and what could use another look. Tap \"Take the Quiz\" below when you're ready.";
     }
+
+    // ADD THE TWO NEW LINES RIGHT HERE:
+    $bonbonActivityGreeting = "Hi{$bonbonGreetName}! I'm BonBon, your activity buddy. Time to put what you've learned into practice!";
+    $bonbonActivityMessage = "Answer each question one at a time — tap \"Take the Activity\" below when you're ready.";
 
     if (!empty($lesson)) {
         $bonbonCleanTitle = preg_replace('/^Lesson\s*\d+\s*:\s*/i', '', $lesson['title']);
@@ -3794,7 +4382,8 @@ function youtubeEmbed($url)
                                                 </div>
                                                 <div class="act-hero-title"><?= htmlspecialchars($act['title']) ?></div>
                                                 <?php if (!empty($act['instructions'])): ?>
-                                                    <div class="act-hero-desc"><?= nl2br(htmlspecialchars($act['instructions'])) ?>
+                                                    <div class="act-hero-desc">
+                                                        <?= nl2br(htmlspecialchars($act['instructions'])) ?>
                                                     </div>
                                                 <?php endif; ?>
                                                 <div class="act-meta-pills">
@@ -3892,13 +4481,23 @@ function youtubeEmbed($url)
                                             <img src="../images/robot-ai5.png" alt="">
                                             <div class="speech-bubble bubble-quiz">
                                                 <strong>BonBon</strong>
-                                                <p>Time to put what you learned into practice! Answer each question one at a
-                                                    time — tap the button below when you're ready.</p>
-                                                <button type="button" class="btn-take-quiz btn-visible"
-                                                    onclick="openActivityStage()">
-                                                    <i class="fa fa-pencil"></i>
-                                                    Take the Activity
-                                                </button>
+                                                <div id="bonbonActivityGreetingStage">
+                                                    <p id="bonbonMessage-activity-greeting"></p>
+                                                    <span class="bb-skip-typing" id="skipActivityGreetingTyping"
+                                                        onclick="skipBonbonActivityGreeting()">Skip »</span>
+                                                    <button type="button" class="btn-quiz-continue" id="btnActivityContinue">
+                                                        Continue
+                                                    </button>
+                                                </div>
+                                                <div id="bonbonActivityMessageStage" style="display:none;">
+                                                    <p id="bonbonMessage-activity"></p>
+                                                    <span class="bb-skip-typing" id="skipActivityMsgTyping"
+                                                        onclick="skipBonbonActivityMsg()">Skip »</span>
+                                                    <button type="button" class="btn-take-quiz" onclick="openActivityStage()">
+                                                        <i class="fa fa-pencil"></i>
+                                                        Take the Activity
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -3968,6 +4567,195 @@ function youtubeEmbed($url)
                                             </div>
                                         </div>
                                     <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php
+                            $pendingDragDrops = [];
+                            foreach ($dragDropData as $ddTitle => $ddInfo) {
+                                if ($ddInfo['submission'] === null)
+                                    $pendingDragDrops[$ddTitle] = $ddInfo;
+                            }
+                            ?>
+
+                            <?php if (!empty($dragDropData)): ?>
+                                <div class="ls-section" id="section-dragdrop">
+
+                                    <?php foreach ($dragDropData as $ddTitle => $ddInfo):
+                                        if ($ddInfo['submission'] === null)
+                                            continue;
+                                        $ddAnswers = json_decode($ddInfo['submission']['answers_json'] ?? '{}', true) ?: [];
+                                        ?>
+                                        <div class="activity-block">
+                                            <div class="activity-hero-card">
+                                                <div class="act-hero-tag">Matching Activity</div>
+                                                <div class="act-hero-title">
+                                                    <?= htmlspecialchars($ddTitle) ?>
+                                                </div>
+                                                <?php if (!empty($ddInfo['game']['instructions'])): ?>
+                                                    <div class="act-hero-desc">
+                                                        <?= nl2br(htmlspecialchars($ddInfo['game']['instructions'])) ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="submitted-notice">
+                                                <div class="submitted-check"><i class="fa fa-check"></i></div>
+                                                <div class="submitted-notice-text">
+                                                    <div class="sn-title">Activity Submitted</div>
+                                                    <div class="sn-sub">You've already completed this matching activity.</div>
+                                                </div>
+                                            </div>
+                                            <?php foreach ($ddInfo['items'] as $item):
+                                                $picked = $ddAnswers[$item['label']] ?? null;
+                                                $isCorrect = ($picked === $item['category']);
+                                                ?>
+                                                <div class="question-card">
+                                                    <div class="q-num-label">Item</div>
+                                                    <div class="q-text">
+                                                        <?= htmlspecialchars($item['label']) ?>
+                                                    </div>
+                                                    <div class="review-choice"
+                                                        style="<?= $isCorrect ? 'border-color:#22c55e;background:#f0fdf4;' : 'border-color:#ef4444;background:#fef2f2;' ?>">
+                                                        Your answer:
+                                                        <?= htmlspecialchars($picked ?? '—') ?>
+                                                        <?php if (!$isCorrect): ?>
+                                                            <span style="margin-left:auto;color:#ef4444;">Correct:
+                                                                <?= htmlspecialchars($item['category']) ?>
+                                                            </span>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endforeach; ?>
+
+                                    <?php foreach ($pendingDragDrops as $ddTitle => $ddInfo): ?>
+                                        <div class="activity-hero-card">
+                                            <div class="act-hero-tag">Matching Activity</div>
+                                            <div class="act-hero-title">
+                                                <?= htmlspecialchars($ddTitle) ?>
+                                            </div>
+                                            <?php if (!empty($ddInfo['game']['instructions'])): ?>
+                                                <div class="act-hero-desc">
+                                                    <?= nl2br(htmlspecialchars($ddInfo['game']['instructions'])) ?>
+                                                </div>
+                                            <?php else: ?>
+                                                <div class="act-hero-desc"><?= count($ddInfo['items']) ?>
+                                                    item<?= count($ddInfo['items']) === 1 ? '' : 's' ?> to match.</div>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <div class="content-quiz-cta">
+                                            <img src="../images/robot-ai5.png" alt="">
+                                            <div class="speech-bubble bubble-quiz">
+                                                <strong>BonBon</strong>
+                                                <div class="bonbon-dd-greeting-stage">
+                                                    <p class="bonbon-dd-greeting-text"
+                                                        data-msg="<?= htmlspecialchars($bonbonDragDropGreeting) ?>"></p>
+                                                    <span class="bb-skip-typing skip-dd-greeting">Skip »</span>
+                                                    <button type="button"
+                                                        class="btn-quiz-continue btn-dd-continue">Continue</button>
+                                                </div>
+                                                <div class="bonbon-dd-message-stage" style="display:none;">
+                                                    <p class="bonbon-dd-message-text"
+                                                        data-msg="<?= htmlspecialchars($bonbonDragDropMessage) ?>"></p>
+                                                    <span class="bb-skip-typing skip-dd-msg">Skip »</span>
+                                                    <button type="button" class="btn-take-quiz"
+                                                        onclick="openDragDropStage('<?= htmlspecialchars(addslashes($ddTitle), ENT_QUOTES) ?>')">
+                                                        <i class="fa fa-arrows-alt"></i> Take the Activity
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="ls-section dd-stage-section" id="drop-drag"
+                                            data-game-title="<?= htmlspecialchars($ddTitle) ?>" style="display:none;">
+                                            <div class="dd-nav-back">
+                                                <button type="button" class="btn-exit-quiz"
+                                                    onclick="closeDragDropStage('<?= htmlspecialchars(addslashes($ddTitle), ENT_QUOTES) ?>')">
+                                                    <i class="fa fa-arrow-left"></i>
+                                                </button>
+                                            </div>
+
+                                            <div class="dd-board" data-game-title="<?= htmlspecialchars($ddTitle) ?>">
+                                                <div class="dd-parent-header">
+                                                    <div class="dd-hud">
+                                                        <div class="dd-hud-title">
+                                                            <i class="fa fa-gamepad"></i> Component Matching Challenge
+                                                        </div>
+                                                        <!-- <div class="dd-hud-stats">
+                                                        <span class="dd-hud-pill streak"><i class="fa fa-fire"></i> <span
+                                                                class="dd-streak-val">0</span> streak</span>
+                                                        <span class="dd-hud-pill score"><i class="fa fa-star"></i> <span
+                                                                class="dd-score-val">0</span> pts</span>
+                                                    </div> -->
+                                                        <div class="dd-feedback"></div>
+                                                    </div>
+
+                                                    <div class="dd-board-header">
+                                                        <div class="qz-counter dd-counter">0 of
+                                                            <?= count($ddInfo['items']) ?> placed
+                                                        </div>
+                                                        <div class="qz-progress-track">
+                                                            <div class="qz-progress-fill dd-progress-fill" style="width:0%"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <?php
+                                                $shuffledCats = $ddInfo['categories'];
+                                                shuffle($shuffledCats);
+                                                ?>
+                                                <div class="dd-puzzle-board">
+                                                    <div class="dd-target-row">
+                                                        <?php foreach ($shuffledCats as $cat):
+                                                            $catIcon = ddIconForLabel($cat);
+                                                            ?>
+                                                            <div class="dd-target-card" data-category="<?= htmlspecialchars($cat) ?>">
+                                                                <div class="dd-target-visual">
+                                                                    <i class="fa <?= $catIcon ?>"></i>
+                                                                </div>
+                                                                <div class="dd-target-label"><?= htmlspecialchars($cat) ?></div>
+                                                                <div class="dd-socket" data-category="<?= htmlspecialchars($cat) ?>">
+                                                                    <div class="dd-socket-slot" data-placeholder="Drop here"></div>
+                                                                </div>
+                                                            </div>
+                                                        <?php endforeach; ?>
+                                                    </div>
+
+                                                    <div class="dd-item-row" data-role="bank">
+                                                        <?php foreach ($ddInfo['items'] as $item):
+                                                            $itemIcon = ddIconForLabel($item['label']);
+                                                            $itemImg = !empty($item['image']) ? $item['image'] : null;
+                                                            ?>
+                                                            <div class="dd-card" draggable="true"
+                                                                data-item="<?= htmlspecialchars($item['label']) ?>"
+                                                                data-category="<?= htmlspecialchars($item['category']) ?>">
+                                                                <div class="dd-card-visual">
+                                                                    <?php if ($itemImg): ?>
+                                                                        <img src="<?= htmlspecialchars($itemImg) ?>" alt="">
+                                                                    <?php else: ?>
+                                                                        <i class="fa <?= $itemIcon ?>"></i>
+                                                                    <?php endif; ?>
+                                                                </div>
+                                                                <div class="dd-card-label"><?= htmlspecialchars($item['label']) ?></div>
+                                                            </div>
+                                                        <?php endforeach; ?>
+                                                    </div>
+                                                </div>
+
+                                                <div class="dd-footer">
+                                                    <div class="qz-nav-row">
+                                                        <div></div>
+                                                        <button class="btn-qnav-next dd-finish-btn" disabled
+                                                            onclick="ddSubmit('<?= htmlspecialchars(addslashes($ddTitle), ENT_QUOTES) ?>')">
+                                                            Finish <i class="fa fa-check"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
                                 </div>
                             <?php endif; ?>
 
@@ -4289,9 +5077,34 @@ function youtubeEmbed($url)
             </div><!-- /lessons-main -->
         </div><!-- /lessons-shell -->
 
-        <div class="qz-overlay" id="qzOverlay"></div>
+        <div class="qz-overlay" id="qzOverlay">
+            <div class="BonBon-parent">
+                <img src="../images/welcome-interactive.png" alt="">
+                <div class="bonbon-pole-wrap">
+                    <div class="bonbon-pole"></div>
+                </div>
+                <div class="speech-bubble drop-drag">
+                    <strong>BonBon</strong>
+                    <p><?= htmlspecialchars($bonbonQuizGreeting ?? "Hi! I'm BonBon, your quiz buddy. Quick reminder — there's a short quiz ahead so you can check how well you understood this lesson.") ?>
+                    </p>
+                </div>
+            </div>
+        </div>
 
         <div class="qz-overlay" id="actOverlay"></div>
+
+        <div class="qz-overlay" id="ddOverlay">
+
+            <div class="BonBon-parent">
+                <img src="../images/welcome-interactive.png" alt="">
+                <div class="speech-bubble drop-drag">
+                    <strong>BonBon</strong>
+
+                    <p id="bonbonMessage2"></p>
+
+                </div>
+            </div>
+        </div>
 
         <div class="db-lightbox" id="dbLightbox" onclick="dbLightboxClose()">
             <button class="db-lightbox-close" onclick="dbLightboxClose()">
@@ -4352,6 +5165,19 @@ function youtubeEmbed($url)
                 }
             }
 
+            (function () {
+                if (typeof LESSON_DATA === 'undefined' || !LESSON_DATA.lessonId) return;
+                var flagKey = 'quiz_open_lesson_' + LESSON_DATA.lessonId;
+
+                if (sessionStorage.getItem(flagKey) === '1') {
+                    document.addEventListener('DOMContentLoaded', function () {
+                        if (document.getElementById('section-quizzes')) {
+                            openQuizStage();
+                        }
+                    });
+                }
+            })();
+
             function closeQuizStage() {
                 var quizSection = document.getElementById('section-quizzes');
                 var overlay = document.getElementById('qzOverlay');
@@ -4410,6 +5236,11 @@ function youtubeEmbed($url)
                 if (shell) shell.classList.add('shell-scroll-lock');
 
                 if (typeof actUpdateNav === 'function') actUpdateNav();
+
+                // NEW: remember that the activity stage is open, so a reload can restore it
+                if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+                    sessionStorage.setItem('activity_open_lesson_' + LESSON_DATA.lessonId, '1');
+                }
             }
 
             function closeActivityStage() {
@@ -4431,6 +5262,11 @@ function youtubeEmbed($url)
 
                     var shell = document.getElementById('lessonsShell');
                     if (shell) shell.classList.remove('shell-scroll-lock');
+
+                    // NEW: clear the flag once the user actually leaves the stage
+                    if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+                        sessionStorage.removeItem('activity_open_lesson_' + LESSON_DATA.lessonId);
+                    }
 
                     scrollToSection('activityCta');
                 }, 280);
@@ -4463,11 +5299,11 @@ function youtubeEmbed($url)
                 type();
             }
 
-            document.addEventListener('DOMContentLoaded', startBonbonBubble3Typewriter);
+            onDomReady(startBonbonBubble3Typewriter);
         </script>
 
         <script>
-            var _bbGreetingFinish = null;
+            var _bbQuizGreetingFinish = null;
             var _bbQuizMsgFinish = null;
 
             function startBonbonQuizGreetingTypewriter() {
@@ -4475,7 +5311,7 @@ function youtubeEmbed($url)
                 if (!el || el.dataset.typed) return;
                 el.dataset.typed = '1';
 
-                const message = <?= json_encode($bonbonQuizGreeting) ?>;
+                const message = <?= json_encode($bonbonQuizGreeting ?? '') ?>;
                 const speed = 28;
                 let i = 0;
                 let done = false;
@@ -4496,7 +5332,7 @@ function youtubeEmbed($url)
                     const btn = document.getElementById('btnQuizContinue');
                     if (btn) btn.classList.add('btn-visible');
                 }
-                _bbGreetingFinish = finish;
+                _bbQuizGreetingFinish = finish;
 
                 function type() {
                     if (done) return;
@@ -4512,15 +5348,15 @@ function youtubeEmbed($url)
             }
 
             function skipBonbonGreeting() {
-                if (_bbGreetingFinish) _bbGreetingFinish();
+                if (_bbQuizGreetingFinish) _bbQuizGreetingFinish();
             }
 
-            function startBonbonQuizTypewriter() {
+            function typeQuizMessage() {
                 const el = document.getElementById('bonbonMessage-quiz');
                 if (!el || el.dataset.typed) return;
                 el.dataset.typed = '1';
 
-                const message = <?= json_encode($bonbonQuizMessage) ?>;
+                const message = <?= json_encode($bonbonQuizMessage ?? '') ?>;
                 const speed = 28;
                 let i = 0;
                 let done = false;
@@ -4538,7 +5374,7 @@ function youtubeEmbed($url)
                     cursor.remove();
                     el.textContent = message;
                     if (skipEl) skipEl.style.display = 'none';
-                    const btn = document.querySelector('.bubble-quiz .btn-take-quiz');
+                    const btn = document.querySelector('#bonbonQuizMessageStage .btn-take-quiz');
                     if (btn) btn.classList.add('btn-visible');
                 }
                 _bbQuizMsgFinish = finish;
@@ -4560,15 +5396,22 @@ function youtubeEmbed($url)
                 if (_bbQuizMsgFinish) _bbQuizMsgFinish();
             }
 
-            document.addEventListener('DOMContentLoaded', function () {
-                var quizAlreadyDone = <?= json_encode($quizAlreadyDone) ?>;
+            // Entry point kept so the existing call from the splash-exit handler
+            // still works, and it also fires correctly on skip-splash reloads.
+            function startBonbonQuizTypewriter() {
+                <?php if ($quizAlreadyDone): ?>
+                    typeQuizMessage();
+                <?php else: ?>
+                    startBonbonQuizGreetingTypewriter();
+                <?php endif; ?>
+            }
 
-                if (quizAlreadyDone) {
+            onDomReady(function () {
+                if (!document.getElementById('quizCta')) return;
+
+                if (document.documentElement.classList.contains('skip-splash')) {
                     startBonbonQuizTypewriter();
-                    return;
                 }
-
-                startBonbonQuizGreetingTypewriter();
 
                 const continueBtn = document.getElementById('btnQuizContinue');
                 if (continueBtn) {
@@ -4577,7 +5420,119 @@ function youtubeEmbed($url)
                         const messageStage = document.getElementById('bonbonQuizMessageStage');
                         if (greetingStage) greetingStage.style.display = 'none';
                         if (messageStage) messageStage.style.display = 'block';
-                        startBonbonQuizTypewriter();
+                        typeQuizMessage();
+                    });
+                }
+            });
+        </script>
+
+        <script>
+            var _bbActGreetingFinish = null;
+            var _bbActMsgFinish = null;
+
+            function startBonbonActivityGreetingTypewriter() {
+                const el = document.getElementById('bonbonMessage-activity-greeting');
+                if (!el || el.dataset.typed) return;
+                el.dataset.typed = '1';
+
+                const message = <?= json_encode($bonbonActivityGreeting ?? '') ?>;
+                const speed = 28;
+                let i = 0;
+                let done = false;
+
+                const cursor = document.createElement('span');
+                cursor.className = 'typing-cursor';
+                el.appendChild(cursor);
+
+                const skipEl = document.getElementById('skipActivityGreetingTyping');
+                if (skipEl) skipEl.style.display = 'flex';
+
+                function finish() {
+                    if (done) return;
+                    done = true;
+                    cursor.remove();
+                    el.textContent = message;
+                    if (skipEl) skipEl.style.display = 'none';
+                    const btn = document.getElementById('btnActivityContinue');
+                    if (btn) btn.classList.add('btn-visible');
+                }
+                _bbActGreetingFinish = finish;
+
+                function type() {
+                    if (done) return;
+                    if (i < message.length) {
+                        cursor.insertAdjacentText('beforebegin', message.charAt(i));
+                        i++;
+                        setTimeout(type, speed);
+                    } else {
+                        setTimeout(finish, 200);
+                    }
+                }
+                type();
+            }
+
+            function skipBonbonActivityGreeting() {
+                if (_bbActGreetingFinish) _bbActGreetingFinish();
+            }
+
+            function startBonbonActivityTypewriter() {
+                const el = document.getElementById('bonbonMessage-activity');
+                if (!el || el.dataset.typed) return;
+                el.dataset.typed = '1';
+
+                const message = <?= json_encode($bonbonActivityMessage ?? '') ?>;
+                const speed = 28;
+                let i = 0;
+                let done = false;
+
+                const cursor = document.createElement('span');
+                cursor.className = 'typing-cursor';
+                el.appendChild(cursor);
+
+                const skipEl = document.getElementById('skipActivityMsgTyping');
+                if (skipEl) skipEl.style.display = 'flex';
+
+                function finish() {
+                    if (done) return;
+                    done = true;
+                    cursor.remove();
+                    el.textContent = message;
+                    if (skipEl) skipEl.style.display = 'none';
+                    const btn = document.querySelector('#bonbonActivityMessageStage .btn-take-quiz');
+                    if (btn) btn.classList.add('btn-visible');
+                }
+                _bbActMsgFinish = finish;
+
+                function type() {
+                    if (done) return;
+                    if (i < message.length) {
+                        cursor.insertAdjacentText('beforebegin', message.charAt(i));
+                        i++;
+                        setTimeout(type, speed);
+                    } else {
+                        setTimeout(finish, 200);
+                    }
+                }
+                type();
+            }
+
+            function skipBonbonActivityMsg() {
+                if (_bbActMsgFinish) _bbActMsgFinish();
+            }
+
+            onDomReady(function () {
+                if (!document.getElementById('bonbonMessage-activity-greeting')) return;
+
+                startBonbonActivityGreetingTypewriter();
+
+                const continueBtn = document.getElementById('btnActivityContinue');
+                if (continueBtn) {
+                    continueBtn.addEventListener('click', function () {
+                        const greetingStage = document.getElementById('bonbonActivityGreetingStage');
+                        const messageStage = document.getElementById('bonbonActivityMessageStage');
+                        if (greetingStage) greetingStage.style.display = 'none';
+                        if (messageStage) messageStage.style.display = 'block';
+                        startBonbonActivityTypewriter();
                     });
                 }
             });
@@ -4609,7 +5564,7 @@ function youtubeEmbed($url)
                 type();
             }
 
-            document.addEventListener('DOMContentLoaded', startBonbonBubble2Typewriter);
+            onDomReady(startBonbonBubble2Typewriter);
         </script>
 
         <script>
@@ -4715,7 +5670,14 @@ function youtubeEmbed($url)
                         'passing_score' => (int) $d['quiz']['passing_score'],
                         'done' => ($d['result'] !== null),
                     ];
-                }, $quizData))) ?>
+                }, $quizData))) ?>,
+                dragdrops: <?= json_encode(array_map(function ($title, $d) {
+                    return [
+                        'title' => $title,
+                        'required' => count($d['items']),
+                        'done' => ($d['submission'] !== null),
+                    ];
+                }, array_keys($dragDropData), $dragDropData)) ?>
             };
 
             (function () {
@@ -4726,6 +5688,20 @@ function youtubeEmbed($url)
                     document.addEventListener('DOMContentLoaded', function () {
                         if (document.getElementById('section-quizzes')) {
                             openQuizStage();
+                        }
+                    });
+                }
+            })();
+
+            // PASTE THE ACTIVITY IIFE HERE — this is the position that actually works
+            (function () {
+                if (typeof LESSON_DATA === 'undefined' || !LESSON_DATA.lessonId) return;
+                var actFlagKey = 'activity_open_lesson_' + LESSON_DATA.lessonId;
+
+                if (sessionStorage.getItem(actFlagKey) === '1') {
+                    document.addEventListener('DOMContentLoaded', function () {
+                        if (document.getElementById('section-activity-stage')) {
+                            openActivityStage();
                         }
                     });
                 }
@@ -4768,6 +5744,62 @@ function youtubeEmbed($url)
                     }, 460);
                 });
             })();
+        </script>
+
+        <script>
+            document.querySelectorAll('.dd-stage-section').forEach(function (section) {
+                var wrap = section.previousElementSibling; // content-quiz-cta
+                if (!wrap || !wrap.classList.contains('content-quiz-cta')) return;
+
+                var greetEl = wrap.querySelector('.bonbon-dd-greeting-text');
+                var msgEl = wrap.querySelector('.bonbon-dd-message-text');
+                var greetStage = wrap.querySelector('.bonbon-dd-greeting-stage');
+                var msgStage = wrap.querySelector('.bonbon-dd-message-stage');
+                var continueBtn = wrap.querySelector('.btn-dd-continue');
+                var skipGreet = wrap.querySelector('.skip-dd-greeting');
+                var skipMsg = wrap.querySelector('.skip-dd-msg');
+
+                function typeInto(el, text, onDone, skipEl) {
+                    if (el.dataset.typed) return;
+                    el.dataset.typed = '1';
+                    var i = 0, done = false;
+                    var cursor = document.createElement('span');
+                    cursor.className = 'typing-cursor';
+                    el.appendChild(cursor);
+                    if (skipEl) skipEl.style.display = 'flex';
+
+                    function finish() {
+                        if (done) return;
+                        done = true;
+                        cursor.remove();
+                        el.textContent = text;
+                        if (skipEl) skipEl.style.display = 'none';
+                        if (onDone) onDone();
+                    }
+                    if (skipEl) skipEl.onclick = finish;
+
+                    (function type() {
+                        if (done) return;
+                        if (i < text.length) { cursor.insertAdjacentText('beforebegin', text.charAt(i)); i++; setTimeout(type, 28); }
+                        else setTimeout(finish, 200);
+                    })();
+                }
+
+                typeInto(greetEl, <?php /* not php here, static JS below */ ?> greetEl.dataset.msg || greetEl.textContent, function () {
+                    if (continueBtn) continueBtn.classList.add('btn-visible');
+            }, skipGreet);
+
+            if (continueBtn) {
+                continueBtn.addEventListener('click', function () {
+                    greetStage.style.display = 'none';
+                    msgStage.style.display = 'block';
+                    typeInto(msgEl, msgEl.dataset.msg || msgEl.textContent, function () {
+                        var takeBtn = wrap.querySelector('.btn-take-quiz');
+                        if (takeBtn) takeBtn.classList.add('btn-visible');
+                    }, skipMsg);
+                });
+            }
+            });
         </script>
 
         <script>

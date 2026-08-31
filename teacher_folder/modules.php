@@ -6,464 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Modules</title>
     <link rel="stylesheet" href="../css_folder/modules_teacher.css">
+    <link rel="stylesheet" href="../css_folder/modules_teacher_interactive.css">
     <link rel="stylesheet" href="../css_folder/components.css">
+
+    <!-- <link rel="stylesheet" href="../css_folder/create_module.css"> -->
+    <!-- <link rel="stylesheet" href="../css_folder/create_activities_blocks.css"> -->
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
 
     <style>
-        @font-face {
-            font-family: 'Poppins';
-            src: url('../Poppins/Poppins-Regular.ttf') format('truetype');
-            font-weight: 400;
-        }
 
-        @font-face {
-            font-family: 'Titan';
-            src: url('../Titan_One/TitanOne-Regular.ttf') format('truetype');
-            font-weight: 400;
-            font-style: normal;
-        }
-
-        * {
-            font-family: 'Poppins', sans-serif;
-        }
-
-        :root {
-            --green: #4CAF7D;
-            --green-dark: #2D6A4F;
-            --green-light: #E8F5EE;
-            --green-mid: #c8e6d6;
-            --orange: #FF8A65;
-            --orange-light: #FFF3EF;
-            --orange-dark: #bf5b3a;
-            --bg: #F9FBF9;
-            --white: #ffffff;
-            --card-border: rgba(0, 0, 0, 0.07);
-            --text: #2D6A4F;
-            --text-dark: #1a3a2a;
-            --text-muted: #7a9a8a;
-            --sidebar-bg: #ffffff;
-            --shadow: 0 2px 12px rgba(76, 175, 125, 0.08);
-            --background-icon: #2d3748;
-            --green-text: #4a6a58;
-        }
-
-        .container-fluid {
-            background-color: #ffffff;
-            overflow: hidden;
-        }
-
-        .container-fluid nav {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem 1rem 1rem;
-            background-color: #ffffff;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-            border-left: 1px solid rgba(0, 0, 0, 0.1);
-            z-index: 999;
-        }
-
-        .container-fluid nav .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-        }
-
-        .container-fluid nav h2 {
-            font-size: 18px;
-            margin: 0;
-            text-transform: uppercase;
-            font-family: "Titan", sans-serif;
-        }
-
-        .container-fluid nav h2 b {
-            color: var(--green);
-            font-family: "Titan", sans-serif;
-        }
-
-        .container-fluid nav form button {
-            padding: 8px 30px;
-            border-radius: 10px;
-            border: none;
-            background-color: var(--green);
-            color: white;
-            font-weight: 600;
-            font-size: 14.5px;
-        }
-
-        .container-fluid .sidebar .sidebar-menu ul li {
-            list-style: none;
-            line-height: 50px;
-            padding: 0 10px;
-            border-radius: 10px;
-            margin-top: 0.5rem;
-        }
-
-        .container-fluid .sidebar .sidebar-menu ul li:hover {
-            background-color: #E7E8EB;
-            border-radius: 10px;
-        }
-
-        .container-fluid .sidebar .sidebar-menu ul li a .fa {
-            font-size: 18px;
-        }
-
-        .container-fluid .sidebar .sidebar-menu ul li.active {
-            background-color: var(--green);
-            color: #ffffff;
-        }
-
-        .container-fluid .sidebar .sidebar-menu ul li.active a {
-            color: #ffffff;
-        }
-
-        .container-fluid .sidebar .sidebar-footer {
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: left;
-            align-items: center;
-            gap: 1rem;
-            font-size: 15.5px;
-            font-weight: 600;
-            color: var(--green-text);
-            padding: 26px;
-        }
-
-        .container-fluid .sidebar .sidebar-footer .fa {
-            font-size: 18px;
-        }
-
-        .container-fluid .sidebar .sidebar-footer p {
-            margin: 0;
-        }
-
-        .container-fluid .rightbar {
-            width: calc(100% - 248px);
-            height: 100vh;
-            overflow-y: auto;
-            margin-left: 248px;
-            border-left: 1px solid rgba(0, 0, 0, 0.1);
-            /* background-color: #F7F9F8; */
-            padding: 1.8rem;
-        }
-
-        .container-fluid .sidebar-logo {
-            height: 100px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            position: relative;
-        }
-
-        .container-fluid .sidebar-logo p {
-            font-size: 22px;
-            margin: 0;
-            font-family: "Titan", sans-serif;
-            color: var(--green);
-        }
-
-        .container-fluid .sidebar-logo p b {
-            color: #212529;
-            font-family: "Titan", sans-serif;
-        }
-
-        .container-fluid .sidebar-logo .logo-icon {
-            padding: 11px;
-            background-color: var(--green-light);
-            border-radius: 10px;
-        }
-
-        .container-fluid .sidebar-logo .logo-icon .fa-solid {
-            color: var(--green);
-            font-size: 20px;
-        }
-
-        /* ── BACK BREADCRUMB ── */
-        .back-breadcrumb {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13.5px;
-            color: var(--green-text);
-            font-weight: 600;
-            text-decoration: none;
-            margin-bottom: 1.2rem;
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 1px solid #e5e7eb;
-            background: #fff;
-            transition: border-color .18s, color .18s;
-        }
-
-        .back-breadcrumb:hover {
-            border-color: var(--green);
-            color: var(--green);
-        }
-
-        /* ── BANNER ── */
-        .module-title {
-            width: 100%;
-            border-radius: 10px;
-            border: 1px solid #E2E8E5;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-            overflow: hidden;
-            margin-bottom: 1.5rem;
-        }
-
-        .module-title .module-picture {
-            background-color: var(--green-dark);
-            background-size: cover;
-            background-position: center;
-            width: 100%;
-            height: 180px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .module-title .module-picture h2 {
-            color: white;
-            font-size: 28px;
-            font-family: "Titan", sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-align: center;
-            padding: 1rem;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-
-        .module-title .module-body {
-            background-color: #ffffff;
-            border-bottom-left-radius: 10px;
-            border-bottom-right-radius: 10px;
-            padding: 1.5rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        .module-title .module-body h1 {
-            font-size: 20px;
-            text-transform: uppercase;
-            font-family: "Titan", sans-serif;
-            color: var(--green-dark);
-            margin: 0 0 .4rem;
-        }
-
-        .module-title .module-body p {
-            font-size: 14px;
-            color: #555;
-            line-height: 26px;
-            margin: 0;
-            max-width: 500px;
-        }
-
-        .module-browse-btn {
-            text-decoration: none;
-            background-color: var(--green);
-            color: #ffffff;
-            padding: 10px 24px;
-            border-radius: 28px;
-            font-size: 13.5px;
-            font-weight: 700;
-            white-space: nowrap;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-
-        .module-browse-btn:hover {
-            opacity: .88;
-            color: #fff;
-        }
-
-        /* ── MAIN LAYOUT ── */
-        .modules-main {
-            display: flex;
-            gap: 2rem;
-            align-items: flex-start;
-        }
-
-        /* ── LEARNING CATALOG ── */
-        .learning-catalog {
-            width: 220px;
-            min-width: 200px;
-            flex-shrink: 0;
-            display: none;
-        }
-
-        .learning-catalog h4 {
-            font-size: 17px;
-            font-weight: 800;
-            color: #1a1a1a;
-            margin: 0 0 1rem;
-        }
-
-        .learning-catalog .catalog-section-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #555;
-            margin: 0 0 .5rem;
-        }
-
-        .catalog-list {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 1rem;
-        }
-
-        .catalog-list li {
-            font-size: 13.5px;
-            color: #333;
-            padding: 5px 0;
-            border-bottom: 1px solid #f0f0f0;
-            cursor: pointer;
-            transition: color .15s;
-        }
-
-        .catalog-list li:hover {
-            color: var(--green);
-        }
-
-        .see-more-btn {
-            background: none;
-            border: 1px solid #e5e7eb;
-            border-radius: 20px;
-            padding: 6px 16px;
-            font-size: 12.5px;
-            font-weight: 700;
-            color: #555;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transition: border-color .18s, color .18s;
-            margin-top: .3rem;
-        }
-
-        .see-more-btn:hover {
-            border-color: var(--green);
-            color: var(--green);
-        }
-
-        /* ── MODULE CARDS GRID ── */
-        .learning-module {
-            flex: 1;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.2rem;
-        }
-
-        .module-feed-card {
-            background: #ffffff;
-            border: 1px solid #E2E8E5;
-            border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            transition: box-shadow .2s, border-color .2s;
-        }
-
-        .module-feed-card:hover {
-            box-shadow: 0 4px 16px rgba(0, 0, 0, .10);
-            border-color: var(--green);
-        }
-
-        .module-feed-card .card-img {
-            width: 100%;
-            height: 130px;
-            background-color: var(--green-dark);
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .module-feed-card .card-img i {
-            font-size: 40px;
-            color: rgba(255, 255, 255, 0.4);
-        }
-
-        .module-feed-card .card-body {
-            padding: 1.2rem 1.4rem 1rem;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .module-feed-card .card-body .lesson-count {
-            font-size: 12px;
-            color: var(--green);
-            font-weight: 600;
-            margin-bottom: .4rem;
-        }
-
-        .module-feed-card .card-body h3 {
-            font-size: 15px;
-            color: var(--green-dark);
-            font-family: "Titan", sans-serif;
-            margin: 0 0 .5rem;
-            line-height: 1.4;
-        }
-
-        .module-feed-card .card-body p {
-            font-size: 13px;
-            color: #555;
-            margin: 0 0 1.2rem;
-            line-height: 1.5;
-            flex: 1;
-        }
-
-        .card-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: auto;
-        }
-
-        .btn-view-lessons {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 7px;
-            background-color: var(--green);
-            color: #ffffff;
-            padding: 9px 16px;
-            flex: 1;
-            border-radius: 28px;
-            font-size: 13.5px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: opacity .18s;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-view-lessons:hover {
-            opacity: .88;
-            color: #fff;
-        }
-
-        .modules-empty {
-            text-align: center;
-            padding: 60px 20px;
-            color: #aaa;
-            grid-column: span 2;
-        }
-
-        .modules-empty i {
-            font-size: 48px;
-            display: block;
-            margin-bottom: 14px;
-        }
     </style>
 </head>
 
@@ -477,17 +29,19 @@
 
                 <?php if ($subjectInfo): ?>
 
-                    <a href="/learning_management/public/?url=modules_teacher" class="back-breadcrumb">
-                        <i class="fa fa-arrow-left"></i> Back to Modules
-                    </a>
+                    <div class="nav-banner">
+                        <a href="/learning_management/public/?url=modules_teacher" class="back-breadcrumb">
+                            <i class="fa fa-arrow-left"></i> Back to Modules
+                        </a>
+                    </div>
 
                     <!-- ── BANNER ── -->
                     <div class="module-title">
-                        <div class="module-picture" <?php if (!empty($subjectInfo['subject_image'])): ?>
+                        <!-- <div class="module-picture" <?php if (!empty($subjectInfo['subject_image'])): ?>
                                 style="background-image: url('/learning_management/<?= htmlspecialchars($subjectInfo['subject_image']) ?>');"
                             <?php endif; ?>>
                             <h2><?= htmlspecialchars($subjectInfo['subject_name']) ?></h2>
-                        </div>
+                        </div> -->
                         <div class="module-body">
                             <div>
                                 <h1><?= htmlspecialchars($subjectInfo['subject_name']) ?></h1>
@@ -523,52 +77,109 @@
                             <?php endif; ?>
                         </div>
 
-                        <!-- Module Cards Grid -->
-                        <div class="learning-module">
-                            <?php if (empty($modules)): ?>
-                                <div class="modules-empty">
-                                    <i class="fa fa-book-open"></i>
-                                    <p>No modules yet for this subject.
-                                        <a
-                                            href="/learning_management/public/?url=create_module&subject_id=<?= (int) $subjectId ?>">
-                                            Create one now.
-                                        </a>
-                                    </p>
+                        <!-- Module List -->
+                        <div class="learning-module-wrap" style="flex:1;">
+
+                            <!-- ── TOOLBAR: heading + Grid/List toggle ── -->
+                            <div class="modules-toolbar">
+
+                                <?php if (!empty($modules)): ?>
+                                    <div class="view-toggle" id="viewToggle">
+                                        <button type="button" class="view-btn" data-view="grid" onclick="setModuleView('grid')">
+                                            <i class="fa fa-th-large"></i> Grid View
+                                        </button>
+                                        <button type="button" class="view-btn active" data-view="list"
+                                            onclick="setModuleView('list')">
+                                            <i class="fa fa-list"></i> List View
+                                        </button>
+                                    </div>
+                                <?php endif; ?>
+
+                                <div class="toolbar-heading">
+                                    <!-- <div class="icon-badge"><i class="fa fa-bookmark"></i></div>
+                                    <div>
+                                        <h4>Your Modules</h4>
+                                        <span>Manage and organize your learning modules</span>
+                                    </div> -->
+                                    <button type="button" class="btn-open-create-module" data-bs-toggle="modal"
+                                        data-bs-target="#createModuleModal">
+                                        <i class="fa fa-plus"></i>
+                                        <span>Create module</span>
+                                    </button>
                                 </div>
-                            <?php else: ?>
-                                <?php foreach ($modules as $mod):
-                                    $count = (int) ($mod['lesson_count'] ?? 0);
-                                    // First lesson ID for direct entry
-                                    $firstLesson = $teacherModel->getLessonsByModule($mod['id']);
-                                    $firstLessonId = !empty($firstLesson) ? (int) $firstLesson[0]['id'] : 0;
-                                    $lessonsUrl = "/learning_management/public/?url=subject_lessons_teacher&subject_id={$subjectId}&id={$mod['id']}"
-                                        . ($firstLessonId ? "&lesson={$firstLessonId}" : '');
+                            </div>
+
+                            <div class="learning-module" id="learningModule">
+                                <?php if (empty($modules)): ?>
+                                    <div class="modules-empty">
+                                        <i class="fa fa-book-open"></i>
+                                        <p>No modules yet for this subject.</p>
+                                    </div>
+                                <?php else: ?>
+                                    <?php
+                                    $iconColors = [
+                                        ['bg' => '#E4FCFF', 'fg' => '#00A8CC'], // cyan
+                                        ['bg' => '#E9F7FF', 'fg' => '#0EA5E9'], // sky blue
+                                        ['bg' => '#EAFBFA', 'fg' => '#0D9488'], // teal
+                                        ['bg' => '#EEF9FF', 'fg' => '#3B82F6'], // blue
+                                    ];
                                     ?>
-                                    <div class="module-feed-card">
-                                        <div class="card-img">
-                                            <i class="fa fa-book-open"></i>
-                                        </div>
-                                        <div class="card-body">
-                                            <span class="lesson-count">
-                                                <i class="fa fa-list-ul"></i>
-                                                <?= $count ?> lesson<?= $count !== 1 ? 's' : '' ?>
-                                            </span>
-                                            <h3><?= htmlspecialchars($mod['title']) ?></h3>
-                                            <p><?= htmlspecialchars(
-                                                !empty($mod['description'])
-                                                ? mb_strimwidth($mod['description'], 0, 100, '...')
-                                                : 'No description available.'
-                                            ) ?></p>
+                                    <?php foreach ($modules as $i => $mod):
+                                        $lessonCount = (int) ($mod['lesson_count'] ?? 0);
+                                        $videoCount = (int) ($mod['video_count'] ?? 0);
+                                        $imageCount = (int) ($mod['image_count'] ?? 0);
+                                        $activityCount = (int) ($mod['activity_count'] ?? 0);
+                                        $quizCount = (int) ($mod['quiz_count'] ?? 0);
+                                        $color = $iconColors[$i % count($iconColors)];
+
+                                        $firstLesson = $teacherModel->getLessonsByModule($mod['id']);
+                                        $firstLessonId = !empty($firstLesson) ? (int) $firstLesson[0]['id'] : 0;
+                                        $lessonsUrl = "/learning_management/public/?url=subject_lessons_teacher&subject_id={$subjectId}&id={$mod['id']}"
+                                            . ($firstLessonId ? "&lesson={$firstLessonId}" : '');
+                                        ?>
+                                        <div class="module-feed-card">
+                                            <div class="modal-header">
+                                                <div class="card-icon-box" style="background:<?= $color['bg'] ?>;">
+                                                    <i class="fa fa-book-open" style="color:<?= $color['fg'] ?>;"></i>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <h3><?= htmlspecialchars($mod['title']) ?></h3>
+                                                <p><?= htmlspecialchars(
+                                                    !empty($mod['description'])
+                                                    ? mb_strimwidth($mod['description'], 0, 100, '...')
+                                                    : 'No description available.'
+                                                ) ?></p>
+                                                <div class="card-stats">
+                                                    <span class="stat-pill"><i class="fa fa-book-open"></i> <?= $lessonCount ?>
+                                                        Lesson<?= $lessonCount !== 1 ? 's' : '' ?></span>
+                                                    <span class="stat-pill"><i class="fa fa-circle-play"></i> <?= $videoCount ?>
+                                                        Video<?= $videoCount !== 1 ? 's' : '' ?></span>
+                                                    <span class="stat-pill"><i class="fa fa-image"></i> <?= $imageCount ?>
+                                                        Image<?= $imageCount !== 1 ? 's' : '' ?></span>
+                                                    <span class="stat-pill"><i class="fa fa-pen"></i> <?= $activityCount ?>
+                                                        Activit<?= $activityCount !== 1 ? 'ies' : 'y' ?></span>
+                                                    <span class="stat-pill"><i class="fa fa-circle-question"></i> <?= $quizCount ?>
+                                                        Quiz<?= $quizCount !== 1 ? 'zes' : '' ?></span>
+                                                </div>
+                                            </div>
                                             <div class="card-actions">
                                                 <a href="<?= htmlspecialchars($lessonsUrl) ?>" class="btn-view-lessons">
                                                     View Lessons <i class="fa fa-arrow-right"></i>
                                                 </a>
                                             </div>
                                         </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </div>
+
+                            <!-- ── PAGINATION (client-side, 10 per page) ── -->
+                            <div class="modules-pagination" id="modulesPagination">
+                                <span class="pagination-info" id="paginationInfo"></span>
+                                <div class="pagination-controls" id="paginationControls"></div>
+                            </div>
+
+                        </div><!-- /learning-module-wrap -->
 
                     </div><!-- /modules-main -->
 
@@ -592,9 +203,169 @@
                 ? 'See less <i class="fa fa-chevron-up"></i>'
                 : 'See more <i class="fa fa-chevron-down"></i>';
         }
+
+        // ── GRID / LIST VIEW TOGGLE ──
+        function setModuleView(view) {
+            var wrap = document.getElementById('learningModule');
+            var buttons = document.querySelectorAll('#viewToggle .view-btn');
+            if (!wrap) return;
+
+            if (view === 'grid') {
+                wrap.classList.add('grid-view');
+            } else {
+                wrap.classList.remove('grid-view');
+            }
+
+            buttons.forEach(function (b) {
+                b.classList.toggle('active', b.dataset.view === view);
+            });
+
+            try {
+                localStorage.setItem('modulesViewPreference', view);
+            } catch (e) { /* ignore storage errors */ }
+        }
+
+        // ── PAGINATION (client-side, 10 modules per page) ──
+        var MODULES_PER_PAGE = 10;
+        var currentModulePage = 1;
+
+        function paginateModules() {
+            var container = document.getElementById('learningModule');
+            if (!container) return;
+
+            var cards = Array.prototype.slice.call(container.querySelectorAll('.module-feed-card'));
+            var totalItems = cards.length;
+            var totalPages = Math.max(1, Math.ceil(totalItems / MODULES_PER_PAGE));
+
+            if (currentModulePage > totalPages) currentModulePage = totalPages;
+            if (currentModulePage < 1) currentModulePage = 1;
+
+            var start = (currentModulePage - 1) * MODULES_PER_PAGE;
+            var end = start + MODULES_PER_PAGE;
+
+            cards.forEach(function (card, i) {
+                card.style.display = (i >= start && i < end) ? '' : 'none';
+            });
+
+            renderModulePagination(totalItems, totalPages, start, end);
+        }
+
+        function renderModulePagination(totalItems, totalPages, start, end) {
+            var wrap = document.getElementById('modulesPagination');
+            var infoEl = document.getElementById('paginationInfo');
+            var controlsEl = document.getElementById('paginationControls');
+            if (!wrap || !infoEl || !controlsEl) return;
+
+            if (totalItems <= MODULES_PER_PAGE) {
+                wrap.style.display = 'none';
+                return;
+            }
+            wrap.style.display = 'flex';
+
+            var shownStart = totalItems === 0 ? 0 : start + 1;
+            var shownEnd = Math.min(end, totalItems);
+            infoEl.textContent = 'Showing ' + shownEnd + ' of ' + totalItems + ' modules';
+
+            var html = '';
+            html += '<button type="button" class="page-nav-btn" onclick="goToModulePage(' + (currentModulePage - 1) + ')"' +
+                (currentModulePage === 1 ? ' disabled' : '') + '><i class="fa fa-chevron-left"></i></button>';
+
+            for (var p = 1; p <= totalPages; p++) {
+                html += '<button type="button" class="page-num-btn' + (p === currentModulePage ? ' active' : '') +
+                    '" onclick="goToModulePage(' + p + ')">' + p + '</button>';
+            }
+
+            html += '<button type="button" class="page-nav-btn" onclick="goToModulePage(' + (currentModulePage + 1) + ')"' +
+                (currentModulePage === totalPages ? ' disabled' : '') + '><i class="fa fa-chevron-right"></i></button>';
+
+            controlsEl.innerHTML = html;
+        }
+
+        function goToModulePage(page) {
+            currentModulePage = page;
+            paginateModules();
+
+            var wrapEl = document.querySelector('.learning-module-wrap');
+            if (wrapEl) wrapEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var saved = 'list';
+            try {
+                saved = localStorage.getItem('modulesViewPreference') || 'list';
+            } catch (e) { /* ignore storage errors */ }
+            setModuleView(saved);
+
+            paginateModules();
+        });
     </script>
 
     <script defer src="../bootstrap_folder/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ── CREATE MODULE MODAL ── -->
+    <div class="modal fade" id="createModuleModal" tabindex="-1" aria-labelledby="createModuleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content" style="border-radius:16px; border:none;">
+
+                <div class="modal-header" style="border-bottom:1px solid var(--border);">
+                    <h5 class="modal-title" id="createModuleModalLabel">
+                        Create Module —
+                        <?= htmlspecialchars($subjectInfo['subject_name'] ?? '') ?>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="createModuleForm" action="/learning_management/public/?url=save_module" method="POST"
+                        enctype="multipart/form-data">
+
+                        <input type="hidden" name="subject_id" value="<?= htmlspecialchars($subjectId ?? '') ?>">
+
+                        <div class="card-parent-box">
+                            <div class="card-header" style="margin-bottom:0;">
+                                <h3>Create Module</h3>
+                                <div class="buttons">
+                                    <button type="button" id="addModuleBtn">
+                                        <i class="fa fa-plus"></i> Add Module
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div id="contentContainer" style="padding:1.5rem 0 0 0;">
+                                <div class="text-content" id="contentEmpty" style="display:flex;">
+                                    <i class="fa fa-inbox"></i>
+                                    <p>No modules yet — click "Add Module" to start.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer" style="border-top:1px solid var(--border); padding: 16px 22px;">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" form="createModuleForm" class="btn" id="saveModuleBtn" disabled
+                        style="background-color: var(--neon-cyan); color:#fff;">
+                        Save Module
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <?php if (isset($_GET['saved']) && $_GET['saved'] === '1'): ?>
+        <div class="toast-success" id="moduleSavedToast">
+            <div class="toast-icon"><i class="fa fa-check"></i></div>
+            <div class="toast-text">
+                <p class="toast-title">Module created successfully</p>
+                <p class="toast-desc">Your module has been added to this subject.</p>
+            </div>
+            <button type="button" class="toast-close" onclick="dismissToast()"><i class="fa fa-times"></i></button>
+        </div>
+    <?php endif; ?>
+
+    <script src="../teacher_folder/create_module_folder/create_module.js"></script>
 </body>
 
 </html>

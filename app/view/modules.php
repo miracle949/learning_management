@@ -196,6 +196,7 @@
                                     $vidCount = $videoCounts[$mod['id']] ?? 0;
                                     $actCount = $activityCounts[$mod['id']] ?? 0;
                                     $qzCount = $quizCounts[$mod['id']] ?? 0;
+                                    $ddCount = $dragDropCounts[$mod['id']] ?? 0;
 
 
                                     // ✅ Progress-aware status: completed > in-progress > not-started
@@ -285,6 +286,12 @@
                                                     <span class="content-badge badge--quiz">
                                                         <i class="fa fa-circle-question"></i>
                                                         <?= $qzCount ?> Quiz<?= $qzCount !== 1 ? 'zes' : '' ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                                <?php $ddCount = $dragDropCounts[$mod['id']] ?? 0; if ($ddCount > 0): ?>
+                                                    <span class="content-badge badge--dragdrop">
+                                                        <i class="fa fa-arrows-alt"></i>
+                                                        <?= $ddCount ?> Drag and Drop<?= $ddCount !== 1 ? ' Games' : ' Game' ?>
                                                     </span>
                                                 <?php endif; ?>
                                             </div>
