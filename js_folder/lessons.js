@@ -24,60 +24,82 @@ var ACT_STAGE = {
     cur: 0
 };
 
-var DD_STAGE = {};
+/* ==========================
+   DRAG & DROP — ALL ITEMS SHOWN, RANDOM CATEGORY HINTS
+========================== */
+var DD_STAGE = {}; // gameTitle => { items, categoryCounts, solvedCounts, answers, currentCategory }
 var _ddDraggedEl = null;
-
-function ddInitState(gameTitle) {
-    if (!DD_STAGE[gameTitle]) DD_STAGE[gameTitle] = { ans: {}, streak: 0, score: 0 };
-    return DD_STAGE[gameTitle];
-}
-
-function ddUpdateHud(section, gameTitle) {
-    var state = ddInitState(gameTitle);
-    var streakEl = section.querySelector('.dd-streak-val');
-    var scoreEl = section.querySelector('.dd-score-val');
-    if (streakEl) streakEl.textContent = state.streak;
-    if (scoreEl) scoreEl.textContent = state.score;
-}
-
-function ddSetFeedback(section, message, cssClass) {
-    var el = section.querySelector('.dd-feedback');
-    if (!el) return;
-    el.textContent = message;
-    el.classList.remove('is-correct', 'is-wrong');
-    if (cssClass) el.classList.add(cssClass);
-}
-
-function ddSpawnParticles(targetCard, emoji) {
-    if (!targetCard) return;
-    var particle = document.createElement('span');
-    particle.textContent = emoji || '✨';
-    particle.style.cssText = [
-        'position:absolute',
-        'top:50%',
-        'left:50%',
-        'transform:translate(-50%,-50%)',
-        'font-size:22px',
-        'pointer-events:none',
-        'opacity:1',
-        'transition:transform .6s ease, opacity .6s ease',
-        'z-index:5'
-    ].join(';');
-    targetCard.style.position = targetCard.style.position || 'relative';
-    targetCard.appendChild(particle);
-
-    requestAnimationFrame(function () {
-        particle.style.transform = 'translate(-50%, -140%) scale(1.4)';
-        particle.style.opacity = '0';
-    });
-
-    setTimeout(function () {
-        particle.remove();
-    }, 650);
-}
 
 function ddFindSection(gameTitle) {
     return document.querySelector('.dd-stage-section[data-game-title="' + CSS.escape(gameTitle) + '"]');
+}
+
+// Real definitions for common categories, used as a clue so the student
+// can reason out which items belong there without being told directly.
+// Kept intentionally short (roughly one line each) so the speech bubble
+// never grows tall enough to push the BonBon mascot off-screen — long,
+// two-sentence clues were the actual root cause of the overflow, not
+// just something a transform could patch around.
+
+function ddCategoryDescriptions(cat, hint) {
+    var trimmedHint = (hint || '').trim();
+
+    if (trimmedHint) {
+        // Straight description pulled from dragdrop_category_description —
+        // no randomized phrasing, just "Category — description".
+        return '"' + cat + '" — ' + trimmedHint;
+    }
+
+    // Generic fallback — no description was set for this category in the DB.
+    return 'Sort the cards that belong under "' + cat + '".';
+}
+
+function ddInitState(gameTitle, itemsFromDom, categoryHints) {
+    if (!DD_STAGE[gameTitle]) {
+        var categoryCounts = {};
+        (itemsFromDom || []).forEach(function (it) {
+            categoryCounts[it.category] = (categoryCounts[it.category] || 0) + 1;
+        });
+        DD_STAGE[gameTitle] = {
+            items: itemsFromDom || [],
+            categoryCounts: categoryCounts,
+            categoryHints: categoryHints || {},   // NEW — admin-authored per-category hint text
+            solvedCounts: {},
+            answers: {},
+            currentCategory: null
+        };
+    }
+    return DD_STAGE[gameTitle];
+}
+
+function ddSetBubble(gameTitle, text) {
+    var section = ddFindSection(gameTitle);
+    var qEl = section && section.querySelector('.dd-question-text');
+    if (qEl) qEl.textContent = text;
+    var overlayMsg = document.getElementById('ddOverlayMessage');
+    if (overlayMsg) overlayMsg.textContent = text;
+
+    // Re-measure after the new (possibly longer/shorter) text has been
+    // painted. rAF x2 + a short trailing timeout covers both same-frame
+    // reflow and any late image/font layout shifts.
+    adjustBonBonPosition('#ddOverlay');
+}
+
+function ddPickNextCategoryHint(gameTitle) {
+    var state = DD_STAGE[gameTitle];
+    if (!state) return;
+
+    var totalPlaced = Object.keys(state.answers).length;
+    if (totalPlaced >= state.items.length) {
+        ddSetBubble(gameTitle, "You've placed every item! Tap Finish to see your score.");
+        state.currentCategory = null;
+        return;
+    }
+
+    var categories = Object.keys(state.categoryCounts);
+    var next = categories[Math.floor(Math.random() * categories.length)];
+    state.currentCategory = next;
+    ddSetBubble(gameTitle, ddCategoryDescriptions(next, state.categoryHints[next]));
 }
 
 function ddWireBoard(section) {
@@ -86,25 +108,35 @@ function ddWireBoard(section) {
 
     var gameTitle = section.dataset.gameTitle;
     var board = section.querySelector('.dd-puzzle-board');
-    var bank = board.querySelector('.dd-item-row');
+    var bank = section.querySelector('.dd-item-row[data-role="bank"]');
 
-    board.querySelectorAll('.dd-card').forEach(function (item) {
-        item.addEventListener('dragstart', function (e) {
-            if (item.classList.contains('locked')) { e.preventDefault(); return; }
-            _ddDraggedEl = item;
-            item.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-            e.dataTransfer.setData('text/plain', item.dataset.item);
-        });
-        item.addEventListener('dragend', function () {
-            item.classList.remove('dragging');
-            _ddDraggedEl = null;
+    // Delegate dragstart/dragend so it also works for cards moved
+    // between zones later (event delegation avoids re-binding).
+    board.addEventListener('dragstart', function (e) {
+        var item = e.target.closest('.dd-card');
+        if (!item) return;
+        _ddDraggedEl = item;
+        item.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', item.dataset.item);
+    });
+    board.addEventListener('dragend', function (e) {
+        var item = e.target.closest('.dd-card');
+        if (!item) return;
+        item.classList.remove('dragging');
+        _ddDraggedEl = null;
+
+        // NEW — safety net: dragleave doesn't always fire reliably when a
+        // placed item is dragged back out of the card it started in, which
+        // left the cyan "drag-over" highlight stuck. Clear it from every
+        // target card whenever any drag ends, no matter how it ended.
+        section.querySelectorAll('.dd-target-card.drag-over').forEach(function (c) {
+            c.classList.remove('drag-over');
         });
     });
 
     board.querySelectorAll('.dd-target-card').forEach(function (card) {
         card.addEventListener('dragover', function (e) {
-            if (card.classList.contains('solved')) return;
             e.preventDefault();
             card.classList.add('drag-over');
         });
@@ -114,77 +146,150 @@ function ddWireBoard(section) {
         card.addEventListener('drop', function (e) {
             e.preventDefault();
             card.classList.remove('drag-over');
-            if (card.classList.contains('solved')) return;
-            var socket = card.querySelector('.dd-socket');
-            ddDropInto(gameTitle, socket, bank);
+            ddDropInto(gameTitle, card.querySelector('.dd-socket'));
         });
     });
-}
 
-function ddDropInto(gameTitle, socket, bank) {
-    if (!_ddDraggedEl) return;
-    var section = ddFindSection(gameTitle);
-    var state = ddInitState(gameTitle);
-    var slot = socket.querySelector('.dd-socket-slot');
-    var targetCard = socket.closest('.dd-target-card');
-    var item = _ddDraggedEl;
-    var isCorrect = item.dataset.category === socket.dataset.category;
-
-    if (isCorrect) {
-        slot.innerHTML = '';
-        slot.appendChild(item);
-        item.classList.add('locked');
-        item.setAttribute('draggable', 'false');
-        targetCard.classList.add('solved');
-        state.ans[item.dataset.item] = socket.dataset.category;
-        state.streak += 1;
-        state.score += 10 + Math.max(0, (state.streak - 1) * 2);
-
-        ddSpawnParticles(targetCard, '✨');
-        ddSetFeedback(section, 'Correct! ' + socket.dataset.category + ' matched.', 'is-correct');
-        ddUpdateHud(section, gameTitle);
-        ddUpdateBoardNav(gameTitle);
-        ddCheckWin(section, gameTitle);
-    } else {
-        state.streak = 0;
-        ddUpdateHud(section, gameTitle);
-        ddSetFeedback(section, 'Not quite — try a different card.', 'is-wrong');
-
-        targetCard.classList.add('zone-shake');
-        item.classList.add('shake-wrong');
-        setTimeout(function () {
-            targetCard.classList.remove('zone-shake');
-            item.classList.remove('shake-wrong');
-        }, 450);
+    // Dropping a placed card back onto the bank removes its answer.
+    if (bank) {
+        bank.addEventListener('dragover', function (e) {
+            e.preventDefault();
+        });
+        bank.addEventListener('drop', function (e) {
+            e.preventDefault();
+            if (_ddDraggedEl && _ddDraggedEl.classList.contains('placed')) {
+                ddReturnToBank(gameTitle, _ddDraggedEl);
+            }
+        });
     }
 }
 
-function ddUpdateBoardNav(gameTitle) {
+function ddDropInto(gameTitle, socket) {
+    if (!_ddDraggedEl) return;
+    var state = DD_STAGE[gameTitle];
     var section = ddFindSection(gameTitle);
-    if (!section) return;
-    var state = ddInitState(gameTitle);
-    var board = section.querySelector('.dd-puzzle-board');
-    var total = board.querySelectorAll('.dd-card').length;
-    var placed = Object.keys(state.ans).length;
+    if (!state || !section) return;
+
+    var slot = socket.querySelector('.dd-socket-slot');
+    var targetCard = socket.closest('.dd-target-card');
+    var item = _ddDraggedEl;
+    var chosenCategory = socket.dataset.category;
+
+    // Always accept the drop, right or wrong — correctness is only
+    // revealed later, on the Finish/results screen.
+    slot.appendChild(item);
+    item.classList.remove('dragging');
+    item.classList.add('placed');
+    // Stays draggable so the student can re-drag it to another
+    // category, or back into the item bank to remove it.
+    item.setAttribute('draggable', 'true');
+
+    ddAddRemoveBtn(item, gameTitle);
+
+    state.answers[item.dataset.item] = chosenCategory; // plain word, no JSON
+    targetCard.classList.add('has-items');
+
+    ddSetFeedback(section, '"' + item.dataset.item + '" placed in "' + chosenCategory + '".');
+    ddUpdateBoardNav(gameTitle);
+    ddPickNextCategoryHint(gameTitle);
+}
+
+// Adds a small × button to a placed card so it can be removed
+// back to the item bank with a tap, without needing to drag.
+function ddAddRemoveBtn(item, gameTitle) {
+    if (item.querySelector('.dd-card-remove')) return; // already has one
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'dd-card-remove';
+    btn.innerHTML = '&times;';
+    btn.setAttribute('aria-label', 'Remove');
+    btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        ddReturnToBank(gameTitle, item);
+    });
+    item.style.position = 'relative';
+    item.appendChild(btn);
+}
+
+// Moves a placed card back into the item bank and clears its answer.
+function ddReturnToBank(gameTitle, item) {
+    var state = DD_STAGE[gameTitle];
+    var section = ddFindSection(gameTitle);
+    if (!state || !section) return;
+
+    var bank = section.querySelector('.dd-item-row[data-role="bank"]');
+    if (!bank) return;
+
+    delete state.answers[item.dataset.item];
+
+    item.classList.remove('placed');
+    var removeBtn = item.querySelector('.dd-card-remove');
+    if (removeBtn) removeBtn.remove();
+
+    // Move the card back into the bank FIRST — only after it's actually
+    // out of the socket will slot.children.length correctly read 0.
+    bank.appendChild(item);
+
+    // NOW clear the "has-items" highlight on any target zone that's empty
+    section.querySelectorAll('.dd-target-card').forEach(function (card) {
+        var slot = card.querySelector('.dd-socket-slot');
+        if (slot && !slot.children.length) card.classList.remove('has-items');
+    });
+
+    var section2 = ddFindSection(gameTitle);
+    ddSetFeedback(section2, '"' + item.dataset.item + '" moved back to the item bank.');
+    ddUpdateBoardNav(gameTitle);
+    ddPickNextCategoryHint(gameTitle);
+}
+
+function ddSetFeedback(section, message) {
+    var el = section.querySelector('.dd-feedback');
+    if (!el) return;
+    el.textContent = message;
+    el.classList.remove('is-correct', 'is-wrong');
+}
+
+function ddSpawnParticles(targetCard, emoji) {
+    if (!targetCard) return;
+    var particle = document.createElement('span');
+    particle.textContent = emoji || '✨';
+    particle.style.cssText = [
+        'position:absolute', 'top:50%', 'left:50%', 'transform:translate(-50%,-50%)',
+        'font-size:22px', 'pointer-events:none', 'opacity:1',
+        'transition:transform .6s ease, opacity .6s ease', 'z-index:5'
+    ].join(';');
+    targetCard.style.position = targetCard.style.position || 'relative';
+    targetCard.appendChild(particle);
+    requestAnimationFrame(function () {
+        particle.style.transform = 'translate(-50%, -140%) scale(1.4)';
+        particle.style.opacity = '0';
+    });
+    setTimeout(function () { particle.remove(); }, 650);
+}
+
+function ddUpdateBoardNav(gameTitle) {
+    var state = DD_STAGE[gameTitle];
+    var section = ddFindSection(gameTitle);
+    if (!state || !section) return;
+
+    var total = state.items.length;
+    var placed = Object.keys(state.answers).length;
 
     var counter = section.querySelector('.dd-counter');
     if (counter) counter.textContent = placed + ' of ' + total + ' placed';
 
+    // NEW — actually fill the bar
     var fill = section.querySelector('.dd-progress-fill');
-    if (fill) fill.style.width = Math.round((placed / total) * 100) + '%';
+    if (fill) {
+        var pct = total > 0 ? Math.round((placed / total) * 100) : 0;
+        fill.style.width = pct + '%';
+    }
 
     var finishBtn = section.querySelector('.dd-finish-btn');
-    if (finishBtn) finishBtn.disabled = (placed < total);
-}
-
-function ddCheckWin(section, gameTitle) {
-    var state = ddInitState(gameTitle);
-    var board = section.querySelector('.dd-board');
-    var total = board.querySelectorAll('.dd-item').length;
-    if (Object.keys(state.ans).length >= total) {
-        var banner = section.querySelector('.dd-win-banner');
-        if (banner) banner.style.display = 'flex';
-        ddSetFeedback(section, 'All items placed correctly!', 'is-correct');
+    if (finishBtn) {
+        var allPlaced = (placed >= total);
+        finishBtn.disabled = !allPlaced;
+        finishBtn.style.display = allPlaced ? 'flex' : 'none';
     }
 }
 
@@ -213,10 +318,17 @@ function openDragDropStage(gameTitle) {
     document.body.dataset.prevOverflow = document.body.style.overflow || '';
     document.body.style.overflow = 'hidden';
 
-    ddInitState(gameTitle);
+    var board = section.querySelector('.dd-board');
+    var items = [];
+    var categoryHints = {};
+    try { items = JSON.parse(board.dataset.items || '[]'); } catch (e) { items = []; }
+    try { categoryHints = JSON.parse(board.dataset.categoryHints || '{}'); } catch (e) { categoryHints = {}; }
+
+    ddInitState(gameTitle, items, categoryHints);
     ddWireBoard(section);
     ddUpdateBoardNav(gameTitle);
-    ddUpdateHud(section, gameTitle);
+    ddPickNextCategoryHint(gameTitle);
+    adjustBonBonPosition('#ddOverlay', 450);
 
     if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
         sessionStorage.setItem('dragdrop_open_lesson_' + LESSON_DATA.lessonId, gameTitle);
@@ -232,6 +344,81 @@ function closeDragDropStage(gameTitle) {
     var marker = document.querySelector('.dd-home-marker[data-game-title="' + CSS.escape(gameTitle) + '"]');
     if (!section || !overlay) return;
 
+    var state = DD_STAGE[gameTitle];
+    if (state && state.justCompleted) {
+        // Just finished this activity — reload so the lesson page re-renders
+        // from the server with "Review the Activity" instead of the stale
+        // "Take the Activity" markup.
+        if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+            sessionStorage.removeItem('dragdrop_open_lesson_' + LESSON_DATA.lessonId);
+        }
+        window.location.reload();
+        return;
+    }
+
+    overlay.classList.add('qz-closing');
+    setTimeout(function () {
+        if (marker && marker.parentNode) marker.parentNode.insertBefore(section, marker);
+        section.style.display = 'none';
+        overlay.classList.remove('open', 'qz-closing');
+        document.body.style.overflow = document.body.dataset.prevOverflow || '';
+        if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+            sessionStorage.removeItem('dragdrop_open_lesson_' + LESSON_DATA.lessonId);
+        }
+    }, 280);
+}
+
+function ddReviewFindSection(gameTitle) {
+    return document.querySelector('.dd-review-section[data-game-title="' + CSS.escape(gameTitle) + '"]');
+}
+
+function openDragDropReviewStage(gameTitle) {
+    var section = ddReviewFindSection(gameTitle);
+    var overlay = document.getElementById('ddOverlay');
+    if (!section || !overlay) return;
+
+    if (overlay.parentElement !== document.body) {
+        document.body.appendChild(overlay);
+    }
+
+    if (!section.dataset.homeMarked) {
+        var marker = document.createElement('div');
+        marker.className = 'dd-review-home-marker';
+        marker.style.display = 'none';
+        marker.dataset.gameTitle = gameTitle;
+        section.parentNode.insertBefore(marker, section);
+        section.dataset.homeMarked = '1';
+    }
+
+    overlay.appendChild(section);
+    section.style.display = 'block';
+    overlay.classList.remove('qz-closing');
+    overlay.classList.add('open');
+    overlay.scrollTop = 0;
+
+    document.body.dataset.prevOverflow = document.body.style.overflow || '';
+    document.body.style.overflow = 'hidden';
+
+    var msgEl = document.getElementById('ddOverlayMessage');
+    if (msgEl) msgEl.textContent = 'Here\'s how you did on "' + gameTitle + '"!';
+
+    adjustBonBonPosition('#ddOverlay', 450);
+
+    // Remember that the review stage is open, so a reload restores it
+    if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+        sessionStorage.setItem('dragdrop_review_open_lesson_' + LESSON_DATA.lessonId, gameTitle);
+    }
+    if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.moduleId) {
+        sessionStorage.setItem('lessons_view_module_' + LESSON_DATA.moduleId, 'lesson');
+    }
+}
+
+function closeDragDropReviewStage(gameTitle) {
+    var section = ddReviewFindSection(gameTitle);
+    var overlay = document.getElementById('ddOverlay');
+    var marker = document.querySelector('.dd-review-home-marker[data-game-title="' + CSS.escape(gameTitle) + '"]');
+    if (!section || !overlay) return;
+
     overlay.classList.add('qz-closing');
     setTimeout(function () {
         if (marker && marker.parentNode) marker.parentNode.insertBefore(section, marker);
@@ -239,35 +426,182 @@ function closeDragDropStage(gameTitle) {
         overlay.classList.remove('open', 'qz-closing');
         document.body.style.overflow = document.body.dataset.prevOverflow || '';
 
+        // Clear the flag once the user actually leaves the review
         if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
-            sessionStorage.removeItem('dragdrop_open_lesson_' + LESSON_DATA.lessonId);
+            sessionStorage.removeItem('dragdrop_review_open_lesson_' + LESSON_DATA.lessonId);
         }
     }, 280);
 }
 
 function ddSubmit(gameTitle) {
-    var state = ddInitState(gameTitle);
+    var state = DD_STAGE[gameTitle];
+    if (!state) return;
     var lessonId = LESSON_DATA ? LESSON_DATA.lessonId : 0;
 
     var fd = new FormData();
     fd.append('lesson_id', lessonId);
     fd.append('game_title', gameTitle);
-    Object.keys(state.ans).forEach(function (item) {
-        fd.append('answers[' + item + ']', state.ans[item]);
+    Object.keys(state.answers).forEach(function (item) {
+        fd.append('answers[' + item + ']', state.answers[item]);
     });
 
+    console.log('[ddSubmit] sending', { lessonId: lessonId, gameTitle: gameTitle, answers: state.answers });
+
     fetch('/learning_management/public/?url=submit_dragdrop', { method: 'POST', body: fd })
-        .then(function (r) { return r.json().catch(function () { return {}; }); })
-        .then(function () {
+        .then(function (r) {
+            console.log('[ddSubmit] HTTP status:', r.status);
+            return r.text().then(function (text) {
+                console.log('[ddSubmit] raw response:', text);
+                var json;
+                try { json = JSON.parse(text); } catch (e) { json = null; }
+                return json;
+            });
+        })
+        .then(function (resp) {
+            if (!resp || resp.ok !== true) {
+                console.error('[ddSubmit] server rejected save:', resp);
+                alert('There was a problem saving your answers: ' + (resp && resp.msg ? resp.msg : 'unknown error') + '. Please try again.');
+                return;
+            }
+
+            var correct = (typeof resp.score === 'number') ? resp.score : state.items.length;
+            var total = (typeof resp.total === 'number') ? resp.total : state.items.length;
+
+            state.justCompleted = true; // flag this so closing the overlay reloads instead of just hiding
+
             if (LESSON_DATA && LESSON_DATA.dragdrops) {
-                LESSON_DATA.dragdrops.forEach(function (dd) {
-                    if (dd.title === gameTitle) dd.done = true;
-                });
+                LESSON_DATA.dragdrops.forEach(function (dd) { if (dd.title === gameTitle) dd.done = true; });
             }
             checkLessonComplete();
-            setTimeout(function () { closeDragDropStage(gameTitle); }, 900);
+            ddShowResults(gameTitle, correct, total);
         })
-        .catch(function () { closeDragDropStage(gameTitle); });
+        .catch(function (err) {
+            console.error('[ddSubmit] fetch FAILED:', err);
+            alert('Could not reach the server to save your answers. Please check your connection and try again.');
+        });
+
+}
+
+/* =========================================================
+   FIXED: BonBon overlay repositioning
+   -----------------------------------------------------------
+   Old behavior only nudged the box up with a transform, which
+   could get overridden by `position: sticky` recalculating on
+   reflow/scroll, and it was measured before webfonts/images had
+   finished loading — so long category messages still overflowed
+   past the bottom of the screen.
+
+   Fix:
+   1. Reading getBoundingClientRect() forces a synchronous layout,
+      so we don't need to guess with rAF timing for the *text*
+      itself — but we still allow an optional delay for callers
+      that fire this right as the overlay is opening (before the
+      robot image has necessarily painted).
+   2. We re-run the measurement again once the robot image
+      reports "loaded", since its intrinsic height (200px wide,
+      height:auto) isn't known until then and can silently throw
+      off the calculation on first paint.
+   3. We clear any previous transform before measuring so stale
+      offsets don't compound.
+========================================================= */
+function adjustBonBonPosition(overlaySelector, delay) {
+    var overlay = document.querySelector(overlaySelector);
+    var parent = overlay && overlay.querySelector('.BonBon-parent');
+    if (!overlay || !parent) return;
+
+    function measure() {
+        parent.style.transform = '';
+
+        // Force layout to settle (two rAFs is enough for text reflow +
+        // animation class changes; getBoundingClientRect below forces
+        // a synchronous layout read).
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                var rect = parent.getBoundingClientRect();
+                var overlayRect = overlay.getBoundingClientRect();
+                var buffer = 24;
+                var overflow = rect.bottom - overlayRect.bottom + buffer;
+
+                if (overflow > 0) {
+                    parent.style.transform = 'translateY(-' + overflow + 'px)';
+                } else {
+                    parent.style.transform = '';
+                }
+            });
+        });
+    }
+
+    if (delay) {
+        setTimeout(measure, delay);
+    } else {
+        measure();
+    }
+
+    // Re-measure once the robot image itself has finished loading —
+    // its real height isn't known beforehand, and a late layout shift
+    // from the image was the main reason long messages still hung off
+    // the bottom of the screen even after the transform was applied.
+    var img = parent.querySelector('img');
+    if (img && !img.complete) {
+        img.addEventListener('load', measure, { once: true });
+    }
+
+    // Also re-measure on resize while this overlay is open, since a
+    // window resize changes overlayRect.bottom without re-triggering
+    // any of the code paths above.
+    if (!overlay.dataset.resizeBound) {
+        overlay.dataset.resizeBound = '1';
+        window.addEventListener('resize', function () {
+            if (overlay.classList.contains('open')) measure();
+        });
+    }
+}
+
+function ddShowResults(gameTitle, correct, total) {
+    var state = DD_STAGE[gameTitle];
+    var section = ddFindSection(gameTitle);
+    if (!state || !section) { closeDragDropStage(gameTitle); return; }
+
+    var board = section.querySelector('.dd-board');
+    var results = section.querySelector('.dd-results');
+    if (board) board.style.display = 'none';
+
+    var pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+    var scoreMsg = 'You matched ' + correct + ' out of ' + total + ' correctly (' + pct + '%)! ' +
+        (pct === 100 ? 'Perfect score!' : pct >= 70 ? 'Great job!' : 'Nice try — review your answers below.');
+    ddSetBubble(gameTitle, scoreMsg);
+
+    if (results) {
+        results.style.display = 'block';
+        var fill = results.querySelector('.qz-accuracy-fill');
+        var pctLabel = results.querySelector('.qz-accuracy-pct');
+        if (fill) requestAnimationFrame(function () { fill.style.width = pct + '%'; });
+        if (pctLabel) pctLabel.textContent = pct + '%';
+
+        var list = results.querySelector('.dd-review-list');
+        if (list) {
+            list.innerHTML = '';
+            state.items.forEach(function (item) {
+                var given = state.answers[item.label];
+                var isCorrect = given === item.category;
+                var row = document.createElement('div');
+                row.className = 'question-card';
+                row.innerHTML =
+                    '<div class="q-num-label">Item</div>' +
+                    '<div class="q-text">' + escHtml(item.label) + '</div>' +
+                    (item.subtitle ? '<div style="font-size:12.5px;color:var(--text-dim);margin:-6px 0 10px;">' + escHtml(item.subtitle) + '</div>' : '') +
+                    '<div class="review-choice" style="' + (isCorrect ? 'border-color:#22c55e;background:#f0fdf4;' : 'border-color:#ef4444;background:#fef2f2;') + '">' +
+                    '<span style="font-weight:700;margin-right:8px;color:' + (isCorrect ? '#22c55e' : '#ef4444') + ';">' +
+                    (isCorrect ? '✓ Correct' : '✗ Incorrect') +
+                    '</span>' +
+                    'Your answer: ' + escHtml(given || '—') +
+                    (!isCorrect ? '<span style="margin-left:auto;color:#ef4444;">Correct: ' + escHtml(item.category) + '</span>' : '') +
+                    '</div>';
+                list.appendChild(row);
+            });
+        }
+    }
+
 }
 
 /* =========================================================
@@ -325,6 +659,11 @@ document.addEventListener('DOMContentLoaded', function () {
     var ddFlag = sessionStorage.getItem('dragdrop_open_lesson_' + LESSON_DATA.lessonId);
     if (ddFlag) {
         openDragDropStage(ddFlag);
+    }
+    // Restore the review overlay if it was open before the reload
+    var ddReviewFlag = sessionStorage.getItem('dragdrop_review_open_lesson_' + LESSON_DATA.lessonId);
+    if (ddReviewFlag) {
+        openDragDropReviewStage(ddReviewFlag);
     }
     try {
         var qzBlocks = document.querySelectorAll('.qz-question-block:not(.act-question-block)');
@@ -781,7 +1120,7 @@ function checkLessonComplete() {
         (LESSON_DATA.dragdrops || []).forEach(function (dd) {
             if (dd.done) return;
             var state = DD_STAGE[dd.title];
-            if (!state || Object.keys(state.ans).length < dd.required) allDone = false;
+            if (!state || Object.keys(state.answers).length < dd.required) allDone = false;
         });
 
         if (allDone) {

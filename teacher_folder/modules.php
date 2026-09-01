@@ -130,6 +130,7 @@
                                         $imageCount = (int) ($mod['image_count'] ?? 0);
                                         $activityCount = (int) ($mod['activity_count'] ?? 0);
                                         $quizCount = (int) ($mod['quiz_count'] ?? 0);
+                                        $arrangeStepsCount = (int) ($mod['arrange_steps_count'] ?? 0);
                                         $color = $iconColors[$i % count($iconColors)];
 
                                         $firstLesson = $teacherModel->getLessonsByModule($mod['id']);
@@ -161,6 +162,8 @@
                                                         Activit<?= $activityCount !== 1 ? 'ies' : 'y' ?></span>
                                                     <span class="stat-pill"><i class="fa fa-circle-question"></i> <?= $quizCount ?>
                                                         Quiz<?= $quizCount !== 1 ? 'zes' : '' ?></span>
+                                                    <span class="stat-pill"><i class="fa fa-random"></i> <?= $arrangeStepsCount ?>
+                                                        Arrange<?= $arrangeStepsCount !== 1 ? ' Games' : ' Game' ?></span>
                                                 </div>
                                             </div>
                                             <div class="card-actions">

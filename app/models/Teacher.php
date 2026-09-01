@@ -979,30 +979,70 @@ class Teacher extends Model
     public function getInteractiveModulesWithCount($subjectId)
     {
         $sql = "
-        SELECT 
-            im.id, im.title, im.description, im.created_at,
-            COUNT(DISTINCT l.id) AS lesson_count,
-            COUNT(DISTINCT CASE WHEN ic.type = 'video' THEN ic.id END) AS video_count,
-            COUNT(DISTINCT CASE WHEN ic.type = 'image' THEN ic.id END) AS image_count,
-            COUNT(DISTINCT CASE WHEN ic.type = 'activity' THEN CONCAT(ic.lesson_id, '-', ic.title) END) AS activity_count,
-            COUNT(DISTINCT CASE WHEN ic.type = 'quiz' THEN CONCAT(ic.lesson_id, '-', ic.title) END) AS quiz_count
-        FROM tbl_interactive_modules im
-        LEFT JOIN tbl_lessons l ON l.interactive_module_id = im.id
-        LEFT JOIN tbl_interactive_contents ic ON ic.lesson_id = l.id
-        WHERE im.subject_id = ?
-        GROUP BY im.id
-        ORDER BY im.created_at ASC
-    ";
+    SELECT 
+        im.id, im.title, im.description, im.created_at,
+        COUNT(DISTINCT l.id) AS lesson_count,
+        COUNT(DISTINCT CASE WHEN ic.type = 'video' THEN ic.id END) AS video_count,
+        COUNT(DISTINCT CASE WHEN ic.type = 'image' THEN ic.id END) AS image_count,
+        COUNT(DISTINCT CASE WHEN ic.type = 'activity' THEN CONCAT(ic.lesson_id, '-', ic.title) END) AS activity_count,
+        COUNT(DISTINCT CASE WHEN ic.type = 'quiz' THEN CONCAT(ic.lesson_id, '-', ic.title) END) AS quiz_count,
+        COUNT(DISTINCT CASE WHEN ic.type = 'arrange_steps' THEN CONCAT(ic.lesson_id, '-', ic.title) END) AS arrange_steps_count
+    FROM tbl_interactive_modules im
+    LEFT JOIN tbl_lessons l ON l.interactive_module_id = im.id
+    LEFT JOIN tbl_interactive_contents ic ON ic.lesson_id = l.id
+    WHERE im.subject_id = ?
+    GROUP BY im.id
+    ORDER BY im.created_at ASC
+";
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param("i", $subjectId);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function getLessonArrangeStepsData($lessonId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT title, instructions, question AS step_text, step_order
+        FROM tbl_interactive_contents
+        WHERE lesson_id = ? AND type = 'arrange_steps'
+        ORDER BY id ASC
+    ");
+        $stmt->bind_param("i", $lessonId);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $grouped = [];
+        foreach ($rows as $row) {
+            $key = $row['title'];
+            if (!isset($grouped[$key])) {
+                $grouped[$key] = [
+                    'game' => [
+                        'title' => $row['title'],
+                        'instructions' => $row['instructions'],
+                    ],
+                    'steps' => [],
+                ];
+            }
+            $grouped[$key]['steps'][] = [
+                'text' => $row['step_text'],
+                'order' => $row['step_order'],
+            ];
+        }
+
+        foreach ($grouped as &$game) {
+            usort($game['steps'], fn($a, $b) => ($a['order'] ?? 0) <=> ($b['order'] ?? 0));
+        }
+        unset($game);
+
+        return $grouped;
+    }
+
     public function getLessonDragDropData($lessonId)
     {
         $stmt = $this->db->prepare("
-        SELECT title, instructions, dragdrop_item_label, dragdrop_item_subtitle, dragdrop_item_image, dragdrop_category
+        SELECT title, instructions, dragdrop_item_label, dragdrop_item_subtitle, dragdrop_item_image,
+               dragdrop_category, dragdrop_category_description
         FROM tbl_interactive_contents
         WHERE lesson_id = ? AND type = 'drag_drop'
         ORDER BY id ASC
@@ -1021,17 +1061,27 @@ class Teacher extends Model
                         'instructions' => $row['instructions'],
                     ],
                     'categories' => [],
+                    'category_hints' => [],   // ADD THIS
                     'items' => [],
+                    // ...keep whatever else your version already sets here (submission, etc.)
                 ];
             }
-            if (!in_array($row['dragdrop_category'], $grouped[$key]['categories'], true)) {
-                $grouped[$key]['categories'][] = $row['dragdrop_category'];
+
+            $catName = $row['dragdrop_category'];
+            if (!in_array($catName, $grouped[$key]['categories'], true)) {
+                $grouped[$key]['categories'][] = $catName;
             }
+
+            // ADD THIS — first non-empty description wins for that category
+            if (!empty($row['dragdrop_category_description']) && !isset($grouped[$key]['category_hints'][$catName])) {
+                $grouped[$key]['category_hints'][$catName] = $row['dragdrop_category_description'];
+            }
+
             $grouped[$key]['items'][] = [
                 'label' => $row['dragdrop_item_label'],
                 'subtitle' => $row['dragdrop_item_subtitle'],
-                'image' => $row['dragdrop_item_image'],   // NEW
-                'category' => $row['dragdrop_category'],
+                'image' => $row['dragdrop_item_image'],
+                'category' => $catName,
             ];
         }
         return $grouped;
@@ -1316,32 +1366,38 @@ class Teacher extends Model
         $fileName = $data['file_name'] ?? null;
         $fileType = $data['file_type'] ?? null;
         $dragdropCategory = $data['dragdrop_category'] ?? null;
+        $dragdropCategoryDescription = $data['dragdrop_category_description'] ?? null;
         $dragdropItemLabel = $data['dragdrop_item_label'] ?? null;
         $dragdropItemSubtitle = $data['dragdrop_item_subtitle'] ?? null;
         $dragdropItemImage = $data['dragdrop_item_image'] ?? null;
+        $stepOrder = $data['step_order'] ?? null;
 
         $stmt = $this->db->prepare("
-            INSERT INTO tbl_interactive_contents (
-            lesson_id, type, title, body, key_idea, instructions,
-            question, question_type,
-            choice_a, choice_b, choice_c, choice_d,
-            correct_ans, model_answer,
-            passing_score, total_points,
-            card_front, card_back, card_type,
-            file_path, file_name, file_type,
-            dragdrop_category, dragdrop_item_label, dragdrop_item_subtitle, dragdrop_item_image,
-            created_at
-        ) VALUES (
-            ?, ?, ?, ?, ?, ?,
-            ?, ?,
-            ?, ?, ?, ?,
-            ?, ?,
-            ?, ?,
-            ?, ?, ?,
-            ?, ?, ?,
-            ?, ?, ?, ?,
-            NOW()
-        )
+        INSERT INTO tbl_interactive_contents (
+        lesson_id, type, title, body, key_idea, instructions,
+        question, question_type,
+        choice_a, choice_b, choice_c, choice_d,
+        correct_ans, model_answer,
+        passing_score, total_points,
+        card_front, card_back, card_type,
+        file_path, file_name, file_type,
+        dragdrop_category, dragdrop_category_description,
+        dragdrop_item_label, dragdrop_item_subtitle, dragdrop_item_image,
+        step_order,
+        created_at
+    ) VALUES (
+        ?, ?, ?, ?, ?, ?,
+        ?, ?,
+        ?, ?, ?, ?,
+        ?, ?,
+        ?, ?,
+        ?, ?, ?,
+        ?, ?, ?,
+        ?, ?,
+        ?, ?, ?,
+        ?,
+        NOW()
+    )
     ");
 
         if (!$stmt) {
@@ -1350,10 +1406,14 @@ class Teacher extends Model
             );
         }
 
-        // 1 i (lessonId) + 22 s (type..dragdrop_item_subtitle, with 2 ints
-        // for passing_score/total_points mixed in) -> "i" + "s"x13 + "i"x2 + "s"x9
-        $stmt->bind_param(
-            "isssssssssssssiisssssssss" . "s",   // add one more 's' for dragdropItemImage
+        // Build params in the EXACT order they appear in the SQL above.
+        // Integer columns get 'i', everything else gets 's' (NULL-safe in mysqli).
+        $params = [
+            'i' => $lessonId,
+            's' => $type,
+        ];
+
+        $orderedValues = [
             $lessonId,
             $type,
             $title,
@@ -1377,10 +1437,31 @@ class Teacher extends Model
             $fileName,
             $fileType,
             $dragdropCategory,
+            $dragdropCategoryDescription,
             $dragdropItemLabel,
             $dragdropItemSubtitle,
-            $dragdropItemImage   // NEW
-        );
+            $dragdropItemImage,
+            $stepOrder,
+        ];
+
+        // Columns that must bind as integers — match by position (0-based)
+        // matching the $orderedValues array above.
+        $intPositions = [0, 14, 15, 27]; // lessonId, passingScore, totalPoints, stepOrder
+
+        $types = '';
+        foreach ($orderedValues as $i => $val) {
+            $types .= in_array($i, $intPositions, true) ? 'i' : 's';
+        }
+
+        // Sanity check — this can never silently mismatch again.
+        if (strlen($types) !== count($orderedValues)) {
+            throw new \RuntimeException(
+                "insertInteractiveContent: type string length (" . strlen($types) .
+                ") does not match variable count (" . count($orderedValues) . ")"
+            );
+        }
+
+        $stmt->bind_param($types, ...$orderedValues);
 
         if (!$stmt->execute()) {
             throw new \RuntimeException(
@@ -1389,6 +1470,67 @@ class Teacher extends Model
         }
 
         return $this->db->insert_id;
+    }
+
+    // ============================================================
+// ARRANGE THE STEPS — student submission
+// ============================================================
+    public function saveArrangeStepsSubmission(
+        $studentId,
+        $lessonId,
+        $gameTitle,
+        array $submittedOrder,
+        array $correctOrder
+    ) {
+        $totalSteps = count($correctOrder);
+        $score = 0;
+        foreach ($submittedOrder as $i => $step) {
+            if (isset($correctOrder[$i]) && $correctOrder[$i] === $step) {
+                $score++;
+            }
+        }
+        $isCorrect = ($score === $totalSteps && $totalSteps > 0) ? 1 : 0;
+
+        $stmt = $this->db->prepare("SELECT COUNT(*) AS total FROM tbl_arrange_steps_results WHERE student_id = ? AND lesson_id = ? AND game_title = ?");
+        $stmt->bind_param("iis", $studentId, $lessonId, $gameTitle);
+        $stmt->execute();
+        $attemptNumber = (int) ($stmt->get_result()->fetch_assoc()['total'] ?? 0) + 1;
+
+        $submittedJson = json_encode(array_values($submittedOrder));
+        $correctJson = json_encode(array_values($correctOrder));
+
+        $stmt = $this->db->prepare("
+        INSERT INTO tbl_arrange_steps_results
+            (student_id, lesson_id, game_title, submitted_order, correct_order,
+             score, total_steps, is_correct, attempt_number, submitted_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+    ");
+        $stmt->bind_param(
+            "iisssiiii",
+            $studentId,
+            $lessonId,
+            $gameTitle,
+            $submittedJson,
+            $correctJson,
+            $score,
+            $totalSteps,
+            $isCorrect,
+            $attemptNumber
+        );
+        $stmt->execute();
+        return $this->db->insert_id;
+    }
+
+    public function getArrangeStepsResults($studentId, $lessonId, $gameTitle)
+    {
+        $stmt = $this->db->prepare("
+        SELECT * FROM tbl_arrange_steps_results
+        WHERE student_id = ? AND lesson_id = ? AND game_title = ?
+        ORDER BY attempt_number DESC
+    ");
+        $stmt->bind_param("iis", $studentId, $lessonId, $gameTitle);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
     public function getTotalSubmittedAssignments($teacher_id)

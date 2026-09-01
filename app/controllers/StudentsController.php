@@ -188,7 +188,7 @@ class StudentsController
         $videoCounts = [];
         $activityCounts = [];
         $quizCounts = [];
-        $dragDropCounts = []; 
+        $dragDropCounts = [];
 
         foreach ($modules as $mod) {
             $lessonCounts[$mod['id']] = $studentModel->countIMlessons($mod['id']);
@@ -343,6 +343,7 @@ class StudentsController
             $dragDropData[$title] = [
                 'game' => $game['game'],
                 'categories' => $game['categories'],
+                'category_hints' => $game['category_hints'] ?? [],   // ← ADD THIS LINE
                 'items' => $game['items'],
                 'submission' => $studentId ? $studentModel->getDragDropSubmission($lessonId, $title, $studentId) : null,
             ];
@@ -1376,41 +1377,69 @@ class StudentsController
     {
         header('Content-Type: application/json');
 
-        $studentId = $_SESSION['student_id'] ?? 0;
-        if (!$studentId && !empty($_SESSION['user_id'])) {
-            $subjectModel = new subjects();
-            $studentRow = $subjectModel->getStudentByUserId($_SESSION['user_id']);
-            if ($studentRow) {
-                $studentId = (int) $studentRow['id'];
-                $_SESSION['student_id'] = $studentId;
+        try {
+            $studentId = $_SESSION['student_id'] ?? 0;
+            if (!$studentId && !empty($_SESSION['user_id'])) {
+                $subjectModel = new subjects();
+                $studentRow = $subjectModel->getStudentByUserId($_SESSION['user_id']);
+                if ($studentRow) {
+                    $studentId = (int) $studentRow['id'];
+                    $_SESSION['student_id'] = $studentId;
+                }
             }
-        }
-        if (!$studentId) {
-            echo json_encode(['ok' => false, 'msg' => 'not logged in']);
+            if (!$studentId) {
+                echo json_encode(['ok' => false, 'msg' => 'not logged in']);
+                exit;
+            }
+
+            $lessonId = (int) ($_POST['lesson_id'] ?? 0);
+            $gameTitle = trim($_POST['game_title'] ?? '');
+            $answers = $_POST['answers'] ?? [];
+
+            error_log('[submit_dragdrop] lessonId=' . $lessonId . ' gameTitle=' . $gameTitle . ' studentId=' . $studentId . ' answers=' . json_encode($answers));
+
+            if (!$lessonId || !$gameTitle || empty($answers)) {
+                echo json_encode(['ok' => false, 'msg' => 'missing data', 'lessonId' => $lessonId, 'gameTitle' => $gameTitle, 'answersCount' => count($answers)]);
+                exit;
+            }
+
+            $studentModel = new Students();
+            $existing = $studentModel->getDragDropSubmission($lessonId, $gameTitle, $studentId);
+
+            if (!$existing) {
+                $saved = $studentModel->saveDragDropSubmission($lessonId, $gameTitle, $studentId, $answers);
+                if (!$saved) {
+                    error_log('[submit_dragdrop] saveDragDropSubmission FAILED for lessonId=' . $lessonId . ' gameTitle=' . $gameTitle);
+                    echo json_encode(['ok' => false, 'msg' => 'db insert failed']);
+                    exit;
+                }
+                $studentModel->logActivity($studentId, 'dragdrop_completed', $gameTitle);
+                $studentModel->markLessonVisited($lessonId, $studentId);
+                $lessonRow = $studentModel->getIMLessonById($lessonId);
+                if ($lessonRow) {
+                    $studentModel->updateModuleProgress((int) $lessonRow['module_id'], $studentId);
+                }
+            }
+
+            $allGames = $studentModel->getLessonDragDrops($lessonId);
+            $items = $allGames[$gameTitle]['items'] ?? [];
+            $finalAnswers = $existing['answers'] ?? $answers;
+
+            $correct = 0;
+            foreach ($items as $it) {
+                $given = $finalAnswers[$it['label']] ?? null;
+                if ($given !== null && strcasecmp($given, $it['category']) === 0) {
+                    $correct++;
+                }
+            }
+
+            echo json_encode(['ok' => true, 'score' => $correct, 'total' => count($items)]);
+            exit;
+
+        } catch (\Throwable $e) {
+            error_log('[submit_dragdrop] EXCEPTION: ' . $e->getMessage());
+            echo json_encode(['ok' => false, 'msg' => 'server error: ' . $e->getMessage()]);
             exit;
         }
-
-        $lessonId = (int) ($_POST['lesson_id'] ?? 0);
-        $gameTitle = trim($_POST['game_title'] ?? '');
-        $answers = $_POST['answers'] ?? [];
-
-        if (!$lessonId || !$gameTitle) {
-            echo json_encode(['ok' => false, 'msg' => 'missing data']);
-            exit;
-        }
-
-        $studentModel = new Students();
-        $existing = $studentModel->getDragDropSubmission($lessonId, $gameTitle, $studentId);
-        if (!$existing) {
-            $studentModel->saveDragDropSubmission($lessonId, $gameTitle, $studentId, json_encode($answers));
-            $studentModel->logActivity($studentId, 'dragdrop_completed', $gameTitle);
-            $studentModel->markLessonVisited($lessonId, $studentId);
-            $lessonRow = $studentModel->getIMLessonById($lessonId);
-            if ($lessonRow) {
-                $studentModel->updateModuleProgress((int) $lessonRow['module_id'], $studentId);
-            }
-        }
-        echo json_encode(['ok' => true]);
-        exit;
     }
 }

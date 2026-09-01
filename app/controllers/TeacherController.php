@@ -1100,52 +1100,17 @@ class TeacherController
                                 break;
                             $gameInstructions = trim($block['dragdrop_instructions'] ?? '');
 
-                            // cat_id -> label lookup
+                            // cat_id -> [label, description] lookup
                             $catMap = [];
                             foreach (($block['categories'] ?? []) as $cat) {
                                 $label = trim($cat['label'] ?? '');
                                 $catId = $cat['cat_id'] ?? '';
                                 if ($label === '' || $catId === '')
                                     continue;
-                                $catMap[$catId] = $label;
-                            }
-
-                            foreach (($block['items'] ?? []) as $item) {
-                                $itemLabel = trim($item['label'] ?? '');
-                                if ($itemLabel === '')
-                                    continue;
-                                $catId = $item['cat_id'] ?? '';
-                                $categoryLabel = $catMap[$catId] ?? null;
-                                if ($categoryLabel === null)
-                                    continue; // item pointing at a deleted/unnamed category — skip
-
-                                $itemSubtitle = trim($item['subtitle'] ?? '');
-
-                                $teacherModel->insertInteractiveContent($lessonId, 'drag_drop', [
-                                    'title' => $gameTitle,
-                                    'instructions' => $gameInstructions !== '' ? $gameInstructions : null,
-                                    'dragdrop_item_label' => $itemLabel,
-                                    'dragdrop_item_subtitle' => $itemSubtitle !== '' ? $itemSubtitle : null,
-                                    'dragdrop_category' => $categoryLabel,
-                                    'sort_order' => $sortOrder,
-                                ]);
-                            }
-                            break;
-
-                        case 'drag_drop':
-                            $gameTitle = trim($block['dragdrop_title'] ?? '');
-                            if ($gameTitle === '')
-                                break;
-                            $gameInstructions = trim($block['dragdrop_instructions'] ?? '');
-
-                            // cat_id -> label lookup
-                            $catMap = [];
-                            foreach (($block['categories'] ?? []) as $cat) {
-                                $label = trim($cat['label'] ?? '');
-                                $catId = $cat['cat_id'] ?? '';
-                                if ($label === '' || $catId === '')
-                                    continue;
-                                $catMap[$catId] = $label;
+                                $catMap[$catId] = [
+                                    'label' => $label,
+                                    'description' => trim($cat['description'] ?? ''),
+                                ];
                             }
 
                             foreach (($block['items'] ?? []) as $itemIdx => $item) {
@@ -1153,10 +1118,12 @@ class TeacherController
                                 if ($itemLabel === '')
                                     continue;
                                 $catId = $item['cat_id'] ?? '';
-                                $categoryLabel = $catMap[$catId] ?? null;
-                                if ($categoryLabel === null)
+                                $categoryInfo = $catMap[$catId] ?? null;
+                                if ($categoryInfo === null)
                                     continue; // item pointing at a deleted/unnamed category — skip
 
+                                $categoryLabel = $categoryInfo['label'];
+                                $categoryDescription = $categoryInfo['description'];
                                 $itemSubtitle = trim($item['subtitle'] ?? '');
 
                                 // ── handle optional item image ──
@@ -1181,8 +1148,30 @@ class TeacherController
                                     'instructions' => $gameInstructions !== '' ? $gameInstructions : null,
                                     'dragdrop_item_label' => $itemLabel,
                                     'dragdrop_item_subtitle' => $itemSubtitle !== '' ? $itemSubtitle : null,
-                                    'dragdrop_item_image' => $itemImagePath,        // NEW
+                                    'dragdrop_item_image' => $itemImagePath,
                                     'dragdrop_category' => $categoryLabel,
+                                    'dragdrop_category_description' => $categoryDescription !== '' ? $categoryDescription : null, // NEW
+                                    'sort_order' => $sortOrder,
+                                ]);
+                            }
+                            break;
+                        // ── ARRANGE THE STEPS (one block = one sequencing game) ──
+                        case 'arrange_steps':
+                            $gameTitle = trim($block['arrange_title'] ?? '');
+                            if ($gameTitle === '')
+                                break;
+                            $gameInstructions = trim($block['arrange_instructions'] ?? '');
+
+                            foreach (($block['steps'] ?? []) as $stepIdx => $step) {
+                                $stepText = trim($step['text'] ?? '');
+                                if ($stepText === '')
+                                    continue;
+
+                                $teacherModel->insertInteractiveContent($lessonId, 'arrange_steps', [
+                                    'title' => $gameTitle,
+                                    'instructions' => $gameInstructions !== '' ? $gameInstructions : null,
+                                    'question' => $stepText,
+                                    'step_order' => (int) $stepIdx,
                                     'sort_order' => $sortOrder,
                                 ]);
                             }
@@ -1256,6 +1245,7 @@ class TeacherController
         $activityData = $lessonId ? $teacherModel->getLessonActivityData($lessonId, 0) : [];
         $quizData = $lessonId ? $teacherModel->getLessonQuizData($lessonId, 0) : [];
         $dragDropData = $lessonId ? $teacherModel->getLessonDragDropData($lessonId) : [];
+        $arrangeStepsData = $lessonId ? $teacherModel->getLessonArrangeStepsData($lessonId) : []; // NEW
         $totalLessons = count($lessons);
 
         $subjectInfo = $teacherModel->getSubjectWithGrade($subjectId);
@@ -1275,10 +1265,45 @@ class TeacherController
             'flashcards' => $flashcards,
             'activityData' => $activityData,
             'quizData' => $quizData,
+            'dragDropData' => $dragDropData,           // NEW — was fetched but never passed to the view
+            'arrangeStepsData' => $arrangeStepsData,   // NEW
             'totalLessons' => $totalLessons,
         ]);
 
         require "../teacher_folder/subject_lessons.php";
+    }
+
+    public function submit_arrange_steps()
+    {
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
+            echo json_encode(['success' => false, 'message' => 'Unauthorized']);
+            exit;
+        }
+
+        $teacherModel = new Teacher();
+        $studentId = (int) ($_SESSION['student_id'] ?? 0);
+        $lessonId = (int) ($_POST['lesson_id'] ?? 0);
+        $gameTitle = trim($_POST['game_title'] ?? '');
+        $submittedOrder = json_decode($_POST['submitted_order'] ?? '[]', true) ?: [];
+        $correctOrder = json_decode($_POST['correct_order'] ?? '[]', true) ?: [];
+
+        if (!$studentId || !$lessonId || !$gameTitle || empty($correctOrder)) {
+            echo json_encode(['success' => false, 'message' => 'Missing required data.']);
+            exit;
+        }
+
+        $resultId = $teacherModel->saveArrangeStepsSubmission(
+            $studentId,
+            $lessonId,
+            $gameTitle,
+            $submittedOrder,
+            $correctOrder
+        );
+
+        echo json_encode(['success' => true, 'result_id' => $resultId]);
+        exit;
     }
 
     // ============================================================
@@ -1636,7 +1661,6 @@ class TeacherController
         $module = $teacherModel->getModuleById($moduleId);
         $lessons = $teacherModel->getLessonsByModule($moduleId);
 
-        // Default to first lesson if none specified
         if (!$lessonId && !empty($lessons)) {
             $lessonId = (int) $lessons[0]['id'];
         }
@@ -1648,9 +1672,9 @@ class TeacherController
         $activityData = $lessonId ? $teacherModel->getLessonActivityData($lessonId, 0) : [];
         $quizData = $lessonId ? $teacherModel->getLessonQuizData($lessonId, 0) : [];
         $dragDropData = $lessonId ? $teacherModel->getLessonDragDropData($lessonId) : [];
+        $arrangeStepsData = $lessonId ? $teacherModel->getLessonArrangeStepsData($lessonId) : []; // NEW
         $totalLessons = count($lessons);
 
-        // Attach subject name to module array
         $subjectInfo = $teacherModel->getSubjectWithGrade($subjectId);
         if ($module && $subjectInfo) {
             $module['subject_name'] = $subjectInfo['subject_name'];
@@ -1668,6 +1692,8 @@ class TeacherController
             'flashcards' => $flashcards,
             'activityData' => $activityData,
             'quizData' => $quizData,
+            'dragDropData' => $dragDropData,           // NEW
+            'arrangeStepsData' => $arrangeStepsData,   // NEW
             'totalLessons' => $totalLessons,
         ]);
 

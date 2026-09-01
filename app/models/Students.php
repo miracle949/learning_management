@@ -417,9 +417,11 @@ class Students extends Model
     {
         $stmt = $this->db->prepare("
     SELECT title, instructions,
-           COALESCE(dragdrop_item_label, card_front)     AS item_label,
-           COALESCE(dragdrop_item_subtitle, key_idea)     AS item_subtitle,
-           COALESCE(dragdrop_category, card_back)         AS category
+           COALESCE(dragdrop_item_label, card_front)         AS item_label,
+           COALESCE(dragdrop_item_subtitle, key_idea)         AS item_subtitle,
+           COALESCE(dragdrop_item_image, file_path)           AS item_image,
+           COALESCE(dragdrop_category, card_back)             AS category,
+           dragdrop_category_description                     AS category_description
     FROM tbl_interactive_contents
     WHERE lesson_id = ? AND type = 'drag_drop'
     ORDER BY id ASC
@@ -435,18 +437,68 @@ class Students extends Model
                 $grouped[$key] = [
                     'game' => ['title' => $row['title'], 'instructions' => $row['instructions']],
                     'categories' => [],
+                    'category_hints' => [],
                     'items' => [],
                 ];
             }
+
             if ($row['category'] !== null && !in_array($row['category'], $grouped[$key]['categories'], true)) {
                 $grouped[$key]['categories'][] = $row['category'];
             }
+
+            if (
+                $row['category'] !== null
+                && !empty(trim((string) $row['category_description']))
+                && !isset($grouped[$key]['category_hints'][$row['category']])
+            ) {
+                $grouped[$key]['category_hints'][$row['category']] = trim($row['category_description']);
+            }
+
             $grouped[$key]['items'][] = [
                 'label' => $row['item_label'],
                 'subtitle' => $row['item_subtitle'],
                 'category' => $row['category'],
+                'image' => $row['item_image'],   // ← NEW
             ];
         }
+        return $grouped;
+    }
+
+    public function getLessonArrangeStepsData($lessonId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT title, instructions, question AS step_text, step_order
+        FROM tbl_interactive_contents
+        WHERE lesson_id = ? AND type = 'arrange_steps'
+        ORDER BY id ASC
+    ");
+        $stmt->bind_param("i", $lessonId);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $grouped = [];
+        foreach ($rows as $row) {
+            $key = $row['title'];
+            if (!isset($grouped[$key])) {
+                $grouped[$key] = [
+                    'game' => [
+                        'title' => $row['title'],
+                        'instructions' => $row['instructions'],
+                    ],
+                    'steps' => [],
+                ];
+            }
+            $grouped[$key]['steps'][] = [
+                'text' => $row['step_text'],
+                'order' => $row['step_order'],
+            ];
+        }
+
+        foreach ($grouped as &$game) {
+            usort($game['steps'], fn($a, $b) => ($a['order'] ?? 0) <=> ($b['order'] ?? 0));
+        }
+        unset($game);
+
         return $grouped;
     }
 
@@ -455,23 +507,78 @@ class Students extends Model
         if (!$studentId)
             return null;
         $stmt = $this->db->prepare("
-        SELECT id, answers_json, completed_at
+        SELECT item_label, student_answer, correct_answer, is_correct, completed_at
         FROM tbl_dragdrop_results
-        WHERE lesson_id = ? AND game_title = ? AND student_id = ? LIMIT 1
+        WHERE lesson_id = ? AND game_title = ? AND student_id = ?
+        ORDER BY id ASC
     ");
         $stmt->bind_param("isi", $lessonId, $gameTitle, $studentId);
         $stmt->execute();
-        return $stmt->get_result()->fetch_assoc();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        if (!$rows)
+            return null;
+
+        $answers = [];
+        $correctness = [];
+        foreach ($rows as $r) {
+            $answers[$r['item_label']] = $r['student_answer'];
+            $correctness[$r['item_label']] = (int) $r['is_correct'];
+        }
+        return [
+            'answers' => $answers,
+            'correctness' => $correctness,
+            'completed_at' => $rows[0]['completed_at'],
+        ];
     }
 
-    public function saveDragDropSubmission($lessonId, $gameTitle, $studentId, $answersJson)
+    public function saveDragDropSubmission($lessonId, $gameTitle, $studentId, array $answers)
     {
+        // Look up each item's real category so we can store correctness alongside it
+        $allGames = $this->getLessonDragDrops($lessonId);
+        $correctMap = [];
+        if (isset($allGames[$gameTitle])) {
+            foreach ($allGames[$gameTitle]['items'] as $it) {
+                $correctMap[$it['label']] = $it['category'];
+            }
+        }
+
         $stmt = $this->db->prepare("
-        INSERT IGNORE INTO tbl_dragdrop_results (lesson_id, game_title, student_id, answers_json, completed_at)
-        VALUES (?, ?, ?, ?, NOW())
+        INSERT INTO tbl_dragdrop_results
+            (lesson_id, game_title, student_id, item_label, student_answer, correct_answer, is_correct, completed_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+        ON DUPLICATE KEY UPDATE
+            student_answer = VALUES(student_answer),
+            correct_answer = VALUES(correct_answer),
+            is_correct     = VALUES(is_correct),
+            completed_at   = VALUES(completed_at)
     ");
-        $stmt->bind_param("isis", $lessonId, $gameTitle, $studentId, $answersJson);
-        return $stmt->execute();
+
+        if (!$stmt) {
+            error_log('[saveDragDropSubmission] prepare failed: ' . $this->db->error);
+            return false;
+        }
+
+        $ok = true;
+        foreach ($answers as $itemLabel => $chosenCategory) {
+            $correctCategory = $correctMap[$itemLabel] ?? null;
+            $isCorrect = ($correctCategory !== null && strcasecmp($chosenCategory, $correctCategory) === 0) ? 1 : 0;
+
+            $stmt->bind_param(
+                "isisssi",
+                $lessonId,
+                $gameTitle,
+                $studentId,
+                $itemLabel,
+                $chosenCategory,
+                $correctCategory,
+                $isCorrect
+            );
+            if (!$stmt->execute()) {
+                error_log('[saveDragDropSubmission] execute failed for item "' . $itemLabel . '": ' . $stmt->error);
+                $ok = false;
+            }
+        }
+        return $ok;
     }
 
     public function isLessonCompleted($lessonId, $studentId)

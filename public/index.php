@@ -162,6 +162,10 @@ switch ($url) {
         requireAuth('student');
         $student->subject_activity();
         break;
+    case 'submit_dragdrop':
+        requireAuth('student');
+        $student->submit_dragdrop();
+        break;
 
     // ── Teacher routes ────────────────────────────────────────
     case 'teacher':

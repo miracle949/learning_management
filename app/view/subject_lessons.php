@@ -2027,8 +2027,11 @@ function ddIconForLabel($label)
         }
 
         .question-card {
-            background: var(--page-card, #fff);
-            border: 1px solid var(--page-border, var(--panel-border));
+            /* background: var(--page-card, #fff); */
+            /* border: 1px solid var(--page-border, var(--panel-border)); */
+            color: var(--text-light);
+            background: var(--panel);
+            border: 1px solid var(--panel-edge);
             border-radius: 12px;
             padding: 18px 20px;
             margin-bottom: 12px;
@@ -2045,14 +2048,16 @@ function ddIconForLabel($label)
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .07em;
-            color: var(--neon-cyan);
+            /* color: var(--neon-cyan); */
+            color: #ffffff;
             margin-bottom: 7px;
         }
 
         .q-text {
             font-size: 14.5px;
             font-weight: 600;
-            color: var(--page-text, var(--text-bright));
+            /* color: var(--page-text, var(--text-bright)); */
+            color: #ffffff;
             line-height: 1.5;
             margin-bottom: 14px;
         }
@@ -2110,10 +2115,13 @@ function ddIconForLabel($label)
             align-items: center;
             gap: 11px;
             padding: 11px 14px;
-            border-radius: 9px;
-            border: 1.5px solid var(--page-border, var(--panel-border));
+            border-radius: 28px;
+            /* border-width: 2px; */
+            border: 2px solid var(--page-border, var(--panel-border));
             font-size: 13.5px;
-            color: var(--page-text, var(--text-bright));
+            /* color: var(--page-text, var(--text-bright)); */
+            /* color: #ffffff; */
+            /* color: #ff4d6d; */
             margin-bottom: 8px;
             pointer-events: none;
         }
@@ -2890,43 +2898,44 @@ function ddIconForLabel($label)
         }
 
         .BonBon-parent {
-            position: static;
+            position: sticky;
+            top: 40px;
             flex-shrink: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 260px;
-            margin-top: 60px;
-            align-self: stretch;
-            /* NEW — lets it fill the overlay's full height */
+            margin-top: -100px;
+            align-self: flex-start;
+            /* no longer stretches to match tall content — stays a fixed size */
             height: auto;
+            max-height: 340px;
         }
+
 
         .bonbon-pole-wrap {
             order: 3;
-            flex: 1 1 auto;
-            /* fills remaining vertical space in BonBon-parent */
+            flex: 0 0 auto;
+            /* fixed length instead of growing to fill all leftover space */
             width: 100%;
-            height: 100%;
+            height: 90px;
             display: flex;
             flex-direction: column;
-            /* NEW — was defaulting to row, which stretched the pole full-width */
             align-items: center;
-            /* NEW — centers the pole horizontally instead of stretching it */
-            justify-content: center;
-            /* min-height: 40px; */
-            margin: 10px 0 0;
-            /* padding-bottom: 8px; */
+            margin-top: 10px;
+            margin-left: 20px;
         }
 
         .bonbon-pole {
             /* width: 14px; */
             width: 100%;
             height: 100%;
-            flex: 1 1 auto;
-            /* now grows along the column's main axis (vertically) */
+            /* position: absolute; */
+            /* back to a real pole width, not 100% */
+            /* flex: 1 1 auto; */
+            /* grows to fill 100% of the wrap's height on its own */
             align-self: stretch;
-            /* NEW — makes it fill the wrap's height top-to-bottom */
+            /* keep this — makes sure it fills top-to-bottom, not just centered */
             border-radius: 99px;
             background: linear-gradient(180deg, rgba(51, 230, 255, .55), rgba(51, 230, 255, .12));
             border: 1.5px solid rgba(51, 230, 255, .5);
@@ -3039,6 +3048,12 @@ function ddIconForLabel($label)
             margin: 0;
         }
 
+        .qz-overlay #drop-drag {
+            max-width: 800px;
+            width: 100%;
+            /* margin: 0 auto; */
+        }
+
         /* #ddOverlay {
             position: relative;
         } */
@@ -3131,7 +3146,7 @@ function ddIconForLabel($label)
             margin: 0 auto;
         }
 
-        .dd-nav-back {
+        /* .dd-nav-back {
             max-width: 800px;
             margin: 0 auto;
         }
@@ -3144,7 +3159,7 @@ function ddIconForLabel($label)
         .dd-parent-header {
             max-width: 800px;
             margin: 0 auto;
-        }
+        } */
 
         /* .qz-overlay #drop-drag{
             max-width: 800px;
@@ -3484,27 +3499,25 @@ function ddIconForLabel($label)
 
         .dd-puzzle-board {
             display: flex;
+            justify-content: center;
+            /* align-items: center */
             flex-direction: column;
             gap: 28px;
-            max-width: 900px;
+            max-width: 800px;
             margin: 0 auto;
         }
 
         .dd-target-row,
         .dd-item-row {
-            display: flex;
-            flex-wrap: wrap;
-            /* display: grid; */
-            /* grid-template-columns: repeat(5, 1fr); */
-            /* justify-content: center; */
-            /* align-items: center; */
-            gap: 16px;
+            display: grid;
+            grid-template-columns: repeat(5, max-content);
             justify-content: center;
+            gap: 16px;
         }
 
         .dd-item-row {
-            max-width: 700px;
-            margin: 0 auto;
+            /* max-width: 800px; */
+            /* margin: 0 auto; */
         }
 
         .dd-target-card {
@@ -3573,6 +3586,8 @@ function ddIconForLabel($label)
         .dd-socket-slot {
             width: 100%;
             display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
             justify-content: center;
         }
 
@@ -3646,7 +3661,7 @@ function ddIconForLabel($label)
 
         .dd-card.locked {
             cursor: default;
-            border-color: var(--neon-green);
+            border-color: var(--arcade-cyan);
             width: 100px;
         }
 
@@ -3711,9 +3726,115 @@ function ddIconForLabel($label)
             padding: 5px 4px;
         }
 
+        .dd-card-subtitle {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-dim);
+            opacity: 0.65;
+            padding: 0 6px 6px;
+            line-height: 1.3;
+        }
+
         .dd-card.locked .dd-card-visual i,
         .dd-card.locked .dd-card-label {
-            color: var(--neon-green);
+            color: var(--arcade-cyan);
+        }
+
+        .dd-card.dd-wrong {
+            border-color: #ff4d6d !important;
+        }
+
+        .dd-card.dd-wrong .dd-card-visual i,
+        .dd-card.dd-wrong .dd-card-label {
+            color: #ff4d6d;
+        }
+
+        .dd-target-card.dd-wrong-zone .dd-socket {
+            border-color: #ff4d6d;
+        }
+
+        .dd-question-card {
+            background: linear-gradient(160deg, var(--panel), #0a1230);
+            border: 1px solid var(--panel-edge);
+            border-radius: 16px;
+            padding: 22px 26px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .dd-question-text {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .dd-results {
+            max-width: 800px;
+            /* margin: 20px auto 0; */
+        }
+
+        .dd-results h2 {
+            font-size: 21px;
+            color: #ffffff;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .dd-review-list {
+            margin-top: 16px;
+        }
+
+        .dd-review-section {
+            width: 100%;
+            max-width: 800px;
+            /* margin: 0 auto; */
+        }
+
+        .dd-card.placed {
+            cursor: grab;
+            border-color: var(--arcade-cyan);
+            width: 100px;
+        }
+
+        .dd-card.placed:hover {
+            box-shadow: 0 6px 16px rgba(51, 230, 255, .25);
+        }
+
+        .dd-card-remove {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ff4d6d;
+            color: #fff;
+            font-size: 13px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--panel);
+            cursor: pointer;
+            z-index: 2;
+            display: none;
+        }
+
+        .dd-card-remove:hover {
+            background: #e0334f;
+        }
+
+        .dd-target-card.has-items .dd-target-visual {
+            border-color: var(--arcade-cyan);
+            background: rgba(51, 230, 255, 0.06);
+        }
+
+        .dd-target-card.has-items .dd-socket {
+            border-style: solid;
+            border-color: var(--arcade-cyan);
+            background: rgba(51, 230, 255, 0.08);
+            transition: background .18s ease, border-color .18s ease;
         }
     </style>
 </head>
@@ -4584,48 +4705,95 @@ function ddIconForLabel($label)
                                     <?php foreach ($dragDropData as $ddTitle => $ddInfo):
                                         if ($ddInfo['submission'] === null)
                                             continue;
-                                        $ddAnswers = json_decode($ddInfo['submission']['answers_json'] ?? '{}', true) ?: [];
+                                        $ddAnswers = $ddInfo['submission']['answers'] ?? [];
+
+                                        $ddReviewCorrect = 0;
+                                        foreach ($ddInfo['items'] as $item) {
+                                            $picked = $ddAnswers[$item['label']] ?? null;
+                                            if ($picked !== null && strcasecmp($picked, $item['category']) === 0) {
+                                                $ddReviewCorrect++;
+                                            }
+                                        }
+                                        $ddReviewTotal = count($ddInfo['items']);
+                                        $ddReviewAccuracy = $ddReviewTotal > 0 ? round(($ddReviewCorrect / $ddReviewTotal) * 100) : 0;
+                                        $ddReviewIncorrect = $ddReviewTotal - $ddReviewCorrect;
                                         ?>
-                                        <div class="activity-block">
-                                            <div class="activity-hero-card">
-                                                <div class="act-hero-tag">Matching Activity</div>
-                                                <div class="act-hero-title">
-                                                    <?= htmlspecialchars($ddTitle) ?>
-                                                </div>
-                                                <?php if (!empty($ddInfo['game']['instructions'])): ?>
-                                                    <div class="act-hero-desc">
-                                                        <?= nl2br(htmlspecialchars($ddInfo['game']['instructions'])) ?>
-                                                    </div>
-                                                <?php endif; ?>
+                                        <div class="content-quiz-cta">
+                                            <img src="../images/robot-ai5.png" alt="">
+                                            <div class="speech-bubble bubble-quiz">
+                                                <strong>BonBon</strong>
+                                                <p>Nice work — you've already completed "<?= htmlspecialchars($ddTitle) ?>"! Want to
+                                                    see which ones you got right?</p>
+                                                <button type="button" class="btn-take-quiz btn-visible"
+                                                    onclick="openDragDropReviewStage('<?= htmlspecialchars(addslashes($ddTitle), ENT_QUOTES) ?>')">
+                                                    <i class="fa fa-list-check"></i> Review the Activity
+                                                </button>
                                             </div>
-                                            <div class="submitted-notice">
-                                                <div class="submitted-check"><i class="fa fa-check"></i></div>
-                                                <div class="submitted-notice-text">
-                                                    <div class="sn-title">Activity Submitted</div>
-                                                    <div class="sn-sub">You've already completed this matching activity.</div>
+                                        </div>
+
+                                        <div class="ls-section dd-review-section"
+                                            data-game-title="<?= htmlspecialchars($ddTitle) ?>" style="display:none;">
+                                            <button type="button" class="btn-exit-quiz"
+                                                onclick="closeDragDropReviewStage('<?= htmlspecialchars(addslashes($ddTitle), ENT_QUOTES) ?>')">
+                                                <i class="fa fa-arrow-left"></i>
+                                            </button>
+
+                                            <div class="dd-results" style="display:block;">
+                                                <h2>Matching Results</h2>
+                                                <div class="qz-result-card">
+                                                    <div class="qz-result-label">Accuracy</div>
+                                                    <div class="qz-accuracy-row">
+                                                        <div class="qz-accuracy-track">
+                                                            <div class="qz-accuracy-fill" style="width:<?= $ddReviewAccuracy ?>%">
+                                                            </div>
+                                                        </div>
+                                                        <span class="qz-accuracy-pct"><?= $ddReviewAccuracy ?>%</span>
+                                                    </div>
+                                                </div>
+                                                <div class="qz-result-card">
+                                                    <div class="qz-result-row">
+                                                        <div class="qz-result-label">Performance Stats</div>
+                                                        <span class="qz-result-count"><?= $ddReviewTotal ?> items</span>
+                                                    </div>
+                                                    <div class="qz-stat-pills">
+                                                        <span class="qz-stat-pill pill-correct">
+                                                            <i class="fa fa-check"></i> <?= $ddReviewCorrect ?> Correct
+                                                        </span>
+                                                        <span class="qz-stat-pill pill-incorrect">
+                                                            <i class="fa fa-times"></i> <?= $ddReviewIncorrect ?> Incorrect
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="dd-review-list">
+                                                    <?php foreach ($ddInfo['items'] as $item):
+                                                        $picked = $ddAnswers[$item['label']] ?? null;
+                                                        $isCorrect = ($picked !== null && strcasecmp($picked, $item['category']) === 0);
+                                                        ?>
+                                                        <div class="question-card">
+                                                            <div class="q-num-label">Item</div>
+                                                            <div class="q-text"><?= htmlspecialchars($item['label']) ?></div>
+                                                            <?php if (!empty($item['subtitle'])): ?>
+                                                                <div style="font-size:12.5px;color:var(--text-dim);margin:-6px 0 10px;">
+                                                                    <?= htmlspecialchars($item['subtitle']) ?>
+                                                                </div>
+                                                            <?php endif; ?>
+                                                            <div class="review-choice"
+                                                                style="<?= $isCorrect ? 'border-color:var(--neon-green);background: rgba(57, 255, 158, .10); color: var(--neon-green)' : 'border-color:#ff4d6d; background: rgba(255, 77, 109, .10);     color: #ff4d6d;' ?>">
+                                                                <span
+                                                                    style="font-weight:700; font-size: 13.5px; color:<?= $isCorrect ? 'var(--neon-green)' : '#ff4d6d' ?>;">
+                                                                    <?= $isCorrect ? '✓ Correct' : '✗ Incorrect' ?>
+                                                                </span>
+                                                                Your answer:
+                                                                <?= htmlspecialchars($picked ?? '—') ?>
+                                                                <?php if (!$isCorrect): ?>
+                                                                    <span style="margin-left:auto;color:#ef4444;">Correct:
+                                                                        <?= htmlspecialchars($item['category']) ?></span>
+                                                                <?php endif; ?>
+                                                            </div>
+                                                        </div>
+                                                    <?php endforeach; ?>
                                                 </div>
                                             </div>
-                                            <?php foreach ($ddInfo['items'] as $item):
-                                                $picked = $ddAnswers[$item['label']] ?? null;
-                                                $isCorrect = ($picked === $item['category']);
-                                                ?>
-                                                <div class="question-card">
-                                                    <div class="q-num-label">Item</div>
-                                                    <div class="q-text">
-                                                        <?= htmlspecialchars($item['label']) ?>
-                                                    </div>
-                                                    <div class="review-choice"
-                                                        style="<?= $isCorrect ? 'border-color:#22c55e;background:#f0fdf4;' : 'border-color:#ef4444;background:#fef2f2;' ?>">
-                                                        Your answer:
-                                                        <?= htmlspecialchars($picked ?? '—') ?>
-                                                        <?php if (!$isCorrect): ?>
-                                                            <span style="margin-left:auto;color:#ef4444;">Correct:
-                                                                <?= htmlspecialchars($item['category']) ?>
-                                                            </span>
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                            <?php endforeach; ?>
                                         </div>
                                     <?php endforeach; ?>
 
@@ -4668,6 +4836,17 @@ function ddIconForLabel($label)
                                             </div>
                                         </div>
 
+                                        <?php
+                                        $itemsForJs = array_map(function ($it) {
+                                            return [
+                                                'label' => $it['label'],
+                                                'subtitle' => $it['subtitle'],
+                                                'category' => $it['category'],
+                                                'image' => $it['image'] ?? null,
+                                                'icon' => ddIconForLabel($it['label']),
+                                            ];
+                                        }, array_values($ddInfo['items']));
+                                        ?>
                                         <div class="ls-section dd-stage-section" id="drop-drag"
                                             data-game-title="<?= htmlspecialchars($ddTitle) ?>" style="display:none;">
                                             <div class="dd-nav-back">
@@ -4677,44 +4856,47 @@ function ddIconForLabel($label)
                                                 </button>
                                             </div>
 
-                                            <div class="dd-board" data-game-title="<?= htmlspecialchars($ddTitle) ?>">
+                                            <?php
+                                            // Build a { "Category Name": "hint text" } map for the JS to read.
+// Missing/empty hints are simply omitted — the JS fallback handles those.
+                                            $categoryHintsForJs = [];
+                                            foreach (($ddInfo['category_hints'] ?? []) as $catName => $hintText) {
+                                                if (trim((string) $hintText) !== '') {
+                                                    $categoryHintsForJs[$catName] = trim((string) $hintText);
+                                                }
+                                            }
+                                            ?>
+                                            <div class="dd-board" data-game-title="<?= htmlspecialchars($ddTitle) ?>"
+                                                data-items='<?= htmlspecialchars(json_encode($itemsForJs), ENT_QUOTES) ?>'
+                                                data-category-hints='<?= htmlspecialchars(json_encode($categoryHintsForJs), ENT_QUOTES) ?>'>
+
                                                 <div class="dd-parent-header">
                                                     <div class="dd-hud">
-                                                        <div class="dd-hud-title">
-                                                            <i class="fa fa-gamepad"></i> Component Matching Challenge
-                                                        </div>
-                                                        <!-- <div class="dd-hud-stats">
-                                                        <span class="dd-hud-pill streak"><i class="fa fa-fire"></i> <span
-                                                                class="dd-streak-val">0</span> streak</span>
-                                                        <span class="dd-hud-pill score"><i class="fa fa-star"></i> <span
-                                                                class="dd-score-val">0</span> pts</span>
-                                                    </div> -->
+                                                        <div class="dd-hud-title"><i class="fa fa-gamepad"></i> Component Matching
+                                                            Challenge</div>
                                                         <div class="dd-feedback"></div>
                                                     </div>
-
                                                     <div class="dd-board-header">
-                                                        <div class="qz-counter dd-counter">0 of
-                                                            <?= count($ddInfo['items']) ?> placed
-                                                        </div>
+                                                        <div class="qz-counter dd-counter">0 of <?= count($ddInfo['items']) ?>
+                                                            placed</div>
                                                         <div class="qz-progress-track">
                                                             <div class="qz-progress-fill dd-progress-fill" style="width:0%"></div>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <?php
-                                                $shuffledCats = $ddInfo['categories'];
-                                                shuffle($shuffledCats);
-                                                ?>
+                                                <!-- <div class="dd-question-card">
+                                                    <div class="dd-question-text"></div>
+                                                </div> -->
+
+                                                <?php $shuffledCats = $ddInfo['categories'];
+                                                shuffle($shuffledCats); ?>
                                                 <div class="dd-puzzle-board">
                                                     <div class="dd-target-row">
                                                         <?php foreach ($shuffledCats as $cat):
-                                                            $catIcon = ddIconForLabel($cat);
-                                                            ?>
+                                                            $catIcon = ddIconForLabel($cat); ?>
                                                             <div class="dd-target-card" data-category="<?= htmlspecialchars($cat) ?>">
-                                                                <div class="dd-target-visual">
-                                                                    <i class="fa <?= $catIcon ?>"></i>
-                                                                </div>
+                                                                <div class="dd-target-visual"><i class="fa <?= $catIcon ?>"></i></div>
                                                                 <div class="dd-target-label"><?= htmlspecialchars($cat) ?></div>
                                                                 <div class="dd-socket" data-category="<?= htmlspecialchars($cat) ?>">
                                                                     <div class="dd-socket-slot" data-placeholder="Drop here"></div>
@@ -4723,8 +4905,10 @@ function ddIconForLabel($label)
                                                         <?php endforeach; ?>
                                                     </div>
 
+                                                    <?php $shuffledItems = $ddInfo['items'];
+                                                    shuffle($shuffledItems); ?>
                                                     <div class="dd-item-row" data-role="bank">
-                                                        <?php foreach ($ddInfo['items'] as $item):
+                                                        <?php foreach ($shuffledItems as $item):
                                                             $itemIcon = ddIconForLabel($item['label']);
                                                             $itemImg = !empty($item['image']) ? $item['image'] : null;
                                                             ?>
@@ -4733,12 +4917,17 @@ function ddIconForLabel($label)
                                                                 data-category="<?= htmlspecialchars($item['category']) ?>">
                                                                 <div class="dd-card-visual">
                                                                     <?php if ($itemImg): ?>
-                                                                        <img src="<?= htmlspecialchars($itemImg) ?>" alt="">
+                                                                        <img src="<?= htmlspecialchars($itemImg) ?>" alt=""
+                                                                            onerror="this.replaceWith(Object.assign(document.createElement('i'), {className:'fa <?= $itemIcon ?>'}));">
                                                                     <?php else: ?>
                                                                         <i class="fa <?= $itemIcon ?>"></i>
                                                                     <?php endif; ?>
                                                                 </div>
                                                                 <div class="dd-card-label"><?= htmlspecialchars($item['label']) ?></div>
+                                                                <?php if (!empty($item['subtitle'])): ?>
+                                                                    <div class="dd-card-subtitle"><?= htmlspecialchars($item['subtitle']) ?>
+                                                                    </div>
+                                                                <?php endif; ?>
                                                             </div>
                                                         <?php endforeach; ?>
                                                     </div>
@@ -4747,12 +4936,26 @@ function ddIconForLabel($label)
                                                 <div class="dd-footer">
                                                     <div class="qz-nav-row">
                                                         <div></div>
-                                                        <button class="btn-qnav-next dd-finish-btn" disabled
+                                                        <button class="btn-qnav-next dd-finish-btn" disabled style="display:none;"
                                                             onclick="ddSubmit('<?= htmlspecialchars(addslashes($ddTitle), ENT_QUOTES) ?>')">
                                                             Finish <i class="fa fa-check"></i>
                                                         </button>
                                                     </div>
                                                 </div>
+                                            </div>
+
+                                            <div class="dd-results" style="display:none;">
+                                                <h2>Matching Results</h2>
+                                                <div class="qz-result-card">
+                                                    <div class="qz-result-label">Accuracy</div>
+                                                    <div class="qz-accuracy-row">
+                                                        <div class="qz-accuracy-track">
+                                                            <div class="qz-accuracy-fill" style="width:0%"></div>
+                                                        </div>
+                                                        <span class="qz-accuracy-pct">0%</span>
+                                                    </div>
+                                                </div>
+                                                <div class="dd-review-list"></div>
                                             </div>
                                         </div>
                                     <?php endforeach; ?>
@@ -5078,8 +5281,8 @@ function ddIconForLabel($label)
         </div><!-- /lessons-shell -->
 
         <div class="qz-overlay" id="qzOverlay">
-            <div class="BonBon-parent">
-                <img src="../images/welcome-interactive.png" alt="">
+            <!-- <div class="BonBon-parent">
+                <img src="../images/robot-ai10.png" alt="">
                 <div class="bonbon-pole-wrap">
                     <div class="bonbon-pole"></div>
                 </div>
@@ -5088,20 +5291,35 @@ function ddIconForLabel($label)
                     <p><?= htmlspecialchars($bonbonQuizGreeting ?? "Hi! I'm BonBon, your quiz buddy. Quick reminder — there's a short quiz ahead so you can check how well you understood this lesson.") ?>
                     </p>
                 </div>
-            </div>
+            </div> -->
         </div>
 
-        <div class="qz-overlay" id="actOverlay"></div>
-
-        <div class="qz-overlay" id="ddOverlay">
-
-            <div class="BonBon-parent">
-                <img src="../images/welcome-interactive.png" alt="">
+        <div class="qz-overlay" id="actOverlay">
+            <!-- <div class="BonBon-parent">
+                <img src="../images/robot-ai10.png" alt="">
+                <div class="bonbon-pole-wrap">
+                    <div class="bonbon-pole"></div>
+                </div>
                 <div class="speech-bubble drop-drag">
                     <strong>BonBon</strong>
+                    <p id="actOverlayMessage">
+                        <?= htmlspecialchars($bonbonDragDropGreeting ?? "Let's match these up!") ?>
+                    </p>
+                </div>
+            </div> -->
+        </div>
 
-                    <p id="bonbonMessage2"></p>
-
+        <div class="qz-overlay" id="ddOverlay">
+            <div class="BonBon-parent">
+                <img src="../images/robot-ai10.png" alt="">
+                <div class="bonbon-pole-wrap">
+                    <div class="bonbon-pole"></div>
+                </div>
+                <div class="speech-bubble drop-drag">
+                    <strong>BonBon</strong>
+                    <p id="ddOverlayMessage">
+                        <?= htmlspecialchars($bonbonDragDropGreeting ?? "Let's match these up!") ?>
+                    </p>
                 </div>
             </div>
         </div>

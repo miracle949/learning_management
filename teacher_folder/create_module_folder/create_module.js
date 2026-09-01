@@ -29,7 +29,8 @@ const BLOCK_META = {
   quiz: { label: 'Quiz', cls: 'tag-quiz' },
   activity: { label: 'Activity', cls: 'tag-activity' },
   flashcard: { label: 'Flashcard', cls: 'tag-flashcard' },
-  drag_drop: { label: 'Drag & Drop', cls: 'tag-dragdrop' }   // NEW
+  drag_drop: { label: 'Drag & Drop', cls: 'tag-dragdrop' },
+  arrange_steps: { label: 'Arrange the Steps', cls: 'tag-arrange' }   // NEW
 };
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB
@@ -241,6 +242,7 @@ function addLesson(btn) {
           <button type="button" onclick="addBlockToLesson(this, 'activity')"><i class="fa fa-pen"></i> Add Activity</button>
           <button type="button" onclick="addBlockToLesson(this, 'flashcard')"><i class="fa fa-clone"></i> Add Flashcard</button>
           <button type="button" onclick="addBlockToLesson(this, 'drag_drop')"><i class="fa fa-arrows-alt"></i> Add Drag & Drop</button>
+          <button type="button" onclick="addBlockToLesson(this, 'arrange_steps')"><i class="fa fa-random"></i> Add Arrange Steps</button>
         </div>
       </div>
     </div>`;
@@ -379,6 +381,18 @@ function blockFieldsMarkup(type) {
       </div>
       <textarea data-field="text" style="display:none;"></textarea>
       <textarea class="text-keyidea-input" data-field="key_idea" placeholder="Key idea / callout (optional) — e.g. The operating system is the translator between hardware and application software..."></textarea>`;
+  }
+
+  if (type === 'arrange_steps') {
+    return `
+    <input type="text" data-field="arrange_title" placeholder="Game title — e.g. Assemble a Computer">
+    <textarea data-field="arrange_instructions" placeholder="Instructions (optional) — e.g. Arrange the steps in the correct order"></textarea>
+
+    <div class="content-label" style="margin-top:0.75rem;">Steps (add them in the correct order)</div>
+    <div class="steps-wrap"></div>
+    <button type="button" class="btn-add-question" onclick="addArrangeStep(this)">
+      <i class="fa fa-plus"></i> Add step
+    </button>`;
   }
 
   if (type === 'image') {
@@ -656,7 +670,8 @@ function addDragDropCategory(btn) {
       <span>Category</span>
       <button type="button" class="danger" onclick="removeDragDropCategory(this)"><i class="fa fa-trash"></i></button>
     </div>
-    <input type="text" data-catfield="label" placeholder="Category name — e.g. Processing" oninput="refreshDragDropItemSelects(this.closest('.block'))">`;
+    <input type="text" data-catfield="label" placeholder="Category name — e.g. Processing" oninput="refreshDragDropItemSelects(this.closest('.block'))">
+    <textarea data-catfield="description" placeholder="Category description (optional) — e.g. Components that process instructions and calculations"></textarea>`;
   wrap.appendChild(row);
   renumberAll();
   refreshDragDropItemSelects(block);
@@ -703,6 +718,21 @@ function addDragDropItem(btn) {
   wrap.appendChild(row);
   populateItemCategoryOptions(row.querySelector('select'), block);
   wireDragDropItemImageUpload(row);
+  renumberAll();
+}
+
+/* ---------- arrange the steps (ordered sequence) ---------- */
+function addArrangeStep(btn) {
+  const wrap = btn.previousElementSibling; // .steps-wrap
+  const row = document.createElement('div');
+  row.className = 'step-row';
+  row.innerHTML = `
+    <div class="question-row-head">
+      <span class="step-order-label">Step</span>
+      <button type="button" class="danger" onclick="this.closest('.step-row').remove(); renumberAll();"><i class="fa fa-trash"></i></button>
+    </div>
+    <input type="text" data-stepfield="text" placeholder="Step text — e.g. Install the power supply">`;
+  wrap.appendChild(row);
   renumberAll();
 }
 
@@ -897,6 +927,16 @@ function renumberAll() {
         //     input.name = `${prefix}[items][${itemIdx}][${input.dataset.itemfield}]`;
         //   });
         // });
+
+        // nested arrange-the-steps items — DOM order = correct sequence
+        const stepRows = blockEl.querySelectorAll(':scope .step-row');
+        stepRows.forEach((stepRow, stepIdx) => {
+          const label = stepRow.querySelector('.step-order-label');
+          if (label) label.textContent = 'Step ' + (stepIdx + 1);
+          stepRow.querySelectorAll('[data-stepfield]').forEach(input => {
+            input.name = `${prefix}[steps][${stepIdx}][${input.dataset.stepfield}]`;
+          });
+        });
 
         // nested drag-drop items
         const itemRows = blockEl.querySelectorAll(':scope .item-row');
