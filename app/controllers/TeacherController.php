@@ -101,7 +101,16 @@ class TeacherController
 
         $enrolledStudents = $teacherModel->getEnrolledStudentsBySection($subject_id, $section_id);
 
-        $approvedStudents = $teacherModel->getApprovedStudentsNotEnrolled($subject_id, $section_id);
+        // NEW — masterlist status for the People tab banner
+        $masterlistStatus = $teacherModel->getMasterlistStatusForSection(
+            $grade_level_id,
+            $section_id,
+            $subject_id
+        );
+
+        $userId = $_SESSION['user_id'];
+        $notifications = $teacherModel->getTeacherNotifications($userId);
+        $unreadCount = $teacherModel->countUnreadNotifications($userId);
 
         extract([
             'subject_id' => $subject_id,
@@ -113,11 +122,148 @@ class TeacherController
             'studentCount' => $studentCount,
             'totalLessons' => $totalLessons,
             'teacherModel' => $teacherModel,
-            'approvedStudents' => $approvedStudents,
             'enrolledStudents' => $enrolledStudents,
+            'masterlistStatus' => $masterlistStatus,   // ADD THIS
+            'notifications' => $notifications,
+            'unreadCount' => $unreadCount,
         ]);
 
         require "../teacher_folder/records.php";
+    }
+
+    // NEW endpoint — mark notifications as read (called via AJAX when bell is opened)
+    public function mark_notifications_read()
+    {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
+            echo json_encode(['success' => false]);
+            exit;
+        }
+        $teacherModel = new Teacher();
+        $teacherModel->markNotificationsRead($_SESSION['user_id']);
+        echo json_encode(['success' => true]);
+        exit;
+    }
+
+    // ============================================================
+    // BULK ENROLLMENT — teacher uploads CSV roster (LRNs)
+    // ============================================================
+    public function bulk_enroll_students()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        $teacherModel = new Teacher();
+        $subjectId = (int) ($_POST['subject_id'] ?? 0);
+        $gradeLevelId = (int) ($_POST['grade_level_id'] ?? 0);
+        $sectionId = (int) ($_POST['section_id'] ?? 0);
+
+        $teacherId = $_SESSION['teacher_id'] ?? 0;
+        if (!$teacherId) {
+            $result = $teacherModel->getTeacherIdByUserId($_SESSION['user_id'] ?? 0);
+            $teacherId = (int) ($result['teacher_id'] ?? 0);
+            $_SESSION['teacher_id'] = $teacherId;
+        }
+
+        $redirectBack = "/learning_management/public/?url=teacher_class"
+            . "&id={$subjectId}&grade_id={$gradeLevelId}&section_id={$sectionId}";
+
+        if (empty($_FILES['roster_csv']['tmp_name']) || $_FILES['roster_csv']['error'] !== UPLOAD_ERR_OK) {
+            $_SESSION['bulk_enroll_error'] = "Please upload a valid CSV file.";
+            header("Location: {$redirectBack}");
+            exit;
+        }
+
+        // Parse CSV — accepts a header row containing "LRN" / "student_lrn",
+        // or a plain single-column list of LRNs with no header.
+        $lrns = [];
+        if (($handle = fopen($_FILES['roster_csv']['tmp_name'], 'r')) !== false) {
+            $rowIndex = 0;
+            $lrnColIndex = 0;
+
+            while (($row = fgetcsv($handle)) !== false) {
+                $rowIndex++;
+                if (empty($row))
+                    continue;
+
+                if ($rowIndex === 1) {
+                    $headers = array_map('strtolower', array_map('trim', $row));
+                    $headerMatch = array_search('lrn', $headers);
+                    if ($headerMatch === false) {
+                        $headerMatch = array_search('student_lrn', $headers);
+                    }
+                    if ($headerMatch !== false) {
+                        $lrnColIndex = $headerMatch;
+                        continue; // skip header row, don't treat it as data
+                    }
+                    // no header detected — fall through, first row is data
+                }
+
+                $value = trim($row[$lrnColIndex] ?? '');
+                if ($value !== '' && preg_match('/^\d+$/', $value)) {
+                    $lrns[] = $value;
+                }
+            }
+            fclose($handle);
+        }
+
+        if (empty($lrns)) {
+            $_SESSION['bulk_enroll_error'] = "No valid LRNs found in the uploaded file.";
+            header("Location: {$redirectBack}");
+            exit;
+        }
+
+        $result = $teacherModel->bulkEnrollByLRNs(
+            $teacherId,
+            $subjectId,
+            $gradeLevelId,
+            $sectionId,
+            $lrns
+        );
+
+        $_SESSION['bulk_enroll_result'] = $result;
+        header("Location: {$redirectBack}#people");
+        exit;
+    }
+
+    // ============================================================
+// DOWNLOAD MASTERLIST AS CSV — teacher can download then re-upload
+// ============================================================
+    public function download_masterlist_csv()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        $gradeLevelId = (int) ($_GET['grade_level_id'] ?? 0);
+        $sectionId = (int) ($_GET['section_id'] ?? 0);
+
+        $teacherModel = new Teacher();
+        $students = $teacherModel->getMasterlistStudentsBySection($gradeLevelId, $sectionId);
+
+        $filename = "masterlist_grade{$gradeLevelId}_section{$sectionId}.csv";
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header("Content-Disposition: attachment; filename=\"{$filename}\"");
+
+        $out = fopen('php://output', 'w');
+
+        // Header row — matches what bulk_enroll_students() expects to parse back in
+        fputcsv($out, ['LRN', 'Last Name', 'First Name']);
+
+        foreach ($students as $s) {
+            fputcsv($out, [
+                $s['student_LRN'],
+                $s['last_name'],
+                $s['first_name'],
+            ]);
+        }
+
+        fclose($out);
+        exit;
     }
 
     public function lessons()
@@ -657,9 +803,13 @@ class TeacherController
     // }
 
 
-    public function send_invitation()
+    // ============================================================
+// BULK ENROLLMENT — teacher uploads CSV roster (LRNs)
+// ============================================================
+
+    // AJAX preview — fetches masterlist students for the class currently open
+    public function get_masterlist_preview()
     {
-        // Always respond with JSON
         header('Content-Type: application/json');
 
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
@@ -667,160 +817,41 @@ class TeacherController
             exit;
         }
 
+        $gradeLevelId = (int) ($_GET['grade_level_id'] ?? 0);
+        $sectionId = (int) ($_GET['section_id'] ?? 0);
+
         $teacherModel = new Teacher();
-        $teacherId = (int) ($_SESSION['teacher_id'] ?? 0);
+        $students = $teacherModel->getMasterlistStudentsBySection($gradeLevelId, $sectionId);
+
+        echo json_encode(['success' => true, 'students' => $students]);
+        exit;
+    }
+
+    // One-click enroll everyone in the masterlist for this section
+    public function bulk_enroll_from_masterlist()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        $teacherModel = new Teacher();
         $subjectId = (int) ($_POST['subject_id'] ?? 0);
         $gradeLevelId = (int) ($_POST['grade_level_id'] ?? 0);
         $sectionId = (int) ($_POST['section_id'] ?? 0);
-        $email = trim($_POST['student_email'] ?? '');
 
+        $teacherId = $_SESSION['teacher_id'] ?? 0;
         if (!$teacherId) {
             $result = $teacherModel->getTeacherIdByUserId($_SESSION['user_id'] ?? 0);
             $teacherId = (int) ($result['teacher_id'] ?? 0);
             $_SESSION['teacher_id'] = $teacherId;
         }
 
-        if (!$teacherId || !$subjectId || !$gradeLevelId || !$sectionId || !$email) {
-            echo json_encode(['success' => false, 'message' => 'All fields are required.']);
-            exit;
-        }
+        $result = $teacherModel->bulkEnrollFromMasterlist($teacherId, $subjectId, $gradeLevelId, $sectionId);
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            echo json_encode(['success' => false, 'message' => 'Invalid email address.']);
-            exit;
-        }
-
-        $student = $teacherModel->getApprovedStudentByEmail($email);
-        if (!$student) {
-            echo json_encode(['success' => false, 'message' => 'No approved student found.']);
-            exit;
-        }
-
-        if ($teacherModel->isAlreadyEnrolled($student['student_id'], $subjectId, $sectionId)) {
-            echo json_encode(['success' => false, 'message' => 'Student already enrolled.']);
-            exit;
-        }
-
-        if ($teacherModel->hasPendingInvitation($email, $subjectId, $sectionId)) {
-            echo json_encode(['success' => false, 'message' => 'Invitation already sent.']);
-            exit;
-        }
-
-        $token = $teacherModel->createInvitation(
-            $teacherId,
-            $subjectId,
-            $gradeLevelId,
-            $sectionId,
-            $email,
-            $student['student_id']
-        );
-
-        $classInfo = $teacherModel->getClassInfoForInviteModal($teacherId, $subjectId, $sectionId);
-        $subjectName = $classInfo['subject_name'] ?? 'your class';
-        $sectionName = $classInfo['section_name'] ?? '';
-        $teacherName = $_SESSION['name'] ?? 'Your Teacher';
-
-        $acceptUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http')
-            . "://{$_SERVER['HTTP_HOST']}/learning_management/public/?url=accept_invite&token={$token}";
-
-        $emailSubject = "Class Invitation: {$subjectName} — iLearn";
-        $emailBody = "
-    <html>
-    <body style='margin:0;padding:0;background:#f0f2f5;font-family:Segoe UI,system-ui,sans-serif;'>
-      <table width='100%' cellpadding='0' cellspacing='0' style='padding:40px 20px;'>
-        <tr><td align='center'>
-          <table width='520' cellpadding='0' cellspacing='0'
-                 style='background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.10);'>
-            <tr>
-              <td style='background:linear-gradient(135deg,#00C950 0%,#009e3e 100%);padding:32px 36px;'>
-                <div style='font-size:24px;font-weight:800;color:#fff;'>📚 iLearn</div>
-                <div style='font-size:14px;color:rgba(255,255,255,.8);margin-top:4px;'>Learning Management System</div>
-              </td>
-            </tr>
-            <tr>
-              <td style='padding:32px 36px;'>
-                <p style='font-size:16px;color:#111827;font-weight:700;margin:0 0 6px;'>
-                  Hi " . htmlspecialchars($student['name']) . " 👋
-                </p>
-                <p style='font-size:14px;color:#6b7280;margin:0 0 24px;'>
-                  <strong>" . htmlspecialchars($teacherName) . "</strong> has invited you to join a class on iLearn.
-                </p>
-                <div style='background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:20px 24px;margin-bottom:28px;'>
-                  <div style='font-size:18px;font-weight:800;color:#15803d;'>" . htmlspecialchars($subjectName) . "</div>
-                  <div style='font-size:13px;color:#6b7280;margin-top:6px;'>Section: <strong>" . htmlspecialchars($sectionName) . "</strong></div>
-                  <div style='font-size:13px;color:#6b7280;margin-top:4px;'>Teacher: <strong>" . htmlspecialchars($teacherName) . "</strong></div>
-                </div>
-                <table cellpadding='0' cellspacing='0'>
-                  <tr>
-                    <td style='border-radius:50px;background:#00C950;'>
-                      <a href='{$acceptUrl}' style='display:inline-block;padding:14px 36px;font-size:15px;font-weight:700;color:#fff;text-decoration:none;border-radius:50px;'>
-                        ✅ Accept Invitation
-                      </a>
-                    </td>
-                  </tr>
-                </table>
-                <p style='font-size:12px;color:#9ca3af;margin-top:28px;'>
-                  This invitation expires on <strong>" . date('F d, Y', strtotime('+7 days')) . "</strong>.
-                </p>
-              </td>
-            </tr>
-            <tr>
-              <td style='background:#f9fafb;border-top:1px solid #e4e7eb;padding:16px 36px;text-align:center;'>
-                <p style='font-size:12px;color:#9ca3af;margin:0;'>iLearn Learning Management System</p>
-              </td>
-            </tr>
-          </table>
-        </td></tr>
-      </table>
-    </body>
-    </html>";
-
-        $mail = new PHPMailer(true);
-        $sent = false;
-
-        try {
-            $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'rogelioamoyan123@gmail.com';
-            $mail->Password = 'cmdq rxjr sufp hnul';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 587;
-
-            $mail->setFrom('rogelioamoyan123@gmail.com', 'learningManagement');
-            $mail->addAddress($email, $student['name']);
-            $mail->isHTML(true);
-            $mail->Subject = $emailSubject;
-            $mail->Body = $emailBody;
-            $mail->AltBody = "You have been invited to join {$subjectName}. Visit: {$acceptUrl}";
-
-            $mail->send();
-            $sent = true;
-
-        } catch (Exception $e) {
-            error_log("[iLearn] PHPMailer Error: " . $mail->ErrorInfo);
-            error_log("[iLearn] Exception: " . $e->getMessage());
-        }
-
-        echo json_encode(['success' => $sent, 'message' => $sent ? 'Sent' : $mail->ErrorInfo]);
+        $_SESSION['bulk_enroll_result'] = $result;
+        header("Location: /learning_management/public/?url=teacher_class&id={$subjectId}&grade_id={$gradeLevelId}&section_id={$sectionId}#people");
         exit;
-    }
-
-
-    // ============================================================
-    // ACCEPT INVITE — student clicks link in email
-    // ============================================================
-    public function accept_invite()
-    {
-        $teacherModel = new Teacher();
-        $token = trim($_GET['token'] ?? '');
-        $result = ['success' => false, 'message' => 'Invalid or missing token.'];
-
-        if ($token) {
-            $result = $teacherModel->acceptInvitation($token);
-        }
-
-        require "../teacher_folder/accept_invite.php";
     }
 
     // ============================================================
@@ -834,11 +865,23 @@ class TeacherController
         }
 
         $teacherModel = new Teacher();
-        $gradeLevels = $teacherModel->getAllGradeLevels();
+
+        $teacher_id = $_SESSION['teacher_id'] ?? 0;
+        if (!$teacher_id) {
+            $result = $teacherModel->getTeacherIdByUserId($_SESSION['user_id'] ?? 0);
+            $teacher_id = (int) ($result['teacher_id'] ?? 0);
+            $_SESSION['teacher_id'] = $teacher_id;
+        }
+
+        // Only grade levels this teacher actually has a class in
+        $gradeLevels = $teacherModel->getAssignedGradeLevelsForTeacher($teacher_id);
+
         $selectedGrade = isset($_GET['grade_id']) ? (int) $_GET['grade_id'] : 0;
-        $subjects = $selectedGrade
-            ? $teacherModel->getSubjectsByGradeLevel($selectedGrade)
-            : $teacherModel->getAllSubjectsWithGrade();
+
+        // Only subjects this teacher is actually assigned to — one card per
+        // subject+section assignment, so a subject taught in two sections
+        // shows two cards, each linking to its own section.
+        $subjects = $teacherModel->getAssignedSubjectsForTeacher($teacher_id, $selectedGrade);
 
         extract([
             'gradeLevels' => $gradeLevels,
@@ -847,6 +890,47 @@ class TeacherController
         ]);
 
         require "../teacher_folder/modules_teacher.php";
+    }
+
+    public function view_modules_teacher()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        $teacherModel = new Teacher();
+        $subjectId = isset($_GET['subject_id']) ? (int) $_GET['subject_id'] : 0;
+        $gradeLevelId = isset($_GET['grade_id']) ? (int) $_GET['grade_id'] : 0;
+        $sectionId = isset($_GET['section_id']) ? (int) $_GET['section_id'] : 0;
+
+        $teacher_id = $_SESSION['teacher_id'] ?? 0;
+        if (!$teacher_id) {
+            $result = $teacherModel->getTeacherIdByUserId($_SESSION['user_id'] ?? 0);
+            $teacher_id = (int) ($result['teacher_id'] ?? 0);
+            $_SESSION['teacher_id'] = $teacher_id;
+        }
+
+        $subjectInfo = $subjectId ? $teacherModel->getSubjectWithGrade($subjectId) : null;
+
+        // Only THIS teacher's own interactive modules for this subject
+        $modules = $subjectId ? $teacherModel->getInteractiveModulesWithCount($subjectId, $teacher_id) : [];
+
+        // Resolve the section that was clicked on module_teacher.php, for the banner
+        $sectionInfo = ($sectionId > 0)
+            ? $teacherModel->getClassInfo($subjectId, $gradeLevelId, $sectionId)
+            : null;
+
+        extract([
+            'subjectId' => $subjectId,
+            'gradeLevelId' => $gradeLevelId,
+            'sectionId' => $sectionId,
+            'sectionInfo' => $sectionInfo,
+            'subjectInfo' => $subjectInfo,
+            'teacherModel' => $teacherModel,
+            'modules' => $modules
+        ]);
+        require "../teacher_folder/modules.php";
     }
 
     public function create_module()
@@ -1160,6 +1244,7 @@ class TeacherController
                             $gameTitle = trim($block['arrange_title'] ?? '');
                             if ($gameTitle === '')
                                 break;
+                            $gameCategory = trim($block['arrange_category'] ?? '');
                             $gameInstructions = trim($block['arrange_instructions'] ?? '');
 
                             foreach (($block['steps'] ?? []) as $stepIdx => $step) {
@@ -1169,6 +1254,7 @@ class TeacherController
 
                                 $teacherModel->insertInteractiveContent($lessonId, 'arrange_steps', [
                                     'title' => $gameTitle,
+                                    'arrange_category' => $gameCategory !== '' ? $gameCategory : null,
                                     'instructions' => $gameInstructions !== '' ? $gameInstructions : null,
                                     'question' => $stepText,
                                     'step_order' => (int) $stepIdx,
@@ -1188,35 +1274,6 @@ class TeacherController
 
         header("Location: /learning_management/public/?url=view_modules_teacher&subject_id={$subject_id}&saved=1");
         exit;
-    }
-
-    public function view_modules_teacher()
-    {
-        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'teacher') {
-            header("Location: ?url=login");
-            exit;
-        }
-
-        $teacherModel = new Teacher();
-        $subjectId = isset($_GET['subject_id']) ? (int) $_GET['subject_id'] : 0;
-
-        $teacher_id = $_SESSION['teacher_id'] ?? 0;
-        if (!$teacher_id) {
-            $result = $teacherModel->getTeacherIdByUserId($_SESSION['user_id'] ?? 0);
-            $teacher_id = (int) ($result['teacher_id'] ?? 0);
-            $_SESSION['teacher_id'] = $teacher_id;
-        }
-
-        $subjectInfo = $subjectId ? $teacherModel->getSubjectWithGrade($subjectId) : null;
-        $modules = $subjectId ? $teacherModel->getInteractiveModulesWithCount($subjectId) : [];
-
-        extract([
-            'subjectId' => $subjectId,
-            'subjectInfo' => $subjectInfo,
-            'teacherModel' => $teacherModel,
-            'modules' => $modules
-        ]);
-        require "../teacher_folder/modules.php";
     }
 
     public function subject_lessons_teacher()

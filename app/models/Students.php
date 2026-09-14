@@ -464,10 +464,105 @@ class Students extends Model
         return $grouped;
     }
 
+    // ── ARRANGE THE STEPS ──────────────────────────────────────
+
+    // ── ARRANGE THE STEPS ──────────────────────────────────────
+
+    public function getArrangeStepsSubmission($lessonId, $gameTitle, $studentId)
+    {
+        if (!$studentId)
+            return null;
+
+        $stmt = $this->db->prepare("
+        SELECT step_text, submitted_position, correct_position, is_correct, category, submitted_at
+        FROM tbl_arrange_steps_results
+        WHERE lesson_id = ? AND game_title = ? AND student_id = ?
+        ORDER BY submitted_position ASC
+    ");
+        $stmt->bind_param("isi", $lessonId, $gameTitle, $studentId);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        if (!$rows)
+            return null;
+
+        $order = [];
+        $correctness = [];
+        $correctPositions = [];
+        $score = 0;
+
+        foreach ($rows as $r) {
+            $order[] = $r['step_text'];
+            $correctness[$r['step_text']] = (int) $r['is_correct'];
+            $correctPositions[$r['step_text']] = (int) $r['correct_position'];
+            if ($r['is_correct'])
+                $score++;
+        }
+
+        return [
+            'order' => $order,
+            'correctness' => $correctness,
+            'correct_positions' => $correctPositions,
+            'score' => $score,
+            'total' => count($rows),
+            'category' => $rows[0]['category'],
+            'completed_at' => $rows[0]['submitted_at'],
+        ];
+    }
+
+    public function saveArrangeStepsSubmission($lessonId, $gameTitle, $studentId, array $orderedSteps)
+    {
+        $allGames = $this->getLessonArrangeStepsData($lessonId);
+        $correctPositionMap = [];
+        $category = null;
+
+        if (isset($allGames[$gameTitle])) {
+            $category = $allGames[$gameTitle]['game']['category'] ?? null;
+            foreach ($allGames[$gameTitle]['steps'] as $i => $s) {
+                $correctPositionMap[$s['text']] = $i + 1;
+            }
+        }
+
+        $stmt = $this->db->prepare("
+        INSERT INTO tbl_arrange_steps_results
+            (student_id, lesson_id, game_title, step_text, submitted_position, correct_position, is_correct, category, submitted_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+    ");
+        if (!$stmt) {
+            error_log('[saveArrangeStepsSubmission] prepare failed: ' . $this->db->error);
+            return false;
+        }
+
+        $ok = true;
+        foreach ($orderedSteps as $idx => $stepText) {
+            $submittedPosition = $idx + 1;
+            $correctPosition = $correctPositionMap[$stepText] ?? 0;
+            $isCorrect = ($correctPosition === $submittedPosition) ? 1 : 0;
+
+            $stmt->bind_param(
+                "iissiiis",
+                $studentId,
+                $lessonId,
+                $gameTitle,
+                $stepText,
+                $submittedPosition,
+                $correctPosition,
+                $isCorrect,
+                $category
+            );
+            if (!$stmt->execute()) {
+                error_log('[saveArrangeStepsSubmission] execute failed for step "' . $stepText . '": ' . $stmt->error);
+                $ok = false;
+            }
+        }
+        return $ok;
+    }
+
+
+
     public function getLessonArrangeStepsData($lessonId)
     {
         $stmt = $this->db->prepare("
-        SELECT title, instructions, question AS step_text, step_order
+        SELECT title, arrange_category, instructions, question AS step_text, step_order
         FROM tbl_interactive_contents
         WHERE lesson_id = ? AND type = 'arrange_steps'
         ORDER BY id ASC
@@ -483,6 +578,7 @@ class Students extends Model
                 $grouped[$key] = [
                     'game' => [
                         'title' => $row['title'],
+                        'category' => $row['arrange_category'],   // NEW
                         'instructions' => $row['instructions'],
                     ],
                     'steps' => [],
@@ -644,6 +740,19 @@ class Students extends Model
         // ...after the activity check block, add:
         foreach ($dragDropGames as $ddTitle => $ddData) {
             if (!$this->getDragDropSubmission($lessonId, $ddTitle, $studentId)) {
+                return false;
+            }
+        }
+
+        $arrangeGames = $this->getLessonArrangeStepsData($lessonId);
+
+        // widen the "nothing to do" early-exit to also account for arrange-steps
+        if (empty($quizGroups) && $acount === 0 && empty($dragDropGames) && empty($arrangeGames)) {
+            return $this->isLessonVisitedViaProgress($lessonId, $studentId);
+        }
+
+        foreach ($arrangeGames as $arTitle => $arData) {
+            if (!$this->getArrangeStepsSubmission($lessonId, $arTitle, $studentId)) {
                 return false;
             }
         }
@@ -813,10 +922,10 @@ class Students extends Model
     public function getIMQuizResult($quizId, $studentId)
     {
         $stmt = $this->db->prepare("
-            SELECT id, score, total, passed, answers_json, taken_at 
-            FROM tbl_quiz_results 
-            WHERE content_id = ? AND student_id = ? LIMIT 1
-        ");
+        SELECT id, score, total, passed, answers, taken_at 
+        FROM tbl_quiz_results 
+        WHERE content_id = ? AND student_id = ? LIMIT 1
+    ");
         $stmt->bind_param("ii", $quizId, $studentId);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
@@ -826,11 +935,29 @@ class Students extends Model
     {
         $passed = ($total > 0 && (($score / $total) * 100) >= $passingScore) ? 1 : 0;
         $stmt = $this->db->prepare("
-        INSERT INTO tbl_quiz_results (content_id, student_id, score, total, passed, answers_json, taken_at)
+        INSERT INTO tbl_quiz_results (content_id, student_id, score, total, passed, answers, taken_at)
         VALUES (?, ?, ?, ?, ?, ?, NOW())
     ");
         $stmt->bind_param("iiiiss", $quizId, $studentId, $score, $total, $passed, $answersJson);
         return $stmt->execute();
+    }
+
+    public function getIMQuizById($quizId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT ic.id, ic.title, ic.instructions, ic.passing_score, ic.lesson_id,
+               l.title AS lesson_title, l.interactive_module_id AS module_id,
+               s.subject_name, s.subject_code
+        FROM tbl_interactive_contents ic
+        JOIN tbl_lessons l ON ic.lesson_id = l.id
+        JOIN tbl_interactive_modules im ON l.interactive_module_id = im.id
+        JOIN tbl_subjects s ON im.subject_id = s.id
+        WHERE ic.id = ? AND ic.type = 'quiz'
+        LIMIT 1
+    ");
+        $stmt->bind_param("i", $quizId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
     }
 
     // ============================================================

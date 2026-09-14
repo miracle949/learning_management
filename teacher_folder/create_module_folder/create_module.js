@@ -386,6 +386,14 @@ function blockFieldsMarkup(type) {
   if (type === 'arrange_steps') {
     return `
     <input type="text" data-field="arrange_title" placeholder="Game title — e.g. Assemble a Computer">
+    <input type="text" data-field="arrange_category" placeholder="Category — e.g. Hardware Assembly, Safety Procedures" list="arrangeCategoryOptions">
+    <datalist id="arrangeCategoryOptions">
+      <option value="Hardware Assembly">
+      <option value="Software Installation">
+      <option value="Networking">
+      <option value="Safety Procedures">
+      <option value="Troubleshooting">
+    </datalist>
     <textarea data-field="arrange_instructions" placeholder="Instructions (optional) — e.g. Arrange the steps in the correct order"></textarea>
 
     <div class="content-label" style="margin-top:0.75rem;">Steps (add them in the correct order)</div>

@@ -19,99 +19,6 @@
     <div class="container-fluid p-0">
 
         <main>
-            <!-- <div class="main-image">
-                <div class="main-parent">
-                    <div class="main-icon">
-                        <a href="/learning_management/public/?url=landingpage">
-                            <img src="../images/logo1.png" alt="">
-                            <h3>SHS Strand</h3>
-                        </a>
-                    </div>
-                    <div class="main-body">
-                        <h2>Ready to Start Your <b>Learning Journey?</b></h2>
-
-                        <p>Track your assignments, access class materials, and stay on top of your Computer System
-                            Servicing
-                            modules — all in one place.</p>
-                    </div>
-                    <div class="main-footer">
-                        <div class="footer-card">
-                            <div class="card-dot"></div>
-                            <span>Hardware Assembly & Troubleshooting</span>
-                        </div>
-
-                        <div class="footer-card">
-                            <div class="card-dot"></div>
-                            <span>PC Repair · Networking · OS Install</span>
-                        </div>
-
-                        <div class="footer-card">
-                            <div class="card-dot"></div>
-                            <span>TESDA NC II Certified in 6 Months</span>
-                        </div>
-
-                        <div class="footer-card">
-                            <div class="card-dot"></div>
-                            <span>TESDA NC II Certified in 6 Months</span>
-                        </div>
-                    </div>
-
-                    <div class="brand-footer">© 2026 iLearn-CSS · CSS Batch 2026</div>
-                </div>
-            </div>
-            <div class="main-form">
-
-                <form action="?url=login" method="post">
-                    <div class="form-parent">
-                        <div class="card-brand">
-
-                            <div class="card-badge">
-                                <span class="dot"></span>
-                                CSS Learning Platform
-                            </div>
-                        </div>
-
-
-                        <div class="form-panel-nav">
-                            <h2>Student Sign In</h2>
-                            <p>Unlock a world of learning with just one click. Log in to get started and access your
-                                account.</p>
-                        </div>
-
-                        <div class="form-panel">
-                            <div class="input-1">
-                                <label>Learner Reference Number (LRN)</label>
-                                <input class="input-form" type="text" name="email"
-                                    value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" id=""
-                                    placeholder="Enter your email" required>
-                            </div>
-
-                            <div class="input-2">
-                                <label>Password</label>
-                                <input class="input-form" type="password" name="password" id=""
-                                    placeholder="Enter password" required>
-                            </div>
-                        </div>
-
-                        <div class="forgot">
-                            <a href="#">Forgot Password</a>
-                        </div>
-
-                        <button class="submit" class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">Sign
-                            In</button>
-
-                        <div class="card-divider"></div>
-
-                        <div class="need-help">
-                            <p>Need help signing in? Contact your school's
-                                <br>
-                                CSS Instructor or <b>visit the Help Center</b>
-
-                            </p>
-                        </div>
-                    </div>
-                </form>
-            </div> -->
 
             <div class="main-sub-form-parent">
                 <div class="main-image-form">
@@ -148,10 +55,13 @@
                 </div>
 
                 <div class="main-parent-form">
-                    <!-- <div class="card-badge">
-                        Students Learning Platform
-                    </div> -->
-                    <form action="?url=login" method="post">
+                    <form action="?url=login" method="post" id="login-form">
+
+                        <!-- Tracks which form is active: "student" or "staff".
+                             The controller reads this to decide loginByLRN() vs loginByIdentifier(). -->
+                        <input type="hidden" name="login_type" id="login_type"
+                            value="<?= (($_POST['login_type'] ?? 'student') === 'staff') ? 'staff' : 'student' ?>">
+
                         <div class="card-logo">
                             <a href="/learning_management/public/?url=landingpage">
                                 <img src="../images/logo1.png" alt="">
@@ -159,28 +69,62 @@
                             </a>
                         </div>
 
-                        <h2>Hi, Welcome Back!</h2>
+                        <h2>
+                            <span id="login-heading-student" style="font-weight: bold;">Hi, Welcome
+                                <a href="#" id="toggle-to-staff" title="Teacher / Admin / Super Admin login"
+                                    style="color: inherit; text-decoration: none; font-weight: bold;">Back!</a>
+                            </span>
+                            <span id="login-heading-staff" style="display: none; font-weight: bold;">Staff Login</span>
+                        </h2>
 
-                        <p>Unlock a world of learning with just one click. Log in to get started and access your
-                            account.
+                        <p id="login-subtext-student">Unlock a world of learning with just one click. Log in to get
+                            started and access your account.
+                        </p>
+                        <p id="login-subtext-staff" style="display: none;">
+                            For Teachers, Admins, and Super Admins.
+                            <a href="#" id="toggle-to-student">Back to student login</a>.
                         </p>
 
-                        <div class="form-input form-input1">
+                        <?php if (!empty($error)): ?>
+                            <div class="alert alert-danger d-flex align-items-center gap-2 mb-3"
+                                style="border-radius: 12px; padding: 10px 15px" role="alert">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                                <span style="font-size: 14px;"><?= htmlspecialchars($error) ?></span>
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- Student field: LRN -->
+                        <div class="form-input form-input1" id="field-lrn">
                             <label>Learner Reference Number (LRN)</label>
-                            <input type="text" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" id=""
-                                placeholder="Enter your email" required>
+                            <input type="text" name="lrn" id="lrn-input"
+                                value="<?= htmlspecialchars($_POST['lrn'] ?? '') ?>" placeholder="Enter your LRN"
+                                inputmode="numeric" pattern="\d{12}" maxlength="12" autocomplete="off"
+                                title="LRN must be 12 digits">
                         </div>
 
-                        <div class="form-input form-input2">
+                        <!-- Staff field: username -->
+                        <div class="form-input form-input1" id="field-identifier" style="display: none;">
+                            <label>Username</label>
+                            <input type="text" name="identifier" id="identifier-input"
+                                value="<?= htmlspecialchars($_POST['identifier'] ?? '') ?>"
+                                placeholder="Enter your username" autocomplete="off">
+                        </div>
+
+                        <div class="form-input form-input2" style="position: relative;">
                             <label>Password</label>
-                            <input type="password" name="password" id="" placeholder="Enter your password" required>
+                            <input type="password" id="login-password" name="password" placeholder="Enter your password"
+                                style="padding-right: 40px;" required>
+                            <span onclick="toggleLoginPassword()"
+                                style="position: absolute; right: 12px; top: 75%; transform: translateY(-50%); cursor: pointer; color: #888;">
+                                <i class="fa fa-eye" id="eye-login"></i>
+                            </span>
                         </div>
 
                         <div class="form-forgot">
                             <a href="#">Forgot Password</a>
                         </div>
 
-                        <button class="submit" class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">Sign
+                        <button class="submit" class="<?= ($current_url ?? '') === 'dashboard' ? 'active' : '' ?>">Sign
                             In</button>
 
                         <div class="need-help">
@@ -194,123 +138,27 @@
             </div>
         </main>
 
-        <!-- <form action="?url=login" method="post">
-            <div class="login-parent">
-                <div class="form-logo">
-                    <div class="parent-logo">
-                        <div class="logo-icon">
-                            <i class="fa-solid fa-lightbulb"></i>
-                        </div>
-                        <div class="logo-text">
-                            <p><b>i</b>Learn</p>
-                        </div>
-                    </div>
-                    <h2>Let's the learning journey begin.</h2>
-                    <p>Unlock a world of learning with just one click. Log in to get started.</p>
-                </div>
-                <div class="image-form">
-                    <div class="image-parent">
-                        <div class="image-container">
-                            <div class="image-nav">
-                                <i class="fa fa-star"></i>
-                                <span>Education Platform</span>
-                            </div>
-
-                            <h3>Start your <b>learning journey</b> today and take the first step toward achieving your
-                                goals.</h3>
-
-                            <p>Join thousands of students unlocking their potential through quality education, gaining
-                                new
-                                skills, building confidence, and achieving their academic goals every day.</p>
-                        </div>
-                        <div class="image-footer">
-                            <div class="footer">
-                                <p>10k+</p>
-                                <span>Students</span>
-                            </div>
-
-                            <div class="footer">
-                                <p>500+</p>
-                                <span>Courses</span>
-                            </div>
-
-                            <div class="footer">
-                                <p>98%</p>
-                                <span>Satisfaction</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="field-form">
-                    <div class="form-extension form">
-
-                        <div class="form-logo">
-                            <div class="parent-logo">
-                                <a href="/learning_management/public/?url=landingpage">
-                                    <div class="logo-icon">
-                                        <i class="fa-solid fa-lightbulb"></i>
-                                    </div>
-                                </a>
-                                <div class="logo-text">
-                                    <p><b>i</b>Learn</p>
-                                </div>
-                            </div>
-                            <h2>Let's the learning journey begin.</h2>
-                            <p>Unlock a world of learning with just one click. Log in to get started.</p>
-                        </div>
-
-
-                        <div class="text-box">
-                            <?php if (!empty($error)): ?>
-                                <div class="alert alert-danger d-flex align-items-center gap-2 mb-3"
-                                    style="border-radius: 28px; padding: 10px 15px" role="alert">
-                                    <i class="fa-solid fa-circle-exclamation"></i>
-                                    <span style="font-size: 15px;"><?= htmlspecialchars($error) ?></span>
-                                </div>
-                            <?php endif; ?>
-
-                            <label>Email</label>
-                            <input type="text" class="form-control mt-2" placeholder="Enter email" name="email"
-                                value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
-                        </div>
-
-                        <div class="text-box" style="position: relative;">
-                            <div class="forgot">
-                                <label>Password</label>
-                                <a href="#">Forgot Password?</a>
-                            </div>
-                            <input type="password" id="login-password" class="form-control mt-2" placeholder="Enter password"
-                                name="password" style="padding-right: 40px;"  id="" required>
-                            <span onclick="toggleLoginPassword()"
-                                style="position: absolute; right: 12px; top: 71%; transform: translateY(-50%); cursor: pointer; color: #888;">
-                                <i class="fa fa-eye" id="eye-login"></i>
-                            </span>
-                        </div>
-
-
-                        <div class="button">
-                            <button class="submit"
-                                class="<?= $current_url === 'dashboard' ? 'active' : '' ?>">Login</button>
-                        </div>
-
-                        <div class="change">
-                            <label>Don't have an account? <a href="/learning_management/public/?url=signup">Sign up</a>
-                            </label>
-                        </div>
-
-                    </div>
-
-                    <div class="change">
-
-                        <label>Need help? Contact us at <a href="#">helloilearn@gmail.com</a></label>
-                    </div>
-                </div>
-
-            </div>
-        </form> -->
     </div>
 
     <script>
+        const lrnInput = document.getElementById('lrn-input');
+        const identifierInput = document.getElementById('identifier-input');
+        const loginTypeField = document.getElementById('login_type');
+
+        const fieldLrn = document.getElementById('field-lrn');
+        const fieldIdentifier = document.getElementById('field-identifier');
+
+        const headingStudent = document.getElementById('login-heading-student');
+        const headingStaff = document.getElementById('login-heading-staff');
+        const subtextStudent = document.getElementById('login-subtext-student');
+        const subtextStaff = document.getElementById('login-subtext-staff');
+
+        // Strip anything that isn't a digit as the user types — pattern="" alone
+        // only validates on submit, it doesn't block keystrokes.
+        lrnInput.addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').slice(0, 12);
+        });
+
         function toggleLoginPassword() {
             const input = document.getElementById('login-password');
             const icon = document.getElementById('eye-login');
@@ -321,6 +169,49 @@
                 input.type = 'password';
                 icon.classList.replace('fa-eye-slash', 'fa-eye');
             }
+        }
+
+        function showStaffLogin() {
+            fieldLrn.style.display = 'none';
+            fieldIdentifier.style.display = '';
+            headingStudent.style.display = 'none';
+            headingStaff.style.display = '';
+            subtextStudent.style.display = 'none';
+            subtextStaff.style.display = '';
+
+            lrnInput.required = false;
+            identifierInput.required = true;
+            loginTypeField.value = 'staff';
+        }
+
+        function showStudentLogin() {
+            fieldIdentifier.style.display = 'none';
+            fieldLrn.style.display = '';
+            headingStaff.style.display = 'none';
+            headingStudent.style.display = '';
+            subtextStaff.style.display = 'none';
+            subtextStudent.style.display = '';
+
+            identifierInput.required = false;
+            lrnInput.required = true;
+            loginTypeField.value = 'student';
+        }
+
+        document.getElementById('toggle-to-staff').addEventListener('click', function (e) {
+            e.preventDefault();
+            showStaffLogin();
+        });
+
+        document.getElementById('toggle-to-student').addEventListener('click', function (e) {
+            e.preventDefault();
+            showStudentLogin();
+        });
+
+        // If the page reloaded after a failed staff-login POST, stay on the staff form.
+        if (loginTypeField.value === 'staff') {
+            showStaffLogin();
+        } else {
+            showStudentLogin();
         }
     </script>
 

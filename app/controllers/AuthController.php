@@ -43,6 +43,13 @@ class AuthController
         exit;
     }
 
+    // ============================================================
+    // LOGIN — single form, single route. A hidden "login_type" field
+    // ("student" or "staff") tells us which credential path to use:
+    //   - student -> LRN + password, must resolve to role = student
+    //   - staff   -> username/email + password, must resolve to
+    //                role = teacher/admin/superadmin
+    // ============================================================
     public function login()
     {
         // If already logged in, redirect to their dashboard
@@ -51,33 +58,65 @@ class AuthController
         }
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $email = $_POST["email"] ?? null;
+            $login_type = ($_POST['login_type'] ?? 'student') === 'staff' ? 'staff' : 'student';
             $password = $_POST["password"] ?? null;
 
             $userModel = new User();
-            $user = $userModel->login($email);
+            $user = null;
 
-            if (!$user) {
-                $error = "No account found with that email address.";
-            } elseif ($user['status'] === 'Pending') {
-                $error = "Your account is pending approval.";
-            } elseif ($user['status'] === 'Declined') {
-                $error = "Your account has been declined.";
-            } elseif (!password_verify($password, $user['password'])) {
-                $error = "Incorrect password. Please try again.";
-            } else {
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['role'] = $user['role'];
-                $_SESSION['email'] = $user['email'];
-                $_SESSION['name'] = $userModel->getName($user['id']);
+            if ($login_type === 'staff') {
+                $identifier = trim($_POST["identifier"] ?? '');
 
-                if ($user['role'] === 'student') {
-                    $studentInfo = $userModel->getStudentInfo($user['id']);
-                    $_SESSION['grade_level'] = $studentInfo['grade_level'] ?? null;
-                    $_SESSION['section'] = $studentInfo['section_name'] ?? null;
+                if ($identifier === '' || !$password) {
+                    $error = "Please enter your username/email and password.";
+                } else {
+                    // loginByIdentifier() should look up tbl_users by username OR email
+                    // and return id, email, password, role, status (same shape as loginByLRN()).
+                    $user = $userModel->loginByIdentifier($identifier);
+
+                    if (!$user) {
+                        $error = "No account found with that username.";
+                    } elseif ($user['role'] === 'student') {
+                        // Students must use the LRN-based form instead.
+                        $error = "Students should sign in from the student login form.";
+                        $user = null;
+                    }
                 }
+            } else {
+                $lrn = trim($_POST["lrn"] ?? '');
 
-                $this->redirectToDashboard($user['role']);
+                if ($lrn === '' || !$password) {
+                    $error = "Please enter your LRN and password.";
+                } else {
+                    // loginByLRN() should join tbl_students -> tbl_users on user_id
+                    // and return the user's id, email, password, role, status.
+                    $user = $userModel->loginByLRN($lrn);
+
+                    if (!$user) {
+                        $error = "No account found with that LRN.";
+                    }
+                }
+            }
+
+            // Shared checks once we have a candidate $user, regardless of login_type.
+            if ($user) {
+                if (!password_verify($password, $user['password'])) {
+                    $error = "Incorrect password. Please try again.";
+                } else {
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['role'] = $user['role'];
+                    $_SESSION['email'] = $user['email'];
+                    $_SESSION['name'] = $userModel->getName($user['id']);
+
+                    if ($user['role'] === 'student') {
+                        $studentInfo = $userModel->getStudentInfo($user['id']);
+                        $_SESSION['grade_level'] = $studentInfo['grade_level'] ?? null;
+                        $_SESSION['section'] = $studentInfo['section_name'] ?? null;
+                        $_SESSION['student_lrn'] = $lrn ?? null;
+                    }
+
+                    $this->redirectToDashboard($user['role']);
+                }
             }
         }
 
@@ -87,9 +126,9 @@ class AuthController
     public function dashboard()
     {
         $this->checkAuth(['student']);
-        require "../app/view/dashboard.php";
+        $studentsController = new StudentsController();
+        $studentsController->dashboardView();
     }
-
     public function admin()
     {
         $this->checkAuth(['admin']);
@@ -108,6 +147,10 @@ class AuthController
         require "../app/view/teacher.php";
     }
 
+    // ============================================================
+    // SIGNUP — LRN must exist in tbl_master_lrn before an account
+    // can be created. Auto-approves on match; otherwise blocks signup.
+    // ============================================================
     public function signup()
     {
         // Prevent logged-in users from accessing signup
@@ -117,7 +160,7 @@ class AuthController
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-            $student_id = $_POST["student_id"] ?? null;
+            $student_id = trim($_POST["student_id"] ?? '');
             $firstname = $_POST["firstname"] ?? null;
             $middle = $_POST["middle"] ?? null;
             $lastname = $_POST["lastname"] ?? null;
@@ -133,6 +176,13 @@ class AuthController
 
             if (!$student_id || !$firstname || !$lastname || !$email || !$username || !$password || !$grade_level_id || !$section_id) {
                 die("Please fill in all required fields.");
+            }
+
+            // ── Verify LRN against the admin-imported masterlist FIRST ──
+            // matchAgainstMasterlist() should query tbl_master_lrn by student_LRN.
+            $masterRecord = $userModel->matchAgainstMasterlist($student_id);
+            if (!$masterRecord) {
+                $errors['student_id'] = "This LRN was not found in our official student list. Please contact your school registrar.";
             }
 
             if ($userModel->isLRNTaken($student_id)) {
@@ -170,7 +220,24 @@ class AuthController
             $name = trim($firstname . ' ' . ($middle ? $middle . '. ' : '') . $lastname);
             $password_HASH = password_hash($password, PASSWORD_DEFAULT);
 
-            $userModel->signup($student_id, $name, $email, $username, $password_HASH, $grade_level_id, $section_id);
+            // signup() should return the new tbl_students.id (insert_id) so we
+            // can link any enrollments the teacher already bulk-enrolled by LRN.
+            $newStudentId = $userModel->signup(
+                $student_id,
+                $name,
+                $email,
+                $username,
+                $password_HASH,
+                $grade_level_id,
+                $section_id
+            );
+
+            // Attach this brand-new account to any tbl_student_enrollments rows
+            // that were created earlier (teacher bulk enrollment) with this LRN
+            // but no student_id yet, since the account didn't exist at the time.
+            if ($newStudentId) {
+                $userModel->linkPendingEnrollments($student_id, $newStudentId);
+            }
 
             $_SESSION['signup_success'] = true;
             header("Location: /learning_management/public/?url=signup");

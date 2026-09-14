@@ -33,12 +33,12 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'teacher';
                     <span>Modules</span>
                 </a>
             </li>
-            <li class="<?= $current_url === 'assignments' ? 'active' : '' ?>">
+            <!-- <li class="<?= $current_url === 'assignments' ? 'active' : '' ?>">
                 <a href="#" class="text-decoration-none">
                     <i class="fa fa-pen"></i>
                     <span>Assignments</span>
                 </a>
-            </li>
+            </li> -->
 
             <div class="sidebar-category">
                 <h5>Evaluation</h5>
@@ -49,10 +49,10 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'teacher';
                     <span>Reports</span>
                 </a>
             </li>
-            <li class="<?= $current_url === 'settings' ? 'active' : '' ?>">
+            <li class="<?= $current_url === 'profile' ? 'active' : '' ?>">
                 <a href="#" class="text-decoration-none">
-                    <i class="fa fa-gear"></i>
-                    <span>Settings</span>
+                    <i class="fa fa-user"></i>
+                    <span>Profile</span>
                 </a>
             </li>
 

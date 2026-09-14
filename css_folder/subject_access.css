@@ -1,0 +1,570 @@
+.container-fluid .rightbar {
+    width: calc(100% - 248px);
+    /* height: 100vh; */
+    /* margin-top: 68px; */
+    /* overflow-y: auto; */
+    margin-left: 248px;
+    height: 100vh;
+    overflow-y: auto;
+    /* border-left: 1px solid rgba(0, 0, 0, 0.1); */
+    background-image:
+        radial-gradient(circle at 15% 0%, rgba(0, 119, 204, 0.06), transparent 45%),
+        radial-gradient(circle at 100% 30%, rgba(85, 51, 204, 0.06), transparent 40%),
+        repeating-linear-gradient(0deg, rgba(0, 100, 200, 0.035) 0px, rgba(0, 100, 200, 0.035) 1px, transparent 1px, transparent 42px),
+        repeating-linear-gradient(90deg, rgba(0, 100, 200, 0.035) 0px, rgba(0, 100, 200, 0.035) 1px, transparent 1px, transparent 42px);
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: visible;
+    /* background-color: #F7F9F8; */
+    padding: 1.8rem;
+}
+
+.sac-header h2 {
+    font-size: 24px;
+    margin: 0 0 5px;
+    font-weight: 600;
+}
+
+.sac-header p {
+    font-size: 14.5px;
+    margin: 0;
+    /* color: #808080; */
+    color: var(--text-dim);
+    font-weight: 500;
+    width: 500px;
+}
+
+/* ── Toolbar (search + grade filter, now a real <form> so both submit together) ── */
+
+/* ── Toolbar: search + grade + section, all in one row ── */
+
+.sac-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* background: #fff; */
+    border-radius: 20px;
+    padding: 0.85rem 1rem;
+    /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06); */
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    background-color: #ffffff;
+    /* margin-bottom: 1.25rem; */
+    margin: 1.5rem 0 1rem;
+    /* flex-wrap: wrap; */
+}
+
+/* .sac-search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 180px;
+} */
+
+.sac-search-wrap i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+    color: #9ca3af;
+    pointer-events: none;
+}
+
+.sac-search-wrap input {
+    padding-left: 28px;
+}
+
+/* .sac-grade-select {
+    width: auto;
+    min-width: 120px;
+    flex-shrink: 0;
+} */
+
+.sac-toolbar input {
+    font-size: 14px;
+}
+
+.sac-toolbar select {
+    width: 40%;
+    font-size: 14px;
+}
+
+/* .sac-section-select {
+    width: auto;
+    min-width: 240px;
+    flex: 1.2;
+    flex-shrink: 0;
+} */
+
+.sac-result-count {
+    font-size: 0.78rem;
+    color: #9ca3af;
+    white-space: nowrap;
+    flex-shrink: 0;
+    display: none;
+}
+
+option {
+    height: 250px;
+    overflow-y: auto;
+}
+
+/* ── Panel ── */
+
+.sac-panel {
+    width: 100%;
+}
+
+.sac-panel-placeholder {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #9ca3af;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.sac-panel-placeholder i {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.sac-panel-placeholder p {
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+@media (max-width: 900px) {
+    .sac-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    /* .sac-search-wrap,
+    .sac-grade-select,
+    .sac-section-select {
+        min-width: 0;
+        width: 100%;
+    } */
+}
+
+.sac-sidebar {
+    width: 300px;
+    flex-shrink: 0;
+    background: #fff;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.sac-panel {
+    flex: 1;
+    /* background: #fff; */
+    border-radius: 20px;
+    padding: 1.5rem;
+    /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06); */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    background-color: #ffffff;
+    border: 1px solid var(--border);
+}
+
+.sac-grade-group {
+    margin-bottom: 12px;
+}
+
+.sac-grade-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #9ca3af;
+    margin: 8px 4px;
+}
+
+.sac-section-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: 4px;
+}
+
+.sac-section-item:hover {
+    background: #f3f4f6;
+}
+
+.sac-section-item.active {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+}
+
+.sac-section-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #dbeafe;
+    color: #1d4ed8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.7rem;
+}
+
+.sac-section-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.sac-section-meta {
+    font-size: 0.75rem;
+    color: #9ca3af;
+}
+
+.sac-section-badge {
+    margin-left: auto;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #b45309;
+    background: #fef3c7;
+    padding: 2px 8px;
+    border-radius: 999px;
+}
+
+.sac-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    padding: 0 0 18px;
+    border-bottom: 1px solid var(--border);
+}
+
+.sac-panel-header h4 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 4px;
+}
+
+.sac-panel-header p {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-dim);
+}
+
+.sac-panel-stats {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.sac-panel-stats div {
+    text-align: center;
+}
+
+.sac-panel-stats strong {
+    display: block;
+    /* font-size: 1.2rem; */
+    font-size: 19px;
+    color: #1d4ed8;
+    font-weight: 600;
+}
+
+.sac-panel-stats span {
+    /* font-size: 0.75rem; */
+    /* color: #9ca3af; */
+    font-size: 13.5px;
+    color: var(--text-dim);
+}
+
+.sac-section-block {
+    /* margin-bottom: 1.75rem; */
+    margin: 1.75rem 0 0;
+}
+
+.sac-block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* margin-bottom: 0.75rem; */
+    margin-bottom: 10px;
+}
+
+.sac-bulk-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.sac-bulk-actions .sac-bulk-btn{
+    background: #fff;
+    /* border: 1px solid var(--line); */
+    /* border-color: #bfe8cf; */
+    color: var(--ink);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.sac-bulk-actions .sac-bulk-btn.enabled {
+    /* color: var(--green); */
+    color: #22A35A;
+    border: 1px solid #bfe8cf;
+}
+
+.sac-bulk-actions .sac-bulk-btn.disabled {
+    /* color: var(--green); */
+    color: #C94A4A;
+    border: 1px solid #f2c9c9;
+}
+
+.sac-block-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin: 0 0 10px;
+}
+
+.sac-subject-grid {
+    display: grid;
+    /* grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); */
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.sac-subject-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    /* border: 1px solid #e5e7eb; */
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+}
+
+/* Multiple .sac-panel blocks now stack on the page (one per section),
+   so give them breathing room between each other. */
+.sac-panel + .sac-panel {
+    margin-top: 1.25rem;
+}
+
+.sac-panel-placeholder {
+    background: #fff;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #9ca3af;
+}
+
+.sac-panel-placeholder i {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.sac-panel-placeholder p {
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.parent-subject {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sac-subject-toggle {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 44px !important;
+    height: 24px !important;
+    background-color: #e2e5ea !important;
+    background-image: none !important;
+    border: none !important;
+    border-radius: 999px !important;
+    position: relative;
+    cursor: pointer;
+    margin: 0;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease;
+}
+
+.sac-subject-toggle::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease;
+}
+
+.sac-subject-toggle:checked {
+    background-color: #2563eb !important;
+}
+
+.sac-subject-toggle:checked::before {
+    transform: translateX(20px);
+}
+
+.sac-subject-toggle:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
+}
+
+.sac-subject-toggle:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* The wrapping Bootstrap .form-check / .form-switch divs add their own
+   margin/padding assumptions — neutralize those so our switch sits cleanly
+   inside the subject card without extra offset. */
+/* .sac-subject-card .form-check.form-switch {
+    padding-left: 0;
+    margin: 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+} */
+
+.sac-subject-card.sac-subject-on {
+    border-color: #93c5fd;
+    background: #eff6ff;
+}
+
+.sac-subject-card.sac-subject-fixed {
+    background: #fff7ed;
+    border-color: #fde68a;
+}
+
+.sac-subject-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sac-subject-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.sac-subject-status {
+    font-size: 0.75rem;
+    /* color: #9ca3af; */
+    color: var(--text-dim);
+}
+
+.sac-sidebar {
+    display: flex;
+    flex-direction: column;
+    /* Cap the whole left column so it never grows taller than the viewport
+       and pushes the header/page around. */
+    max-height: calc(100vh - 160px);
+}
+
+.sac-sidebar-fixed {
+    flex-shrink: 0;
+}
+
+.sac-filter-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.sac-search-wrap input {
+    width: 100%;
+}
+
+/* .sac-search-wrap {
+    position: relative;
+    flex: 1;
+}
+ 
+.sac-search-wrap i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+    color: #9ca3af;
+    pointer-events: none;
+} */
+
+.sac-search-wrap input {
+    padding-left: 28px;
+}
+
+/*  
+.sac-grade-select {
+    width: auto;
+    min-width: 110px;
+    flex-shrink: 0;
+} */
+
+.sac-result-count {
+    font-size: 0.72rem;
+    color: #9ca3af;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f1f3;
+}
+
+/* The scrollable region — this is what stops the sidebar from growing
+   endlessly and looking "compressed" when there are many sections. */
+.sac-section-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+    min-height: 0;
+    /* required in flex containers for overflow to work */
+}
+
+.sac-section-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sac-section-list::-webkit-scrollbar-thumb {
+    background: #e5e7eb;
+    border-radius: 999px;
+}
+
+.sac-section-list::-webkit-scrollbar-thumb:hover {
+    background: #d1d5db;
+}
+
+.sac-grade-count {
+    font-weight: 600;
+    color: #cbd5e1;
+    margin-left: 4px;
+}
+
+.sac-empty-state {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: #9ca3af;
+}
+
+.sac-empty-state i {
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.sac-empty-state p {
+    font-size: 0.85rem;
+    margin: 0;
+}

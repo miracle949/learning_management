@@ -15,6 +15,10 @@ var UNIFIED_QZ = {
     ans: {}
 };
 
+var QZ_LOCKED = false;
+
+var QUIZ_JUST_COMPLETED = false;
+
 /* ==========================
    ACTIVITY STAGE STATE
    (mirrors UNIFIED_QZ, but for the one-question-at-a-time
@@ -66,22 +70,27 @@ function ddInitState(gameTitle, itemsFromDom, categoryHints) {
             categoryHints: categoryHints || {},   // NEW — admin-authored per-category hint text
             solvedCounts: {},
             answers: {},
-            currentCategory: null
+            currentCategory: null,
+            selectedItemEl: null
         };
     }
     return DD_STAGE[gameTitle];
 }
 
+// function ddSetBubble(gameTitle, text) {
+//     var section = ddFindSection(gameTitle);
+//     var qEl = section && section.querySelector('.dd-question-text');
+//     if (qEl) qEl.textContent = text;
+//     var overlayMsg = document.getElementById('ddOverlayMessage');
+//     if (overlayMsg) overlayMsg.textContent = text;
+
+//     adjustBonBonPosition('#ddOverlay');
+// }
+
 function ddSetBubble(gameTitle, text) {
-    var section = ddFindSection(gameTitle);
-    var qEl = section && section.querySelector('.dd-question-text');
-    if (qEl) qEl.textContent = text;
     var overlayMsg = document.getElementById('ddOverlayMessage');
     if (overlayMsg) overlayMsg.textContent = text;
 
-    // Re-measure after the new (possibly longer/shorter) text has been
-    // painted. rAF x2 + a short trailing timeout covers both same-frame
-    // reflow and any late image/font layout shifts.
     adjustBonBonPosition('#ddOverlay');
 }
 
@@ -97,7 +106,15 @@ function ddPickNextCategoryHint(gameTitle) {
     }
 
     var categories = Object.keys(state.categoryCounts);
-    var next = categories[Math.floor(Math.random() * categories.length)];
+
+    // Exclude whichever category is currently shown so the bubble always
+    // shuffles to something new — otherwise Math.random() can (and often
+    // does) land back on the same category, making it look like nothing
+    // changed when a card is dropped in or dragged back out to the bank.
+    var candidates = categories.filter(function (c) { return c !== state.currentCategory; });
+    if (!candidates.length) candidates = categories; // only one category total — nothing else to pick
+
+    var next = candidates[Math.floor(Math.random() * candidates.length)];
     state.currentCategory = next;
     ddSetBubble(gameTitle, ddCategoryDescriptions(next, state.categoryHints[next]));
 }
@@ -126,26 +143,38 @@ function ddWireBoard(section) {
         item.classList.remove('dragging');
         _ddDraggedEl = null;
 
-        // NEW — safety net: dragleave doesn't always fire reliably when a
-        // placed item is dragged back out of the card it started in, which
-        // left the cyan "drag-over" highlight stuck. Clear it from every
-        // target card whenever any drag ends, no matter how it ended.
         section.querySelectorAll('.dd-target-card.drag-over').forEach(function (c) {
             c.classList.remove('drag-over');
         });
+
+        // NEW — clear any leftover ghost placeholder
+        section.querySelectorAll('.dd-ghost').forEach(function (g) { g.remove(); });
     });
 
     board.querySelectorAll('.dd-target-card').forEach(function (card) {
         card.addEventListener('dragover', function (e) {
             e.preventDefault();
             card.classList.add('drag-over');
+
+            var slot = card.querySelector('.dd-socket-slot');
+            if (slot && !slot.querySelector('.dd-ghost')) {
+                var ghost = document.createElement('div');
+                ghost.className = 'dd-ghost';
+                slot.appendChild(ghost);
+            }
         });
+
         card.addEventListener('dragleave', function () {
             card.classList.remove('drag-over');
+            var ghost = card.querySelector('.dd-ghost');
+            if (ghost) ghost.remove();
         });
+
         card.addEventListener('drop', function (e) {
             e.preventDefault();
             card.classList.remove('drag-over');
+            var ghost = card.querySelector('.dd-ghost');
+            if (ghost) ghost.remove();
             ddDropInto(gameTitle, card.querySelector('.dd-socket'));
         });
     });
@@ -162,7 +191,34 @@ function ddWireBoard(section) {
             }
         });
     }
+
+    board.addEventListener('click', function (e) {
+        if (e.target.closest('.dd-card-remove')) return; // let the × button handle itself
+
+        var clickedItem = e.target.closest('.dd-card');
+        var clickedTarget = e.target.closest('.dd-target-card');
+        var clickedBank = e.target.closest('.dd-item-row[data-role="bank"]');
+
+        // Tapping ANY card — placed or unplaced — selects/deselects it.
+        if (clickedItem) {
+            ddSelectItem(gameTitle, clickedItem);
+            return;
+        }
+
+        // Tapping a category places (or MOVES) the currently selected item there.
+        if (clickedTarget) {
+            var socket = clickedTarget.querySelector('.dd-socket');
+            ddPlaceSelected(gameTitle, socket);
+            return;
+        }
+
+        // Tapping empty space in the bank row removes a selected PLACED item.
+        if (clickedBank) {
+            ddReturnSelectedToBank(gameTitle);
+        }
+    });
 }
+
 
 function ddDropInto(gameTitle, socket) {
     if (!_ddDraggedEl) return;
@@ -175,23 +231,98 @@ function ddDropInto(gameTitle, socket) {
     var item = _ddDraggedEl;
     var chosenCategory = socket.dataset.category;
 
-    // Always accept the drop, right or wrong — correctness is only
-    // revealed later, on the Finish/results screen.
+    // NEW — remember the item's PREVIOUS zone before we move it, so we
+    // can clear its "has-items" highlight if it's left empty behind.
+    var prevTargetCard = item.closest('.dd-target-card');
+
+    // If this card came from the bank, leave a placeholder behind
+    // in its exact spot so the bank layout doesn't reflow.
+    var bank = section.querySelector('.dd-item-row[data-role="bank"]');
+    if (bank && bank.contains(item)) {
+        var placeholder = document.createElement('div');
+        placeholder.className = 'dd-card-placeholder';
+        placeholder.dataset.forItem = item.dataset.item;
+        bank.insertBefore(placeholder, item);
+    }
+
     slot.appendChild(item);
     item.classList.remove('dragging');
     item.classList.add('placed');
-    // Stays draggable so the student can re-drag it to another
-    // category, or back into the item bank to remove it.
     item.setAttribute('draggable', 'true');
 
     ddAddRemoveBtn(item, gameTitle);
 
-    state.answers[item.dataset.item] = chosenCategory; // plain word, no JSON
-    targetCard.classList.add('has-items');
+    state.answers[item.dataset.item] = chosenCategory;
+    targetCard.classList.add('has-items', 'dd-just-filled');
+    setTimeout(function () { targetCard.classList.remove('dd-just-filled'); }, 500);
+
+    // NEW — if the card moved from a different category zone (not the
+    // bank, and not the same zone it's now in), clear that old zone's
+    // highlight if it's now empty of cards.
+    if (prevTargetCard && prevTargetCard !== targetCard) {
+        var prevSlot = prevTargetCard.querySelector('.dd-socket-slot');
+        if (prevSlot && !prevSlot.children.length) {
+            prevTargetCard.classList.remove('has-items');
+        }
+    }
 
     ddSetFeedback(section, '"' + item.dataset.item + '" placed in "' + chosenCategory + '".');
     ddUpdateBoardNav(gameTitle);
     ddPickNextCategoryHint(gameTitle);
+}
+
+function ddSelectItem(gameTitle, itemEl) {
+    var section = ddFindSection(gameTitle);
+    var state = DD_STAGE[gameTitle];
+    if (!section || !state) return;
+
+    // Clicking the already-selected item again deselects it
+    if (state.selectedItemEl === itemEl) {
+        itemEl.classList.remove('selected');
+        state.selectedItemEl = null;
+        ddPickNextCategoryHint(gameTitle);
+        return;
+    }
+
+    section.querySelectorAll('.dd-card.selected').forEach(function (c) {
+        c.classList.remove('selected');
+    });
+
+    itemEl.classList.add('selected');
+    state.selectedItemEl = itemEl;
+
+    if (itemEl.classList.contains('placed')) {
+        ddSetBubble(gameTitle, 'Tap a different category to move "' + itemEl.dataset.item + '", or tap the items area above to remove it.');
+    } else {
+        ddSetBubble(gameTitle, 'Now tap the category "' + itemEl.dataset.item + '" belongs to.');
+    }
+}
+
+function ddPlaceSelected(gameTitle, socket) {
+    var state = DD_STAGE[gameTitle];
+    if (!state || !state.selectedItemEl || !socket) return;
+
+    var item = state.selectedItemEl;
+    item.classList.remove('selected');
+    state.selectedItemEl = null;
+
+    // Reuse the existing drop logic by pretending this was a drag
+    _ddDraggedEl = item;
+    ddDropInto(gameTitle, socket);
+    _ddDraggedEl = null;
+}
+
+function ddReturnSelectedToBank(gameTitle) {
+    var state = DD_STAGE[gameTitle];
+    if (!state || !state.selectedItemEl) return;
+
+    var item = state.selectedItemEl;
+    item.classList.remove('selected');
+    state.selectedItemEl = null;
+
+    if (item.classList.contains('placed')) {
+        ddReturnToBank(gameTitle, item);
+    }
 }
 
 // Adds a small × button to a placed card so it can be removed
@@ -226,11 +357,16 @@ function ddReturnToBank(gameTitle, item) {
     var removeBtn = item.querySelector('.dd-card-remove');
     if (removeBtn) removeBtn.remove();
 
-    // Move the card back into the bank FIRST — only after it's actually
-    // out of the socket will slot.children.length correctly read 0.
-    bank.appendChild(item);
+    // NEW — find this item's placeholder and swap the card back into
+    // that exact spot, instead of just appending to the end of the bank.
+    var placeholder = bank.querySelector('.dd-card-placeholder[data-for-item="' + CSS.escape(item.dataset.item) + '"]');
+    if (placeholder) {
+        bank.insertBefore(item, placeholder);
+        placeholder.remove();
+    } else {
+        bank.appendChild(item);
+    }
 
-    // NOW clear the "has-items" highlight on any target zone that's empty
     section.querySelectorAll('.dd-target-card').forEach(function (card) {
         var slot = card.querySelector('.dd-socket-slot');
         if (slot && !slot.children.length) card.classList.remove('has-items');
@@ -483,6 +619,637 @@ function ddSubmit(gameTitle) {
 }
 
 /* =========================================================
+   ARRANGE THE STEPS — drag to reorder, or use up/down arrows
+========================================================= */
+var ARR_STAGE = {}; // gameTitle => { order: [texts...] }
+var _arrDraggedEl = null;
+
+function arrFindSection(gameTitle) {
+    return document.querySelector('.arr-stage-section[data-game-title="' + CSS.escape(gameTitle) + '"]');
+}
+
+function arrInitState(gameTitle, stepsFromDom) {
+    if (!ARR_STAGE[gameTitle]) {
+        ARR_STAGE[gameTitle] = {
+            order: (stepsFromDom || []).map(function (s) { return s.text; }),
+            locked: false
+        };
+    }
+    return ARR_STAGE[gameTitle];
+}
+
+function arrRenderList(gameTitle) {
+    var state = ARR_STAGE[gameTitle];
+    var section = arrFindSection(gameTitle);
+    if (!state || !section) return;
+
+    var list = section.querySelector('.arr-list');
+    if (!list) return;
+    list.innerHTML = '';
+
+    state.order.forEach(function (text, idx) {
+        var isLast = (idx === state.order.length - 1);
+
+        var row = document.createElement('div');
+        row.className = 'arr-row';
+        row.dataset.text = text;
+
+        row.innerHTML =
+            '<div class="arr-timeline-col">' +
+            '<div class="arr-circle-num">' + (idx + 1) + '</div>' +
+            (isLast ? '' : '<div class="arr-connector-line"></div>') +
+            '</div>' +
+            '<div class="arr-item" draggable="true">' +
+            '<span class="arr-item-grip"><i class="fa fa-grip-vertical"></i></span>' +
+            '<span class="arr-item-text"></span>' +
+            '<span class="arr-item-controls">' +
+            '<button type="button" class="arr-item-btn arr-up" aria-label="Move up"><i class="fa fa-chevron-up"></i></button>' +
+            '<button type="button" class="arr-item-btn arr-down" aria-label="Move down"><i class="fa fa-chevron-down"></i></button>' +
+            '</span>' +
+            '</div>';
+        row.querySelector('.arr-item-text').textContent = text;
+
+        // Compute the button's row index dynamically at click-time instead
+        // of closuring over idx — this way the buttons never go stale after
+        // a reorder, since we never rebuild the list anymore.
+        row.querySelector('.arr-up').addEventListener('click', function () {
+            var rows = Array.prototype.slice.call(list.querySelectorAll('.arr-row'));
+            var curIdx = rows.indexOf(row);
+            arrMove(gameTitle, curIdx, -1);
+        });
+        row.querySelector('.arr-down').addEventListener('click', function () {
+            var rows = Array.prototype.slice.call(list.querySelectorAll('.arr-row'));
+            var curIdx = rows.indexOf(row);
+            arrMove(gameTitle, curIdx, 1);
+        });
+
+        if (idx === 0) row.querySelector('.arr-up').disabled = true;
+        if (isLast) row.querySelector('.arr-down').disabled = true;
+
+        list.appendChild(row);
+    });
+
+    arrWireDrag(gameTitle, list);
+}
+
+// Relabels number circles, connector lines, and up/down disabled state
+// to match the CURRENT DOM order — never destroys or recreates rows.
+function arrUpdateRowLabels(gameTitle) {
+    var section = arrFindSection(gameTitle);
+    if (!section) return;
+    var list = section.querySelector('.arr-list');
+    if (!list) return;
+
+    var rows = Array.prototype.slice.call(list.querySelectorAll('.arr-row'));
+    var total = rows.length;
+
+    rows.forEach(function (row, idx) {
+        var numEl = row.querySelector('.arr-circle-num');
+        if (numEl) numEl.textContent = (idx + 1);
+
+        var isLast = (idx === total - 1);
+        var timelineCol = row.querySelector('.arr-timeline-col');
+        var connector = row.querySelector('.arr-connector-line');
+        if (isLast && connector) connector.remove();
+        if (!isLast && !connector && timelineCol) {
+            var line = document.createElement('div');
+            line.className = 'arr-connector-line';
+            timelineCol.appendChild(line);
+        }
+
+        var upBtn = row.querySelector('.arr-up');
+        var downBtn = row.querySelector('.arr-down');
+        if (upBtn) upBtn.disabled = (idx === 0);
+        if (downBtn) downBtn.disabled = isLast;
+    });
+}
+
+// FLIP animation: measure current positions, reorder the DOM to match
+// state.order, then animate each row from its old position to its new
+// one — used by the up/down arrows so the swap slides instead of jumping.
+function arrReorderWithFlip(gameTitle) {
+    var section = arrFindSection(gameTitle);
+    var state = ARR_STAGE[gameTitle];
+    if (!section || !state) return;
+    var list = section.querySelector('.arr-list');
+    if (!list) return;
+
+    var rows = Array.prototype.slice.call(list.querySelectorAll('.arr-row'));
+
+    // FIRST — record starting positions keyed by text
+    var firstRects = {};
+    rows.forEach(function (row) {
+        firstRects[row.dataset.text] = row.getBoundingClientRect();
+    });
+
+    // LAST — physically reorder the existing row elements (no recreation)
+    state.order.forEach(function (text) {
+        var row = rows.filter(function (r) { return r.dataset.text === text; })[0];
+        if (row) list.appendChild(row);
+    });
+
+    arrUpdateRowLabels(gameTitle);
+
+    // INVERT + PLAY
+    var newRows = Array.prototype.slice.call(list.querySelectorAll('.arr-row'));
+    newRows.forEach(function (row) {
+        var first = firstRects[row.dataset.text];
+        if (!first) return;
+        var last = row.getBoundingClientRect();
+        var deltaY = first.top - last.top;
+        if (deltaY) {
+            row.style.transition = 'none';
+            row.style.transform = 'translateY(' + deltaY + 'px)';
+            row.getBoundingClientRect(); // force reflow
+            requestAnimationFrame(function () {
+                row.style.transition = 'transform .32s cubic-bezier(.2,.8,.2,1)';
+                row.style.transform = '';
+            });
+        }
+    });
+}
+
+function arrMove(gameTitle, idx, dir) {
+    var state = ARR_STAGE[gameTitle];
+    if (!state || state.locked) return;
+    var newIdx = idx + dir;
+    if (newIdx < 0 || newIdx >= state.order.length) return;
+
+    var movedText = state.order[idx];
+    var tmp = state.order[idx];
+    state.order[idx] = state.order[newIdx];
+    state.order[newIdx] = tmp;
+
+    arrReorderWithItemFlip(gameTitle, null);
+    arrSetBubble(gameTitle, '"' + movedText + '" moved to position ' + (newIdx + 1) + '.');
+}
+
+function arrApplyLockState(gameTitle) {
+    var section = arrFindSection(gameTitle);
+    var state = ARR_STAGE[gameTitle];
+    if (!section || !state) return;
+
+    var list = section.querySelector('.arr-list');
+    var locked = !!state.locked;
+
+    if (list) {
+        list.classList.toggle('arr-locked', locked);
+        list.querySelectorAll('.arr-item').forEach(function (item) {
+            item.setAttribute('draggable', locked ? 'false' : 'true');
+        });
+        if (locked) {
+            list.querySelectorAll('.arr-item-btn').forEach(function (btn) { btn.disabled = true; });
+        } else {
+            arrUpdateRowLabels(gameTitle); // restores correct up/down disabled states at boundaries
+        }
+    }
+
+    var editBtn = section.querySelector('.arr-edit-btn');
+    var readyBtn = section.querySelector('.arr-ready-btn');
+    var finishBtn = section.querySelector('.arr-finish-btn');
+
+    if (editBtn) editBtn.style.visibility = locked ? 'visible' : 'hidden';
+    if (readyBtn) readyBtn.style.display = locked ? 'none' : 'flex';
+    if (finishBtn) { finishBtn.style.display = locked ? 'flex' : 'none'; finishBtn.disabled = false; }
+}
+
+function arrReady(gameTitle) {
+    var state = ARR_STAGE[gameTitle];
+    if (!state) return;
+    state.locked = true;
+    arrApplyLockState(gameTitle);
+    arrSetBubble(gameTitle, 'Are you sure at your answer? Take a look at your arrangements? Tap "Finish" to submit it, or "Edit" if you\'d like to change something.');
+
+    var botImg = document.getElementById('arrOverlayBot');
+    var BonImgparent = document.getElementById('BonBonOverlay');
+    if (botImg) botImg.src = '../images/drop-drag-left.png';
+    BonImgparent.style.marginTop = '-100px';
+}
+
+function arrEdit(gameTitle) {
+    var state = ARR_STAGE[gameTitle];
+    if (!state) return;
+    state.locked = false;
+    arrApplyLockState(gameTitle);
+    arrSetBubble(gameTitle, 'Drag the cards or use the arrows to rearrange the steps.');
+
+    var botImg = document.getElementById('arrOverlayBot');
+    if (botImg) botImg.src = '../images/robot-ai10.png';
+}
+
+// Reorders rows instantly (numbers relabel with zero animation, since the
+// row itself never moves/animates) then FLIP-animates ONLY the .arr-item
+// card inside each row, sliding it into its new slot.
+function arrReorderWithItemFlip(gameTitle, pulseText) {
+    var section = arrFindSection(gameTitle);
+    var state = ARR_STAGE[gameTitle];
+    if (!section || !state) return;
+    var list = section.querySelector('.arr-list');
+    if (!list) return;
+
+    var rows = Array.prototype.slice.call(list.querySelectorAll('.arr-row'));
+
+    // FIRST — record each ITEM's starting position (not the row's)
+    var firstRects = {};
+    rows.forEach(function (row) {
+        var itemEl = row.querySelector('.arr-item');
+        if (itemEl) firstRects[row.dataset.text] = itemEl.getBoundingClientRect();
+    });
+
+    // Reorder the rows instantly — numbers relabel with no animation since
+    // the row itself is never transformed, only the item inside it.
+    state.order.forEach(function (text) {
+        var row = rows.filter(function (r) { return r.dataset.text === text; })[0];
+        if (row) list.appendChild(row);
+    });
+
+    arrUpdateRowLabels(gameTitle);
+
+    // LAST + INVERT + PLAY — animate ONLY the .arr-item elements
+    var newRows = Array.prototype.slice.call(list.querySelectorAll('.arr-row'));
+    newRows.forEach(function (row) {
+        var itemEl = row.querySelector('.arr-item');
+        var first = firstRects[row.dataset.text];
+        if (!itemEl || !first) return;
+        var last = itemEl.getBoundingClientRect();
+        var deltaY = first.top - last.top;
+        if (deltaY) {
+            itemEl.style.transition = 'none';
+            itemEl.style.transform = 'translateY(' + deltaY + 'px)';
+            itemEl.getBoundingClientRect(); // force reflow
+            requestAnimationFrame(function () {
+                itemEl.style.transition = 'transform .32s cubic-bezier(.2,.8,.2,1)';
+                itemEl.style.transform = '';
+            });
+        }
+    });
+
+    if (pulseText) {
+        var pulsedRow = newRows.filter(function (r) { return r.dataset.text === pulseText; })[0];
+        if (pulsedRow) {
+            pulsedRow.classList.remove('arr-drop-pulse');
+            void pulsedRow.offsetWidth;
+            pulsedRow.classList.add('arr-drop-pulse');
+            pulsedRow.addEventListener('animationend', function handler() {
+                pulsedRow.classList.remove('arr-drop-pulse');
+                pulsedRow.removeEventListener('animationend', handler);
+            });
+        }
+    }
+}
+
+function arrSetBubble(gameTitle, text) {
+    var overlayMsg = document.getElementById('arrOverlayMessage');
+    if (overlayMsg) overlayMsg.textContent = text;
+    adjustBonBonPosition('#arrOverlay');
+}
+
+// Drag no longer physically moves rows while hovering — that's what was
+// dragging the number badge along and causing the ghosting. Rows stay put;
+// we just show a drop-target line and reorder + FLIP the item on drop.
+function arrWireDrag(gameTitle, list) {
+    if (list.dataset.wired) return;
+    list.dataset.wired = '1';
+
+    list.addEventListener('dragstart', function (e) {
+        var state = ARR_STAGE[gameTitle];
+        if (state && state.locked) { e.preventDefault(); return; }
+        var itemEl = e.target.closest('.arr-item');
+        if (!itemEl) return;
+        var row = itemEl.closest('.arr-row');
+        if (!row) return;
+
+        _arrDraggedEl = row;
+        row.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', row.dataset.text);
+        e.dataTransfer.setDragImage(itemEl, itemEl.offsetWidth / 2, itemEl.offsetHeight / 2);
+    });
+
+    list.addEventListener('dragend', function () {
+        if (_arrDraggedEl) _arrDraggedEl.classList.remove('dragging');
+        list.querySelectorAll('.arr-row.arr-drop-target').forEach(function (r) {
+            r.classList.remove('arr-drop-target');
+        });
+        _arrDraggedEl = null;
+    });
+
+    list.addEventListener('dragover', function (e) {
+        var state = ARR_STAGE[gameTitle];
+        if (state && state.locked) return;
+        e.preventDefault();
+        if (!_arrDraggedEl) return;
+
+        var afterEl = arrGetDragAfterElement(list, e.clientY);
+
+        list.querySelectorAll('.arr-row.arr-drop-target').forEach(function (r) {
+            r.classList.remove('arr-drop-target');
+        });
+        var target = afterEl || list.lastElementChild;
+        if (target && target !== _arrDraggedEl) target.classList.add('arr-drop-target');
+
+        list.dataset.dropAfter = afterEl ? afterEl.dataset.text : '';
+        list.dataset.dropAtEnd = afterEl ? '' : '1';
+    });
+
+    list.addEventListener('drop', function (e) {
+        var state = ARR_STAGE[gameTitle];
+        if (state && state.locked) return;
+        e.preventDefault();
+
+        list.querySelectorAll('.arr-row.arr-drop-target').forEach(function (r) {
+            r.classList.remove('arr-drop-target');
+        });
+
+        var draggedText = _arrDraggedEl.dataset.text;
+        var afterText = list.dataset.dropAfter;
+        var atEnd = list.dataset.dropAtEnd === '1';
+
+        var order = state.order.slice();
+        var fromIdx = order.indexOf(draggedText);
+        if (fromIdx === -1) return;
+        order.splice(fromIdx, 1);
+
+        var toIdx;
+        if (atEnd || !afterText) {
+            toIdx = order.length;
+        } else {
+            toIdx = order.indexOf(afterText);
+            if (toIdx === -1) toIdx = order.length;
+        }
+        order.splice(toIdx, 0, draggedText);
+        state.order = order;
+
+        arrReorderWithItemFlip(gameTitle, draggedText);
+
+        var newPos = state.order.indexOf(draggedText) + 1;
+        arrSetBubble(gameTitle, '"' + draggedText + '" moved to position ' + newPos + '.');
+    });
+}
+
+function arrGetDragAfterElement(list, y) {
+    var items = Array.prototype.slice.call(list.querySelectorAll('.arr-row:not(.dragging)'));
+    return items.reduce(function (closest, child) {
+        var box = child.getBoundingClientRect();
+        var offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+            return { offset: offset, element: child };
+        } else {
+            return closest;
+        }
+    }, { offset: -Infinity, element: null }).element;
+}
+
+function openArrangeStage(gameTitle) {
+    var section = arrFindSection(gameTitle);
+    var overlay = document.getElementById('arrOverlay');
+    if (!section || !overlay) return;
+
+    if (overlay.parentElement !== document.body) document.body.appendChild(overlay);
+
+    if (!section.dataset.homeMarked) {
+        var marker = document.createElement('div');
+        marker.className = 'arr-home-marker';
+        marker.style.display = 'none';
+        marker.dataset.gameTitle = gameTitle;
+        section.parentNode.insertBefore(marker, section);
+        section.dataset.homeMarked = '1';
+    }
+
+    overlay.appendChild(section);
+    section.style.display = 'block';
+    overlay.classList.remove('qz-closing');
+    overlay.classList.add('open');
+    overlay.scrollTop = 0;
+
+    document.body.dataset.prevOverflow = document.body.style.overflow || '';
+    document.body.style.overflow = 'hidden';
+
+    var board = section.querySelector('.arr-board');
+    var steps = [];
+    try { steps = JSON.parse(board.dataset.steps || '[]'); } catch (e) { steps = []; }
+    var correctOrderRaw = [];
+    try { correctOrderRaw = JSON.parse(board.dataset.correctOrder || '[]'); } catch (e) { correctOrderRaw = []; }
+
+    var state = arrInitState(gameTitle, steps);
+    if (!state.correctOrder) {
+        state.correctOrder = correctOrderRaw.map(function (s) { return s.text; });
+    }
+
+    arrRenderList(gameTitle);
+    arrApplyLockState(gameTitle);
+
+    var botImg = document.getElementById('arrOverlayBot');
+    if (botImg) botImg.src = (state && state.locked) ? '../images/drop-drag-left.png' : '../images/robot-ai10.png';
+
+    var msgEl = document.getElementById('arrOverlayMessage');
+    if (msgEl) {
+        msgEl.textContent = (state && state.locked)
+            ? 'Are you sure at your answer? Take a look at your arrangements? Tap "Finish" to submit it, or "Edit" if you\'d like to change something.'
+            : 'The steps are shuffled. Drag the cards or use the arrows to arrange them in the correct order!';
+    }
+    adjustBonBonPosition('#arrOverlay', 450);
+
+    if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+        sessionStorage.setItem('arrange_open_lesson_' + LESSON_DATA.lessonId, gameTitle);
+    }
+    if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.moduleId) {
+        sessionStorage.setItem('lessons_view_module_' + LESSON_DATA.moduleId, 'lesson');
+    }
+}
+
+function closeArrangeStage(gameTitle) {
+    var section = arrFindSection(gameTitle);
+    var overlay = document.getElementById('arrOverlay');
+    var marker = document.querySelector('.arr-home-marker[data-game-title="' + CSS.escape(gameTitle) + '"]');
+    if (!section || !overlay) return;
+
+    var state = ARR_STAGE[gameTitle];
+    if (state && state.justCompleted) {
+        if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+            sessionStorage.removeItem('arrange_open_lesson_' + LESSON_DATA.lessonId);
+        }
+        window.location.reload();
+        return;
+    }
+
+    overlay.classList.add('qz-closing');
+    setTimeout(function () {
+        if (marker && marker.parentNode) marker.parentNode.insertBefore(section, marker);
+        section.style.display = 'none';
+        overlay.classList.remove('open', 'qz-closing');
+        document.body.style.overflow = document.body.dataset.prevOverflow || '';
+        if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+            sessionStorage.removeItem('arrange_open_lesson_' + LESSON_DATA.lessonId);
+        }
+    }, 280);
+}
+
+function arrReviewFindSection(gameTitle) {
+    return document.querySelector('.arr-review-section[data-game-title="' + CSS.escape(gameTitle) + '"]');
+}
+
+function openArrangeReviewStage(gameTitle) {
+    var section = arrReviewFindSection(gameTitle);
+    var overlay = document.getElementById('arrOverlay');
+    if (!section || !overlay) return;
+
+    if (overlay.parentElement !== document.body) document.body.appendChild(overlay);
+
+    if (!section.dataset.homeMarked) {
+        var marker = document.createElement('div');
+        marker.className = 'arr-review-home-marker';
+        marker.style.display = 'none';
+        marker.dataset.gameTitle = gameTitle;
+        section.parentNode.insertBefore(marker, section);
+        section.dataset.homeMarked = '1';
+    }
+
+    overlay.appendChild(section);
+    section.style.display = 'block';
+    overlay.classList.remove('qz-closing');
+    overlay.classList.add('open');
+    overlay.scrollTop = 0;
+
+    document.body.dataset.prevOverflow = document.body.style.overflow || '';
+    document.body.style.overflow = 'hidden';
+
+    var msgEl = document.getElementById('arrOverlayMessage');
+    if (msgEl) msgEl.textContent = 'Here\'s how you did on "' + gameTitle + '"!';
+    adjustBonBonPosition('#arrOverlay', 450);
+
+    if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+        sessionStorage.setItem('arrange_review_open_lesson_' + LESSON_DATA.lessonId, gameTitle);
+    }
+}
+
+function closeArrangeReviewStage(gameTitle) {
+    var section = arrReviewFindSection(gameTitle);
+    var overlay = document.getElementById('arrOverlay');
+    var marker = document.querySelector('.arr-review-home-marker[data-game-title="' + CSS.escape(gameTitle) + '"]');
+    if (!section || !overlay) return;
+
+    overlay.classList.add('qz-closing');
+    setTimeout(function () {
+        if (marker && marker.parentNode) marker.parentNode.insertBefore(section, marker);
+        section.style.display = 'none';
+        overlay.classList.remove('open', 'qz-closing');
+        document.body.style.overflow = document.body.dataset.prevOverflow || '';
+        if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+            sessionStorage.removeItem('arrange_review_open_lesson_' + LESSON_DATA.lessonId);
+        }
+    }, 280);
+}
+
+function arrSubmit(gameTitle) {
+    var state = ARR_STAGE[gameTitle];
+    if (!state) return;
+    var section = arrFindSection(gameTitle);
+    var finishBtn = section && section.querySelector('.arr-finish-btn');
+    if (finishBtn) finishBtn.disabled = true;
+
+    var lessonId = LESSON_DATA ? LESSON_DATA.lessonId : 0;
+
+
+    var fd = new FormData();
+    fd.append('lesson_id', lessonId);
+    fd.append('game_title', gameTitle);
+    state.order.forEach(function (text) {
+        fd.append('order[]', text);
+    });
+
+    fetch('/learning_management/public/?url=submit_arrange_steps', { method: 'POST', body: fd })
+        .then(function (r) {
+            return r.text().then(function (text) {
+                console.log('[arrSubmit] raw response:', text);
+                var json;
+                try { json = JSON.parse(text); } catch (e) { json = null; }
+                return json;
+            });
+        })
+        .then(function (resp) {
+            if (!resp || resp.ok !== true) {
+                console.error('[arrSubmit] server rejected save:', resp);
+                alert('There was a problem saving your answers: ' + (resp && resp.msg ? resp.msg : 'unknown error') + '. Please try again.');
+                return;
+            }
+            var correct = (typeof resp.score === 'number') ? resp.score : state.order.length;
+            var total = (typeof resp.total === 'number') ? resp.total : state.order.length;
+
+            state.justCompleted = true;
+
+            if (LESSON_DATA && LESSON_DATA.arrangesteps) {
+                LESSON_DATA.arrangesteps.forEach(function (a) { if (a.title === gameTitle) a.done = true; });
+            }
+            checkLessonComplete();
+            arrShowResults(gameTitle, correct, total);
+        })
+        .catch(function () {
+            if (finishBtn) finishBtn.disabled = false;
+            alert('Could not reach the server to save your answers. Please check your connection and try again.');
+        });
+}
+
+function arrShowResults(gameTitle, correct, total) {
+    var state = ARR_STAGE[gameTitle];
+    var section = arrFindSection(gameTitle);
+    if (!state || !section) { closeArrangeStage(gameTitle); return; }
+
+    var board = section.querySelector('.arr-board');
+    var results = section.querySelector('.dd-results');
+    if (board) board.style.display = 'none';
+
+    var pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+    var msgEl = document.getElementById('arrOverlayMessage');
+    if (msgEl) {
+        msgEl.textContent = 'You placed ' + correct + ' out of ' + total + ' steps correctly (' + pct + '%)! ' +
+            (pct === 100 ? 'Perfect order!' : pct >= 70 ? 'Great job!' : 'Nice try — review your order below.');
+    }
+
+    if (results) {
+        results.style.display = 'block';
+        var fill = results.querySelector('.qz-accuracy-fill');
+        var pctLabel = results.querySelector('.qz-accuracy-pct');
+        if (fill) requestAnimationFrame(function () { fill.style.width = pct + '%'; });
+        if (pctLabel) pctLabel.textContent = pct + '%';
+
+        var list = results.querySelector('.dd-review-list');
+        if (list) {
+            list.innerHTML = '';
+            var correctOrder = state.correctOrder || [];
+            var totalSteps = state.order.length;
+
+            state.order.forEach(function (text, idx) {
+                var correctIdx = correctOrder.indexOf(text);
+                var isCorrect = correctIdx === idx;
+                var color = isCorrect ? 'var(--neon-green)' : '#ff4d6d';
+                var isLast = (idx === totalSteps - 1);
+
+                var row = document.createElement('div');
+                row.className = 'arr-row';
+                row.style.cursor = 'default';
+                row.innerHTML =
+                    '<div class="arr-timeline-col">' +
+                    '<div class="arr-circle-num" style="border-color:' + color + ';color:' + color + ';">' + (idx + 1) + '</div>' +
+                    (isLast ? '' : '<div class="arr-connector-line"></div>') +
+                    '</div>' +
+                    '<div class="arr-item" style="border-color:' + color + ';cursor:default;">' +
+                    '<span class="arr-item-text" style="color:' + color + ';">' + escHtml(text) + '</span>' +
+                    '</div>';
+                list.appendChild(row);
+
+                if (!isCorrect && correctIdx > -1) {
+                    var note = document.createElement('div');
+                    note.style.cssText = 'font-size:12px;color:#ff4d6d;margin:-8px 0 12px 54px;font-weight:600;';
+                    note.textContent = 'Belongs at position ' + (correctIdx + 1) + ', not ' + (idx + 1) + '.';
+                    list.appendChild(note);
+                }
+            });
+        }
+    }
+}
+
+/* =========================================================
    FIXED: BonBon overlay repositioning
    -----------------------------------------------------------
    Old behavior only nudged the box up with a transform, which
@@ -564,7 +1331,24 @@ function ddShowResults(gameTitle, correct, total) {
 
     var board = section.querySelector('.dd-board');
     var results = section.querySelector('.dd-results');
+
+    var countEl = results.querySelector('.qz-result-count');
+    var pillCorrect = results.querySelector('.pill-correct');
+    var pillIncorrect = results.querySelector('.pill-incorrect');
+    if (countEl) countEl.textContent = total + ' item' + (total === 1 ? '' : 's');
+    if (pillCorrect) pillCorrect.innerHTML = '<i class="fa fa-check"></i> ' + correct + ' Correct';
+    if (pillIncorrect) pillIncorrect.innerHTML = '<i class="fa fa-times"></i> ' + (total - correct) + ' Incorrect';
+
+    // NEW — hide everything else in the stage besides the board,
+    // so only the results card shows (matching the clean reload view).
+    var counter = section.querySelector('.dd-counter');
+    var progressTrack = section.querySelector('.qz-progress-track');
+    var questionCard = section.querySelector('.dd-question-card');
+
     if (board) board.style.display = 'none';
+    if (counter) counter.style.display = 'none';
+    if (progressTrack) progressTrack.style.display = 'none';
+    if (questionCard) questionCard.style.display = 'none';
 
     var pct = total > 0 ? Math.round((correct / total) * 100) : 0;
     var scoreMsg = 'You matched ' + correct + ' out of ' + total + ' correctly (' + pct + '%)! ' +
@@ -590,18 +1374,19 @@ function ddShowResults(gameTitle, correct, total) {
                     '<div class="q-num-label">Item</div>' +
                     '<div class="q-text">' + escHtml(item.label) + '</div>' +
                     (item.subtitle ? '<div style="font-size:12.5px;color:var(--text-dim);margin:-6px 0 10px;">' + escHtml(item.subtitle) + '</div>' : '') +
-                    '<div class="review-choice" style="' + (isCorrect ? 'border-color:#22c55e;background:#f0fdf4;' : 'border-color:#ef4444;background:#fef2f2;') + '">' +
-                    '<span style="font-weight:700;margin-right:8px;color:' + (isCorrect ? '#22c55e' : '#ef4444') + ';">' +
+                    '<div class="review-choice" style="' + (isCorrect
+                        ? 'border-color:var(--neon-green);background: rgba(57, 255, 158, .10); color: var(--neon-green)'
+                        : 'border-color:#ff4d6d; background: rgba(255, 77, 109, .10); color: #ff4d6d;') + '">' +
+                    '<span style="font-weight:700;margin-right:8px;">' +
                     (isCorrect ? '✓ Correct' : '✗ Incorrect') +
                     '</span>' +
                     'Your answer: ' + escHtml(given || '—') +
-                    (!isCorrect ? '<span style="margin-left:auto;color:#ef4444;">Correct: ' + escHtml(item.category) + '</span>' : '') +
+                    (!isCorrect ? '<span style="margin-left:auto;color:#ff4d6d;">Correct: ' + escHtml(item.category) + '</span>' : '') +
                     '</div>';
                 list.appendChild(row);
             });
         }
     }
-
 }
 
 /* =========================================================
@@ -665,6 +1450,12 @@ document.addEventListener('DOMContentLoaded', function () {
     if (ddReviewFlag) {
         openDragDropReviewStage(ddReviewFlag);
     }
+
+    var arrFlag = sessionStorage.getItem('arrange_open_lesson_' + LESSON_DATA.lessonId);
+    if (arrFlag) openArrangeStage(arrFlag);
+
+    var arrReviewFlag = sessionStorage.getItem('arrange_review_open_lesson_' + LESSON_DATA.lessonId);
+    if (arrReviewFlag) openArrangeReviewStage(arrReviewFlag);
     try {
         var qzBlocks = document.querySelectorAll('.qz-question-block:not(.act-question-block)');
         UNIFIED_QZ.total = qzBlocks.length;
@@ -743,6 +1534,7 @@ function pickMC(el) {
    QUIZIZZ-STYLE QUIZ STAGE
 ========================================================= */
 function qzPick(el) {
+    if (QZ_LOCKED) return;
     var qid = el.dataset.qid;
     var key = el.dataset.key;
     var qzid = parseInt(el.dataset.qzid);
@@ -774,7 +1566,9 @@ function qzNav(dir) {
     UNIFIED_QZ.cur = newIdx;
     blocks[UNIFIED_QZ.cur].style.display = 'block';
 
-    qzRestoreSelection(blocks[UNIFIED_QZ.cur]);
+    if (!QZ_LOCKED) {
+        qzRestoreSelection(blocks[UNIFIED_QZ.cur]);
+    }
     qzUpdateNav();
 }
 
@@ -808,6 +1602,18 @@ function qzUpdateNav() {
 
     var nextBtn = document.getElementById('qzNextBtn');
     if (nextBtn) {
+        if (QZ_LOCKED) {
+            nextBtn.disabled = false;
+            if (UNIFIED_QZ.cur === total - 1) {
+                nextBtn.innerHTML = 'View Results <i class="fa fa-arrow-right"></i>';
+                nextBtn.onclick = function () { backToQuizResultsFromReview(); };
+            } else {
+                nextBtn.innerHTML = 'Next <i class="fa fa-chevron-right"></i>';
+                nextBtn.onclick = function () { qzNav(1); };
+            }
+            return;
+        }
+
         var curBlock = blocks[UNIFIED_QZ.cur];
         var firstChoice = curBlock ? curBlock.querySelector('.qz-choice-btn') : null;
         var curQid = firstChoice ? firstChoice.dataset.qid : null;
@@ -816,10 +1622,7 @@ function qzUpdateNav() {
 
         if (UNIFIED_QZ.cur === total - 1) {
             nextBtn.innerHTML = 'Finish <i class="fa fa-check"></i>';
-            nextBtn.onclick = function () {
-                checkLessonComplete();
-                showQuizResults();
-            };
+            nextBtn.onclick = function () { finishQuiz(); };
         } else {
             nextBtn.innerHTML = 'Next <i class="fa fa-chevron-right"></i>';
             nextBtn.onclick = function () { qzNav(1); };
@@ -889,6 +1692,155 @@ function showQuizResults() {
         });
     }
 
+    if (exitBtn) {
+        exitBtn.style.display = '';
+        exitBtn.onclick = function () {
+            var lessonNextBtn = document.getElementById('nextBtn');
+            if (lessonNextBtn && !lessonNextBtn.classList.contains('disabled')) {
+                lessonNextBtn.click();
+            } else {
+                closeQuizStage();
+            }
+        };
+    }
+}
+
+function finishQuiz() {
+    var nextBtn = document.getElementById('qzNextBtn');
+    if (nextBtn) {
+        nextBtn.disabled = true;
+        nextBtn.innerHTML = 'Saving…';
+    }
+    submitQuizStageResults(function () {
+        renderQuizResultsUI(document.getElementById('qzStage'), document.getElementById('qzResults'));
+    });
+}
+
+function submitQuizStageResults(callback) {
+    var lessonId = LESSON_DATA ? LESSON_DATA.lessonId : 0;
+
+    var groups = {};
+    document.querySelectorAll('.qz-question-block:not(.act-question-block)').forEach(function (block) {
+        var qzid = block.dataset.qzid;
+        if (!qzid) return;
+        var firstChoice = block.querySelector('.qz-choice-btn');
+        var qid = firstChoice ? firstChoice.dataset.qid : null;
+        if (!qid) return;
+        if (!groups[qzid]) groups[qzid] = {};
+        if (UNIFIED_QZ.ans[qid]) groups[qzid][qid] = UNIFIED_QZ.ans[qid];
+    });
+
+    var pending = [];
+    (LESSON_DATA && LESSON_DATA.quizzes ? LESSON_DATA.quizzes : []).forEach(function (qz) {
+        if (qz.done) return;
+        pending.push({ id: qz.id, passing_score: qz.passing_score, answers: groups[qz.id] || {} });
+    });
+
+    console.log('[submitQuizStageResults] pending quizzes to save:', pending);
+
+    if (!pending.length) {
+        console.warn('[submitQuizStageResults] nothing pending — nothing will be saved. ' +
+            'Check LESSON_DATA.quizzes / data-qzid values.');
+    }
+
+    submitQuizzesSequentially(pending, lessonId, function (allOk) {
+        checkLessonComplete();
+        if (!allOk) {
+            alert('There was a problem saving your quiz. Your score is shown below, but it may not have been recorded — please try again or contact your teacher if this keeps happening.');
+        } else {
+            QUIZ_JUST_COMPLETED = true;
+        }
+        callback();
+    });
+}
+
+function submitQuizzesSequentially(list, lessonId, callback, allOk) {
+    allOk = (allOk === undefined) ? true : allOk;
+
+    if (!list.length) { callback(allOk); return; }
+
+    var item = list[0];
+    var rest = list.slice(1);
+    var fd = new FormData();
+    fd.append('quiz_id', item.id);
+    fd.append('lesson_id', lessonId);
+    fd.append('passing_score', item.passing_score);
+    Object.keys(item.answers).forEach(function (qid) {
+        fd.append('answers[' + qid + ']', item.answers[qid]);
+    });
+
+    fetch('/learning_management/public/?url=submit_quiz', { method: 'POST', body: fd })
+        .then(function (r) {
+            return r.text().then(function (text) {
+                console.log('[submitQuizzesSequentially] raw response for quiz ' + item.id + ':', text);
+                var json;
+                try { json = JSON.parse(text); } catch (e) { json = null; }
+                return json;
+            });
+        })
+        .then(function (resp) {
+            var ok = !!(resp && resp.ok === true);
+            if (!ok) {
+                console.error('[submitQuizzesSequentially] quiz ' + item.id + ' was NOT saved:', resp);
+            } else if (LESSON_DATA && LESSON_DATA.quizzes) {
+                LESSON_DATA.quizzes.forEach(function (qz) { if (qz.id === item.id) qz.done = true; });
+            }
+            submitQuizzesSequentially(rest, lessonId, callback, allOk && ok);
+        })
+        .catch(function (err) {
+            console.error('[submitQuizzesSequentially] fetch FAILED for quiz ' + item.id, err);
+            submitQuizzesSequentially(rest, lessonId, callback, false);
+        });
+}
+
+function renderQuizResultsUI(stage, results) {
+    var buttons = document.querySelectorAll('.qz-choice-btn[data-correct]');
+    var seen = {};
+    var total = 0;
+    var correct = 0;
+
+    buttons.forEach(function (btn) {
+        var qid = btn.dataset.qid;
+        if (!qid || seen[qid]) return;
+        seen[qid] = true;
+        total++;
+
+        var picked = UNIFIED_QZ.ans[qid];
+        var correctBtn = document.querySelector('.qz-choice-btn[data-qid="' + qid + '"][data-correct="1"]');
+        var correctKey = correctBtn ? correctBtn.dataset.key : null;
+
+        if (picked && correctKey && picked === correctKey) correct++;
+    });
+
+    var incorrect = total - correct;
+    var accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+    var countEl = document.getElementById('qzResultCount');
+    var pillCorrect = document.getElementById('qzPillCorrect');
+    var pillIncorrect = document.getElementById('qzPillIncorrect');
+    var fill = document.getElementById('qzAccuracyFill');
+    var pct = document.getElementById('qzAccuracyPct');
+
+    if (countEl) countEl.textContent = total + ' question' + (total === 1 ? '' : 's');
+    if (pillCorrect) pillCorrect.innerHTML = '<i class="fa fa-check"></i> ' + correct + ' Correct';
+    if (pillIncorrect) pillIncorrect.innerHTML = '<i class="fa fa-times"></i> ' + incorrect + ' Incorrect';
+    if (pct) pct.textContent = accuracy + '%';
+
+    stage.style.display = 'none';
+    results.style.display = 'block';
+
+    var exitBtn = document.querySelector('#section-quizzes .btn-exit-quiz');
+    if (exitBtn) exitBtn.style.display = 'none';
+
+    if (fill) {
+        fill.style.width = '0%';
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                fill.style.width = accuracy + '%';
+            });
+        });
+    }
+
     var continueBtn = document.getElementById('qzResultsContinueBtn');
     if (continueBtn) {
         continueBtn.onclick = function () {
@@ -901,6 +1853,50 @@ function showQuizResults() {
             }
         };
     }
+
+    var backBtn = document.getElementById('qzResultsBackBtn');
+    if (backBtn) {
+        backBtn.onclick = function () {
+            results.style.display = 'none';
+            stage.style.display = 'block';
+            if (exitBtn) exitBtn.style.display = '';
+
+            enterQuizReviewMode();
+
+            var blocks = document.querySelectorAll('.qz-question-block:not(.act-question-block)');
+            if (blocks.length) {
+                blocks[UNIFIED_QZ.cur].style.display = 'none';
+                UNIFIED_QZ.cur = blocks.length - 1;
+                blocks[UNIFIED_QZ.cur].style.display = 'block';
+            }
+            qzUpdateNav();
+        };
+    }
+}
+
+function enterQuizReviewMode() {
+    QZ_LOCKED = true;
+    document.querySelectorAll('.qz-question-block:not(.act-question-block) .qz-choice-btn').forEach(function (btn) {
+        var qid = btn.dataset.qid;
+        var key = btn.dataset.key;
+        var isCorrect = btn.dataset.correct === '1';
+        var picked = UNIFIED_QZ.ans[qid] === key;
+
+        btn.classList.remove('selected');
+        btn.classList.add('qz-review-choice');
+        if (isCorrect) btn.classList.add('qz-correct');
+        if (picked && !isCorrect) btn.classList.add('qz-wrong');
+    });
+}
+
+function backToQuizResultsFromReview() {
+    var stage = document.getElementById('qzStage');
+    var results = document.getElementById('qzResults');
+    if (stage) stage.style.display = 'none';
+    if (results) results.style.display = 'block';
+
+    var exitBtn = document.querySelector('#section-quizzes .btn-exit-quiz');
+    if (exitBtn) exitBtn.style.display = 'none';
 }
 
 /* =========================================================
@@ -1121,6 +2117,12 @@ function checkLessonComplete() {
             if (dd.done) return;
             var state = DD_STAGE[dd.title];
             if (!state || Object.keys(state.answers).length < dd.required) allDone = false;
+        });
+
+        (LESSON_DATA.arrangesteps || []).forEach(function (a) { if (!a.done) hasPending = true; });
+
+        (LESSON_DATA.arrangesteps || []).forEach(function (a) {
+            if (!a.done) allDone = false;
         });
 
         if (allDone) {

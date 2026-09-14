@@ -30,28 +30,27 @@
                 <?php if ($subjectInfo): ?>
 
                     <div class="nav-banner">
-                        <a href="/learning_management/public/?url=modules_teacher" class="back-breadcrumb">
+                        <a href="/learning_management/public/?url=modules_teacher<?= !empty($gradeLevelId) ? '&grade_id=' . (int) $gradeLevelId : '' ?>"
+                            class="back-breadcrumb">
                             <i class="fa fa-arrow-left"></i> Back to Modules
                         </a>
                     </div>
 
                     <!-- ── BANNER ── -->
                     <div class="module-title">
-                        <!-- <div class="module-picture" <?php if (!empty($subjectInfo['subject_image'])): ?>
-                                style="background-image: url('/learning_management/<?= htmlspecialchars($subjectInfo['subject_image']) ?>');"
-                            <?php endif; ?>>
-                            <h2><?= htmlspecialchars($subjectInfo['subject_name']) ?></h2>
-                        </div> -->
                         <div class="module-body">
                             <div>
                                 <h1><?= htmlspecialchars($subjectInfo['subject_name']) ?></h1>
                                 <p><?= htmlspecialchars($subjectInfo['subject_description'] ?? 'No description available.') ?>
                                 </p>
+                                <?php if (!empty($sectionInfo)): ?>
+                                    <p style="margin-top:4px;font-size:13px;color:#ffffff;">
+                                        <i class="fa fa-layer-group"></i> <?= htmlspecialchars($sectionInfo['grade'] ?? '') ?>
+                                        &middot;
+                                        <i class="fa fa-users"></i> <?= htmlspecialchars($sectionInfo['section'] ?? '') ?>
+                                    </p>
+                                <?php endif; ?>
                             </div>
-                            <!-- <a href="/learning_management/public/?url=create_module&subject_id=<?= (int) $subjectId ?>"
-                                class="module-browse-btn">
-                                <i class="fa fa-plus"></i> Create Module
-                            </a> -->
                         </div>
                     </div>
 
@@ -136,6 +135,8 @@
                                         $firstLesson = $teacherModel->getLessonsByModule($mod['id']);
                                         $firstLessonId = !empty($firstLesson) ? (int) $firstLesson[0]['id'] : 0;
                                         $lessonsUrl = "/learning_management/public/?url=subject_lessons_teacher&subject_id={$subjectId}&id={$mod['id']}"
+                                            . ($gradeLevelId ? "&grade_id={$gradeLevelId}" : '')
+                                            . ($sectionId ? "&section_id={$sectionId}" : '')
                                             . ($firstLessonId ? "&lesson={$firstLessonId}" : '');
                                         ?>
                                         <div class="module-feed-card">
@@ -324,6 +325,8 @@
                         enctype="multipart/form-data">
 
                         <input type="hidden" name="subject_id" value="<?= htmlspecialchars($subjectId ?? '') ?>">
+                        <input type="hidden" name="grade_level_id" value="<?= htmlspecialchars($gradeLevelId ?? '') ?>">
+                        <input type="hidden" name="section_id" value="<?= htmlspecialchars($sectionId ?? '') ?>">
 
                         <div class="card-parent-box">
                             <div class="card-header" style="margin-bottom:0;">

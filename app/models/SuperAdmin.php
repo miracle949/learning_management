@@ -327,12 +327,6 @@ class SuperAdmin extends Model
         return (int) $result->fetch_assoc()['total'];
     }
 
-    public function getTotalPendingApprovals()
-    {
-        $result = $this->db->query("SELECT COUNT(*) AS total FROM tbl_students WHERE status = 'Pending'");
-        return (int) $result->fetch_assoc()['total'];
-    }
-
     public function getTotalSubjects()
     {
         $result = $this->db->query("SELECT COUNT(*) AS total FROM tbl_subjects");
@@ -345,19 +339,181 @@ class SuperAdmin extends Model
         return (int) $result->fetch_assoc()['total'];
     }
 
-    public function getPendingStudents()
+    // ============================================================
+    // ADMIN ACCOUNTS
+    // ------------------------------------------------------------
+    // ASSUMPTION: sub-admins (distinct from the logged-in Super Admin)
+    // are stored in tbl_users with role = 'admin'. If your app tracks
+    // admins in a separate tbl_admins table instead, swap the query
+    // below to count from that table.
+    // ============================================================
+    public function getTotalAdmins()
     {
-        $result = $this->db->query("
-        SELECT u.name, u.email, s.status,
-               gl.name AS grade_level, sec.section_name
-        FROM tbl_users u
-        JOIN tbl_students s ON s.user_id = u.id
-        JOIN tbl_grade_level gl ON gl.id = s.grade_level_id
-        JOIN tbl_sections sec ON sec.id = s.section_id
-        WHERE u.role = 'student' AND s.status = 'Pending'
-        ORDER BY u.id DESC
+        $result = @$this->db->query("
+            SELECT COUNT(*) AS total FROM tbl_users WHERE role = 'admin'
+        ");
+        return $result ? (int) $result->fetch_assoc()['total'] : 0;
+    }
+
+    // ============================================================
+    // STRANDS
+    // ------------------------------------------------------------
+    // ASSUMPTION: strand (STEM, ABM, HUMSS, GAS, TVL, etc.) is stored
+    // as a `strand` column on tbl_sections. If you instead have a
+    // dedicated tbl_strands table, point these two methods at it —
+    // they're written defensively (the @ + null check) so a missing
+    // column/table returns an empty result instead of a fatal error.
+    // ============================================================
+    public function getStrandsOffered()
+    {
+        $result = @$this->db->query("
+            SELECT DISTINCT strand
+            FROM tbl_sections
+            WHERE strand IS NOT NULL AND strand <> ''
+            ORDER BY strand ASC
+        ");
+        return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    }
+
+    public function getEnrollmentByStrand()
+    {
+        $result = @$this->db->query("
+            SELECT sec.strand AS strand, COUNT(se.student_id) AS total
+            FROM tbl_student_enrollments se
+            JOIN tbl_sections sec ON sec.id = se.section_id
+            WHERE sec.strand IS NOT NULL AND sec.strand <> ''
+            GROUP BY sec.strand
+            ORDER BY sec.strand ASC
+        ");
+        return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    }
+
+    // ============================================================
+    // BACKUPS
+    // ------------------------------------------------------------
+    // ASSUMPTION: whatever job runs your backups writes a row to
+    // tbl_system_backups(created_at, status, type, size_mb) each time
+    // it runs. Point this at your real backup log table/columns, or
+    // create that table if backups aren't logged anywhere yet.
+    // ============================================================
+    public function getLastBackup()
+    {
+        try {
+            $result = $this->db->query("
+            SELECT created_at, status, type, size_mb
+            FROM tbl_system_backups
+            ORDER BY created_at DESC
+            LIMIT 1
+        ");
+            return $result ? $result->fetch_assoc() : null;
+        } catch (\mysqli_sql_exception $e) {
+            // Table doesn't exist yet — no backups logged. Fail gracefully.
+            return null;
+        }
+    }
+
+    // ============================================================
+    // ACTIVE SESSIONS
+    // ------------------------------------------------------------
+    // ASSUMPTION: tbl_users has a `last_activity` DATETIME column
+    // that gets touched on every authenticated request (e.g. in your
+    // auth middleware). "Active" = activity within $minutesThreshold
+    // minutes. If you track sessions in a separate table instead,
+    // swap the query to read from there.
+    // ============================================================
+    public function getActiveSessionsSummary($minutesThreshold = 5)
+    {
+        $summary = ['total' => 0, 'student' => 0, 'teacher' => 0, 'admin' => 0, 'superadmin' => 0];
+
+        try {
+            $result = $this->db->query("
+            SELECT role, COUNT(*) AS total
+            FROM tbl_users
+            WHERE last_activity IS NOT NULL
+              AND last_activity >= DATE_SUB(NOW(), INTERVAL {$minutesThreshold} MINUTE)
+            GROUP BY role
+        ");
+
+            if ($result) {
+                while ($row = $result->fetch_assoc()) {
+                    $role = $row['role'];
+                    if (!isset($summary[$role])) {
+                        $summary[$role] = 0;
+                    }
+                    $summary[$role] = (int) $row['total'];
+                    $summary['total'] += (int) $row['total'];
+                }
+            }
+        } catch (\mysqli_sql_exception $e) {
+            // last_activity column doesn't exist yet — return zeroed summary
+        }
+
+        return $summary;
+    }
+
+    // ============================================================
+    // SYSTEM ALERTS (Dashboard "Alerts That Need Attention")
+    // ------------------------------------------------------------
+    // Built from real, already-available signals (pending approvals)
+    // plus two optional signals (failed backups, repeated failed
+    // logins) that only fire if those tables exist — safe to leave
+    // in even if you haven't built backup/login-attempt logging yet.
+    // ============================================================
+    public function getSystemAlerts($pendingApprovalsCount = 0)
+    {
+        $alerts = [];
+
+        if ($pendingApprovalsCount > 0) {
+            $alerts[] = [
+                'severity' => 'warn',
+                'title' => $pendingApprovalsCount . ' student' . ($pendingApprovalsCount === 1 ? '' : 's') . ' awaiting approval',
+                'detail' => 'New enrollments are waiting for a super admin to approve.',
+                'link' => '/learning_management/public/?url=super_admin_student_users',
+                'action' => 'Review',
+            ];
+        }
+
+        $lastBackup = $this->getLastBackup();
+        if ($lastBackup && strtolower($lastBackup['status'] ?? '') === 'failed') {
+            $alerts[] = [
+                'severity' => 'err',
+                'title' => 'Automated backup failed',
+                'detail' => 'Last run on ' . date('M j, Y g:i A', strtotime($lastBackup['created_at'])) . ' did not complete.',
+                'link' => '#',
+                'action' => 'Retry',
+            ];
+        }
+
+        // ASSUMPTION: failed login attempts are logged to
+        // tbl_login_attempts(user_email, success, created_at).
+        // This block silently no-ops if that table doesn't exist.
+        $failedLogins = null;
+        try {
+            $failedLogins = $this->db->query("
+        SELECT user_email, COUNT(*) AS attempts, MAX(created_at) AS last_attempt
+        FROM tbl_login_attempts
+        WHERE success = 0 AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
+        GROUP BY user_email
+        HAVING attempts >= 3
     ");
-        return $result->fetch_all(MYSQLI_ASSOC);
+        } catch (\mysqli_sql_exception $e) {
+            // tbl_login_attempts doesn't exist yet — skip this alert type
+        }
+
+        if ($failedLogins) {
+            while ($row = $failedLogins->fetch_assoc()) {
+                $alerts[] = [
+                    'severity' => 'err',
+                    'title' => 'Repeated failed logins',
+                    'detail' => $row['attempts'] . ' failed attempts for ' . $row['user_email']
+                        . ' (last at ' . date('g:i A', strtotime($row['last_attempt'])) . ')',
+                    'link' => '#',
+                    'action' => 'Review',
+                ];
+            }
+        }
+
+        return $alerts;
     }
 
     public function getRecentEnrollments($limit = 5)
@@ -423,36 +579,6 @@ class SuperAdmin extends Model
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function updateStudentApproval($studentId, $gradeLevelId, $sectionId, $studentLRN, $status, $reason, $approvedBy, $userId, $name, $email)
-    {
-        // Update tbl_users table
-        $stmt = $this->db->prepare("UPDATE tbl_users SET name = ?, email = ? WHERE id = ?");
-        $stmt->bind_param("ssi", $name, $email, $userId);
-        $stmt->execute();
-        $stmt->close();
-
-        // Always save approved_by — never skip it
-        $approvedBy = (int) $approvedBy;
-        $stmt2 = $this->db->prepare("
-        UPDATE tbl_students 
-        SET grade_level_id = ?, section_id = ?, student_LRN = ?,
-            status = ?, reason = ?, approved_by = ?, updated_at = NOW()
-        WHERE id = ?
-    ");
-        $stmt2->bind_param(
-            "iisssii",
-            $gradeLevelId,
-            $sectionId,
-            $studentLRN,
-            $status,
-            $reason,
-            $approvedBy,
-            $studentId
-        );
-        $stmt2->execute();
-        $stmt2->close();
-    }
-
     // ============================================================
     // ACTIVITY LOGS — pulls from existing tables, no new table needed
     // ============================================================
@@ -472,20 +598,6 @@ class SuperAdmin extends Model
         JOIN tbl_users u      ON u.id   = st.user_id
         JOIN tbl_subjects s   ON s.id   = se.subject_id
         JOIN tbl_sections sec ON sec.id = se.section_id
-
-        UNION ALL
-
-        SELECT
-            'pending' AS action,
-            CONCAT(u.name, ' registration is pending approval · ', gl.name, ' ', sec.section_name) AS description,
-            'student' AS role,
-            u.name AS user_name,
-            u.created_at AS created_at
-        FROM tbl_users u
-        JOIN tbl_students s     ON s.user_id  = u.id
-        JOIN tbl_grade_level gl ON gl.id       = s.grade_level_id
-        JOIN tbl_sections sec   ON sec.id      = s.section_id
-        WHERE s.status = 'Pending'
 
         UNION ALL
 
@@ -554,22 +666,6 @@ class SuperAdmin extends Model
         UNION ALL
 
         SELECT
-            'invite_accepted' AS action,
-            CONCAT(COALESCE(approver.name, 'Admin'), ' approved student ', stu_u.name, ' · ', gl.name, ' ', sec.section_name) AS description,
-            COALESCE(approver.role, 'superadmin') AS role,
-            COALESCE(approver.name, 'Super Admin') AS user_name,
-            stu.updated_at AS created_at
-        FROM tbl_students stu
-        JOIN tbl_users stu_u         ON stu_u.id    = stu.user_id
-        JOIN tbl_grade_level gl      ON gl.id        = stu.grade_level_id
-        JOIN tbl_sections sec        ON sec.id       = stu.section_id
-        LEFT JOIN tbl_users approver ON approver.id  = stu.approved_by
-        WHERE stu.status = 'Approved'
-          AND stu.updated_at IS NOT NULL
-
-        UNION ALL
-
-        SELECT
             'subject_created' AS action,
             CONCAT('Subject ', s.subject_name, ' was created · ', COALESCE(gl.name, '')) AS description,
             'superadmin' AS role,
@@ -591,42 +687,6 @@ class SuperAdmin extends Model
         LEFT JOIN tbl_grade_level gl ON gl.id = s.grade_level_id
         WHERE s.updated_at IS NOT NULL
           AND s.updated_at <> s.created_at
-
-        UNION ALL
-
-        SELECT
-            'invite_sent' AS action,
-            CONCAT('Teacher account created for ', u.name, ' (', u.email, ')') AS description,
-            'superadmin' AS role,
-            'Super Admin' AS user_name,
-            u.created_at AS created_at
-        FROM tbl_users u
-        JOIN tbl_teachers t ON t.user_id = u.id
-        WHERE u.role = 'teacher'
-          AND u.created_at IS NOT NULL
-
-        UNION ALL
-
-        SELECT
-            'invite_declined' AS action,
-            CONCAT(
-                COALESCE(approver.name, 'Admin'), ' declined student ', stu_u.name,
-                CASE WHEN stu.reason IS NOT NULL AND stu.reason <> ''
-                     THEN CONCAT(' · Reason: ', LEFT(stu.reason, 60))
-                     ELSE ''
-                END
-            ) AS description,
-            COALESCE(approver.role, 'superadmin') AS role,
-            COALESCE(approver.name, 'Admin') AS user_name,
-            stu.updated_at AS created_at
-        FROM tbl_students stu
-        JOIN tbl_users stu_u         ON stu_u.id  = stu.user_id
-        JOIN tbl_grade_level gl      ON gl.id      = stu.grade_level_id
-        JOIN tbl_sections sec        ON sec.id     = stu.section_id
-        LEFT JOIN tbl_users approver ON approver.id = stu.approved_by
-        WHERE stu.status = 'Rejected'
-          AND stu.approved_by IS NOT NULL
-          AND stu.updated_at IS NOT NULL
 
     ) AS combined
     WHERE created_at IS NOT NULL

@@ -23,14 +23,53 @@ class User extends Model
 
     public function login($email)
     {
+        $stmt = $this->db->prepare("SELECT u.* FROM tbl_users u WHERE u.email = ? LIMIT 1");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    // ------------------------------------------------------------
+    // STUDENT LOGIN — used by AuthController::login() when
+    // login_type = "student". Joins tbl_students on student_LRN so
+    // we get back the account's role/password plus their approval
+    // status. Deliberately selects "s.status" (not "s.*") so the
+    // student row's id column doesn't overwrite u.id in the merged
+    // array — $user['id'] must stay the tbl_users.id used for the
+    // session and getName()/getStudentInfo() lookups.
+    // ------------------------------------------------------------
+    public function loginByLRN($student_lrn)
+    {
         $stmt = $this->db->prepare("
-        SELECT u.*, s.status
+        SELECT u.*
         FROM tbl_users u
-        LEFT JOIN tbl_students s ON s.user_id = u.id
-        WHERE u.email = ?
+        JOIN tbl_students s ON s.user_id = u.id
+        WHERE s.student_LRN = ?
         LIMIT 1
     ");
-        $stmt->bind_param("s", $email);
+        $stmt->bind_param("s", $student_lrn);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    // ------------------------------------------------------------
+    // STAFF LOGIN — used by AuthController::login() when
+    // login_type = "staff". Matches by username OR email. LEFT JOIN
+    // (not JOIN) because teacher/admin/superadmin accounts have no
+    // tbl_students row at all — s.status will just come back NULL
+    // for them, which AuthController's Pending/Rejected checks
+    // correctly skip over.
+    // ------------------------------------------------------------
+    public function loginByIdentifier($identifier)
+    {
+        $stmt = $this->db->prepare("
+            SELECT u.*
+            FROM tbl_users u
+            LEFT JOIN tbl_students s ON s.user_id = u.id
+            WHERE u.username = ?
+            LIMIT 1
+        ");
+        $stmt->bind_param("s", $identifier);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
     }

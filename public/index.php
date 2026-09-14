@@ -29,6 +29,7 @@ function requireAuth(...$allowed_roles)
             'student' => 'dashboard',
             'teacher_users' => 'teacher_users',
             'student_users' => 'student_users',
+            
         ];
         $redirect = $map[$role] ?? 'login';
         header("Location: /learning_management/public/?url=$redirect");
@@ -167,6 +168,16 @@ switch ($url) {
         $student->submit_dragdrop();
         break;
 
+    case 'submit_arrange_steps':
+        requireAuth('student');
+        $student->submit_arrange_steps();
+        break;
+
+    case 'submit_quiz':
+        requireAuth('student');
+        $student->submit_quiz();
+        break;
+
     // ── Teacher routes ────────────────────────────────────────
     case 'teacher':
         requireAuth('teacher');
@@ -248,15 +259,42 @@ switch ($url) {
         $controller->works();
         break;
 
+    case 'get_masterlist_preview':
+        $teacherDashboard->get_masterlist_preview();
+        break;
+
+    // Registers the download_masterlist_csv() method that already exists
+    // in TeacherController — without this case it silently fell through
+    // to the default landingpage() route.
+    case 'download_masterlist_csv':
+        requireAuth('teacher');
+        $teacherDashboard->download_masterlist_csv();
+        break;
+
+    case 'bulk_enroll_from_masterlist':
+        $teacherDashboard->bulk_enroll_from_masterlist();
+        break;
+
     // ── Admin routes ──────────────────────────────────────────
     case 'admin':
         requireAuth('admin');
         $admin->index();
         break;
+
     case 'addSubject':
         requireAuth('admin');
-        $teacher->addSubject();
+        $admin->addSubject();
         break;
+    case 'updateSubject':
+        requireAuth('admin');
+        $admin->updateSubject();
+        break;
+
+    case 'deleteSubject':
+        requireAuth('admin');
+        $admin->deleteSubject();
+        break;
+
     case 'student_records':
         requireAuth('admin');
         $controller->student_records();
@@ -273,6 +311,17 @@ switch ($url) {
 
     case 'accept_invite':
         $teacherDashboard->accept_invite();
+        break;
+
+    // wherever your other routes are defined
+    case 'import_masterlist':
+        requireAuth('admin');   // ← add this line
+        $admin->importMasterlist();
+        break;
+
+    case 'bulk_enroll_students':
+        requireAuth('teacher');
+        $teacherDashboard->bulk_enroll_students();
         break;
 
     // ── Super Admin routes ────────────────────────────────────
@@ -307,12 +356,12 @@ switch ($url) {
 
     case 'createTeacher':
         requireAuth('admin');
-        $teacher->createTeacher();
+        $admin->createTeacher();
         break;
 
     case 'updateTeacher':
         requireAuth('admin');
-        $teacher->updateTeacher();
+        $admin->updateTeacher();
         break;
 
     case 'create_super_admin_Teacher':
@@ -334,7 +383,7 @@ switch ($url) {
         break;
 
     case 'update_student':
-        $teacher->updateStudent();
+        $admin->updateStudent();
         break;
 
     case 'update_super_admin_Student':
@@ -344,12 +393,69 @@ switch ($url) {
 
     case 'teacher_users':
         requireAuth('admin');
-        $teacher->teacherRecords();
+        $admin->teacherRecords();
         break;
 
     case 'student_users':
         requireAuth('admin');
-        $teacher->studentRecords();
+        $admin->studentRecords();
+        break;
+
+    case 'Adminsubjects':
+        requireAuth('admin');
+        $admin->SubjectPage();
+        break;
+
+    case 'Adminsections':
+        requireAuth('admin');
+        $admin->SectionPage();
+        break;
+
+    case 'createSection':
+        requireAuth('admin');
+        $admin->createSection();
+        break;
+
+    case 'updateSection':
+        requireAuth('admin');
+        $admin->updateSection();
+        break;
+
+    case 'deleteSection':
+        requireAuth('admin');
+        $admin->deleteSection();
+        break;
+
+    case 'Reports':
+        requireAuth('admin');
+        $admin->reportsPage();
+        break;
+
+    case 'subject_access':
+        requireAuth('admin');
+        $admin->subjectAccessPage();
+        break;
+
+    case 'subject_access_section_ajax':
+        requireAuth('admin');
+        $admin->subjectAccessSectionAjax();
+        break;
+
+    case 'toggle_subject_access':
+        requireAuth('admin');
+        $admin->toggleSubjectAccessAjax();
+        break;
+
+    case 'bulk_toggle_subject_access':
+        requireAuth('admin');
+        $admin->bulkToggleSubjectAccessAjax();
+        break;
+
+    // ── NEW — AJAX endpoint for student_users.php search/filter/pagination
+    //          (Enrolled Students + Masterlist tables), no full page reload.
+    case 'student_users_search':
+        requireAuth('admin');
+        $admin->studentRecordsAjax();
         break;
 
     case 'super_admin_teacher_users':

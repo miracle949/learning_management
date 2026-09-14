@@ -355,7 +355,7 @@ class Teacher extends Model
     public function getRecentStudents($limit = 5)
     {
         $sql = "
-            SELECT u.name, u.email, gl.name AS grade_level_name, sec.section_name
+            SELECT u.name, gl.name AS grade_level_name, sec.section_name
             FROM tbl_students s
             JOIN tbl_users u ON s.user_id = u.id
             JOIN tbl_grade_level gl ON s.grade_level_id = gl.id
@@ -373,11 +373,11 @@ class Teacher extends Model
         return $students;
     }
 
-    public function createTeacher($name, $email, $password)
+    public function createTeacher($name, $username, $password)
     {
         $hashed = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $this->db->prepare("INSERT INTO tbl_users (name, email, password, role) VALUES (?, ?, ?, 'teacher')");
-        $stmt->bind_param("sss", $name, $email, $hashed);
+        $stmt = $this->db->prepare("INSERT INTO tbl_users (name, username, password, role) VALUES (?, ?, ?, 'teacher')");
+        $stmt->bind_param("sss", $name, $username, $hashed);
         $stmt->execute();
         $user_id = $this->db->insert_id;
 
@@ -468,7 +468,6 @@ class Teacher extends Model
             s.student_LRN,
             s.status,
             u.name,
-            u.email,
             gl.name AS grade_level,
             sec.section_name
         FROM tbl_students s
@@ -508,7 +507,6 @@ class Teacher extends Model
             SELECT
                 t.id   AS teacher_id,
                 u.name,
-                u.email,
                 COUNT(DISTINCT ta.id) AS class_count,
                 GROUP_CONCAT(
                     DISTINCT CONCAT(s.id, '~~', s.subject_name)
@@ -529,7 +527,7 @@ class Teacher extends Model
             LEFT JOIN tbl_sections sec           ON ta.section_id   = sec.id
             LEFT JOIN tbl_grade_level gl         ON ta.grade_level_id = gl.id
             WHERE u.role = 'teacher'
-            GROUP BY t.id, u.name, u.email
+            GROUP BY t.id, u.name
         ";
 
         $outerWhere = [];
@@ -538,10 +536,9 @@ class Teacher extends Model
 
         if ($search !== '') {
             $like = '%' . $search . '%';
-            $outerWhere[] = "(name LIKE ? OR email LIKE ?)";
+            $outerWhere[] = "(name LIKE ?)";
             $params[] = $like;
-            $params[] = $like;
-            $types .= 'ss';
+            $types .= 's';
         }
 
         if ($grade !== '') {
@@ -608,26 +605,19 @@ class Teacher extends Model
         return $teachers;
     }
 
-    public function updateTeacherInfo(int $teacher_id, string $name, string $email, string $password = ''): void
+    public function updateTeacherInfo(int $teacher_id, string $name): void
     {
         $stmt = $this->db->prepare("SELECT user_id FROM tbl_teachers WHERE id = ?");
         $stmt->bind_param("i", $teacher_id);
         $stmt->execute();
         $row = $stmt->get_result()->fetch_assoc();
         $stmt->close();
-
         if (!$row)
             return;
         $user_id = (int) $row['user_id'];
 
-        if (!empty($password)) {
-            $hashed = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $this->db->prepare("UPDATE tbl_users SET name = ?, email = ?, password = ? WHERE id = ?");
-            $stmt->bind_param("sssi", $name, $email, $hashed, $user_id);
-        } else {
-            $stmt = $this->db->prepare("UPDATE tbl_users SET name = ?, email = ? WHERE id = ?");
-            $stmt->bind_param("ssi", $name, $email, $user_id);
-        }
+        $stmt = $this->db->prepare("UPDATE tbl_users SET name = ? WHERE id = ?");
+        $stmt->bind_param("si", $name, $user_id);
         $stmt->execute();
         $stmt->close();
     }
@@ -655,7 +645,7 @@ class Teacher extends Model
     public function getAllTeachers()
     {
         $sql = "
-    SELECT t.id AS teacher_id, u.name, u.email,
+    SELECT t.id AS teacher_id, u.name,
         GROUP_CONCAT(DISTINCT CONCAT(s.id, '~~', s.subject_name)
             ORDER BY s.subject_name SEPARATOR '||') AS subjects,
         COUNT(DISTINCT ta.id) AS class_count,
@@ -668,7 +658,7 @@ class Teacher extends Model
     LEFT JOIN tbl_sections sec ON ta.section_id = sec.id
     LEFT JOIN tbl_grade_level gl ON ta.grade_level_id = gl.id
     WHERE u.role = 'teacher'
-    GROUP BY t.id, u.name, u.email ORDER BY u.name ASC
+    GROUP BY t.id, u.name ORDER BY u.name ASC
     ";
 
         $result = $this->db->query($sql);
@@ -696,7 +686,7 @@ class Teacher extends Model
     public function getEnrolledStudentsBySubject($subject_id, $teacher_id)
     {
         $stmt = $this->db->prepare("
-        SELECT u.name, u.email,
+        SELECT u.name,
                gl.name AS grade_level,
                sec.section_name,
                sec.id AS section_id,
@@ -976,7 +966,7 @@ class Teacher extends Model
         return [];
     }
 
-    public function getInteractiveModulesWithCount($subjectId)
+        public function getInteractiveModulesWithCount($subjectId, $teacherId = 0)
     {
         $sql = "
     SELECT 
@@ -991,11 +981,20 @@ class Teacher extends Model
     LEFT JOIN tbl_lessons l ON l.interactive_module_id = im.id
     LEFT JOIN tbl_interactive_contents ic ON ic.lesson_id = l.id
     WHERE im.subject_id = ?
-    GROUP BY im.id
-    ORDER BY im.created_at ASC
 ";
+        $params = [$subjectId];
+        $types = "i";
+
+        if ($teacherId > 0) {
+            $sql .= " AND im.teacher_id = ?";
+            $params[] = $teacherId;
+            $types .= "i";
+        }
+
+        $sql .= " GROUP BY im.id ORDER BY im.created_at ASC";
+
         $stmt = $this->db->prepare($sql);
-        $stmt->bind_param("i", $subjectId);
+        $stmt->bind_param($types, ...$params);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
@@ -1003,7 +1002,7 @@ class Teacher extends Model
     public function getLessonArrangeStepsData($lessonId)
     {
         $stmt = $this->db->prepare("
-        SELECT title, instructions, question AS step_text, step_order
+        SELECT title, arrange_category, instructions, question AS step_text, step_order
         FROM tbl_interactive_contents
         WHERE lesson_id = ? AND type = 'arrange_steps'
         ORDER BY id ASC
@@ -1019,6 +1018,7 @@ class Teacher extends Model
                 $grouped[$key] = [
                     'game' => [
                         'title' => $row['title'],
+                        'arrange_category' => $row['arrange_category'],   // NEW
                         'instructions' => $row['instructions'],
                     ],
                     'steps' => [],
@@ -1346,6 +1346,7 @@ class Teacher extends Model
     public function insertInteractiveContent($lessonId, $type, $data = [])
     {
         $title = $data['title'] ?? null;
+        $arrangeCategory = $data['arrange_category'] ?? null;
         $body = $data['body'] ?? null;
         $keyIdea = $data['key_idea'] ?? null;
         $instructions = $data['instructions'] ?? null;
@@ -1374,7 +1375,7 @@ class Teacher extends Model
 
         $stmt = $this->db->prepare("
         INSERT INTO tbl_interactive_contents (
-        lesson_id, type, title, body, key_idea, instructions,
+        lesson_id, type, title, arrange_category, body, key_idea, instructions,
         question, question_type,
         choice_a, choice_b, choice_c, choice_d,
         correct_ans, model_answer,
@@ -1386,7 +1387,7 @@ class Teacher extends Model
         step_order,
         created_at
     ) VALUES (
-        ?, ?, ?, ?, ?, ?,
+        ?, ?, ?, ?, ?, ?, ?,
         ?, ?,
         ?, ?, ?, ?,
         ?, ?,
@@ -1401,22 +1402,14 @@ class Teacher extends Model
     ");
 
         if (!$stmt) {
-            throw new \RuntimeException(
-                'insertInteractiveContent: prepare() failed — ' . $this->db->error
-            );
+            throw new \RuntimeException('insertInteractiveContent: prepare() failed — ' . $this->db->error);
         }
-
-        // Build params in the EXACT order they appear in the SQL above.
-        // Integer columns get 'i', everything else gets 's' (NULL-safe in mysqli).
-        $params = [
-            'i' => $lessonId,
-            's' => $type,
-        ];
 
         $orderedValues = [
             $lessonId,
             $type,
             $title,
+            $arrangeCategory,   // NEW — position 3
             $body,
             $keyIdea,
             $instructions,
@@ -1444,16 +1437,14 @@ class Teacher extends Model
             $stepOrder,
         ];
 
-        // Columns that must bind as integers — match by position (0-based)
-        // matching the $orderedValues array above.
-        $intPositions = [0, 14, 15, 27]; // lessonId, passingScore, totalPoints, stepOrder
+        // lessonId, passingScore, totalPoints, stepOrder — positions shifted by +1
+        $intPositions = [0, 15, 16, 28];
 
         $types = '';
         foreach ($orderedValues as $i => $val) {
             $types .= in_array($i, $intPositions, true) ? 'i' : 's';
         }
 
-        // Sanity check — this can never silently mismatch again.
         if (strlen($types) !== count($orderedValues)) {
             throw new \RuntimeException(
                 "insertInteractiveContent: type string length (" . strlen($types) .
@@ -1464,9 +1455,7 @@ class Teacher extends Model
         $stmt->bind_param($types, ...$orderedValues);
 
         if (!$stmt->execute()) {
-            throw new \RuntimeException(
-                'insertInteractiveContent: execute() failed — ' . $stmt->error
-            );
+            throw new \RuntimeException('insertInteractiveContent: execute() failed — ' . $stmt->error);
         }
 
         return $this->db->insert_id;
@@ -1551,7 +1540,6 @@ class Teacher extends Model
         $stmt = $this->db->prepare("
         SELECT DISTINCT
             u.name,
-            u.email,
             gl.name AS grade_level,
             sec.section_name
         FROM tbl_teacher_assignments ta
@@ -1823,7 +1811,7 @@ class Teacher extends Model
     {
         $stmt = $this->db->prepare("
         SELECT s.id AS student_id, s.student_LRN, u.id AS user_id,
-               u.name, u.email, u.status,
+               u.name,
                gl.id AS grade_level_id, gl.name AS grade_level,
                sec.id AS section_id, sec.section_name
         FROM tbl_students s
@@ -1838,50 +1826,25 @@ class Teacher extends Model
         return $stmt->get_result()->fetch_assoc();
     }
 
-    public function updateStudent($user_id, $name, $email, $status, $grade_level_id, $section_id, $student_LRN, $student_id, $decline_reason = '', $approved_by = null)
+    public function updateStudent($user_id, $name, $status, $grade_level_id, $section_id, $student_LRN, $student_id, $decline_reason = '', $approved_by = null)
     {
-        $stmt = $this->db->prepare("
-        UPDATE tbl_users SET name = ?, email = ? WHERE id = ?
-    ");
-        $stmt->bind_param("ssi", $name, $email, $user_id);
+        $stmt = $this->db->prepare("UPDATE tbl_users SET name = ? WHERE id = ?");
+        $stmt->bind_param("si", $name, $user_id);
         $stmt->execute();
         $stmt->close();
 
-        if ($approved_by !== null) {
-            $approvedBy = (int) $approved_by;
-            $stmt2 = $this->db->prepare("
-            UPDATE tbl_students 
-            SET grade_level_id = ?, section_id = ?, student_LRN = ?, 
-                status = ?, reason = ?, approved_by = ?, updated_at = NOW()
-            WHERE id = ?
-        ");
-            $stmt2->bind_param(
-                "iisssii",
-                $grade_level_id,
-                $section_id,
-                $student_LRN,
-                $status,
-                $decline_reason,
-                $approvedBy,
-                $student_id
-            );
-        } else {
-            $stmt2 = $this->db->prepare("
-            UPDATE tbl_students 
-            SET grade_level_id = ?, section_id = ?, student_LRN = ?, 
-                status = ?, reason = ?, updated_at = NOW()
-            WHERE id = ?
-        ");
-            $stmt2->bind_param(
-                "iisssi",
-                $grade_level_id,
-                $section_id,
-                $student_LRN,
-                $status,
-                $decline_reason,
-                $student_id
-            );
-        }
+        $stmt2 = $this->db->prepare("
+        UPDATE tbl_students 
+        SET grade_level_id = ?, section_id = ?, student_LRN = ?, updated_at = NOW()
+        WHERE id = ?
+    ");
+        $stmt2->bind_param(
+            "iisi",
+            $grade_level_id,
+            $section_id,
+            $student_LRN,
+            $student_id
+        );
         $stmt2->execute();
         $stmt2->close();
     }
@@ -1901,30 +1864,409 @@ class Teacher extends Model
     // ENROLLMENT — direct enroll (no invitation table)
     // ============================================================
 
-    public function getApprovedStudentsNotEnrolled(int $subjectId, int $sectionId): array
+    // ============================================================
+// BULK ENROLLMENT — teacher uploads a CSV of LRNs
+// ============================================================
+    public function bulkEnrollByLRNs(
+        int $teacherId,
+        int $subjectId,
+        int $gradeLevelId,
+        int $sectionId,
+        array $lrns
+    ): array {
+        $enrolled = [];
+        $alreadyEnrolled = [];
+        $notInMasterlist = [];
+
+        // The teacher's tbl_users.id — used as "approved_by" for auto-created accounts
+        $teacherUserId = (int) ($this->getUserIdByTeacherId($teacherId) ?? 0);
+
+        foreach ($lrns as $lrn) {
+            $lrn = trim($lrn);
+            if ($lrn === '')
+                continue;
+
+            // Match against the MASTERLIST — the student may not have an account yet.
+            $stmt = $this->db->prepare("
+                SELECT id AS master_lrn_id, student_LRN, first_name, last_name, school_year
+                FROM tbl_master_lrn
+                WHERE student_LRN = ?
+                LIMIT 1
+            ");
+            $stmt->bind_param("s", $lrn);
+            $stmt->execute();
+            $master = $stmt->get_result()->fetch_assoc();
+
+            if (!$master) {
+                $notInMasterlist[] = $lrn;
+                continue;
+            }
+
+            $schoolYear = $master['school_year'];
+            $fullName = trim($master['first_name'] . ' ' . $master['last_name']);
+
+            // Does a student account already exist for this LRN?
+            $studentStmt = $this->db->prepare("SELECT id FROM tbl_students WHERE student_LRN = ? LIMIT 1");
+            $studentStmt->bind_param("s", $lrn);
+            $studentStmt->execute();
+            $existingStudent = $studentStmt->get_result()->fetch_assoc();
+
+            if ($existingStudent) {
+                $studentId = (int) $existingStudent['id'];
+            } else {
+                // ── AUTO-CREATE ACCOUNT: tbl_users + tbl_students ──
+                $username = $lrn;
+                $email = $lrn . '@student.ilearn';
+                $defaultPassword = password_hash($lrn, PASSWORD_DEFAULT);
+
+                $userStmt = $this->db->prepare("
+                    INSERT INTO tbl_users (name, email, username, password, role, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, 'student', NOW(), NOW())
+                ");
+                $userStmt->bind_param("ssss", $fullName, $email, $username, $defaultPassword);
+                $userStmt->execute();
+                $newUserId = $this->db->insert_id;
+
+                $status = 'Approved'; // auto-approved since teacher enrolled them directly
+                $masterLrnId = (int) $master['master_lrn_id'];
+
+                $stuStmt = $this->db->prepare("
+                    INSERT INTO tbl_students
+                        (student_LRN, master_lrn_id, grade_level_id, section_id, user_id, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, NOW(), NOW())
+                ");
+                $stuStmt->bind_param(
+                    "siiii",
+                    $lrn,
+                    $masterLrnId,
+                    $gradeLevelId,
+                    $sectionId,
+                    $newUserId
+                );
+                $stuStmt->execute();
+                $studentId = $this->db->insert_id;
+            }
+
+            // Sync masterlist match status regardless of new or existing account
+            $syncStmt = $this->db->prepare("
+                UPDATE tbl_master_lrn
+                SET is_matched = 1, matched_student_id = ?, enrollment_status = 'Enrolled'
+                WHERE student_LRN = ?
+            ");
+            $syncStmt->bind_param("is", $studentId, $lrn);
+            $syncStmt->execute();
+
+            // Already enrolled in this subject/year?
+            $check = $this->db->prepare("
+                SELECT id FROM tbl_student_enrollments
+                WHERE student_lrn = ? AND subject_id = ? AND school_year = ?
+                LIMIT 1
+            ");
+            $check->bind_param("sis", $lrn, $subjectId, $schoolYear);
+            $check->execute();
+            if ($check->get_result()->fetch_assoc()) {
+                $alreadyEnrolled[] = $fullName;
+                continue;
+            }
+
+            $insert = $this->db->prepare("
+                INSERT INTO tbl_student_enrollments
+                    (student_id, student_lrn, subject_id, section_id, grade_level_id, school_year, enrolled_by_teacher_id, enrolled_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+            ");
+            $insert->bind_param(
+                "isiiisi",
+                $studentId,
+                $lrn,
+                $subjectId,
+                $sectionId,
+                $gradeLevelId,
+                $schoolYear,
+                $teacherId
+            );
+            $insert->execute();
+
+            $enrolled[] = $fullName;
+        }
+
+        return [
+            'enrolled' => $enrolled,
+            'already_enrolled' => $alreadyEnrolled,
+            'not_registered' => $notInMasterlist, // renamed to match records.php's toast script
+        ];
+    }
+
+    public function getMasterlistFiltered($limit, $offset, $search = '', $grade = '', $section = '', $strand = '', $schoolYear = '', $status = '')
+    {
+        $where = ["1=1"];
+        $params = [];
+        $types = '';
+
+        if ($search) {
+            $where[] = "(ml.student_LRN LIKE ? OR ml.first_name LIKE ? OR ml.last_name LIKE ?)";
+            $like = "%$search%";
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+            $types .= 'sss';
+        }
+        if ($grade) {
+            $where[] = "LOWER(gl.name) = ?";
+            $params[] = strtolower($grade);
+            $types .= 's';
+        }
+        if ($section) {
+            $where[] = "LOWER(sec.section_name) = ?";
+            $params[] = strtolower($section);
+            $types .= 's';
+        }
+        if ($strand) {
+            $where[] = "LOWER(ml.strand) = ?";
+            $params[] = strtolower($strand);
+            $types .= 's';
+        }
+        if ($schoolYear) {
+            $where[] = "ml.school_year = ?";
+            $params[] = $schoolYear;
+            $types .= 's';
+        }
+        if ($status !== '') {
+            // status is 'enrolled' or 'pending' from the dropdown
+            $where[] = "ml.is_matched = ?";
+            $params[] = (strtolower($status) === 'enrolled') ? 1 : 0;
+            $types .= 'i';
+        }
+
+        $whereClause = implode(' AND ', $where);
+        $sql = "
+    SELECT ml.id, ml.student_LRN, ml.first_name, ml.last_name, ml.middle_name,
+           ml.strand, ml.school_year, ml.is_matched, ml.matched_student_id,
+           ml.grade_level_id, ml.section_id,
+           gl.name AS grade_level, sec.section_name
+    FROM tbl_master_lrn ml
+    LEFT JOIN tbl_grade_level gl ON ml.grade_level_id = gl.id
+    LEFT JOIN tbl_sections sec ON ml.section_id = sec.id
+    WHERE $whereClause
+    ORDER BY ml.last_name ASC, ml.first_name ASC
+    LIMIT ? OFFSET ?
+";
+        $params[] = $limit;
+        $params[] = $offset;
+        $types .= 'ii';
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function countMasterlistFiltered($search = '', $grade = '', $section = '', $strand = '', $schoolYear = '', $status = '')
+    {
+        $where = ["1=1"];
+        $params = [];
+        $types = '';
+
+        if ($search) {
+            $where[] = "(ml.student_LRN LIKE ? OR ml.first_name LIKE ? OR ml.last_name LIKE ?)";
+            $like = "%$search%";
+            $params[] = $like;
+            $params[] = $like;
+            $params[] = $like;
+            $types .= 'sss';
+        }
+        if ($grade) {
+            $where[] = "LOWER(gl.name) = ?";
+            $params[] = strtolower($grade);
+            $types .= 's';
+        }
+        if ($section) {
+            $where[] = "LOWER(sec.section_name) = ?";
+            $params[] = strtolower($section);
+            $types .= 's';
+        }
+        if ($strand) {
+            $where[] = "LOWER(ml.strand) = ?";
+            $params[] = strtolower($strand);
+            $types .= 's';
+        }
+        if ($schoolYear) {
+            $where[] = "ml.school_year = ?";
+            $params[] = $schoolYear;
+            $types .= 's';
+        }
+        if ($status !== '') {
+            $where[] = "ml.is_matched = ?";
+            $params[] = (strtolower($status) === 'enrolled') ? 1 : 0;
+            $types .= 'i';
+        }
+
+        $whereClause = implode(' AND ', $where);
+        $sql = "
+    SELECT COUNT(*) AS total
+    FROM tbl_master_lrn ml
+    LEFT JOIN tbl_grade_level gl ON ml.grade_level_id = gl.id
+    LEFT JOIN tbl_sections sec ON ml.section_id = sec.id
+    WHERE $whereClause
+";
+
+        if ($params) {
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            return (int) $stmt->get_result()->fetch_assoc()['total'];
+        }
+        return (int) $this->db->query($sql)->fetch_assoc()['total'];
+    }
+
+    // ── NEW — distinct values for the masterlist filter dropdowns ──
+    public function getDistinctMasterlistStrands(): array
+    {
+        $result = $this->db->query("
+        SELECT DISTINCT strand FROM tbl_master_lrn
+        WHERE strand IS NOT NULL AND strand != ''
+        ORDER BY strand ASC
+    ");
+        return array_column($result->fetch_all(MYSQLI_ASSOC), 'strand');
+    }
+
+    public function getDistinctMasterlistSchoolYears(): array
+    {
+        $result = $this->db->query("
+        SELECT DISTINCT school_year FROM tbl_master_lrn
+        WHERE school_year IS NOT NULL AND school_year != ''
+        ORDER BY school_year DESC
+    ");
+        return array_column($result->fetch_all(MYSQLI_ASSOC), 'school_year');
+    }
+
+    public function getEnrollmentsWithTeacherName($subjectId, $sectionId)
     {
         $stmt = $this->db->prepare("
-        SELECT u.email, u.name
-        FROM tbl_users u
-        JOIN tbl_students s ON s.user_id = u.id
-        WHERE u.role = 'student'
-          AND s.status = 'Approved'
-          AND s.id NOT IN (
-              SELECT se.student_id
-              FROM tbl_student_enrollments se
-              WHERE se.subject_id = ? AND se.section_id = ?
-          )
-        ORDER BY u.name ASC
+        SELECT se.*, u.name AS enrolled_by_name
+        FROM tbl_student_enrollments se
+        LEFT JOIN tbl_teachers t ON t.id = se.enrolled_by_teacher_id
+        LEFT JOIN tbl_users u    ON u.id = t.user_id
+        WHERE se.subject_id = ? AND se.section_id = ?
     ");
         $stmt->bind_param("ii", $subjectId, $sectionId);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    // ============================================================
+// BACKFILL — link tbl_students created outside bulkEnrollByLRNs
+// back to their tbl_master_lrn row and mark them Enrolled
+// ============================================================
+    public function backfillMasterlistMatches(): array
+    {
+        $stmt = $this->db->prepare("
+        SELECT s.id AS student_id, s.student_LRN
+        FROM tbl_students s
+        JOIN tbl_master_lrn ml ON ml.student_LRN = s.student_LRN
+        WHERE ml.is_matched = 0 OR ml.matched_student_id IS NULL
+    ");
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $fixed = [];
+        foreach ($rows as $row) {
+            $upd = $this->db->prepare("
+            UPDATE tbl_master_lrn
+            SET is_matched = 1, matched_student_id = ?, enrollment_status = 'Enrolled'
+            WHERE student_LRN = ?
+        ");
+            $upd->bind_param("is", $row['student_id'], $row['student_LRN']);
+            $upd->execute();
+            $fixed[] = $row['student_LRN'];
+        }
+        return $fixed;
+    }
+
+    // ============================================================
+// Preview: masterlist students belonging to this grade+section
+// ============================================================
+    public function getMasterlistStudentsBySection(int $gradeLevelId, int $sectionId): array
+    {
+        $stmt = $this->db->prepare("
+        SELECT ml.student_LRN, ml.first_name, ml.last_name, ml.school_year,
+               s.id AS student_id
+        FROM tbl_master_lrn ml
+        LEFT JOIN tbl_students s ON s.student_LRN = ml.student_LRN
+        WHERE ml.grade_level_id = ? AND ml.section_id = ?
+        ORDER BY ml.last_name ASC, ml.first_name ASC
+    ");
+        $stmt->bind_param("ii", $gradeLevelId, $sectionId);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Enroll every masterlist LRN matching this section in one click
+    public function bulkEnrollFromMasterlist(int $teacherId, int $subjectId, int $gradeLevelId, int $sectionId): array
+    {
+        $masterlistStudents = $this->getMasterlistStudentsBySection($gradeLevelId, $sectionId);
+        $lrns = array_column($masterlistStudents, 'student_LRN');
+
+        if (empty($lrns)) {
+            return ['enrolled' => [], 'already_enrolled' => [], 'not_in_masterlist' => []];
+        }
+
+        return $this->bulkEnrollByLRNs($teacherId, $subjectId, $gradeLevelId, $sectionId, $lrns);
+    }
+
+    public function linkPendingEnrollments(string $lrn, int $studentId): void
+    {
+        $stmt = $this->db->prepare("
+        UPDATE tbl_student_enrollments
+        SET student_id = ?
+        WHERE student_lrn = ? AND student_id IS NULL
+    ");
+        $stmt->bind_param("is", $studentId, $lrn);
+        $stmt->execute();
+    }
+
+    // ============================================================
+// PEOPLE TAB — masterlist status summary for this class/section
+// ============================================================
+    public function getMasterlistStatusForSection(int $gradeLevelId, int $sectionId, int $subjectId): array
+    {
+        // Does a masterlist even exist for this grade + section?
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total
+        FROM tbl_master_lrn
+        WHERE grade_level_id = ? AND section_id = ?
+    ");
+        $stmt->bind_param("ii", $gradeLevelId, $sectionId);
+        $stmt->execute();
+        $total = (int) ($stmt->get_result()->fetch_assoc()['total'] ?? 0);
+
+        if ($total === 0) {
+            return ['has_masterlist' => false, 'total' => 0, 'enrolled' => 0, 'pending' => 0];
+        }
+
+        // Of those masterlist LRNs, how many are already enrolled in THIS subject?
+        $stmt = $this->db->prepare("
+        SELECT COUNT(DISTINCT ml.student_LRN) AS enrolled
+        FROM tbl_master_lrn ml
+        JOIN tbl_student_enrollments se
+            ON se.student_lrn = ml.student_LRN AND se.subject_id = ?
+        WHERE ml.grade_level_id = ? AND ml.section_id = ?
+    ");
+        $stmt->bind_param("iii", $subjectId, $gradeLevelId, $sectionId);
+        $stmt->execute();
+        $enrolled = (int) ($stmt->get_result()->fetch_assoc()['enrolled'] ?? 0);
+
+        return [
+            'has_masterlist' => true,
+            'total' => $total,
+            'enrolled' => $enrolled,
+            'pending' => max(0, $total - $enrolled),
+        ];
+    }
+
     public function getApprovedStudentByEmail(string $email)
     {
         $stmt = $this->db->prepare("
-        SELECT s.id AS student_id, u.id AS user_id, u.name, u.email, s.status,
+        SELECT s.id AS student_id, u.id AS user_id, u.name, s.status,
                s.grade_level_id, s.section_id
         FROM tbl_students s
         JOIN tbl_users u ON u.id = s.user_id
@@ -1934,6 +2276,103 @@ class Teacher extends Model
         $stmt->bind_param("s", $email);
         $stmt->execute();
         return $stmt->get_result()->fetch_assoc();
+    }
+
+    // ============================================================
+// NOTIFY TEACHERS — masterlist imported by admin for a grade+section
+// ============================================================
+    public function notifyTeachersOfMasterlistImport(int $gradeLevelId, int $sectionId, int $studentCount): void
+    {
+        // Find every teacher currently assigned to this grade+section
+        $stmt = $this->db->prepare("
+        SELECT DISTINCT ta.teacher_id, t.user_id
+        FROM tbl_teacher_assignments ta
+        JOIN tbl_teachers t ON t.id = ta.teacher_id
+        WHERE ta.grade_level_id = ? AND ta.section_id = ?
+    ");
+        $stmt->bind_param("ii", $gradeLevelId, $sectionId);
+        $stmt->execute();
+        $teachers = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        if (empty($teachers))
+            return;
+
+        $sectionInfo = $this->db->prepare("
+        SELECT sec.section_name, gl.name AS grade_name
+        FROM tbl_sections sec
+        JOIN tbl_grade_level gl ON gl.id = sec.grade_level_id
+        WHERE sec.id = ? LIMIT 1
+    ");
+        $sectionInfo->bind_param("i", $sectionId);
+        $sectionInfo->execute();
+        $info = $sectionInfo->get_result()->fetch_assoc();
+
+        $sectionName = $info['section_name'] ?? '';
+        $gradeName = $info['grade_name'] ?? '';
+
+        $title = "New Masterlist Available";
+        $message = "{$studentCount} student(s) were added to the official roster for "
+            . "{$gradeName} - {$sectionName}. Open Bulk Enrollment to add them to your class.";
+
+        foreach ($teachers as $t) {
+            $stmt2 = $this->db->prepare("
+            INSERT INTO tbl_notifications
+                (sender_id, recipient_id, grade_level_id, section_id, title, message, type, created_at)
+            VALUES (0, ?, ?, ?, ?, ?, 'masterlist_import', NOW())
+        ");
+            $stmt2->bind_param(
+                "iiiss",
+                $t['user_id'],
+                $gradeLevelId,
+                $sectionId,
+                $title,
+                $message
+            );
+            $stmt2->execute();
+        }
+    }
+
+    // ============================================================
+// GET NOTIFICATIONS — for the bell icon in records.php
+// ============================================================
+    public function getTeacherNotifications(int $userId, int $limit = 10): array
+    {
+        $stmt = $this->db->prepare("
+        SELECT n.id, n.title, n.message, n.grade_level_id, n.section_id,
+               n.is_read, n.created_at,
+               sec.section_name, gl.name AS grade_name
+        FROM tbl_notifications n
+        LEFT JOIN tbl_sections sec ON sec.id = n.section_id
+        LEFT JOIN tbl_grade_level gl ON gl.id = n.grade_level_id
+        WHERE n.recipient_id = ? AND n.type = 'masterlist_import'
+        ORDER BY n.created_at DESC
+        LIMIT ?
+    ");
+        $stmt->bind_param("ii", $userId, $limit);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function countUnreadNotifications(int $userId): int
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(*) AS total FROM tbl_notifications
+        WHERE recipient_id = ? AND type = 'masterlist_import' AND is_read = 0
+    ");
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        return (int) $stmt->get_result()->fetch_assoc()['total'];
+    }
+
+    public function markNotificationsRead(int $userId): void
+    {
+        $stmt = $this->db->prepare("
+        UPDATE tbl_notifications
+        SET is_read = 1
+        WHERE recipient_id = ? AND type = 'masterlist_import'
+    ");
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
     }
 
     public function isAlreadyEnrolled(int $studentId, int $subjectId, int $sectionId): bool
@@ -1965,18 +2404,18 @@ class Teacher extends Model
         return $stmt->get_result()->fetch_assoc() ?: null;
     }
 
-    public function getAllApprovedStudents(): array
-    {
-        $stmt = $this->db->prepare("
-        SELECT u.email, u.name
-        FROM tbl_users u
-        JOIN tbl_students s ON s.user_id = u.id
-        WHERE u.role = 'student' AND s.status = 'Approved'
-        ORDER BY u.name ASC
-    ");
-        $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    }
+    // public function getAllApprovedStudents(): array
+    // {
+    //     $stmt = $this->db->prepare("
+    //     SELECT u.email, u.name
+    //     FROM tbl_users u
+    //     JOIN tbl_students s ON s.user_id = u.id
+    //     WHERE u.role = 'student' AND s.status = 'Approved'
+    //     ORDER BY u.name ASC
+    // ");
+    //     $stmt->execute();
+    //     return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    // }
 
     // Add these three methods to your Teacher class
 
@@ -2268,12 +2707,11 @@ class Teacher extends Model
         $types = '';
 
         if ($search) {
-            $where[] = "(u.name LIKE ? OR u.email LIKE ? OR s.student_LRN LIKE ?)";
+            $where[] = "(u.name LIKE ? OR s.student_LRN LIKE ?)";
             $like = "%$search%";
             $params[] = $like;
             $params[] = $like;
-            $params[] = $like;
-            $types .= 'sss';
+            $types .= 'ss';
         }
         if ($grade) {
             $where[] = "LOWER(gl.name) = ?";
@@ -2285,26 +2723,22 @@ class Teacher extends Model
             $params[] = strtolower($section);
             $types .= 's';
         }
-        if ($status) {
-            $where[] = "LOWER(s.status) = ?";
-            $params[] = strtolower($status);
-            $types .= 's';
-        }
+        // status filter removed — no approval workflow in this schema
 
         $whereClause = implode(' AND ', $where);
         $sql = "
-            SELECT s.id AS student_id, s.user_id, s.grade_level_id, s.section_id,
-            s.student_LRN, s.status, s.reason, u.name, u.email,  
-            u.id AS id,
-            gl.name AS grade_level, sec.section_name
-            FROM tbl_students s
-            JOIN tbl_users u ON s.user_id = u.id
-            JOIN tbl_grade_level gl ON s.grade_level_id = gl.id
-            JOIN tbl_sections sec ON s.section_id = sec.id
-            WHERE $whereClause
-            ORDER BY u.id ASC
-            LIMIT ? OFFSET ?
-        ";
+        SELECT s.id AS student_id, s.user_id, s.grade_level_id, s.section_id,
+        s.student_LRN, u.name,
+        u.id AS id,
+        gl.name AS grade_level, sec.section_name
+        FROM tbl_students s
+        JOIN tbl_users u ON s.user_id = u.id
+        JOIN tbl_grade_level gl ON s.grade_level_id = gl.id
+        JOIN tbl_sections sec ON s.section_id = sec.id
+        WHERE $whereClause
+        ORDER BY u.id ASC
+        LIMIT ? OFFSET ?
+    ";
         $params[] = $limit;
         $params[] = $offset;
         $types .= 'ii';
@@ -2322,11 +2756,10 @@ class Teacher extends Model
         $types = '';
 
         if ($search) {
-            $where[] = "(u.name LIKE ? OR u.email LIKE ?)";
+            $where[] = "(u.name LIKE ?)";
             $like = "%$search%";
             $params[] = $like;
-            $params[] = $like;
-            $types .= 'ss';
+            $types .= 's';
         }
         if ($grade) {
             $where[] = "LOWER(gl.name) = ?";
@@ -2338,11 +2771,7 @@ class Teacher extends Model
             $params[] = strtolower($section);
             $types .= 's';
         }
-        if ($status) {
-            $where[] = "LOWER(s.status) = ?";
-            $params[] = strtolower($status);
-            $types .= 's';
-        }
+        // status filter removed — no approval workflow in this schema
 
         $whereClause = implode(' AND ', $where);
         $sql = "
@@ -2366,15 +2795,7 @@ class Teacher extends Model
 
     public function countStudentsByStatus(string $status): int
     {
-        $stmt = $this->db->prepare("
-        SELECT COUNT(*) AS total
-        FROM tbl_students s
-        JOIN tbl_users u ON s.user_id = u.id
-        WHERE u.role = 'student' AND LOWER(s.status) = LOWER(?)
-    ");
-        $stmt->bind_param("s", $status);
-        $stmt->execute();
-        return (int) $stmt->get_result()->fetch_assoc()['total'];
+        return 0;
     }
 
     public function getAllTeachersFilteredPaginated(
@@ -2389,7 +2810,6 @@ class Teacher extends Model
             SELECT
                 t.id   AS teacher_id,
                 u.name,
-                u.email,
                 COUNT(DISTINCT ta.id) AS class_count,
                 MAX(ta.Status) AS status_raw,
                 GROUP_CONCAT(
@@ -2411,7 +2831,7 @@ class Teacher extends Model
             LEFT JOIN tbl_sections sec           ON ta.section_id   = sec.id
             LEFT JOIN tbl_grade_level gl         ON ta.grade_level_id = gl.id
             WHERE u.role = 'teacher'
-            GROUP BY t.id, u.name, u.email
+            GROUP BY t.id, u.name
         ";
 
         $outerWhere = [];
@@ -2420,10 +2840,9 @@ class Teacher extends Model
 
         if ($search !== '') {
             $like = '%' . $search . '%';
-            $outerWhere[] = "(name LIKE ? OR email LIKE ?)";
+            $outerWhere[] = "(name LIKE ?)";
             $params[] = $like;
-            $params[] = $like;
-            $types .= 'ss';
+            $types .= 's';
         }
         if ($grade !== '') {
             $outerWhere[] = "FIND_IN_SET(LOWER(?), REPLACE(LOWER(COALESCE(grades_raw,'')), '|', ',')) > 0";
@@ -2495,7 +2914,6 @@ class Teacher extends Model
         SELECT
             t.id AS teacher_id,
             u.name,
-            u.email,
             COUNT(DISTINCT ta.id) AS class_count,
             GROUP_CONCAT(
                 DISTINCT LOWER(gl.name)
@@ -2512,7 +2930,7 @@ class Teacher extends Model
         LEFT JOIN tbl_sections sec           ON ta.section_id   = sec.id
         LEFT JOIN tbl_grade_level gl         ON ta.grade_level_id = gl.id
         WHERE u.role = 'teacher'
-        GROUP BY t.id, u.name, u.email
+        GROUP BY t.id, u.name
     ";
 
         $outerWhere = [];
@@ -2521,10 +2939,9 @@ class Teacher extends Model
 
         if ($search !== '') {
             $like = '%' . $search . '%';
-            $outerWhere[] = "(name LIKE ? OR email LIKE ?)";
+            $outerWhere[] = "(name LIKE ?)";
             $params[] = $like;
-            $params[] = $like;
-            $types .= 'ss';
+            $types .= 's';
         }
         if ($grade !== '') {
             $outerWhere[] = "FIND_IN_SET(LOWER(?), REPLACE(LOWER(COALESCE(grades_raw,'')), '|', ',')) > 0";
@@ -2569,18 +2986,7 @@ class Teacher extends Model
 
     public function bulkApproveStudents(array $studentIds): void
     {
-        if (empty($studentIds))
-            return;
-
-        $placeholders = implode(',', array_fill(0, count($studentIds), '?'));
-        $types = str_repeat('i', count($studentIds));
-
-        $stmt = $this->db->prepare("
-        UPDATE tbl_students SET status = 'Approved' WHERE id IN ($placeholders)
-    ");
-        $stmt->bind_param($types, ...$studentIds);
-        $stmt->execute();
-        $stmt->close();
+        // No-op — no approval workflow in this schema.
     }
 
     public function updateAssignmentDueDate($assignmentId, $dueDate, $dueTime)
@@ -2594,13 +3000,62 @@ class Teacher extends Model
 
     public function getAllPendingStudentIds(): array
     {
-        $stmt = $this->db->prepare("SELECT id FROM tbl_students WHERE status = 'Pending'");
+        return [];
+    }
+
+    // ============================================================
+    // MODULES PAGE — only grade levels / subjects+sections this
+    // teacher is actually assigned to (via tbl_teacher_assignments)
+    // ============================================================
+    public function getAssignedGradeLevelsForTeacher(int $teacherId): array
+    {
+        $stmt = $this->db->prepare("
+            SELECT DISTINCT gl.id, gl.name
+            FROM tbl_teacher_assignments ta
+            JOIN tbl_grade_level gl ON gl.id = ta.grade_level_id
+            WHERE ta.teacher_id = ?
+            ORDER BY gl.name ASC
+        ");
+        $stmt->bind_param("i", $teacherId);
         $stmt->execute();
-        $result = $stmt->get_result();
-        $ids = [];
-        while ($row = $result->fetch_assoc()) {
-            $ids[] = (int) $row['id'];
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getAssignedSubjectsForTeacher(int $teacherId, int $gradeLevelId = 0): array
+    {
+        // One row per subject+section assignment — a subject taught in two
+        // sections shows up as two cards, each carrying its own section_id,
+        // so module_teacher.php can pass the exact section clicked.
+        $sql = "
+            SELECT
+                ta.subject_id,
+                ta.grade_level_id,
+                ta.section_id,
+                s.subject_name,
+                s.subject_description,
+                s.subject_image,
+                gl.name AS grade_name,
+                sec.section_name
+            FROM tbl_teacher_assignments ta
+            JOIN tbl_subjects s     ON s.id   = ta.subject_id
+            JOIN tbl_grade_level gl ON gl.id  = ta.grade_level_id
+            JOIN tbl_sections sec   ON sec.id = ta.section_id
+            WHERE ta.teacher_id = ?
+        ";
+        $params = [$teacherId];
+        $types = "i";
+
+        if ($gradeLevelId > 0) {
+            $sql .= " AND ta.grade_level_id = ?";
+            $params[] = $gradeLevelId;
+            $types .= "i";
         }
-        return $ids;
+
+        $sql .= " ORDER BY gl.name ASC, s.subject_name ASC, sec.section_name ASC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 }

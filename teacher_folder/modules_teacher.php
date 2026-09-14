@@ -49,7 +49,7 @@
                 <!-- Subject Cards -->
                 <div class="card-parent-box">
                     <?php if (empty($subjects)): ?>
-                        <p style="color:#9ca3af;font-size:13px;">No subjects found.</p>
+                        <p style="color:#9ca3af;font-size:13px;">No classes assigned to you yet.</p>
                     <?php else: ?>
                         <?php foreach ($subjects as $subject): ?>
                             <div class="card">
@@ -74,15 +74,16 @@
                                                 <?= htmlspecialchars($subject['grade_name']) ?>
                                             </small>
                                         <?php endif; ?>
+                                        <?php if (!empty($subject['section_name'])): ?>
+                                            <small>
+                                                <i class="fa fa-users"></i>
+                                                <?= htmlspecialchars($subject['section_name']) ?>
+                                            </small>
+                                        <?php endif; ?>
                                     </div>
                                     <div class="card-link">
-                                        <!-- <a class="<?= ($current_url ?? '') === 'modules_teacher' ? 'active' : '' ?>"
-                                            href="/learning_management/public/?url=create_module&subject_id=<?= (int) $subject['id'] ?>">
-                                            <i class="fa fa-plus"></i>
-                                            <span>Create module</span>
-                                        </a> -->
                                         <a class="<?= ($current_url ?? '') === 'modules_teacher' ? 'active' : '' ?>"
-                                            href="/learning_management/public/?url=view_modules_teacher&subject_id=<?= (int) $subject['id'] ?>">
+                                            href="/learning_management/public/?url=view_modules_teacher&subject_id=<?= (int) $subject['subject_id'] ?>&grade_id=<?= (int) $subject['grade_level_id'] ?>&section_id=<?= (int) $subject['section_id'] ?>">
                                             <span>View module</span>
                                             <i class="fa fa-arrow-right"></i>
                                         </a>

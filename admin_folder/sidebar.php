@@ -19,40 +19,79 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'admin';
             </li>
 
             <div class="sidebar-category">
-                <h5>Content</h5>
+                <h5>Records</h5>
             </div>
-            <li class="<?= $current_url === 'classes_teacher' ? 'active' : '' ?>">
-                <a href="#" class="text-decoration-none">
-                    <i class="fa fa-book-open"></i>
-                    <span>Modules</span>
-                </a>
-            </li>
-            <li class="<?= $current_url === 'assignments' ? 'active' : '' ?>">
-                <a href="#" class="text-decoration-none">
-                    <i class="fa fa-book"></i>
-                    <span>Assignments</span>
-                </a>
-            </li>
 
-            <div class="sidebar-category">
-                <h5>User Management</h5>
-            </div>
-            <li class="<?= $current_url === 'teacher_users' ? 'active' : '' ?>">
-                <a href="/learning_management/public/?url=teacher_users" class="text-decoration-none">
-                    <i class="fa fa-chalkboard-user"></i>
-                    <span>Teachers</span>
-                </a>
-            </li>
             <li class="<?= $current_url === 'student_users' ? 'active' : '' ?>">
                 <a href="/learning_management/public/?url=student_users" class="text-decoration-none">
                     <i class="fa fa-users"></i>
                     <span>Students</span>
                 </a>
             </li>
-            <li class="<?= $current_url === 'settings' ? 'active' : '' ?>">
+            <li class="<?= $current_url === 'teacher_users' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=teacher_users" class="text-decoration-none">
+                    <i class="fa fa-chalkboard-user"></i>
+                    <span>Teachers</span>
+                </a>
+            </li>
+
+            <li class="<?= $current_url === 'Adminsections' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=Adminsections" class="text-decoration-none">
+                    <i class="fa fa-layer-group"></i>
+                    <span>Sections</span>
+                </a>
+            </li>
+
+            <li class="<?= $current_url === 'Adminsubjects' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=Adminsubjects" class="text-decoration-none">
+                    <i class="fa fa-book-open"></i>
+                    <span>Subjects</span>
+                </a>
+            </li>
+
+            <div class="sidebar-category">
+                <h5>Content Monitoring</h5>
+            </div>
+
+            <li class="<?= $current_url === 'subject_access' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=subject_access" class="text-decoration-none">
+                    <i class="fa fa-unlock-keyhole"></i>
+                    <span>Subject Access</span>
+                </a>
+            </li>
+
+            <li class="<?= $current_url === 'content_management' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=content_management" class="text-decoration-none">
+                    <i class="fa fa-list"></i>
+                    <span>Contents</span>
+                </a>
+            </li>
+
+            <div class="sidebar-category">
+                <h5>Reports</h5>
+            </div>
+
+            <li class="<?= $current_url === 'Reports' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=Reports" class="text-decoration-none">
+                    <i class="fa fa-chart-line"></i>
+                    <span>Reports</span>
+                </a>
+            </li>
+            <!-- <li class="<?= $current_url === 'assignments' ? 'active' : '' ?>">
                 <a href="#" class="text-decoration-none">
-                    <i class="fa fa-gear"></i>
-                    <span>Settings</span>
+                    <i class="fa fa-book"></i>
+                    <span>Assignments</span>
+                </a>
+            </li> -->
+
+            <div class="sidebar-category">
+                <h5>Account</h5>
+            </div>
+
+            <li class="<?= $current_url === 'profile' ? 'active' : '' ?>">
+                <a href="#" class="text-decoration-none">
+                    <i class="fa fa-user"></i>
+                    <span>Profile</span>
                 </a>
             </li>
 

@@ -17,6 +17,8 @@ $totalTeachers = (int) ($totalTeachers ?? count($teachers));
 $limit = 10;
 $offset = (int) ($offset ?? 0);
 
+$teacherStats = $teacherStats ?? ['total' => 0, 'active' => 0, 'inactive' => 0];
+
 $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
 ?>
 <!DOCTYPE html>
@@ -111,17 +113,21 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
 
         /* ── filter grid — always 4 columns ── */
         .filter-grid {
-            display: grid !important;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 10px;
+            /* display: grid !important;
+            grid-template-columns: 2fr 1fr 1fr 1fr; */
+            display: flex;
             align-items: center;
+            gap: 10px;
             width: 100%;
             padding: 16px;
             background-color: #ffffff;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04); */
             border-radius: 10px;
-            border: 1px solid #e2e8f0;
-            margin-top: 16px;
+            /* border: 1px solid #e2e8f0; */
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            /* margin-top: 16px; */
+            margin: 1.5rem 0 0;
         }
 
         @media (max-width: 900px) {
@@ -136,10 +142,16 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
             }
         }
 
+        /* #exampleModal .modal-content{
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        } */
+
         /* ── Edit modal (now mirrors create modal) ── */
-        #editTeacherModal .modal-dialog {
+        /* #editTeacherModal .modal-dialog {
             max-width: 680px;
-        }
+        } */
 
         #editTeacherModal .modal-content {
             max-height: 90vh;
@@ -148,7 +160,8 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
         }
 
         #editTeacherModal .modal-body {
-            padding: 16px 24px 24px;
+            /* padding: 16px 24px 24px; */
+            padding: 16px 20px;
             max-height: 65vh;
             overflow-y: auto;
         }
@@ -169,7 +182,8 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background-color: var(--green, #00C950);
+            /* background-color: var(--green, #00C950); */
+            background-color: var(--neon-cyan);
             color: #fff;
             font-size: 18px;
             font-weight: 700;
@@ -208,55 +222,81 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
 
         /* modal footer */
         #editTeacherModal .modal-footer {
-            padding: 14px 28px;
+            padding: 14px 20px;
             border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 16px;
+            /* justify-content: space-between; */
+            align-items: center;
         }
 
         #editTeacherModal .btn-save {
-            background-color: var(--green, #00C950);
-            color: #fff;
+            padding: 8px 22px;
+            background-color: var(--neon-cyan);
+            color: #ffffff;
+            border-radius: 28px;
             border: none;
-            padding: 8px 24px;
-            border-radius: 8px;
+            outline: none;
             font-weight: 600;
-            cursor: pointer;
-            font-size: 13.5px;
-            transition: background .15s;
+            margin: 0;
         }
 
-        #editTeacherModal .btn-save:hover {
+        /* #editTeacherModal .btn-save:hover {
             background: #00a040;
-        }
+        } */
 
         /* ── Pagination ── */
         .pagination-parent {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 4px 4px;
+            /* padding: 14px 4px 4px; */
+            margin: 16px 0 0;
             flex-wrap: wrap;
             gap: 10px;
         }
 
+        .pagination-parent small {
+            font-size: 14px;
+        }
+
         .pagination-parent .pagination {
             margin: 0;
-            gap: 4px;
+            gap: 6px;
         }
 
         .pagination .page-link {
-            color: #374151;
-            border-color: #e5e7eb;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            font-size: 16px;
-            padding: 6px 12px;
-            border-radius: 7px;
+            border-radius: 6px !important;
+            /* color: #2e7d52; */
+            border-color: #dee2e6;
+            /* padding: 6px 12px; */
+            padding: 0;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pagination .page-item.disabled {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .pagination .page-item.active .page-link {
-            background-color: var(--green, #2e7d52);
-            border-color: var(--green-light, #2e7d52);
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            /* background-color: #2e7d52; */
+            background-color: var(--neon-cyan);
+            /* border-color: #2e7d52; */
+            border-color: var(--neon-cyan);
             color: #fff;
+            /* color: #fff; */
+            font-weight: 600;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 13px;
             font-weight: 600;
         }
 
@@ -265,11 +305,11 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
             border-color: #e5e7eb;
         }
 
-        .pagination .page-link:hover:not(.active) {
+        /* .pagination .page-link:hover:not(.active) {
             background-color: #f0fdf4;
             border-color: #2e7d52;
             color: #2e7d52;
-        }
+        } */
 
         /* ── Section-pair cards (shared between create & edit modals) ── */
         .section-pair-card {
@@ -536,7 +576,7 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
                 <!-- ══ CREATE TEACHER MODAL ══════════════════════════════════ -->
                 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                     aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
+                    <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h1 class="modal-title" id="exampleModalLabel">Create New Teacher</h1>
@@ -544,24 +584,25 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
                                     aria-label="Close"></button>
                             </div>
                             <form action="?url=createTeacher" method="post">
-                                <div class="modal-body">
+                                <div class="modal-body" style="padding: 16px 20px;">
                                     <div class="row g-3">
 
                                         <!-- Basic Info -->
-                                        <div class="col-lg-6">
+                                        <div class="col-lg-12">
                                             <label class="form-label">Name</label>
-                                            <input type="text" name="name" class="form-control" placeholder="Enter name"
-                                                required>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <label class="form-label">Email</label>
-                                            <input type="text" name="email" class="form-control"
-                                                placeholder="Enter email" required>
+                                            <input type="text" name="name" class="form-control"
+                                                placeholder="Enter full name" required>
                                         </div>
                                         <div class="col-lg-12">
-                                            <label class="form-label">Password</label>
-                                            <input type="password" name="password" class="form-control"
-                                                placeholder="Enter password" required>
+                                            <label class="form-label">Username</label>
+                                            <input type="text" name="username" class="form-control"
+                                                placeholder="Enter username" required>
+                                        </div>
+                                        <div class="col-12">
+                                            <small class="text-muted" style="font-size:12px;">
+                                                New teacher accounts are created with the default password
+                                                <strong>12345678</strong>. The teacher can change it after logging in.
+                                            </small>
                                         </div>
 
                                         <div class="col-12">
@@ -658,8 +699,10 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
 
                                     </div>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" style="font-size: 14.5px;"
+                                <div class="modal-footer"
+                                    style="padding: 14px 20px; padding: 14px 20px; border-top: 1px solid #e4e7eb; display: flex; gap: 16px; align-items: center;">
+                                    <button type="button" class="btn btn-secondary"
+                                        style="background: none; border: 1px solid #e4e7eb;border-radius: 50px; padding: 8px 18px;  font-size: 14.5px; font-weight: 600; color: #6b7280; cursor: pointer;"
                                         data-bs-dismiss="modal">Close</button>
                                     <button type="submit" style="font-size: 14.5px;">Create teacher</button>
                                 </div>
@@ -670,7 +713,7 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
 
                 <!-- ══ EDIT / DETAIL TEACHER MODAL ═══════════════════════════ -->
                 <div class="modal fade" id="editTeacherModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-dialog modal-md modal-dialog-centered modal-dialog-scrollable">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h1 class="modal-title">Edit Teacher Assignment</h1>
@@ -687,36 +730,21 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
                                         <div class="teacher-avatar" id="edit-avatar">T</div>
                                         <div style="display:flex;flex-direction:column;gap:4px;">
                                             <h5 id="edit-teacher-name-display">—</h5>
-                                            <p class="m-0" id="edit-teacher-email-display">—</p>
                                         </div>
                                     </div>
 
                                     <!-- ── Editable Basic Info ── -->
                                     <div class="row g-3 mb-3">
-                                        <div class="col-lg-6">
+                                        <div class="col-lg-12">
                                             <label class="form-label">Name</label>
                                             <input type="text" name="name" id="edit-name" class="form-control"
                                                 placeholder="Enter name" required>
                                         </div>
-                                        <div class="col-lg-6">
-                                            <label class="form-label">Email</label>
-                                            <input type="email" name="email" id="edit-email" class="form-control"
-                                                placeholder="Enter email" required>
-                                        </div>
+
                                         <div class="col-lg-12">
-                                            <label class="form-label">
-                                                New Password
-                                                <span class="text-muted" style="font-size:12px;font-weight:400;">(leave
-                                                    blank to keep current)</span>
-                                            </label>
-                                            <div class="input-group">
-                                                <input type="password" name="password" id="edit-password"
-                                                    class="form-control" placeholder="Enter new password">
-                                                <button type="button" class="btn btn-outline-secondary toggle-password"
-                                                    data-target="edit-password" tabindex="-1">
-                                                    <i class="fa fa-eye"></i>
-                                                </button>
-                                            </div>
+                                            <label class="form-label">Username</label>
+                                            <input type="text" name="username" id="edit-username" class="form-control"
+                                                placeholder="Enter username" required>
                                         </div>
 
                                         <div class="col-lg-12 mt-3">
@@ -840,10 +868,56 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
                         <h2>Teachers</h2>
                         <p>Manage teacher accounts and assignments</p>
                     </div>
-                    <div class="main-button-header">
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                            <i class="fa fa-plus"></i> Add Teacher
-                        </button>
+                </div>
+
+                <div class="main-button-header">
+                    <button type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <i class="fa fa-plus me-1"></i> Add Teacher
+                    </button>
+                </div>
+
+                <!-- ══ STATS CARDS ════════════════════════════════════════════ -->
+                <div class="stats-cards-grid">
+                    <div class="stat-card">
+                        
+                        <div class="stat-card-value">
+                            <span class="stat-card-title">Total Teachers</span>
+                            <h3><?= $teacherStats['total'] ?></h3>
+                            <div class="stat-card-desc">All registered teacher accounts</div>
+                        </div>
+                        <div class="stat-card-top">
+                            
+                            <span class="stat-icon-box stat-icon-blue"><i class="fa fa-chalkboard-teacher"></i></span>
+                        </div>
+                        
+                    </div>
+
+                    <div class="stat-card">
+                        
+                        <div class="stat-card-value">
+                            <span class="stat-card-title">Active Teachers</span>
+                            <h3><?= $teacherStats['active'] ?></h3>
+                            <div class="stat-card-desc">Currently has class assignments</div>
+                        </div>
+                        <div class="stat-card-top">
+                            
+                            <span class="stat-icon-box stat-icon-green"><i class="fa fa-user-check"></i></span>
+                        </div>
+                        
+                    </div>
+
+                    <div class="stat-card">
+                        
+                        <div class="stat-card-value">
+                            <span class="stat-card-title">Not Active Teachers</span>
+                            <h3><?= $teacherStats['inactive'] ?></h3>
+                            <div class="stat-card-desc">No current class assignments</div>
+                        </div>
+                        <div class="stat-card-top">
+                            
+                            <span class="stat-icon-box stat-icon-red"><i class="fa fa-user-xmark"></i></span>
+                        </div>
+                        
                     </div>
                 </div>
 
@@ -858,7 +932,7 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fa fa-search"></i></span>
                                 <input type="search" name="search" id="teacher-search" class="form-control"
-                                    placeholder="Search name or email..." value="<?= htmlspecialchars($search) ?>">
+                                    placeholder="Search name..." value="<?= htmlspecialchars($search) ?>">
                             </div>
                             <select name="grade" id="filter-grade" class="form-select">
                                 <option value="">Grade Level</option>
@@ -893,7 +967,7 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Email</th>
+                                    <th>Username</th>
                                     <th>Grade Level</th>
                                     <th>Sections</th>
                                     <th>Status</th>
@@ -950,15 +1024,12 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
                                         ?>
                                         <tr class="teachers-data"
                                             data-name="<?= htmlspecialchars(strtolower($teacher['name'])) ?>"
-                                            data-email="<?= htmlspecialchars(strtolower($teacher['email'])) ?>"
                                             data-sections="<?= htmlspecialchars($sectionNamesFlat) ?>"
                                             data-grades="<?= htmlspecialchars($gradeNamesFlat) ?>"
                                             data-status="<?= htmlspecialchars(strtolower($teacherStatus)) ?>">
 
                                             <td><?= htmlspecialchars($teacher['name']) ?></td>
-                                            <td style="max-width:180px;word-break:break-all;font-size:14.5px">
-                                                <?= htmlspecialchars($teacher['email']) ?>
-                                            </td>
+                                            <td><?= htmlspecialchars($teacher['username'] ?? '—') ?></td>
 
                                             <!-- GRADE LEVEL -->
                                             <td class="tags-cell">
@@ -1009,7 +1080,7 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
                                                 <button type="button" class="btn btn-sm btn-outline-secondary btn-edit-teacher"
                                                     data-teacher-id="<?= $teacher['teacher_id'] ?>"
                                                     data-teacher-name="<?= htmlspecialchars($teacher['name']) ?>"
-                                                    data-teacher-email="<?= htmlspecialchars($teacher['email']) ?>"
+                                                    data-teacher-username="<?= htmlspecialchars($teacher['username'] ?? '') ?>"
                                                     data-teacher-status="<?= htmlspecialchars($teacherStatus) ?>"
                                                     data-subject-ids='<?= json_encode(array_map('intval', $assignedSubjectIds)) ?>'
                                                     data-section-ids='<?= json_encode(array_map('intval', $assignedSectionIds)) ?>'
@@ -1031,7 +1102,7 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
                 <div class="pagination-parent">
                     <small class="text-muted">
                         <?php if ($totalTeachers > 0): ?>
-                            Showing <?= $offset + 1 ?> –
+                            Showing
                             <?= min($offset + $limit, $totalTeachers) ?> of
                             <?= $totalTeachers ?> teachers
                         <?php else: ?>
@@ -1155,12 +1226,11 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
 
                 document.querySelectorAll('tr.teachers-data').forEach(row => {
                     const name = (row.dataset.name || '').toLowerCase();
-                    const email = (row.dataset.email || '').toLowerCase();
                     const grades = (row.dataset.grades || '').toLowerCase();
                     const sections = (row.dataset.sections || '').toLowerCase();
                     const rowStat = (row.dataset.status || '').toLowerCase();
 
-                    const matchQ = !q || name.includes(q) || email.includes(q);
+                    const matchQ = !q || name.includes(q);
                     const matchGrade = !grade || grades.split('|').some(g => g.trim() === grade);
                     const matchSec = !sec || sections.split('|').some(s => {
                         const parts = s.split(' - ');
@@ -1250,20 +1320,17 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
                 if (!btn) return;
 
                 const teacherName = btn.dataset.teacherName;
-                const teacherEmail = btn.dataset.teacherEmail;
                 // pairs: { "section_id": [subject_id, ...], ... }
                 const pairs = JSON.parse(btn.dataset.pairs || '{}');
 
                 // Set header info
                 document.getElementById('edit-teacher-id').value = btn.dataset.teacherId;
                 document.getElementById('edit-teacher-name-display').textContent = teacherName;
-                document.getElementById('edit-teacher-email-display').textContent = teacherEmail;
                 document.getElementById('edit-avatar').textContent = teacherName.trim().charAt(0).toUpperCase();
 
                 // Populate editable fields
                 document.getElementById('edit-name').value = teacherName;
-                document.getElementById('edit-email').value = teacherEmail;
-                document.getElementById('edit-password').value = '';
+                document.getElementById('edit-username').value = btn.dataset.teacherUsername || '';
 
                 const teacherStatus = btn.dataset.teacherStatus || 'Active';
                 document.getElementById('edit-teacher-status').value = teacherStatus;
@@ -1304,22 +1371,6 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
                 // Toast fires after page reload via PHP session — handled by PHP block at top
             });
 
-            /* ─── 5. PASSWORD TOGGLE ────────────────────────────────── */
-            document.querySelectorAll('.toggle-password').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const targetId = this.dataset.target;
-                    const input = document.getElementById(targetId);
-                    const icon = this.querySelector('i');
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        icon.classList.replace('fa-eye', 'fa-eye-slash');
-                    } else {
-                        input.type = 'password';
-                        icon.classList.replace('fa-eye-slash', 'fa-eye');
-                    }
-                });
-            });
-
             // Update avatar letter live when name changes
             document.getElementById('edit-name').addEventListener('input', function () {
                 const first = this.value.trim().charAt(0).toUpperCase();
@@ -1327,11 +1378,7 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
                 document.getElementById('edit-teacher-name-display').textContent = this.value.trim() || '—';
             });
 
-            document.getElementById('edit-email').addEventListener('input', function () {
-                document.getElementById('edit-teacher-email-display').textContent = this.value.trim() || '—';
-            });
-
-            /* ─── 6. UTILITIES ──────────────────────────────────────── */
+            /* ─── 5. UTILITIES ──────────────────────────────────────── */
             function debounce(fn, delay) {
                 let t;
                 return function (...args) {

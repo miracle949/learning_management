@@ -36,6 +36,14 @@ class SuperAdminController
 
         $activityLogs = $this->superAdminModel->getActivityLogs(15);
 
+        // ── New data for the redesigned dashboard ──
+        $totalAdmins = $this->superAdminModel->getTotalAdmins();
+        $strandsOffered = $this->superAdminModel->getStrandsOffered();
+        $enrollmentByStrand = $this->superAdminModel->getEnrollmentByStrand();
+        $lastBackup = $this->superAdminModel->getLastBackup();
+        $activeSessions = $this->superAdminModel->getActiveSessionsSummary();
+        $systemAlerts = $this->superAdminModel->getSystemAlerts($totalPendingApprovals);
+
         extract([
             'totalStudents' => $totalStudents,
             'totalTeachers' => $totalTeachers,
@@ -50,6 +58,12 @@ class SuperAdminController
             'activityLogs' => $activityLogs,
             'approvedCount' => $approvedCount,
             'pendingCount' => $pendingCount,
+            'totalAdmins' => $totalAdmins,
+            'strandsOffered' => $strandsOffered,
+            'enrollmentByStrand' => $enrollmentByStrand,
+            'lastBackup' => $lastBackup,
+            'activeSessions' => $activeSessions,
+            'systemAlerts' => $systemAlerts,
         ]);
 
         require "../app/view/super_admin.php";

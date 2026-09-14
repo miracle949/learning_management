@@ -349,6 +349,16 @@ class StudentsController
             ];
         }
 
+        $arrangeGames = $lessonId ? $studentModel->getLessonArrangeStepsData($lessonId) : [];
+        $arrangeStepsData = [];
+        foreach ($arrangeGames as $title => $game) {
+            $arrangeStepsData[$title] = [
+                'game' => $game['game'],
+                'steps' => $game['steps'],
+                'submission' => $studentId ? $studentModel->getArrangeStepsSubmission($lessonId, $title, $studentId) : null,
+            ];
+        }
+
         $quizData = [];
         foreach ($quizzes as $qz) {
             $quizData[$qz['id']] = [
@@ -1438,6 +1448,147 @@ class StudentsController
 
         } catch (\Throwable $e) {
             error_log('[submit_dragdrop] EXCEPTION: ' . $e->getMessage());
+            echo json_encode(['ok' => false, 'msg' => 'server error: ' . $e->getMessage()]);
+            exit;
+        }
+    }
+
+    public function submit_arrange_steps()
+    {
+        header('Content-Type: application/json');
+
+        try {
+            $studentId = $_SESSION['student_id'] ?? 0;
+            if (!$studentId && !empty($_SESSION['user_id'])) {
+                $subjectModel = new subjects();
+                $studentRow = $subjectModel->getStudentByUserId($_SESSION['user_id']);
+                if ($studentRow) {
+                    $studentId = (int) $studentRow['id'];
+                    $_SESSION['student_id'] = $studentId;
+                }
+            }
+            if (!$studentId) {
+                echo json_encode(['ok' => false, 'msg' => 'not logged in']);
+                exit;
+            }
+
+            $lessonId = (int) ($_POST['lesson_id'] ?? 0);
+            $gameTitle = trim($_POST['game_title'] ?? '');
+            $order = $_POST['order'] ?? [];
+
+            if (!$lessonId || !$gameTitle || empty($order)) {
+                echo json_encode(['ok' => false, 'msg' => 'missing data']);
+                exit;
+            }
+
+            $studentModel = new Students();
+            $existing = $studentModel->getArrangeStepsSubmission($lessonId, $gameTitle, $studentId);
+
+            if (!$existing) {
+                $saved = $studentModel->saveArrangeStepsSubmission($lessonId, $gameTitle, $studentId, $order);
+                if (!$saved) {
+                    echo json_encode(['ok' => false, 'msg' => 'db insert failed']);
+                    exit;
+                }
+                $studentModel->logActivity($studentId, 'arrange_steps_completed', $gameTitle);
+                $studentModel->markLessonVisited($lessonId, $studentId);
+                $lessonRow = $studentModel->getIMLessonById($lessonId);
+                if ($lessonRow) {
+                    $studentModel->updateModuleProgress((int) $lessonRow['module_id'], $studentId);
+                }
+            }
+
+            $finalResult = $studentModel->getArrangeStepsSubmission($lessonId, $gameTitle, $studentId);
+            $correct = $finalResult['score'] ?? 0;
+            $total = $finalResult['total'] ?? count($order);
+
+            echo json_encode(['ok' => true, 'score' => $correct, 'total' => $total]);
+            exit;
+
+        } catch (\Throwable $e) {
+            error_log('[submit_arrange_steps] EXCEPTION: ' . $e->getMessage());
+            echo json_encode(['ok' => false, 'msg' => 'server error: ' . $e->getMessage()]);
+            exit;
+        }
+    }
+
+    public function submit_quiz()
+    {
+        header('Content-Type: application/json');
+
+        try {
+            $studentId = $_SESSION['student_id'] ?? 0;
+            if (!$studentId && !empty($_SESSION['user_id'])) {
+                $subjectModel = new subjects();
+                $studentRow = $subjectModel->getStudentByUserId($_SESSION['user_id']);
+                if ($studentRow) {
+                    $studentId = (int) $studentRow['id'];
+                    $_SESSION['student_id'] = $studentId;
+                }
+            }
+            if (!$studentId) {
+                echo json_encode(['ok' => false, 'msg' => 'not logged in']);
+                exit;
+            }
+
+            $quizId = (int) ($_POST['quiz_id'] ?? 0);
+            $lessonId = (int) ($_POST['lesson_id'] ?? 0);
+            $passingScore = (int) ($_POST['passing_score'] ?? 75);
+            $answers = $_POST['answers'] ?? [];
+
+            if (!$quizId) {
+                echo json_encode(['ok' => false, 'msg' => 'missing quiz_id']);
+                exit;
+            }
+
+            $studentModel = new Students();
+
+            $existing = $studentModel->getIMQuizResult($quizId, $studentId);
+
+            if (!$existing) {
+                $questions = $studentModel->getIMQuizQuestions($quizId);
+                $score = 0;
+                $total = count($questions);
+                foreach ($questions as $q) {
+                    $submitted = strtolower(trim($answers[$q['id']] ?? ''));
+                    $correct = strtolower(trim($q['correct_ans']));
+                    if ($submitted === $correct) {
+                        $score++;
+                    }
+                }
+
+                $studentModel->saveIMQuizResult($quizId, $studentId, $score, $total, $passingScore, json_encode($answers));
+
+                $quizInfo = $studentModel->getIMQuizById($quizId);
+                $quizTitle = $quizInfo['title'] ?? 'Quiz';
+                $subjectName = $quizInfo['subject_name'] ?? null;
+                $moduleId = $quizInfo['module_id'] ?? null;
+                if (!$lessonId && !empty($quizInfo['lesson_id'])) {
+                    $lessonId = (int) $quizInfo['lesson_id'];
+                }
+
+                $studentModel->logActivity($studentId, 'quiz_completed', $quizTitle, $subjectName);
+
+                if ($lessonId) {
+                    $studentModel->markLessonVisited($lessonId, $studentId);
+                    if ($moduleId) {
+                        $studentModel->updateModuleProgress((int) $moduleId, $studentId);
+                    }
+                }
+
+                $existing = $studentModel->getIMQuizResult($quizId, $studentId);
+            }
+
+            echo json_encode([
+                'ok' => true,
+                'score' => (int) ($existing['score'] ?? 0),
+                'total' => (int) ($existing['total'] ?? 0),
+                'passed' => (int) ($existing['passed'] ?? 0),
+            ]);
+            exit;
+
+        } catch (\Throwable $e) {
+            error_log('[submit_quiz] EXCEPTION: ' . $e->getMessage());
             echo json_encode(['ok' => false, 'msg' => 'server error: ' . $e->getMessage()]);
             exit;
         }

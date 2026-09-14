@@ -596,7 +596,7 @@ select.form-select {
 .list-people .student .student-header {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem;
 }
 
 .list-people .student .student-header p {
@@ -607,7 +607,7 @@ select.form-select {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: var(--green);
+    background-color: var(--neon-cyan);
     color: #ffffff;
     display: flex;
     justify-content: center;
@@ -793,4 +793,44 @@ select.form-select {
 
 .toolbar-pane.active {
     display: flex;
+}
+
+/* ── STUDENT PAGINATION ── */
+.student-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 6px;
+    margin-top: 20px;
+    padding-top: 16px;
+}
+
+.page-btn {
+    min-width: 34px;
+    height: 34px;
+    padding: 0 8px;
+    border: 1px solid #e4e7eb;
+    background: #fff;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #374151;
+    cursor: pointer;
+    transition: background .12s, color .12s, border-color .12s;
+}
+
+.page-btn:hover:not(:disabled):not(.active) {
+    background: #f3f4f6;
+}
+
+.page-btn.active {
+    background: var(--neon-cyan);
+    border-color: var(--neon-cyan);
+    color: #fff;
+    cursor: default;
+}
+
+.page-btn:disabled {
+    opacity: .4;
+    cursor: not-allowed;
 }
