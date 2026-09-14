@@ -463,6 +463,7 @@ class Students extends Model
         }
         return $grouped;
     }
+<<<<<<< HEAD
 
     // ── ARRANGE THE STEPS ──────────────────────────────────────
 
@@ -597,6 +598,9 @@ class Students extends Model
 
         return $grouped;
     }
+=======
+    
+>>>>>>> d2167049bf10889dd635a2e7f38f737a21869ea5
 
     public function getDragDropSubmission($lessonId, $gameTitle, $studentId)
     {
