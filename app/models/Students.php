@@ -463,44 +463,7 @@ class Students extends Model
         }
         return $grouped;
     }
-
-    public function getLessonArrangeStepsData($lessonId)
-    {
-        $stmt = $this->db->prepare("
-        SELECT title, instructions, question AS step_text, step_order
-        FROM tbl_interactive_contents
-        WHERE lesson_id = ? AND type = 'arrange_steps'
-        ORDER BY id ASC
-    ");
-        $stmt->bind_param("i", $lessonId);
-        $stmt->execute();
-        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-
-        $grouped = [];
-        foreach ($rows as $row) {
-            $key = $row['title'];
-            if (!isset($grouped[$key])) {
-                $grouped[$key] = [
-                    'game' => [
-                        'title' => $row['title'],
-                        'instructions' => $row['instructions'],
-                    ],
-                    'steps' => [],
-                ];
-            }
-            $grouped[$key]['steps'][] = [
-                'text' => $row['step_text'],
-                'order' => $row['step_order'],
-            ];
-        }
-
-        foreach ($grouped as &$game) {
-            usort($game['steps'], fn($a, $b) => ($a['order'] ?? 0) <=> ($b['order'] ?? 0));
-        }
-        unset($game);
-
-        return $grouped;
-    }
+    
 
     public function getDragDropSubmission($lessonId, $gameTitle, $studentId)
     {
