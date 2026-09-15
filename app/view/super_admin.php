@@ -10,309 +10,7 @@
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
     <style>
-        .dash-header {
-            margin: 0 0 1.5rem;
-        }
 
-        .dash-header h2 {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1a1a1a;
-            margin: 0 0 5px;
-        }
-
-        .dash-header p {
-            font-size: 14.5px;
-            color: var(--text-dim);
-            margin: 0;
-        }
-
-        /* ── Stat cards (top row) ── */
-        .dash-stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-
-        .dash-stat-card {
-            border-radius: 14px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e2e8f0;
-            background-color: #ffffff;
-            padding: 18px 20px;
-        }
-
-        .dash-stat-card .dash-stat-label {
-            font-size: 12.5px;
-            color: #6b7280;
-            font-weight: 600;
-        }
-
-        .dash-stat-card .dash-stat-value {
-            font-size: 26px;
-            font-weight: 700;
-            color: #1a1a2e;
-            margin-top: 6px;
-        }
-
-        .dash-stat-card .dash-stat-delta {
-            font-size: 11.5px;
-            margin-top: 6px;
-        }
-
-        .dash-stat-delta.ok {
-            color: #00a040;
-        }
-
-        .dash-stat-delta.warn {
-            color: #b5762c;
-        }
-
-        .dash-stat-delta.err {
-            color: #d92d20;
-        }
-
-        /* ── Shared card shell for the four sections below ── */
-        .charts-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .chart-card {
-            border-radius: 14px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-            border: 1px solid #e2e8f0;
-            background-color: #ffffff;
-            padding: 20px 22px;
-            width: 100%;
-        }
-
-        .chart-card-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #6b7280;
-            text-transform: uppercase;
-            letter-spacing: .06em;
-            margin: 0 0 4px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .chart-card-title i {
-            color: #00C950;
-            font-size: 14px;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 14px;
-            flex-wrap: wrap;
-        }
-
-        .header a {
-            font-size: 12.5px;
-            font-weight: 600;
-            color: #00a040;
-            text-decoration: none;
-            white-space: nowrap;
-        }
-
-        /* ── Recent System Activity (table) ── */
-        .activity-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .activity-table th {
-            text-align: left;
-            font-size: 11px;
-            color: #9ca3af;
-            text-transform: uppercase;
-            letter-spacing: .04em;
-            padding: 8px 6px;
-            border-bottom: 1px solid #f1f5f9;
-            font-weight: 600;
-        }
-
-        .activity-table td {
-            font-size: 12.8px;
-            color: #1a1a2e;
-            padding: 11px 6px;
-            border-bottom: 1px solid #f8fafc;
-            vertical-align: middle;
-        }
-
-        .activity-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .role-pill {
-            padding: 3px 9px;
-            border-radius: 20px;
-            font-size: 10.5px;
-            font-weight: 700;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
-        .role-pill.student {
-            background: #eff6ff;
-            color: #3b82f6;
-        }
-
-        .role-pill.teacher {
-            background: #ecfdf5;
-            color: #10b981;
-        }
-
-        .role-pill.superadmin,
-        .role-pill.admin {
-            background: #fffbeb;
-            color: #b5762c;
-        }
-
-        /* ── Quick Actions ── */
-        .quick-action-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 11px 0;
-            border-bottom: 1px solid #f1f5f9;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .quick-action-row:last-child {
-            border-bottom: none;
-        }
-
-        .quick-action-icon {
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-            background: #ecfdf5;
-            color: #00a040;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .quick-action-row .qa-t {
-            font-size: 12.8px;
-            font-weight: 600;
-            color: #1a1a2e;
-        }
-
-        .quick-action-row .qa-d {
-            font-size: 11.5px;
-            color: #9ca3af;
-            margin-top: 1px;
-        }
-
-        /* ── Alerts ── */
-        .alert-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .alert-row:last-child {
-            border-bottom: none;
-        }
-
-        .alert-dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            margin-top: 5px;
-            flex-shrink: 0;
-        }
-
-        .alert-dot.warn {
-            background: #b5762c;
-        }
-
-        .alert-dot.err {
-            background: #d92d20;
-        }
-
-        .alert-row .al-t {
-            font-size: 12.8px;
-            font-weight: 600;
-            color: #1a1a2e;
-        }
-
-        .alert-row .al-d {
-            font-size: 11.8px;
-            color: #6b7280;
-            margin-top: 1px;
-        }
-
-        .alert-row a {
-            margin-left: auto;
-            font-size: 11.5px;
-            font-weight: 600;
-            color: #00a040;
-            text-decoration: none;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        /* ── Enrollment by strand bars (reused pattern) ── */
-        .section-bar-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 9px 0;
-        }
-
-        .section-bar-label {
-            font-size: 13.5px;
-            color: #374151;
-            font-weight: 600;
-            flex-shrink: 0;
-            width: 64px;
-        }
-
-        .section-bar-track {
-            flex: 1;
-            height: 10px;
-            background: #f1f5f9;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .section-bar-fill {
-            height: 100%;
-            border-radius: 5px;
-            transition: width .5s ease;
-        }
-
-        .section-bar-val {
-            font-size: 12px;
-            color: #374151;
-            font-weight: 600;
-            width: 30px;
-            text-align: right;
-            flex-shrink: 0;
-        }
-
-        .empty-state {
-            padding: 20px;
-            text-align: center;
-            color: #9ca3af;
-            font-size: 13px;
-        }
     </style>
 </head>
 
@@ -419,11 +117,14 @@
                 </div>
 
                 <!-- ══════════════ ROW 1: Recent System Activity | Quick Actions ══════════════ -->
-                <div class="charts-row" style="align-items:stretch;">
+                <div class="charts-row charts-1" style="align-items:stretch;">
 
                     <div class="chart-card">
                         <div class="header">
-                            <p class="chart-card-title"><i class="fa fa-file"></i> Recent System Activity</p>
+                            <div class="header-left">
+                                <p class="chart-card-title">Recent System Activity</p>
+                                <p class="chart-card-desc">Recent actions across the system</p>
+                            </div>
                             <a href="#">View audit trail</a>
                         </div>
                         <div class="body">
@@ -435,30 +136,48 @@
                                         <tr>
                                             <th>Actor</th>
                                             <th>Action</th>
-                                            <th>Role</th>
-                                            <th>When</th>
+                                            <th>Target</th>
+                                            <th>Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach (array_slice($activityLogs, 0, 6) as $log): ?>
+                                        <?php foreach (array_slice($activityLogs, 0, 6) as $log):
+                                            $statusClass = strtolower($log['status'] ?? 'success');
+                                            ?>
                                             <tr>
                                                 <td><?= htmlspecialchars($log['user_name']) ?></td>
                                                 <td><?= htmlspecialchars($log['description']) ?></td>
                                                 <td><span
-                                                        class="role-pill <?= htmlspecialchars($log['role']) ?>"><?= htmlspecialchars($log['role']) ?></span>
+                                                        class="target-cell"><?= htmlspecialchars($log['target'] ?? '—') ?></span>
                                                 </td>
-                                                <td><?= human_time_diff_dash($log['created_at']) ?></td>
+                                                <td><span
+                                                        class="status-pill <?= htmlspecialchars($statusClass) ?>"><?= htmlspecialchars($log['status'] ?? 'Success') ?></span>
+                                                </td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
+                                <!-- <?php foreach (array_slice($activityLogs, 0, 6) as $log): ?>
+                                <div class="activity-log-item">
+                                    <div class="activity-icon">
+                                        <i class="fa fa-clock-rotate-left"></i>
+                                    </div>
+                                    <div class="activity-text">
+                                        <p><?= htmlspecialchars($log['description']) ?></p>
+                                        <span><?= htmlspecialchars($log['user_name']) ?> · <?= human_time_diff_dash($log['created_at']) ?></span>
+                                    </div>
+                                </div>
+                                <?php endforeach; ?> -->
                             <?php endif; ?>
                         </div>
                     </div>
 
                     <div class="chart-card">
                         <div class="header">
-                            <p class="chart-card-title"><i class="fa fa-bolt"></i> Quick Actions</p>
+                            <div class="header-left">
+                                <p class="chart-card-title">Quick Actions</p>
+                                <p class="chart-card-desc">Recent actions across the system</p>
+                            </div>
                         </div>
                         <div class="body">
                             <!-- NOTE: adjust the ?url= targets below to match your actual routes -->
@@ -497,12 +216,15 @@
                 </div>
 
                 <!-- ══════════════ ROW 2: Alerts That Need Attention | Enrollment by Strand ══════════════ -->
-                <div class="charts-row" style="align-items:stretch;">
+                <div class="charts-row charts-2" style="align-items:stretch;">
 
                     <div class="chart-card">
                         <div class="header">
-                            <p class="chart-card-title"><i class="fa fa-triangle-exclamation"></i> Alerts That Need
-                                Attention</p>
+                            <div class="header-left">
+                                <p class="chart-card-title">Alerts That Need
+                                    Attention</p>
+                                <p class="chart-card-desc"></p>
+                            </div>
                         </div>
                         <div class="body">
                             <?php if (empty($systemAlerts)): ?>
@@ -526,7 +248,10 @@
 
                     <div class="chart-card">
                         <div class="header">
-                            <p class="chart-card-title"><i class="fa fa-signal"></i> Enrollment by Strand</p>
+                            <div class="header-left">
+                                <p class="chart-card-title">Enrollment by Strand</p>
+                                <p class="chart-card-desc"> </p>
+                            </div>
                         </div>
                         <div class="body">
                             <?php if (empty($enrollmentByStrand)): ?>

@@ -589,9 +589,11 @@ class SuperAdmin extends Model
 
         SELECT
             'enrollment' AS action,
-            CONCAT(u.name, ' enrolled in ', s.subject_name, ' · ', sec.section_name) AS description,
+            CONCAT('Enrolled in ', s.subject_name, ' · ', sec.section_name) AS description,
             'student' AS role,
             u.name AS user_name,
+            'tbl_student_enrollments' AS target,
+            'Success' AS status,
             se.enrolled_at AS created_at
         FROM tbl_student_enrollments se
         JOIN tbl_students st  ON st.id  = se.student_id
@@ -603,9 +605,11 @@ class SuperAdmin extends Model
 
         SELECT
             'module_created' AS action,
-            CONCAT(COALESCE(u.name, 'A teacher'), ' created module ', im.title, ' in ', s.subject_name) AS description,
+            CONCAT('Created module ', im.title, ' in ', s.subject_name) AS description,
             'teacher' AS role,
             COALESCE(u.name, 'Unknown') AS user_name,
+            'tbl_interactive_modules' AS target,
+            'Success' AS status,
             im.created_at AS created_at
         FROM tbl_interactive_modules im
         JOIN tbl_subjects s      ON s.id = im.subject_id
@@ -616,9 +620,11 @@ class SuperAdmin extends Model
 
         SELECT
             'activity_submitted' AS action,
-            CONCAT(u.name, ' submitted assignment ', a.title, ' in ', s.subject_name) AS description,
+            CONCAT('Submitted assignment ', a.title, ' in ', s.subject_name) AS description,
             'student' AS role,
             u.name AS user_name,
+            'tbl_assignment_submissions' AS target,
+            'Success' AS status,
             asub.submitted_at AS created_at
         FROM tbl_assignment_submissions asub
         JOIN tbl_assignments a ON a.id  = asub.assignment_id
@@ -631,13 +637,14 @@ class SuperAdmin extends Model
         SELECT
             CASE WHEN qr.passed = 1 THEN 'quiz_passed' ELSE 'quiz_submitted' END AS action,
             CONCAT(
-                u.name,
-                CASE WHEN qr.passed = 1 THEN ' passed' ELSE ' submitted' END,
+                CASE WHEN qr.passed = 1 THEN 'Passed' ELSE 'Submitted' END,
                 ' quiz in ', s.subject_name,
                 ' (', qr.score, '/', qr.total, ')'
             ) AS description,
             'student' AS role,
             u.name AS user_name,
+            'tbl_quiz_results' AS target,
+            CASE WHEN qr.passed = 1 THEN 'Success' ELSE 'Review' END AS status,
             qr.taken_at AS created_at
         FROM tbl_quiz_results qr
         JOIN tbl_interactive_contents ic ON ic.id = qr.content_id
@@ -651,9 +658,11 @@ class SuperAdmin extends Model
 
         SELECT
             'activity_submitted' AS action,
-            CONCAT(u.name, ' submitted activity in ', s.subject_name) AS description,
+            CONCAT('Submitted activity in ', s.subject_name) AS description,
             'student' AS role,
             u.name AS user_name,
+            'tbl_activity_submissions' AS target,
+            'Success' AS status,
             act_sub.submitted_at AS created_at
         FROM tbl_activity_submissions act_sub
         JOIN tbl_interactive_contents ic ON ic.id = act_sub.content_id
@@ -667,9 +676,11 @@ class SuperAdmin extends Model
 
         SELECT
             'subject_created' AS action,
-            CONCAT('Subject ', s.subject_name, ' was created · ', COALESCE(gl.name, '')) AS description,
+            CONCAT('Created subject ', s.subject_name, ' · ', COALESCE(gl.name, '')) AS description,
             'superadmin' AS role,
             'Super Admin' AS user_name,
+            'tbl_subjects' AS target,
+            'Success' AS status,
             s.created_at AS created_at
         FROM tbl_subjects s
         LEFT JOIN tbl_grade_level gl ON gl.id = s.grade_level_id
@@ -679,9 +690,11 @@ class SuperAdmin extends Model
 
         SELECT
             'subject_updated' AS action,
-            CONCAT('Subject ', s.subject_name, ' was updated · ', COALESCE(gl.name, '')) AS description,
+            CONCAT('Updated subject ', s.subject_name, ' · ', COALESCE(gl.name, '')) AS description,
             'superadmin' AS role,
             'Super Admin' AS user_name,
+            'tbl_subjects' AS target,
+            'Success' AS status,
             s.updated_at AS created_at
         FROM tbl_subjects s
         LEFT JOIN tbl_grade_level gl ON gl.id = s.grade_level_id
@@ -699,11 +712,66 @@ class SuperAdmin extends Model
         $stmt->execute();
         $logs = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 
-        // Add time_ago to each log
+        // Optional extra feed sources — no-op if those tables don't exist yet
+        $logs = array_merge($logs, $this->getBackupActivityLogs());
+        $logs = array_merge($logs, $this->getFailedLoginActivityLogs());
+
+        usort($logs, fn($a, $b) => strtotime($b['created_at']) <=> strtotime($a['created_at']));
+        $logs = array_slice($logs, 0, $limit);
+
         foreach ($logs as &$log) {
             $log['time_ago'] = $this->timeAgo($log['created_at']);
         }
 
         return $logs;
+    }
+
+    private function getBackupActivityLogs($limit = 5)
+    {
+        try {
+            $result = $this->db->query("SELECT created_at, status FROM tbl_system_backups ORDER BY created_at DESC LIMIT {$limit}");
+            if (!$result)
+                return [];
+            $rows = [];
+            while ($row = $result->fetch_assoc()) {
+                $ok = strtolower($row['status'] ?? '') !== 'failed';
+                $rows[] = [
+                    'action' => 'automated_backup',
+                    'description' => 'Automated backup',
+                    'role' => 'system',
+                    'user_name' => 'system',
+                    'target' => 'database',
+                    'status' => $ok ? 'Success' : 'Flagged',
+                    'created_at' => $row['created_at'],
+                ];
+            }
+            return $rows;
+        } catch (\mysqli_sql_exception $e) {
+            return [];
+        }
+    }
+
+    private function getFailedLoginActivityLogs($limit = 5)
+    {
+        try {
+            $result = $this->db->query("SELECT user_email, created_at FROM tbl_login_attempts WHERE success = 0 ORDER BY created_at DESC LIMIT {$limit}");
+            if (!$result)
+                return [];
+            $rows = [];
+            while ($row = $result->fetch_assoc()) {
+                $rows[] = [
+                    'action' => 'failed_login',
+                    'description' => 'Failed login attempt',
+                    'role' => 'unknown',
+                    'user_name' => $row['user_email'],
+                    'target' => 'tbl_users',
+                    'status' => 'Flagged',
+                    'created_at' => $row['created_at'],
+                ];
+            }
+            return $rows;
+        } catch (\mysqli_sql_exception $e) {
+            return [];
+        }
     }
 }
