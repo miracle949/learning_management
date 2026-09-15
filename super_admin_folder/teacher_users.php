@@ -27,6 +27,7 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teachers</title>
     <link rel="stylesheet" href="../css_folder/teacher_users.css">
+    <link rel="stylesheet" href="../css_folder/components.css">
     <link rel="stylesheet" href="../bootstrap_folder/css/bootstrap.min.css">
     <link rel="stylesheet" href="../font-awesome-icon/css/all.min.css">
     <style>
@@ -110,17 +111,19 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
 
         /* ── filter grid — always 4 columns ── */
         .filter-grid {
-            display: grid !important;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 10px;
+            display: flex;
             align-items: center;
+            gap: 10px;
             width: 100%;
             padding: 16px;
             background-color: #ffffff;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            /* box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04); */
             border-radius: 10px;
-            border: 1px solid #e2e8f0;
-            margin-top: 16px;
+            /* border: 1px solid #e2e8f0; */
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+            /* margin-top: 16px; */
+            margin: 1.5rem 0 0;
         }
 
         @media (max-width: 900px) {
@@ -134,6 +137,8 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
                 grid-template-columns: 1fr;
             }
         }
+
+        */
 
         /* ── Edit modal (now mirrors create modal) ── */
         #editTeacherModal .modal-dialog {
@@ -239,23 +244,35 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
 
         .pagination-parent .pagination {
             margin: 0;
-            gap: 4px;
+            gap: 6px;
         }
 
         .pagination .page-link {
-            color: #374151;
-            border-color: #e5e7eb;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            font-size: 16px;
-            padding: 6px 12px;
-            border-radius: 7px;
+            border-radius: 6px !important;
+            /* color: #2e7d52; */
+            border-color: #dee2e6;
+            /* padding: 6px 12px; */
+            padding: 0;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .pagination .page-item.active .page-link {
-            background-color: var(--green, #2e7d52);
-            border-color: var(--green-light, #2e7d52);
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            /* background-color: #2e7d52; */
+            */ background-color: var(--neon-cyan);
+            /* border-color: #2e7d52; */
+            border-color: var(--neon-cyan);
             color: #fff;
+            /* color: #fff; */
+            font-weight: 600;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 13px;
             font-weight: 600;
         }
 
@@ -264,11 +281,11 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
             border-color: #e5e7eb;
         }
 
-        .pagination .page-link:hover:not(.active) {
+        /* .pagination .page-link:hover:not(.active) {
             background-color: #f0fdf4;
             border-color: #2e7d52;
             color: #2e7d52;
-        }
+        } */
 
         /* ── Section-pair cards (shared between create & edit modals) ── */
         .section-pair-card {
@@ -500,6 +517,10 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
             font-size: 12.5px;
             font-weight: 600;
         }
+
+        .container-fluid .rightbar main .main-button-header button {
+            display: none;
+        }
     </style>
 </head>
 
@@ -510,8 +531,6 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
         <?php include("../super_admin_folder/sidebar.php") ?>
 
         <div class="rightbar">
-
-            <?php include("../super_admin_folder/nav.php") ?>
 
             <!-- MAIN -->
             <main class="main">
@@ -848,11 +867,56 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
                     </div>
                 </div>
 
+                <!-- ══ STATS CARDS ════════════════════════════════════════════ -->
+                <div class="stats-cards-grid">
+                    <div class="stat-card">
+
+                        <div class="stat-card-value">
+                            <span class="stat-card-title">Total Teachers</span>
+                            <h3><?= $teacherStats['total'] ?></h3>
+                            <div class="stat-card-desc">All registered teacher accounts</div>
+                        </div>
+                        <div class="stat-card-top">
+
+                            <span class="stat-icon-box stat-icon-blue"><i class="fa fa-chalkboard-teacher"></i></span>
+                        </div>
+
+                    </div>
+
+                    <div class="stat-card">
+
+                        <div class="stat-card-value">
+                            <span class="stat-card-title">Active Teachers</span>
+                            <h3><?= $teacherStats['active'] ?></h3>
+                            <div class="stat-card-desc">Currently has class assignments</div>
+                        </div>
+                        <div class="stat-card-top">
+
+                            <span class="stat-icon-box stat-icon-green"><i class="fa fa-user-check"></i></span>
+                        </div>
+
+                    </div>
+
+                    <div class="stat-card">
+
+                        <div class="stat-card-value">
+                            <span class="stat-card-title">Not Active Teachers</span>
+                            <h3><?= $teacherStats['inactive'] ?></h3>
+                            <div class="stat-card-desc">No current class assignments</div>
+                        </div>
+                        <div class="stat-card-top">
+
+                            <span class="stat-icon-box stat-icon-red"><i class="fa fa-user-xmark"></i></span>
+                        </div>
+
+                    </div>
+                </div>
+
                 <!-- ══ MAIN BODY ══════════════════════════════════════════════ -->
                 <div class="main-body">
 
                     <!-- FILTER FORM -->
-                    <form method="GET" action="" id="teacher-filter-form">
+                    <!-- <form method="GET" action="" id="teacher-filter-form">
                         <input type="hidden" name="url" value="super_admin_teacher_users">
                         <input type="hidden" name="page" id="page-input" value="1">
                         <div class="filter-grid">
@@ -860,6 +924,42 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
                                 <span class="input-group-text"><i class="fa fa-search"></i></span>
                                 <input type="search" name="search" id="teacher-search" class="form-control"
                                     placeholder="Search name or email..." value="<?= htmlspecialchars($search) ?>">
+                            </div>
+                            <select name="grade" id="filter-grade" class="form-select">
+                                <option value="">Grade Level</option>
+                                <option value="Grade 12" <?= $grade === 'Grade 12' ? 'selected' : '' ?>>Grade 12</option>
+                                <option value="Grade 11" <?= $grade === 'Grade 11' ? 'selected' : '' ?>>Grade 11</option>
+                            </select>
+                            <select name="section" id="filter-section" class="form-select">
+                                <option value="">All Sections</option>
+                                <?php foreach ($allSectionsFilter as $sec):
+                                    $secVal = $sec['section_name'];
+                                    $gradeVal = strtolower($sec['grade_name'] ?? '');
+                                    $sel = (strtolower($section) === strtolower($secVal)) ? 'selected' : '';
+                                    ?>
+                                    <option value="<?= htmlspecialchars($secVal) ?>"
+                                        data-grade="<?= htmlspecialchars($gradeVal) ?>" <?= $sel ?>>
+                                        <?= htmlspecialchars($secVal) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <select name="status" id="filter-status" class="form-select">
+                                <option value="">All Status</option>
+                                <option value="Active" <?= $status === 'Active' ? 'selected' : '' ?>>Active</option>
+                                <option value="Not Active" <?= $status === 'Not Active' ? 'selected' : '' ?>>Not Active
+                                </option>
+                            </select>
+                        </div>
+                    </form> -->
+
+                    <form method="GET" action="" id="teacher-filter-form">
+                        <input type="hidden" name="url" value="super_admin_teacher_users">
+                        <input type="hidden" name="page" id="page-input" value="1">
+                        <div class="filter-grid">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fa fa-search"></i></span>
+                                <input type="search" name="search" id="teacher-search" class="form-control"
+                                    placeholder="Search name..." value="<?= htmlspecialchars($search) ?>">
                             </div>
                             <select name="grade" id="filter-grade" class="form-select">
                                 <option value="">Grade Level</option>
@@ -1032,7 +1132,7 @@ $allSectionsFilter = array_merge($grade12Sections, $grade11Sections);
                 <div class="pagination-parent">
                     <small class="text-muted">
                         <?php if ($totalTeachers > 0): ?>
-                            Showing <?= $offset + 1 ?> –
+                            Showing
                             <?= min($offset + $limit, $totalTeachers) ?> of
                             <?= $totalTeachers ?> teachers
                         <?php else: ?>

@@ -43,7 +43,8 @@ class HomeController
         require_once "../app/view/subject_lessons.php";
     }
 
-    public function module_teacher(){
+    public function module_teacher()
+    {
         require_once "../teacher_folder/modules_teacher.php";
     }
 
@@ -64,6 +65,19 @@ class HomeController
 
     public function landingpage()
     {
+        require_once "../app/models/SuperAdmin.php";
+        $superAdminModel = new SuperAdmin();
+
+        $schoolProfile = $superAdminModel->getSchoolProfile();
+        $offeredStrands = $superAdminModel->getOfferedStrandsForLanding();
+        $relatedStrands = $superAdminModel->getRelatedStrandRecommendations();
+        $landingVideos = $superAdminModel->getActiveLandingVideos(); // NEW
+
+        $strandsByTrack = [];
+        foreach ($offeredStrands as $strand) {
+            $strandsByTrack[$strand['track']][] = $strand;
+        }
+
         require_once "../app/view/landingpage.php";
     }
 
@@ -72,11 +86,13 @@ class HomeController
         require_once "../app/view/admin.php";
     }
 
-    public function teacher_users(){
+    public function teacher_users()
+    {
         require_once "../admin_folder/teacher_users.php";
     }
 
-    public function student_users(){
+    public function student_users()
+    {
         require_once "../admin_folder/student_users.php";
     }
 
@@ -85,15 +101,18 @@ class HomeController
         require_once "../app/view/teacher.php";
     }
 
-    public function super_admin(){
+    public function super_admin()
+    {
         require_once "../app/view/super_admin.php";
     }
 
-    public function activities(){
+    public function activities()
+    {
         require_once "../super_admin_folder/activities.php";
     }
 
-    public function create_activities(){
+    public function create_activities()
+    {
         require_once "../super_admin_folder/create_activities.php";
     }
 

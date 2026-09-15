@@ -29,7 +29,7 @@ function requireAuth(...$allowed_roles)
             'student' => 'dashboard',
             'teacher_users' => 'teacher_users',
             'student_users' => 'student_users',
-            
+
         ];
         $redirect = $map[$role] ?? 'login';
         header("Location: /learning_management/public/?url=$redirect");
@@ -388,7 +388,7 @@ switch ($url) {
 
     case 'update_super_admin_Student':
         requireAuth('superadmin');
-        $teacher->update_super_admin_Student();
+        $super_controller->update_super_admin_Student();
         break;
 
     case 'teacher_users':
@@ -451,6 +451,103 @@ switch ($url) {
         $admin->bulkToggleSubjectAccessAjax();
         break;
 
+    case 'super_admin_admin_users':
+        requireAuth('superadmin');
+        $super_controller->super_admin_adminRecords();
+        break;
+
+    case 'create_super_admin_Admin':
+        requireAuth('superadmin');
+        $super_controller->create_super_admin_Admin();
+        break;
+
+    case 'update_super_admin_Admin':
+        requireAuth('superadmin');
+        $super_controller->update_super_admin_Admin();
+        break;
+
+    case 'delete_super_admin_Admin':
+        requireAuth('superadmin');
+        $super_controller->delete_super_admin_Admin();
+        break;
+
+    case 'school_profile':
+        requireAuth('superadmin');
+        $super_controller->schoolProfile();
+        break;
+
+    case 'save_school_profile':
+        requireAuth('superadmin');
+        $super_controller->saveSchoolProfile();
+        break;
+
+        // ── Admin Page-Permission Gate ──────────────────────────────
+// Only restricts the 'admin' role. superadmin/teacher/student
+// are unaffected — requireAuth() already scopes those.
+        function requireAdminPageAccess(string $pageKey)
+        {
+            if (($_SESSION['role'] ?? '') === 'admin') {
+                require_once "../app/models/SuperAdmin.php";
+                $model = new SuperAdmin();
+                if (!$model->adminCanAccessPage((int) $_SESSION['user_id'], $pageKey)) {
+                    $_SESSION['flash'] = [
+                        'type' => 'error',
+                        'message' => "You don't have access to that page.",
+                        'page' => 'admin'
+                    ];
+                    header("Location: /learning_management/public/?url=admin");
+                    exit;
+                }
+            }
+        }
+
+    case 'teacher_users':
+        requireAuth('admin');
+        requireAdminPageAccess('teacher_users');
+        $admin->teacherRecords();
+        break;
+
+    case 'student_users':
+        requireAuth('admin');
+        requireAdminPageAccess('student_users');
+        $admin->studentRecords();
+        break;
+
+    case 'Adminsubjects':
+        requireAuth('admin');
+        requireAdminPageAccess('Adminsubjects');
+        $admin->SubjectPage();
+        break;
+
+    case 'Adminsections':
+        requireAuth('admin');
+        requireAdminPageAccess('Adminsections');
+        $admin->SectionPage();
+        break;
+
+    case 'Reports':
+        requireAuth('admin');
+        requireAdminPageAccess('Reports');
+        $admin->reportsPage();
+        break;
+
+    case 'subject_access':
+        requireAuth('admin');
+        requireAdminPageAccess('subject_access');
+        $admin->subjectAccessPage();
+        break;
+
+    case 'roles_permissions':
+        requireAuth('superadmin');
+        $super_controller->rolesPermissions();
+        break;
+
+    case 'save_admin_permissions':
+        requireAuth('superadmin');
+        $super_controller->saveAdminPermissions();
+        break;
+    // ─────────────────────────────────────────────────────────────
+
     // ── NEW — AJAX endpoint for student_users.php search/filter/pagination
     //          (Enrolled Students + Masterlist tables), no full page reload.
     case 'student_users_search':
@@ -460,12 +557,12 @@ switch ($url) {
 
     case 'super_admin_teacher_users':
         requireAuth('superadmin');
-        $teacher->super_admin_teacherRecords();
+        $super_controller->super_admin_teacherRecords();
         break;
 
     case 'super_admin_student_users':
         requireAuth('superadmin');
-        $teacher->super_admin_studentRecords();
+        $super_controller->super_admin_studentRecords();
         break;
 
     // ── Auth routes (public) ──────────────────────────────────

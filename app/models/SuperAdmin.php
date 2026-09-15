@@ -774,4 +774,769 @@ class SuperAdmin extends Model
             return [];
         }
     }
+
+    // ============================================================
+// TEACHERS (Super Admin side)
+// ============================================================
+    public function getAllTeachersFilteredPaginated(
+        string $search = '',
+        string $grade = '',
+        string $section = '',
+        string $status = '',
+        int $limit = 10,
+        int $offset = 0
+    ): array {
+        $innerSQL = "
+        SELECT
+            t.id   AS teacher_id,
+            u.name,
+            u.username AS email,
+            COUNT(DISTINCT ta.id) AS class_count,
+            GROUP_CONCAT(
+                DISTINCT CONCAT(s.id, '~~', s.subject_name)
+                ORDER BY s.subject_name SEPARATOR '||'
+            ) AS subjects_raw,
+            GROUP_CONCAT(
+                DISTINCT CONCAT(gl.name, ' - ', sec.section_name)
+                ORDER BY gl.name, sec.section_name SEPARATOR '||'
+            ) AS sections_raw,
+            GROUP_CONCAT(
+                DISTINCT LOWER(gl.name)
+                ORDER BY gl.name SEPARATOR '|'
+            ) AS grades_raw
+        FROM tbl_teachers t
+        JOIN  tbl_users u  ON t.user_id = u.id
+        LEFT JOIN tbl_teacher_assignments ta ON ta.teacher_id = t.id
+        LEFT JOIN tbl_subjects s             ON ta.subject_id   = s.id
+        LEFT JOIN tbl_sections sec           ON ta.section_id   = sec.id
+        LEFT JOIN tbl_grade_level gl         ON ta.grade_level_id = gl.id
+        WHERE u.role = 'teacher'
+        GROUP BY t.id, u.name, u.username
+    ";
+
+        $outerWhere = [];
+        $params = [];
+        $types = '';
+
+        if ($search !== '') {
+            $like = '%' . $search . '%';
+            $outerWhere[] = "(name LIKE ? OR email LIKE ?)";
+            $params[] = $like;
+            $params[] = $like;
+            $types .= 'ss';
+        }
+        if ($grade !== '') {
+            $outerWhere[] = "FIND_IN_SET(LOWER(?), REPLACE(LOWER(COALESCE(grades_raw,'')), '|', ',')) > 0";
+            $params[] = strtolower($grade);
+            $types .= 's';
+        }
+        if ($section !== '') {
+            $outerWhere[] = "LOWER(COALESCE(sections_raw,'')) LIKE ?";
+            $params[] = '%' . strtolower($section) . '%';
+            $types .= 's';
+        }
+
+        $outerWhereClause = $outerWhere ? 'WHERE ' . implode(' AND ', $outerWhere) : '';
+
+        $sql = "
+        SELECT *
+        FROM ({$innerSQL}) AS teacher_agg
+        {$outerWhereClause}
+        ORDER BY name ASC
+    ";
+
+        if ($params) {
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            $result = $stmt->get_result();
+        } else {
+            $result = $this->db->query($sql);
+        }
+
+        $all = [];
+        while ($row = $result->fetch_assoc()) {
+            $isActive = (int) $row['class_count'] > 0;
+            $row['status_label'] = $isActive ? 'Active' : 'Not Active';
+
+            if ($status !== '' && strtolower($status) !== strtolower($row['status_label'])) {
+                continue;
+            }
+
+            if (!empty($row['subjects_raw'])) {
+                $pairs = explode('||', $row['subjects_raw']);
+                $row['subjects'] = array_map(function ($pair) {
+                    $parts = explode('~~', $pair, 2);
+                    return ['id' => $parts[0] ?? '', 'name' => $parts[1] ?? '', 'join_code' => ''];
+                }, $pairs);
+            } else {
+                $row['subjects'] = [];
+            }
+
+            $row['sections'] = !empty($row['sections_raw'])
+                ? explode('||', $row['sections_raw'])
+                : [];
+
+            unset($row['subjects_raw'], $row['sections_raw'], $row['grades_raw']);
+
+            $all[] = $row;
+        }
+
+        return array_slice($all, $offset, $limit);
+    }
+
+    public function countAllTeachersFiltered(
+        string $search = '',
+        string $grade = '',
+        string $section = '',
+        string $status = ''
+    ): int {
+        $innerSQL = "
+        SELECT
+            t.id AS teacher_id,
+            u.name,
+            u.username AS email,
+            COUNT(DISTINCT ta.id) AS class_count,
+            GROUP_CONCAT(
+                DISTINCT LOWER(gl.name)
+                ORDER BY gl.name SEPARATOR '|'
+            ) AS grades_raw,
+            GROUP_CONCAT(
+                DISTINCT CONCAT(gl.name, ' - ', sec.section_name)
+                ORDER BY gl.name, sec.section_name SEPARATOR '||'
+            ) AS sections_raw
+        FROM tbl_teachers t
+        JOIN  tbl_users u  ON t.user_id = u.id
+        LEFT JOIN tbl_teacher_assignments ta ON ta.teacher_id = t.id
+        LEFT JOIN tbl_subjects s             ON ta.subject_id   = s.id
+        LEFT JOIN tbl_sections sec           ON ta.section_id   = sec.id
+        LEFT JOIN tbl_grade_level gl         ON ta.grade_level_id = gl.id
+        WHERE u.role = 'teacher'
+        GROUP BY t.id, u.name, u.username
+    ";
+
+        $outerWhere = [];
+        $params = [];
+        $types = '';
+
+        if ($search !== '') {
+            $like = '%' . $search . '%';
+            $outerWhere[] = "(name LIKE ? OR email LIKE ?)";
+            $params[] = $like;
+            $params[] = $like;
+            $types .= 'ss';
+        }
+        if ($grade !== '') {
+            $outerWhere[] = "FIND_IN_SET(LOWER(?), REPLACE(LOWER(COALESCE(grades_raw,'')), '|', ',')) > 0";
+            $params[] = strtolower($grade);
+            $types .= 's';
+        }
+        if ($section !== '') {
+            $outerWhere[] = "LOWER(COALESCE(sections_raw,'')) LIKE ?";
+            $params[] = '%' . strtolower($section) . '%';
+            $types .= 's';
+        }
+
+        $outerWhereClause = $outerWhere ? 'WHERE ' . implode(' AND ', $outerWhere) : '';
+
+        $sql = "
+        SELECT *
+        FROM ({$innerSQL}) AS teacher_agg
+        {$outerWhereClause}
+        ORDER BY name ASC
+    ";
+
+        if ($params) {
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            $result = $stmt->get_result();
+        } else {
+            $result = $this->db->query($sql);
+        }
+
+        $count = 0;
+        while ($row = $result->fetch_assoc()) {
+            $isActive = (int) $row['class_count'] > 0;
+            $statusLabel = $isActive ? 'Active' : 'Not Active';
+            if ($status !== '' && strtolower($status) !== strtolower($statusLabel)) {
+                continue;
+            }
+            $count++;
+        }
+        return $count;
+    }
+
+    public function getTeacherStatusCounts(): array
+    {
+        $result = $this->db->query("
+        SELECT t.id AS teacher_id, COUNT(DISTINCT ta.id) AS class_count
+        FROM tbl_teachers t
+        JOIN tbl_users u ON t.user_id = u.id
+        LEFT JOIN tbl_teacher_assignments ta ON ta.teacher_id = t.id
+        WHERE u.role = 'teacher'
+        GROUP BY t.id
+    ");
+
+        $active = 0;
+        $inactive = 0;
+        while ($row = $result->fetch_assoc()) {
+            if ((int) $row['class_count'] > 0) {
+                $active++;
+            } else {
+                $inactive++;
+            }
+        }
+
+        return [
+            'total' => $active + $inactive,
+            'active' => $active,
+            'inactive' => $inactive,
+        ];
+    }
+
+    // ============================================================
+// SECTIONS (Super Admin side)
+// ============================================================
+    public function getAllSections()
+    {
+        $result = $this->db->query("
+        SELECT sec.id, sec.section_name, gl.id AS grade_level_id, gl.name AS grade_name
+        FROM tbl_sections sec
+        JOIN tbl_grade_level gl ON gl.id = sec.grade_level_id
+        ORDER BY gl.name ASC, sec.section_name ASC
+    ");
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // ============================================================
+// STUDENTS (Super Admin side) — tbl_students holds already-
+// enrolled students only, no approval workflow.
+// ============================================================
+    public function getAllStudentsFilteredPaginated(
+        int $limit,
+        int $offset,
+        string $search = '',
+        string $grade = '',
+        string $section = ''
+    ): array {
+        $where = ["u.role = 'student'"];
+        $params = [];
+        $types = '';
+
+        if ($search !== '') {
+            $like = '%' . $search . '%';
+            $where[] = "(u.name LIKE ? OR s.student_LRN LIKE ?)";
+            $params[] = $like;
+            $params[] = $like;
+            $types .= 'ss';
+        }
+        if ($grade !== '') {
+            $where[] = "LOWER(gl.name) = ?";
+            $params[] = strtolower($grade);
+            $types .= 's';
+        }
+        if ($section !== '') {
+            $where[] = "LOWER(sec.section_name) = ?";
+            $params[] = strtolower($section);
+            $types .= 's';
+        }
+
+        $whereClause = implode(' AND ', $where);
+        $sql = "
+        SELECT s.id AS student_id, s.user_id, s.grade_level_id, s.section_id,
+               s.student_LRN, u.name,
+               gl.name AS grade_level, sec.section_name
+        FROM tbl_students s
+        JOIN tbl_users u ON s.user_id = u.id
+        JOIN tbl_grade_level gl ON s.grade_level_id = gl.id
+        JOIN tbl_sections sec ON s.section_id = sec.id
+        WHERE $whereClause
+        ORDER BY u.name ASC
+        LIMIT ? OFFSET ?
+    ";
+        $params[] = $limit;
+        $params[] = $offset;
+        $types .= 'ii';
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function countAllStudentsFiltered(
+        string $search = '',
+        string $grade = '',
+        string $section = ''
+    ): int {
+        $where = ["u.role = 'student'"];
+        $params = [];
+        $types = '';
+
+        if ($search !== '') {
+            $like = '%' . $search . '%';
+            $where[] = "(u.name LIKE ? OR s.student_LRN LIKE ?)";
+            $params[] = $like;
+            $params[] = $like;
+            $types .= 'ss';
+        }
+        if ($grade !== '') {
+            $where[] = "LOWER(gl.name) = ?";
+            $params[] = strtolower($grade);
+            $types .= 's';
+        }
+        if ($section !== '') {
+            $where[] = "LOWER(sec.section_name) = ?";
+            $params[] = strtolower($section);
+            $types .= 's';
+        }
+
+        $whereClause = implode(' AND ', $where);
+        $sql = "
+        SELECT COUNT(*) AS total
+        FROM tbl_students s
+        JOIN tbl_users u ON s.user_id = u.id
+        JOIN tbl_grade_level gl ON s.grade_level_id = gl.id
+        JOIN tbl_sections sec ON s.section_id = sec.id
+        WHERE $whereClause
+    ";
+
+        if ($params) {
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            return (int) $stmt->get_result()->fetch_assoc()['total'];
+        }
+        return (int) $this->db->query($sql)->fetch_assoc()['total'];
+    }
+
+    public function updateStudentInfo(
+        int $user_id,
+        string $name,
+        int $grade_level_id,
+        int $section_id,
+        string $student_LRN,
+        int $student_id
+    ): void {
+        $stmt = $this->db->prepare("UPDATE tbl_users SET name = ? WHERE id = ?");
+        $stmt->bind_param("si", $name, $user_id);
+        $stmt->execute();
+        $stmt->close();
+
+        $stmt2 = $this->db->prepare("
+        UPDATE tbl_students
+        SET grade_level_id = ?, section_id = ?, student_LRN = ?, updated_at = NOW()
+        WHERE id = ?
+    ");
+        $stmt2->bind_param("iisi", $grade_level_id, $section_id, $student_LRN, $student_id);
+        $stmt2->execute();
+        $stmt2->close();
+    }
+
+    // ============================================================
+// ADMINS (Super Admin side)
+// ------------------------------------------------------------
+// ASSUMPTION: sub-admins live in tbl_users with role = 'admin',
+// same assumption as getTotalAdmins() above — no separate
+// tbl_admins table. Columns assumed: id, name, username,
+// password, role, created_at, last_activity (last_activity is
+// optional — same defensive try/catch as getActiveSessionsSummary()).
+// ============================================================
+    public function getAllAdminsFilteredPaginated(int $limit, int $offset, string $search = ''): array
+    {
+        $where = ["role = 'admin'"];
+        $params = [];
+        $types = '';
+
+        if ($search !== '') {
+            $like = '%' . $search . '%';
+            $where[] = "(name LIKE ? OR username LIKE ?)";
+            $params[] = $like;
+            $params[] = $like;
+            $types .= 'ss';
+        }
+
+        $whereClause = implode(' AND ', $where);
+        $sql = "
+        SELECT id, name, username, created_at
+        FROM tbl_users
+        WHERE $whereClause
+        ORDER BY name ASC
+        LIMIT ? OFFSET ?
+    ";
+        $params[] = $limit;
+        $params[] = $offset;
+        $types .= 'ii';
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function countAllAdminsFiltered(string $search = ''): int
+    {
+        $where = ["role = 'admin'"];
+        $params = [];
+        $types = '';
+
+        if ($search !== '') {
+            $like = '%' . $search . '%';
+            $where[] = "(name LIKE ? OR username LIKE ?)";
+            $params[] = $like;
+            $params[] = $like;
+            $types .= 'ss';
+        }
+
+        $whereClause = implode(' AND ', $where);
+        $sql = "SELECT COUNT(*) AS total FROM tbl_users WHERE $whereClause";
+
+        if ($params) {
+            $stmt = $this->db->prepare($sql);
+            $stmt->bind_param($types, ...$params);
+            $stmt->execute();
+            return (int) $stmt->get_result()->fetch_assoc()['total'];
+        }
+        return (int) $this->db->query($sql)->fetch_assoc()['total'];
+    }
+
+    public function countAdminsAddedThisMonth(): int
+    {
+        try {
+            $result = $this->db->query("
+            SELECT COUNT(*) AS total FROM tbl_users
+            WHERE role = 'admin'
+              AND created_at >= DATE_FORMAT(NOW(), '%Y-%m-01')
+        ");
+            return $result ? (int) $result->fetch_assoc()['total'] : 0;
+        } catch (\mysqli_sql_exception $e) {
+            return 0;
+        }
+    }
+
+    public function countActiveAdminsNow(int $minutesThreshold = 5): int
+    {
+        try {
+            $stmt = $this->db->prepare("
+            SELECT COUNT(*) AS total FROM tbl_users
+            WHERE role = 'admin'
+              AND last_activity IS NOT NULL
+              AND last_activity >= DATE_SUB(NOW(), INTERVAL ? MINUTE)
+        ");
+            $stmt->bind_param("i", $minutesThreshold);
+            $stmt->execute();
+            return (int) $stmt->get_result()->fetch_assoc()['total'];
+        } catch (\mysqli_sql_exception $e) {
+            return 0;
+        }
+    }
+
+    public function getAdminByUsername(string $username)
+    {
+        $stmt = $this->db->prepare("SELECT id FROM tbl_users WHERE username = ? LIMIT 1");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function createAdmin(string $name, string $username, string $password): array
+    {
+        if ($this->getAdminByUsername($username)) {
+            return ['success' => false, 'error' => 'Username is already taken.'];
+        }
+
+        $hashed = password_hash($password, PASSWORD_DEFAULT);
+        $role = 'admin';
+
+        $stmt = $this->db->prepare("
+        INSERT INTO tbl_users (name, username, password, role, created_at)
+        VALUES (?, ?, ?, ?, NOW())
+    ");
+        $stmt->bind_param("ssss", $name, $username, $hashed, $role);
+        $stmt->execute();
+
+        return ['success' => true, 'id' => $this->db->insert_id];
+    }
+
+    public function updateAdminInfo(int $id, string $name, string $username, ?string $password = null): void
+    {
+        if ($password !== null && $password !== '') {
+            $hashed = password_hash($password, PASSWORD_DEFAULT);
+            $stmt = $this->db->prepare("
+            UPDATE tbl_users SET name = ?, username = ?, password = ?
+            WHERE id = ? AND role = 'admin'
+        ");
+            $stmt->bind_param("sssi", $name, $username, $hashed, $id);
+        } else {
+            $stmt = $this->db->prepare("
+            UPDATE tbl_users SET name = ?, username = ?
+            WHERE id = ? AND role = 'admin'
+        ");
+            $stmt->bind_param("ssi", $name, $username, $id);
+        }
+        $stmt->execute();
+    }
+
+    public function deleteAdmin(int $id): void
+    {
+        $stmt = $this->db->prepare("DELETE FROM tbl_users WHERE id = ? AND role = 'admin'");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+    }
+
+    // ============================================================
+// SCHOOL PROFILE
+// ------------------------------------------------------------
+// tbl_school_profile is a single-row table (id = 1) holding the
+// school's identity info shown on the landing page and reports.
+// ============================================================
+    public function getSchoolProfile()
+    {
+        $result = $this->db->query("SELECT * FROM tbl_school_profile WHERE id = 1 LIMIT 1");
+        $profile = $result ? $result->fetch_assoc() : null;
+
+        // Defensive default so the form never renders against a null row,
+        // e.g. on a fresh install before the seed INSERT has run.
+        return $profile ?: [
+            'id' => 1,
+            'school_name' => '',
+            'deped_school_id' => '',
+            'region_division' => '',
+            'principal_name' => '',
+            'address' => '',
+            'contact_number' => '',
+            'current_school_year' => '',
+            'grade_levels_offered' => '',
+        ];
+    }
+
+    public function updateSchoolProfile(array $data): void
+    {
+        // Insert-or-update, so this still works if the seed row (id=1)
+        // was never created (fresh install).
+        $stmt = $this->db->prepare("
+        INSERT INTO tbl_school_profile (
+            id, school_name, deped_school_id, region_division,
+            principal_name, address, contact_number,
+            current_school_year, grade_levels_offered, updated_at
+        ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        ON DUPLICATE KEY UPDATE
+            school_name = VALUES(school_name),
+            deped_school_id = VALUES(deped_school_id),
+            region_division = VALUES(region_division),
+            principal_name = VALUES(principal_name),
+            address = VALUES(address),
+            contact_number = VALUES(contact_number),
+            current_school_year = VALUES(current_school_year),
+            grade_levels_offered = VALUES(grade_levels_offered),
+            updated_at = NOW()
+    ");
+        $stmt->bind_param(
+            "ssssssss",
+            $data['school_name'],
+            $data['deped_school_id'],
+            $data['region_division'],
+            $data['principal_name'],
+            $data['address'],
+            $data['contact_number'],
+            $data['current_school_year'],
+            $data['grade_levels_offered']
+        );
+        $stmt->execute();
+    }
+
+    // ============================================================
+// STRAND SETTINGS (Academic Setup toggles on the School Profile page)
+// ------------------------------------------------------------
+// Not wired to the landing page yet — landingpage.php still has
+// the strand cards hardcoded. This just persists which strands
+// are currently "offered" so that switch-over can happen later
+// without changing this page again.
+// ============================================================
+    public function getAllStrandSettings(): array
+    {
+        $result = $this->db->query("
+        SELECT id, strand_code, strand_name, track, category_label,
+               short_description, image_url, is_offered
+        FROM tbl_strand_settings
+        WHERE is_related_recommendation = 0
+        ORDER BY sort_order ASC, strand_name ASC
+    ");
+        return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    }
+
+    // Saves the description/image text edited on the School Profile page,
+// per strand row.
+    public function updateStrandContent(array $descriptions, array $images): void
+    {
+        foreach ($descriptions as $id => $desc) {
+            $id = (int) $id;
+            if ($id <= 0)
+                continue;
+
+            $desc = trim($desc);
+            $img = trim($images[$id] ?? '');
+
+            $stmt = $this->db->prepare("
+            UPDATE tbl_strand_settings
+            SET short_description = ?, image_url = ?
+            WHERE id = ? AND is_related_recommendation = 0
+        ");
+            $stmt->bind_param("ssi", $desc, $img, $id);
+            $stmt->execute();
+        }
+    }
+
+    // ============================================================
+// LANDING PAGE DATA (public-facing, no auth required)
+// ============================================================
+    public function getOfferedStrandsForLanding(): array
+    {
+        $result = $this->db->query("
+        SELECT strand_code, strand_name, track, category_label, short_description, image_url
+        FROM tbl_strand_settings
+        WHERE is_offered = 1
+        ORDER BY sort_order ASC, strand_name ASC
+    ");
+        return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    }
+
+    public function getRelatedStrandRecommendations(): array
+    {
+        $result = $this->db->query("
+        SELECT strand_code, strand_name, category_label, related_blurb, image_url
+        FROM tbl_strand_settings
+        WHERE is_related_recommendation = 1
+        ORDER BY sort_order ASC
+    ");
+        return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    }
+
+    public function setStrandOfferedStates(array $offeredIds): void
+    {
+        // Anything not in $offeredIds gets turned off; anything in it gets turned on.
+        // Simplest correct approach: reset all, then flip on the submitted ones.
+        $this->db->query("UPDATE tbl_strand_settings SET is_offered = 0");
+
+        if (!empty($offeredIds)) {
+            $ids = array_map('intval', $offeredIds);
+            $placeholders = implode(',', array_fill(0, count($ids), '?'));
+            $types = str_repeat('i', count($ids));
+
+            $stmt = $this->db->prepare("
+            UPDATE tbl_strand_settings SET is_offered = 1 WHERE id IN ($placeholders)
+        ");
+            $stmt->bind_param($types, ...$ids);
+            $stmt->execute();
+        }
+    }
+
+    // ============================================================
+// LANDING VIDEOS ("Strands in Action" section)
+// ============================================================
+    public function getAllLandingVideos(): array
+    {
+        $result = $this->db->query("
+        SELECT id, title, category_label, duration_label, youtube_video_id, sort_order, is_active
+        FROM tbl_landing_videos
+        ORDER BY sort_order ASC, id ASC
+    ");
+        return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    }
+
+    public function getActiveLandingVideos(): array
+    {
+        $result = $this->db->query("
+        SELECT title, category_label, duration_label, youtube_video_id
+        FROM tbl_landing_videos
+        WHERE is_active = 1
+        ORDER BY sort_order ASC, id ASC
+    ");
+        return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    }
+
+    public function updateLandingVideo(int $id, string $title, string $category, string $duration, string $videoId, bool $isActive): void
+    {
+        $active = $isActive ? 1 : 0;
+        $stmt = $this->db->prepare("
+        UPDATE tbl_landing_videos
+        SET title = ?, category_label = ?, duration_label = ?, youtube_video_id = ?, is_active = ?
+        WHERE id = ?
+    ");
+        $stmt->bind_param("ssssii", $title, $category, $duration, $videoId, $active, $id);
+        $stmt->execute();
+    }
+
+    // ============================================================
+// ROLES & PERMISSIONS (admin page-level access)
+// ------------------------------------------------------------
+// Only the 'admin' role has configurable access — superadmin,
+// teacher, and student stay fixed. An admin with no row for a
+// given page_key defaults to ALLOWED, so this only ever narrows
+// access once a super admin explicitly restricts a page.
+// ============================================================
+    public const PERMISSION_PAGES = [
+        'teacher_users' => 'Teachers',
+        'student_users' => 'Students',
+        'Adminsubjects' => 'Subjects',
+        'Adminsections' => 'Sections',
+        'Reports' => 'Reports',
+        'subject_access' => 'Subject Access',
+    ];
+
+    public function getAllAdminsForPermissions(): array
+    {
+        $result = $this->db->query("
+        SELECT id, name, username FROM tbl_users
+        WHERE role = 'admin'
+        ORDER BY name ASC
+    ");
+        return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+    }
+
+    public function getPermissionsForAdmin(int $userId): array
+    {
+        $stmt = $this->db->prepare("
+        SELECT page_key, allowed FROM tbl_admin_permissions WHERE user_id = ?
+    ");
+        $stmt->bind_param("i", $userId);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        // Default every known page to allowed, then overlay any stored rows
+        $permissions = array_fill_keys(array_keys(self::PERMISSION_PAGES), true);
+        foreach ($rows as $row) {
+            $permissions[$row['page_key']] = (bool) $row['allowed'];
+        }
+        return $permissions;
+    }
+
+    public function saveAdminPermissions(int $userId, array $allowedPageKeys): void
+    {
+        $stmt = $this->db->prepare("
+        INSERT INTO tbl_admin_permissions (user_id, page_key, allowed)
+        VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE allowed = VALUES(allowed)
+    ");
+
+        foreach (array_keys(self::PERMISSION_PAGES) as $pageKey) {
+            $allowed = in_array($pageKey, $allowedPageKeys, true) ? 1 : 0;
+            $stmt->bind_param("isi", $userId, $pageKey, $allowed);
+            $stmt->execute();
+        }
+    }
+
+    public function adminCanAccessPage(int $userId, string $pageKey): bool
+    {
+        $stmt = $this->db->prepare("
+        SELECT allowed FROM tbl_admin_permissions WHERE user_id = ? AND page_key = ? LIMIT 1
+    ");
+        $stmt->bind_param("is", $userId, $pageKey);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+
+        // No row = default allowed
+        return $row ? (bool) $row['allowed'] : true;
+    }
 }

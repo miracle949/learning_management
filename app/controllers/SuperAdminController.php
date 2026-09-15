@@ -368,4 +368,431 @@ class SuperAdminController
         header("Location: /learning_management/public/?url=activities");
         exit;
     }
+
+    // ============================================================
+// TEACHERS (Super Admin side)
+// ============================================================
+    public function super_admin_teacherRecords()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        require_once "../app/models/subjects.php";
+        require_once "../app/models/Grade_level.php";
+        $subjectModel = new subjects();
+        $gradeLevelModel = new Grade_level();
+
+        $grade11Subjects = $subjectModel->getGrade11Subjects();
+        $grade12Subjects = $subjectModel->getGrade12Subjects();
+        $grade11Sections = $gradeLevelModel->getGrade11Sections();
+        $grade12Sections = $gradeLevelModel->getGrade12Sections();
+
+        $teacherStats = $this->superAdminModel->getTeacherStatusCounts();
+
+        $search = trim($_GET['search'] ?? '');
+        $grade = trim($_GET['grade'] ?? '');
+        $section = trim($_GET['section'] ?? '');
+        $status = trim($_GET['status'] ?? '');
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
+        $totalTeachers = $this->superAdminModel->countAllTeachersFiltered($search, $grade, $section, $status);
+        $totalPages = (int) ceil($totalTeachers / $limit);
+
+        $teachers = $this->superAdminModel->getAllTeachersFilteredPaginated(
+            $search,
+            $grade,
+            $section,
+            $status,
+            $limit,
+            $offset
+        );
+
+        extract(compact(
+            'teachers',
+            'totalTeachers',
+            'totalPages',
+            'page',
+            'limit',
+            'offset',
+            'grade11Subjects',
+            'grade12Subjects',
+            'grade11Sections',
+            'grade12Sections',
+            'search',
+            'grade',
+            'section',
+            'status',
+            'teacherStats'
+        ));
+
+        require "../super_admin_folder/teacher_users.php";
+    }
+
+    // ============================================================
+// STUDENTS (Super Admin side) — enrolled students only
+// ============================================================
+    public function super_admin_studentRecords()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        $search = trim($_GET['search'] ?? '');
+        $grade = trim($_GET['grade'] ?? '');
+        $section = trim($_GET['section'] ?? '');
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
+        $gradeLevels = $this->superAdminModel->getAllGradeLevels();
+        $allSections = $this->superAdminModel->getAllSections();
+
+        $totalStudents = $this->superAdminModel->countAllStudentsFiltered($search, $grade, $section);
+        $totalPages = max(1, (int) ceil($totalStudents / $limit));
+
+        $students = $this->superAdminModel->getAllStudentsFilteredPaginated(
+            $limit,
+            $offset,
+            $search,
+            $grade,
+            $section
+        );
+
+        // ADD THESE TWO — used by the stat cards
+        $totalGrade12 = $this->superAdminModel->countAllStudentsFiltered('', 'Grade 12', '');
+        $totalGrade11 = $this->superAdminModel->countAllStudentsFiltered('', 'Grade 11', '');
+
+        extract(compact(
+            'students',
+            'totalStudents',
+            'totalPages',
+            'page',
+            'limit',
+            'offset',
+            'gradeLevels',
+            'allSections',
+            'search',
+            'grade',
+            'section',
+            'totalGrade12',   // ADD
+            'totalGrade11'    // ADD
+        ));
+
+        require "../super_admin_folder/student_users.php";
+    }
+
+    public function update_super_admin_Student()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $student_id = (int) ($_POST['student_id'] ?? 0);
+            $user_id = (int) ($_POST['user_id'] ?? 0);
+            $name = trim($_POST['name'] ?? '');
+            $grade_level_id = (int) ($_POST['grade_level_id'] ?? 0);
+            $section_id = (int) ($_POST['section_id'] ?? 0);
+            $student_LRN = trim($_POST['student_LRN'] ?? '');
+
+            $this->superAdminModel->updateStudentInfo(
+                $user_id,
+                $name,
+                $grade_level_id,
+                $section_id,
+                $student_LRN,
+                $student_id
+            );
+
+            $_SESSION['flash'] = [
+                'type' => 'success',
+                'message' => 'Student updated successfully.',
+                'page' => 'super_admin_student_users'
+            ];
+
+            header("Location: /learning_management/public/?url=super_admin_student_users");
+            exit;
+        }
+    }
+
+    // ============================================================
+// ADMINS (Super Admin side)
+// ============================================================
+    public function super_admin_adminRecords()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        $search = trim($_GET['search'] ?? '');
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
+        $totalAdmins = $this->superAdminModel->countAllAdminsFiltered($search);
+        $totalPages = max(1, (int) ceil($totalAdmins / $limit));
+
+        $admins = $this->superAdminModel->getAllAdminsFilteredPaginated($limit, $offset, $search);
+
+        $activeAdminsNow = $this->superAdminModel->countActiveAdminsNow();
+        $addedThisMonth = $this->superAdminModel->countAdminsAddedThisMonth();
+
+        extract(compact(
+            'admins',
+            'totalAdmins',
+            'totalPages',
+            'page',
+            'limit',
+            'offset',
+            'search',
+            'activeAdminsNow',
+            'addedThisMonth'
+        ));
+
+        require "../super_admin_folder/admin_users.php";
+    }
+
+    public function create_super_admin_Admin()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name = trim($_POST['name'] ?? '');
+            $username = trim($_POST['username'] ?? '');
+            $password = $_POST['password'] ?? '';
+            $confirmPassword = $_POST['confirm_password'] ?? '';
+
+            if ($name === '' || $username === '' || $password === '') {
+                $_SESSION['flash'] = [
+                    'type' => 'error',
+                    'message' => 'All fields are required.',
+                    'page' => 'super_admin_admin_users'
+                ];
+                header("Location: /learning_management/public/?url=super_admin_admin_users");
+                exit;
+            }
+
+            if ($password !== $confirmPassword) {
+                $_SESSION['flash'] = [
+                    'type' => 'error',
+                    'message' => 'Passwords do not match.',
+                    'page' => 'super_admin_admin_users'
+                ];
+                header("Location: /learning_management/public/?url=super_admin_admin_users");
+                exit;
+            }
+
+            $result = $this->superAdminModel->createAdmin($name, $username, $password);
+
+            $_SESSION['flash'] = $result['success']
+                ? ['type' => 'success', 'message' => 'Admin account created successfully.', 'page' => 'super_admin_admin_users']
+                : ['type' => 'error', 'message' => $result['error'] ?? 'Failed to create admin.', 'page' => 'super_admin_admin_users'];
+        }
+
+        header("Location: /learning_management/public/?url=super_admin_admin_users");
+        exit;
+    }
+
+    public function update_super_admin_Admin()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = (int) ($_POST['admin_id'] ?? 0);
+            $name = trim($_POST['name'] ?? '');
+            $username = trim($_POST['username'] ?? '');
+            $password = trim($_POST['password'] ?? '');
+
+            $this->superAdminModel->updateAdminInfo($id, $name, $username, $password !== '' ? $password : null);
+
+            $_SESSION['flash'] = [
+                'type' => 'success',
+                'message' => 'Admin updated successfully.',
+                'page' => 'super_admin_admin_users'
+            ];
+        }
+
+        header("Location: /learning_management/public/?url=super_admin_admin_users");
+        exit;
+    }
+
+    public function delete_super_admin_Admin()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = (int) ($_POST['admin_id'] ?? 0);
+
+            // Guard rail: don't let a super admin delete their own logged-in account here.
+            if ($id !== (int) ($_SESSION['user_id'] ?? 0)) {
+                $this->superAdminModel->deleteAdmin($id);
+                $_SESSION['flash'] = [
+                    'type' => 'success',
+                    'message' => 'Admin account deleted.',
+                    'page' => 'super_admin_admin_users'
+                ];
+            } else {
+                $_SESSION['flash'] = [
+                    'type' => 'error',
+                    'message' => 'You cannot delete your own account.',
+                    'page' => 'super_admin_admin_users'
+                ];
+            }
+        }
+
+        header("Location: /learning_management/public/?url=super_admin_admin_users");
+        exit;
+    }
+
+    // ============================================================
+// SCHOOL PROFILE
+// ============================================================
+    public function schoolProfile()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        $profile = $this->superAdminModel->getSchoolProfile();
+        $strandSettings = $this->superAdminModel->getAllStrandSettings();
+        $landingVideos = $this->superAdminModel->getAllLandingVideos(); // NEW
+
+        extract(compact('profile', 'strandSettings', 'landingVideos'));
+
+        require "../super_admin_folder/school_profile.php";
+    }
+
+    public function saveSchoolProfile()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'school_name' => trim($_POST['school_name'] ?? ''),
+                'deped_school_id' => trim($_POST['deped_school_id'] ?? ''),
+                'region_division' => trim($_POST['region_division'] ?? ''),
+                'principal_name' => trim($_POST['principal_name'] ?? ''),
+                'address' => trim($_POST['address'] ?? ''),
+                'contact_number' => trim($_POST['contact_number'] ?? ''),
+                'current_school_year' => trim($_POST['current_school_year'] ?? ''),
+                'grade_levels_offered' => trim($_POST['grade_levels_offered'] ?? ''),
+            ];
+
+            if ($data['school_name'] === '') {
+                $_SESSION['flash'] = [
+                    'type' => 'error',
+                    'message' => 'School name is required.',
+                    'page' => 'school_profile'
+                ];
+                header("Location: /learning_management/public/?url=school_profile");
+                exit;
+            }
+
+            $this->superAdminModel->updateSchoolProfile($data);
+
+            $offeredStrandIds = $_POST['strands_offered'] ?? []; // array of checked strand ids
+            $this->superAdminModel->setStrandOfferedStates($offeredStrandIds);
+
+            // NEW — persist per-strand description/image edits
+            $strandDescriptions = $_POST['strand_description'] ?? [];
+            $strandImages = $_POST['strand_image'] ?? [];
+            $this->superAdminModel->updateStrandContent($strandDescriptions, $strandImages);
+
+            // NEW — persist "Strands in Action" video edits
+            $videoTitles = $_POST['video_title'] ?? [];
+            $videoCategories = $_POST['video_category'] ?? [];
+            $videoDurations = $_POST['video_duration'] ?? [];
+            $videoIds = $_POST['video_youtube_id'] ?? [];
+            $videoActive = $_POST['video_active'] ?? []; // only checked ones are present
+
+            foreach ($videoTitles as $id => $title) {
+                $id = (int) $id;
+                if ($id <= 0)
+                    continue;
+
+                $this->superAdminModel->updateLandingVideo(
+                    $id,
+                    trim($title),
+                    trim($videoCategories[$id] ?? ''),
+                    trim($videoDurations[$id] ?? ''),
+                    trim($videoIds[$id] ?? ''),
+                    isset($videoActive[$id])
+                );
+            }
+
+            $_SESSION['flash'] = [
+                'type' => 'success',
+                'message' => 'School profile updated successfully.',
+                'page' => 'school_profile'
+            ];
+        }
+
+        header("Location: /learning_management/public/?url=school_profile");
+        exit;
+    }
+
+    // ============================================================
+// ROLES & PERMISSIONS
+// ============================================================
+    public function rolesPermissions()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        $admins = $this->superAdminModel->getAllAdminsForPermissions();
+        $permissionPages = SuperAdmin::PERMISSION_PAGES;
+
+        // Pre-load each admin's current permissions so the view can render
+        // checkboxes without a per-row AJAX call.
+        $adminPermissions = [];
+        foreach ($admins as $adminRow) {
+            $adminPermissions[$adminRow['id']] = $this->superAdminModel->getPermissionsForAdmin((int) $adminRow['id']);
+        }
+
+        extract(compact('admins', 'permissionPages', 'adminPermissions'));
+
+        require "../super_admin_folder/roles_permissions.php";
+    }
+
+    public function saveAdminPermissions()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $userId = (int) ($_POST['user_id'] ?? 0);
+            $allowedPages = $_POST['allowed_pages'] ?? [];
+
+            if ($userId > 0) {
+                $this->superAdminModel->saveAdminPermissions($userId, $allowedPages);
+                $_SESSION['flash'] = [
+                    'type' => 'success',
+                    'message' => 'Permissions updated successfully.',
+                    'page' => 'roles_permissions'
+                ];
+            }
+        }
+
+        header("Location: /learning_management/public/?url=roles_permissions");
+        exit;
+    }
 }

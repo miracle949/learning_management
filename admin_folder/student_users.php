@@ -618,6 +618,7 @@
                                         <th>Section</th>
                                         <th>Strand</th>
                                         <th>School Year</th>
+                                        <!-- <th>Date</th> -->
                                         <th>Status</th>
                                     </tr>
                                 </thead>

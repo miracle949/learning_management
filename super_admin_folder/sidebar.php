@@ -9,7 +9,7 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'super_admin';
     <div class="sidebar-menu">
         <ul>
             <div class="sidebar-category">
-                <h5>Main</h5>
+                <h5>Overview</h5>
             </div>
             <li class="<?= $current_url === 'super_admin' ? 'active' : '' ?>">
                 <a href="/learning_management/public/?url=super_admin" class="text-decoration-none">
@@ -19,31 +19,72 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'super_admin';
             </li>
 
             <div class="sidebar-category">
-                <h5>Content</h5>
+                <h5>User Management</h5>
             </div>
-            <li class="<?= $current_url === 'classes_teacher' ? 'active' : '' ?>">
-                <a href="#" class="text-decoration-none">
-                    <i class="fa fa-book"></i>
-                    <span>Modules</span>
-                </a>
-            </li>
-            <li class="<?= $current_url === 'activities' ? 'active' : '' ?>">
-                <a href="/learning_management/public/?url=activities" class="text-decoration-none">
-                    <i class="fa fa-pencil"></i>
-                    <span>Activities</span>
-                </a>
-            </li>
-            <li class="<?= $current_url === 'modules' ? 'active' : '' ?>">
-                <a href="#" class="text-decoration-none">
-                    <i class="fa fa-clipboard-list"></i>
-                    <span>Assignments</span>
+            <li class="<?= $current_url === 'super_admin_admin_users' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=super_admin_admin_users" class="text-decoration-none">
+                    <i class="fa fa-users"></i>
+                    <span>Admins</span>
                 </a>
             </li>
 
-            <div class="sidebar-category">
-                <h5>User Management</h5>
-            </div>
             <li class="<?= $current_url === 'super_admin_teacher_users' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=super_admin_teacher_users" class="text-decoration-none">
+                    <i class="fa fa-chalkboard-user"></i>
+                    <span>Teachers</span>
+                </a>
+            </li>
+
+            <li class="<?= $current_url === 'super_admin_student_users' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=super_admin_student_users" class="text-decoration-none">
+                    <i class="fa fa-graduation-cap"></i>
+                    <span>Students</span>
+                </a>
+            </li>
+            <!-- <li class="<?= $current_url === 'activities' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=activities" class="text-decoration-none">
+                    <i class="fa fa-pencil"></i>
+                    <span>Teacher Accounts</span>
+                </a>
+            </li> -->
+            <!-- <li class="<?= $current_url === 'modules' ? 'active' : '' ?>">
+                <a href="#" class="text-decoration-none">
+                    <i class="fa fa-clipboard-list"></i>
+                    <span>Student Accounts</span>
+                </a>
+            </li> -->
+
+            <div class="sidebar-category">
+                <h5>System</h5>
+            </div>
+            <li class="<?= $current_url === 'school_profile' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=school_profile" class="text-decoration-none">
+                    <i class="fa fa-calendar"></i>
+                    <span>School Profile</span>
+                </a>
+            </li>
+
+            <li class="<?= $current_url === 'roles_permissions' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=roles_permissions" class="text-decoration-none">
+                    <i class="fa fa-user-shield"></i>
+                    <span>Roles & Permission</span>
+                </a>
+            </li>
+
+            <li class="<?= $current_url === 'roles_permission' ? 'active' : '' ?>">
+                <a href="#" class="text-decoration-none">
+                    <i class="fa fa-database"></i>
+                    <span>Backup & Restore</span>
+                </a>
+            </li>
+
+            <li class="<?= $current_url === 'roles_permission' ? 'active' : '' ?>">
+                <a href="#" class="text-decoration-none">
+                    <i class="fa fa-clipboard-list"></i>
+                    <span>Audit Trail / Logs</span>
+                </a>
+            </li>
+            <!-- <li class="<?= $current_url === 'super_admin_teacher_users' ? 'active' : '' ?>">
                 <a href="/learning_management/public/?url=super_admin_teacher_users" class="text-decoration-none">
                     <i class="fa fa-chalkboard-user"></i>
                     <span>Teachers</span>
@@ -60,7 +101,7 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'super_admin';
                     <i class="fa fa-gear"></i>
                     <span>Settings</span>
                 </a>
-            </li>
+            </li> -->
 
             <form action="?url=logout" method="post">
                 <li>

@@ -155,45 +155,18 @@
         <!-- FLOATING STRAND CARDS -->
         <div class="strands-float-wrap">
             <div class="strands-grid">
-                <div class="strand-card">
-                    <img class="strand-card-img"
-                        src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=600&q=80" alt="ICT Strand">
-                    <div class="strand-card-body">
-                        <div class="strand-card-eyebrow">TVL · ICT</div>
-                        <div class="strand-card-title">Electrical & Electronics Technology</div>
-                        <div class="strand-card-desc">Pairs naturally with CSS — where CSS builds and repairs the
-                            machine,
-                            ICT focuses on the programs and systems that run on it.</div>
-                        <a href="#" class="strand-card-btn">View Strand →</a>
+                <?php foreach ($relatedStrands as $rs): ?>
+                    <div class="strand-card">
+                        <img class="strand-card-img" src="<?= htmlspecialchars($rs['image_url']) ?>"
+                            alt="<?= htmlspecialchars($rs['strand_name']) ?>">
+                        <div class="strand-card-body">
+                            <div class="strand-card-eyebrow"><?= htmlspecialchars($rs['category_label']) ?></div>
+                            <div class="strand-card-title"><?= htmlspecialchars($rs['strand_name']) ?></div>
+                            <div class="strand-card-desc"><?= htmlspecialchars($rs['related_blurb']) ?></div>
+                            <a href="#" class="strand-card-btn">View Strand →</a>
+                        </div>
                     </div>
-                </div>
-
-                <div class="strand-card">
-                    <img class="strand-card-img"
-                        src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&q=80"
-                        alt="Electronics Strand">
-                    <div class="strand-card-body">
-                        <div class="strand-card-eyebrow">TVL · Electronics</div>
-                        <div class="strand-card-title">Electrical & Electronics Technology</div>
-                        <div class="strand-card-desc">Shares core competencies with CSS in circuitry, soldering, and
-                            component-level troubleshooting.</div>
-                        <a href="#" class="strand-card-btn">View Strand →</a>
-                    </div>
-                </div>
-
-                <div class="strand-card a">
-                    <img class="strand-card-img"
-                        src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&q=80"
-                        alt="Industrial Arts Strand">
-                    <div class="strand-card-body">
-                        <div class="strand-card-eyebrow">TVL · Industrial Arts</div>
-                        <div class="strand-card-title">Industrial Arts & Technical Drafting</div>
-                        <div class="strand-card-desc">Teaches the technical drawing and fabrication skills CSS students
-                            use
-                            when documenting layouts and server room setups.</div>
-                        <a href="#" class="strand-card-btn">View Strand →</a>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
             <div class="strands-spacer"></div>
         </div>
@@ -306,114 +279,18 @@
                 </div>
 
                 <div class="learn-body">
-                    <div class="card-features reveal reveal-delay-1">
-                        <div class="card-features-header">
-                            <img class="module-img" src="../images/css.jpg" alt="">
+                    <?php foreach ($offeredStrands as $i => $strand): ?>
+                        <div class="card-features reveal reveal-delay-<?= min(4, $i + 1) ?>">
+                            <div class="card-features-header">
+                                <img class="module-img" src="<?= htmlspecialchars($strand['image_url']) ?>" alt="">
+                            </div>
+                            <div class="card-features-body">
+                                <div class="module-id"><?= htmlspecialchars($strand['track']) ?></div>
+                                <h5><?= htmlspecialchars($strand['strand_code'] . ' - ' . $strand['strand_name']) ?></h5>
+                                <p><?= htmlspecialchars($strand['short_description']) ?></p>
+                            </div>
                         </div>
-                        <div class="card-features-body">
-                            <div class="module-id">TVL Track</div>
-
-                            <h5>CSS - Computer System Servicing</h5>
-
-                            <p>Hands-on training in PC assembly, OS installation, networking, and hardware repair,
-                                leading to a TESDA NC II certificate.</p>
-
-                        </div>
-                    </div>
-
-                    <div class="card-features reveal reveal-delay-1">
-                        <div class="card-features-header">
-                            <img class="module-img" src="../images/stem.jpg" alt="">
-                        </div>
-                        <div class="card-features-body">
-                            <div class="module-id">Academic Track</div>
-
-                            <h5>STEM - Science, Tech, Engineering & Math</h5>
-
-                            <p>Heavy on math and lab sciences. Built for students aiming at engineering, medicine, IT,
-                                or pure science degrees.</p>
-
-                        </div>
-                    </div>
-
-                    <div class="card-features reveal reveal-delay-2">
-                        <div class="card-features-header">
-                            <img class="module-img" src="../images/abm.jpg" alt="">
-                        </div>
-
-                        <div class="card-features-body">
-                            <div class="module-id">Academic Track</div>
-
-                            <h5>ABM — Accountancy, Business & Management</h5>
-
-                            <p>Covers finance, marketing, and entrepreneurship — a direct path into business,
-                                accountancy, or management degrees.</p>
-                        </div>
-                    </div>
-
-                    <div class="card-features reveal reveal-delay-3">
-                        <div class="card-features-header">
-                            <img class="module-img" src="../images/humms.jpg" alt="">
-                        </div>
-
-                        <div class="card-features-body">
-                            <div class="module-id">Academic Track</div>
-
-                            <h5>HUMSS — Humanities & Social Sciences</h5>
-
-                            <p>Focuses on communication, law, and social issues — ideal for future lawyers, teachers,
-                                writers, and public servants.</p>
-
-                        </div>
-                    </div>
-
-                    <div class="card-features reveal reveal-delay-4">
-                        <div class="card-features-header">
-                            <img class="module-img" src="../images/cookery.jpg" alt="">
-                        </div>
-
-                        <div class="card-features-body">
-                            <div class="module-id">TVL Track</div>
-
-                            <h5>CBF - Cookery Bread & Pastries Food & Beverage Services</h5>
-
-                            <p>Develop skills in cooking, baking, and food service, preparing students for careers in
-                                restaurants, hotels, and the hospitality industry.</p>
-
-                        </div>
-                    </div>
-
-                    <div class="card-features reveal reveal-delay-4">
-                        <div class="card-features-header">
-                            <img class="module-img" src="../images/beauty.avif" alt="">
-                        </div>
-
-                        <div class="card-features-body">
-                            <div class="module-id">TVL Track</div>
-
-                            <h5>BHW - Beauty Care Hair Dressing Wellness Massage</h5>
-
-                            <p>Learn beauty care, hairstyling, and wellness massage, leading to careers in salons, spas,
-                                and the beauty industry.</p>
-
-                        </div>
-                    </div>
-
-                    <div class="card-features reveal reveal-delay-4">
-                        <div class="card-features-header">
-                            <img class="module-img" src="../images/epas.avif" alt="">
-                        </div>
-
-                        <div class="card-features-body">
-                            <div class="module-id">TVL Track</div>
-
-                            <h5>EPAS - Electronic Products Assembly & Servicing</h5>
-
-                            <p>Gain hands-on experience in assembling, testing, and repairing electronic devices for
-                                careers in electronics and technical servicing.</p>
-
-                        </div>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </section>
@@ -516,115 +393,43 @@
                 <!-- ACADEMIC TAB -->
                 <div class="tab-pane active" id="tab-hardware">
                     <div class="parts-grid">
-                        <div class="part-card">
-                            <img class="part-img"
-                                src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=400&q=80"
-                                alt="Laboratory equipment">
-                            <div class="part-name">STEM</div>
-                            <div class="part-desc">Advanced math, physics, chemistry, and biology for students aiming at
-                                engineering or medical degrees.</div>
-                        </div>
-                        <div class="part-card">
-                            <img class="part-img"
-                                src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=80"
-                                alt="Business charts">
-                            <div class="part-name">ABM</div>
-                            <div class="part-desc">Business math, financial statements, and entrepreneurship for future
-                                managers and accountants.</div>
-                        </div>
-                        <div class="part-card">
-                            <img class="part-img"
-                                src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=400&q=80"
-                                alt="Group discussion">
-                            <div class="part-name">HUMSS</div>
-                            <div class="part-desc">Philosophy, social science, and creative writing for future lawyers,
-                                teachers, and writers.</div>
-                        </div>
-                        <div class="part-card">
-                            <img class="part-img"
-                                src="https://images.unsplash.com/photo-1551836022-d5f88ed5a5f9?w=400&q=80"
-                                alt="General academic studies">
-                            <div class="part-name">General Academic Strand</div>
-                            <div class="part-desc">A flexible mix of subjects for students who aren't sure which
-                                specific
-                                path to commit to yet.</div>
-                        </div>
+                        <?php if (empty($strandsByTrack['Academic Track'])): ?>
+                            <p class="text-muted">No strands currently offered under this track.</p>
+                        <?php else: ?>
+                            <?php foreach ($strandsByTrack['Academic Track'] as $strand): ?>
+                                <div class="part-card">
+                                    <img class="part-img" src="<?= htmlspecialchars($strand['image_url']) ?>"
+                                        alt="<?= htmlspecialchars($strand['strand_name']) ?>">
+                                    <div class="part-name"><?= htmlspecialchars($strand['strand_code']) ?></div>
+                                    <div class="part-desc"><?= htmlspecialchars($strand['short_description']) ?></div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
                 </div>
 
                 <!-- TVL TAB -->
                 <div class="tab-pane" id="tab-software">
                     <div class="parts-grid">
-                        <div class="part-card">
-                            <img class="part-img"
-                                src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&q=80"
-                                alt="Computer networking">
-                            <div class="part-name">Computer Systems Servicing</div>
-                            <div class="part-desc">PC assembly, OS installation, and basic networking — a path into IT
-                                support.</div>
-                        </div>
-                        <div class="part-card">
-                            <img class="part-img"
-                                src="https://images.unsplash.com/photo-1551218808-94e220e084d2?w=400&q=80"
-                                alt="Cooking class">
-                            <div class="part-name">Cookery &amp; Food Service</div>
-                            <div class="part-desc">Food prep, kitchen safety, and service skills for the hospitality
-                                industry.</div>
-                        </div>
-                        <div class="part-card">
-                            <img class="part-img"
-                                src="https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=400&q=80"
-                                alt="Electrical wiring">
-                            <div class="part-name">Electrical Installation</div>
-                            <div class="part-desc">Wiring, circuits, and electrical maintenance leading to a trade
-                                certification.</div>
-                        </div>
-                        <div class="part-card">
-                            <img class="part-img"
-                                src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=400&q=80"
-                                alt="Farming">
-                            <div class="part-name">Agri-Fishery Arts</div>
-                            <div class="part-desc">Crop and livestock production, plus aquaculture, for agribusiness
-                                careers.</div>
-                        </div>
+                        <?php if (empty($strandsByTrack['TVL Track'])): ?>
+                            <p class="text-muted">No strands currently offered under this track.</p>
+                        <?php else: ?>
+                            <?php foreach ($strandsByTrack['TVL Track'] as $strand): ?>
+                                <div class="part-card">
+                                    <img class="part-img" src="<?= htmlspecialchars($strand['image_url']) ?>"
+                                        alt="<?= htmlspecialchars($strand['strand_name']) ?>">
+                                    <div class="part-name"><?= htmlspecialchars($strand['strand_code']) ?></div>
+                                    <div class="part-desc"><?= htmlspecialchars($strand['short_description']) ?></div>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
                 </div>
 
                 <!-- SPORTS & ARTS TAB -->
                 <div class="tab-pane" id="tab-network">
                     <div class="parts-grid">
-                        <div class="part-card">
-                            <img class="part-img"
-                                src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=400&q=80"
-                                alt="Athletes training">
-                            <div class="part-name">Sports Science</div>
-                            <div class="part-desc">Fitness training, sports officiating, and coaching fundamentals.
-                            </div>
-                        </div>
-                        <div class="part-card">
-                            <img class="part-img"
-                                src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400&q=80"
-                                alt="Visual arts studio">
-                            <div class="part-name">Visual Arts</div>
-                            <div class="part-desc">Drawing, design fundamentals, and digital art tools for media and
-                                design careers.</div>
-                        </div>
-                        <div class="part-card">
-                            <img class="part-img"
-                                src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&q=80"
-                                alt="Performing arts">
-                            <div class="part-name">Performing Arts</div>
-                            <div class="part-desc">Music, theater, and dance for students pursuing the performing arts.
-                            </div>
-                        </div>
-                        <div class="part-card">
-                            <img class="part-img"
-                                src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&q=80"
-                                alt="Film and media production">
-                            <div class="part-name">Media Arts</div>
-                            <div class="part-desc">Photography, film, and digital storytelling for media production
-                                careers.</div>
-                        </div>
+                        <p class="text-muted">This school doesn't currently offer strands under this track.</p>
                     </div>
                 </div>
             </div>
@@ -643,46 +448,28 @@
 
                     <div class="video-grid">
                         <div class="video-embed">
-                            <iframe id="mainVideo" src="https://www.youtube.com/watch?v=oFEFKl_Xiug"
-                                title="Choosing a Senior High Strand"
+                            <iframe id="mainVideo"
+                                src="https://www.youtube.com/embed/<?= htmlspecialchars($landingVideos[0]['youtube_video_id'] ?? '') ?>"
+                                title="<?= htmlspecialchars($landingVideos[0]['title'] ?? 'Strands in Action') ?>"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowfullscreen>
                             </iframe>
                         </div>
 
                         <div class="video-list">
-                            <div class="video-thumb"
-                                onclick="changeVideo('https://www.youtube.com/watch?v=w7BsTdmprjk')">
-                                <img src="https://img.youtube.com/vi/tK2N9dO5mZY/mqdefault.jpg" alt="Choosing a strand">
-                                <div>
-                                    <div class="video-thumb-title">How to Choose the Right Strand</div>
-                                    <div class="video-thumb-meta">Guidance · 14 min</div>
+                            <?php foreach ($landingVideos as $video): ?>
+                                <div class="video-thumb"
+                                    onclick="changeVideo('https://www.youtube.com/embed/<?= htmlspecialchars($video['youtube_video_id']) ?>')">
+                                    <img src="https://img.youtube.com/vi/<?= htmlspecialchars($video['youtube_video_id']) ?>/mqdefault.jpg"
+                                        alt="<?= htmlspecialchars($video['title']) ?>">
+                                    <div>
+                                        <div class="video-thumb-title"><?= htmlspecialchars($video['title']) ?></div>
+                                        <div class="video-thumb-meta">
+                                            <?= htmlspecialchars($video['category_label']) ?>    <?= $video['duration_label'] ? ' · ' . htmlspecialchars($video['duration_label']) : '' ?>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="video-thumb"
-                                onclick="changeVideo('https://www.youtube.com/watch?v=swapSSDN8g')">
-                                <img src="https://img.youtube.com/vi/swapSSDN8g/mqdefault.jpg" alt="STEM classroom">
-                                <div>
-                                    <div class="video-thumb-title">A Day in STEM Class</div>
-                                    <div class="video-thumb-meta">Academic Track · 11 min</div>
-                                </div>
-                            </div>
-                            <div class="video-thumb"
-                                onclick="changeVideo('https://www.youtube.com/watch?v=Sfxqq5A8cJE')">
-                                <img src="https://img.youtube.com/vi/Sfxqq5A8cJE/mqdefault.jpg" alt="TVL workshop">
-                                <div>
-                                    <div class="video-thumb-title">Inside a TVL Workshop</div>
-                                    <div class="video-thumb-meta">TVL Track · 16 min</div>
-                                </div>
-                            </div>
-                            <div class="video-thumb"
-                                onclick="changeVideo('https://www.youtube.com/watch?v=bS0JgBKFodc')">
-                                <img src="https://img.youtube.com/vi/bS0JgBKFodc/mqdefault.jpg" alt="Arts and sports">
-                                <div>
-                                    <div class="video-thumb-title">Sports &amp; Arts Track Highlights</div>
-                                    <div class="video-thumb-meta">Sports &amp; Arts · 13 min</div>
-                                </div>
-                            </div>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
@@ -898,7 +685,7 @@
             <div class="footer-parent">
                 <div class="footer-logo">
                     <!-- <img src="../images/iLearn-8.png" alt=""> -->
-                    <h3>SHS Strand</h3>
+                    <h3><?= htmlspecialchars($schoolProfile['school_name'] ?: 'SHS Strand') ?></h3>
 
                     <p>An interactive Computer System Servicing learning platform built to help senior high school
                         students
