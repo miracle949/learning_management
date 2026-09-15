@@ -4,6 +4,137 @@ require_once "../core/Model.php";
 
 class SuperAdmin extends Model
 {
+    public const ROLE_PERMISSIONS = [
+        'admin' => [
+            'manage_student_accounts' => [
+                'label' => 'Manage student accounts',
+                'description' => 'Create, edit, and deactivate student records',
+                'default' => true,
+            ],
+            'manage_teacher_accounts' => [
+                'label' => 'Manage teacher accounts',
+                'description' => 'Create, edit, and deactivate teacher records',
+                'default' => true,
+            ],
+            'import_masterlist_csv' => [
+                'label' => 'Import masterlist via CSV',
+                'description' => 'Bulk-upload student records',
+                'default' => true,
+            ],
+            'manage_academic_structure' => [
+                'label' => 'Manage academic structure',
+                'description' => 'School year, grade levels, sections',
+                'default' => false,
+            ],
+            'manage_admin_accounts' => [
+                'label' => 'Manage other admin accounts',
+                'description' => 'Grant or revoke console access',
+                'default' => false,
+            ],
+            'view_audit_log' => [
+                'label' => 'View audit log',
+                'description' => 'Security and activity history',
+                'default' => false,
+            ],
+        ],
+        'teacher' => [
+            'manage_own_classes' => [
+                'label' => 'Manage own classes',
+                'description' => 'View and organize assigned subjects and sections',
+                'default' => true,
+            ],
+            'create_lessons_activities' => [
+                'label' => 'Create lessons & activities',
+                'description' => 'Build modules, quizzes, and activities',
+                'default' => true,
+            ],
+            'grade_student_work' => [
+                'label' => 'Grade student work',
+                'description' => 'Score quizzes, activities, and submissions',
+                'default' => true,
+            ],
+            'post_announcements' => [
+                'label' => 'Post announcements',
+                'description' => 'Send updates to enrolled students',
+                'default' => true,
+            ],
+            'view_class_reports' => [
+                'label' => 'View class reports',
+                'description' => 'Performance and completion reports for own classes',
+                'default' => false,
+            ],
+        ],
+        'student' => [
+            'view_grades_progress' => [
+                'label' => 'View grades & progress',
+                'description' => 'See scores, completion, and feedback',
+                'default' => true,
+            ],
+            'submit_assignments' => [
+                'label' => 'Submit assignments & activities',
+                'description' => 'Upload or answer graded work',
+                'default' => true,
+            ],
+            'message_teachers' => [
+                'label' => 'Message teachers',
+                'description' => 'Send questions directly to subject teachers',
+                'default' => true,
+            ],
+            'view_announcements' => [
+                'label' => 'View announcements',
+                'description' => 'See updates posted by teachers',
+                'default' => true,
+            ],
+        ],
+    ];
+
+    public function getRolePermissions(string $role): array
+    {
+        $definitions = self::ROLE_PERMISSIONS[$role] ?? [];
+        $permissions = [];
+        foreach ($definitions as $key => $def) {
+            $permissions[$key] = $def['default'];
+        }
+
+        $stmt = $this->db->prepare("SELECT permission_key, allowed FROM tbl_role_permissions WHERE role = ?");
+        $stmt->bind_param("s", $role);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        foreach ($rows as $row) {
+            if (isset($permissions[$row['permission_key']])) {
+                $permissions[$row['permission_key']] = (bool) $row['allowed'];
+            }
+        }
+        return $permissions;
+    }
+
+    public function setRolePermission(string $role, string $permissionKey, bool $allowed): bool
+    {
+        if (!isset(self::ROLE_PERMISSIONS[$role][$permissionKey])) {
+            return false;
+        }
+        $stmt = $this->db->prepare("
+        INSERT INTO tbl_role_permissions (role, permission_key, allowed, updated_at)
+        VALUES (?, ?, ?, NOW())
+        ON DUPLICATE KEY UPDATE allowed = VALUES(allowed), updated_at = NOW()
+    ");
+        $allowedInt = $allowed ? 1 : 0;
+        $stmt->bind_param("ssi", $role, $permissionKey, $allowedInt);
+        return $stmt->execute();
+    }
+
+    public function roleHasPermission(string $role, string $permissionKey): bool
+    {
+        if (!isset(self::ROLE_PERMISSIONS[$role][$permissionKey])) {
+            return false;
+        }
+        $stmt = $this->db->prepare("SELECT allowed FROM tbl_role_permissions WHERE role = ? AND permission_key = ? LIMIT 1");
+        $stmt->bind_param("ss", $role, $permissionKey);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        return $row ? (bool) $row['allowed'] : self::ROLE_PERMISSIONS[$role][$permissionKey]['default'];
+    }
+
     private function timeAgo($datetime)
     {
         if (!$datetime)
@@ -1538,5 +1669,243 @@ class SuperAdmin extends Model
 
         // No row = default allowed
         return $row ? (bool) $row['allowed'] : true;
+    }
+
+    // Backup code
+
+    public function getAllBackups(int $limit = 50): array
+    {
+        $stmt = $this->db->prepare("
+        SELECT id, filename, file_path, type, status, size_mb, created_at
+        FROM tbl_system_backups
+        ORDER BY created_at DESC
+        LIMIT ?
+    ");
+        $stmt->bind_param("i", $limit);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        foreach ($rows as &$row) {
+            $row['time_ago'] = $this->timeAgo($row['created_at']);
+        }
+        return $rows;
+    }
+
+    public function getBackupById(int $id)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM tbl_system_backups WHERE id = ? LIMIT 1");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function getBackupStats(): array
+    {
+        $result = $this->db->query("
+        SELECT
+            COUNT(*) AS total_backups,
+            COALESCE(SUM(size_mb), 0) AS total_size_mb,
+            SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) AS failed_count
+        FROM tbl_system_backups
+    ");
+        $stats = $result ? $result->fetch_assoc() : ['total_backups' => 0, 'total_size_mb' => 0, 'failed_count' => 0];
+        $stats['total_backups'] = (int) $stats['total_backups'];
+        $stats['total_size_mb'] = round((float) $stats['total_size_mb'], 2);
+        $stats['failed_count'] = (int) $stats['failed_count'];
+        return $stats;
+    }
+
+    public function recordBackup(string $filename, string $filePath, string $type, string $status, float $sizeMb, ?int $createdBy): int
+    {
+        $stmt = $this->db->prepare("
+        INSERT INTO tbl_system_backups (filename, file_path, type, status, size_mb, created_by, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, NOW())
+    ");
+        $stmt->bind_param("ssssdi", $filename, $filePath, $type, $status, $sizeMb, $createdBy);
+        $stmt->execute();
+        return $this->db->insert_id;
+    }
+
+    public function deleteBackupRecord(int $id): ?array
+    {
+        $backup = $this->getBackupById($id);
+        if (!$backup) {
+            return null;
+        }
+        $stmt = $this->db->prepare("DELETE FROM tbl_system_backups WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        return $backup;
+    }
+
+    /**
+     * Dumps every table in the current database to a single .sql file.
+     * Returns ['success' => bool, 'filename', 'file_path', 'size_mb', 'error'].
+     */
+    public function createFullBackup(string $backupDir): array
+    {
+        try {
+            if (!is_dir($backupDir)) {
+                mkdir($backupDir, 0755, true);
+            }
+
+            $filename = 'backup_' . date('Ymd_His') . '.sql';
+            $fullPath = rtrim($backupDir, '/') . '/' . $filename;
+
+            $handle = fopen($fullPath, 'w');
+            if (!$handle) {
+                return ['success' => false, 'error' => 'Could not open backup file for writing.'];
+            }
+
+            fwrite($handle, "-- Generated backup — " . date('Y-m-d H:i:s') . "\n");
+            fwrite($handle, "SET FOREIGN_KEY_CHECKS=0;\n\n");
+
+            $tablesResult = $this->db->query("SHOW TABLES");
+            while ($tableRow = $tablesResult->fetch_array()) {
+                $table = $tableRow[0];
+
+                // Structure
+                $createResult = $this->db->query("SHOW CREATE TABLE `{$table}`");
+                $createRow = $createResult->fetch_assoc();
+                fwrite($handle, "DROP TABLE IF EXISTS `{$table}`;\n");
+                fwrite($handle, $createRow['Create Table'] . ";\n\n");
+
+                // Data
+                $dataResult = $this->db->query("SELECT * FROM `{$table}`");
+                $numFields = $dataResult->field_count;
+
+                while ($row = $dataResult->fetch_row()) {
+                    $values = array_map(function ($value) {
+                        if ($value === null) {
+                            return 'NULL';
+                        }
+                        return "'" . $this->db->real_escape_string($value) . "'";
+                    }, $row);
+                    fwrite($handle, "INSERT INTO `{$table}` VALUES (" . implode(',', $values) . ");\n");
+                }
+                fwrite($handle, "\n");
+            }
+
+            fwrite($handle, "SET FOREIGN_KEY_CHECKS=1;\n");
+            fclose($handle);
+
+            $sizeMb = round(filesize($fullPath) / (1024 * 1024), 2);
+
+            return [
+                'success' => true,
+                'filename' => $filename,
+                'file_path' => $fullPath,
+                'size_mb' => $sizeMb,
+            ];
+        } catch (\Throwable $e) {
+            return ['success' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
+     * Restores the database from an uploaded .sql file's contents.
+     * Naive statement splitter (splits on ';' at end of line) — fine
+     * for dumps produced by createFullBackup() above, since none of
+     * its INSERT values contain literal ";\n" (real_escape_string
+     * escapes quotes/backslashes but not semicolons; this only matters
+     * if you restore a hand-edited or externally-produced .sql file
+     * with stored procedures / triggers, which this does not support).
+     */
+    public function restoreFromSql(string $sqlContent): array
+    {
+        try {
+            $this->db->query("SET FOREIGN_KEY_CHECKS=0");
+
+            $statements = array_filter(array_map('trim', explode(";\n", $sqlContent)));
+            $executed = 0;
+            $errors = [];
+
+            foreach ($statements as $statement) {
+                if ($statement === '' || str_starts_with($statement, '--')) {
+                    continue;
+                }
+                if (!$this->db->query($statement)) {
+                    $errors[] = $this->db->error;
+                } else {
+                    $executed++;
+                }
+            }
+
+            $this->db->query("SET FOREIGN_KEY_CHECKS=1");
+
+            return [
+                'success' => empty($errors),
+                'executed' => $executed,
+                'errors' => $errors,
+            ];
+        } catch (\Throwable $e) {
+            return ['success' => false, 'executed' => 0, 'errors' => [$e->getMessage()]];
+        }
+    }
+
+    public function getFilteredActivityLogs(
+        string $search = '',
+        string $role = '',
+        string $status = '',
+        int $limit = 15,
+        int $offset = 0
+    ): array {
+        // Pull a generous batch from the existing combined feed, then
+        // filter/paginate over it. 500 comfortably covers a typical
+        // audit trail page; raise this if your school's activity volume
+        // is much higher.
+        $allLogs = $this->getActivityLogs(500);
+
+        $filtered = array_filter($allLogs, function ($log) use ($search, $role, $status) {
+            if ($role !== '' && strtolower($log['role']) !== strtolower($role)) {
+                return false;
+            }
+            if ($status !== '' && strtolower($log['status']) !== strtolower($status)) {
+                return false;
+            }
+            if ($search !== '') {
+                $haystack = strtolower($log['description'] . ' ' . $log['user_name'] . ' ' . $log['action']);
+                if (strpos($haystack, strtolower($search)) === false) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        $filtered = array_values($filtered);
+
+        return [
+            'logs' => array_slice($filtered, $offset, $limit),
+            'total' => count($filtered),
+        ];
+    }
+
+    public function getActivityLogStats(): array
+    {
+        $allLogs = $this->getActivityLogs(500);
+
+        $total = count($allLogs);
+        $success = 0;
+        $flagged = 0;
+        $today = 0;
+        $todayDate = date('Y-m-d');
+
+        foreach ($allLogs as $log) {
+            $statusLower = strtolower($log['status']);
+            if ($statusLower === 'success') {
+                $success++;
+            } elseif (in_array($statusLower, ['flagged', 'review'], true)) {
+                $flagged++;
+            }
+            if (substr($log['created_at'], 0, 10) === $todayDate) {
+                $today++;
+            }
+        }
+
+        return [
+            'total' => $total,
+            'success' => $success,
+            'flagged' => $flagged,
+            'today' => $today,
+        ];
     }
 }

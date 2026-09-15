@@ -71,15 +71,15 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'super_admin';
                 </a>
             </li>
 
-            <li class="<?= $current_url === 'roles_permission' ? 'active' : '' ?>">
-                <a href="#" class="text-decoration-none">
+            <li class="<?= $current_url === 'backup_restore' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=backup_restore" class="text-decoration-none">
                     <i class="fa fa-database"></i>
                     <span>Backup & Restore</span>
                 </a>
             </li>
 
-            <li class="<?= $current_url === 'roles_permission' ? 'active' : '' ?>">
-                <a href="#" class="text-decoration-none">
+            <li class="<?= $current_url === 'audit_logs' ? 'active' : '' ?>">
+                <a href="/learning_management/public/?url=audit_logs" class="text-decoration-none">
                     <i class="fa fa-clipboard-list"></i>
                     <span>Audit Trail / Logs</span>
                 </a>

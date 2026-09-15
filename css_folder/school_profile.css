@@ -1,12 +1,8 @@
 .container-fluid .rightbar {
     width: calc(100% - 248px);
-    /* height: 100vh; */
-    /* margin-top: 68px; */
-    /* overflow-y: auto; */
     margin-left: 248px;
     height: 100vh;
     overflow-y: auto;
-    /* border-left: 1px solid rgba(0, 0, 0, 0.1); */
     background-image:
         radial-gradient(circle at 15% 0%, rgba(0, 119, 204, 0.06), transparent 45%),
         radial-gradient(circle at 100% 30%, rgba(85, 51, 204, 0.06), transparent 40%),
@@ -15,6 +11,421 @@
     position: relative;
     overflow-x: hidden;
     overflow-y: visible;
-    /* background-color: #F7F9F8; */
     padding: 1.8rem;
+}
+
+.main-text-header h2 {
+    font-size: 24px;
+    margin: 0 0 5px;
+    font-weight: 600;
+}
+
+.main-text-header p {
+    font-size: 14.5px;
+    margin: 0;
+    color: var(--text-dim);
+    font-weight: 500;
+}
+
+/* ============================================================
+   TOASTS
+   ============================================================ */
+#toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast-notif {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px 18px;
+    min-width: 280px;
+    max-width: 380px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-left: 4px solid #00C950;
+    pointer-events: all;
+    animation: toastIn .35s cubic-bezier(.34, 1.56, .64, 1) forwards;
+    position: relative;
+    overflow: hidden;
+}
+
+.toast-notif.toast-error {
+    border-left-color: #e53e3e;
+}
+
+.toast-notif.toast-hiding {
+    animation: toastOut .3s ease forwards;
+}
+
+.toast-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #e8f5e9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 16px;
+    color: #00C950;
+}
+
+.toast-notif.toast-error .toast-icon {
+    background: #fff5f5;
+    color: #e53e3e;
+}
+
+.toast-body-text {
+    flex: 1;
+}
+
+.toast-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 2px;
+}
+
+.toast-msg {
+    font-size: 12.5px;
+    color: #6b7280;
+    margin: 0;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.toast-close:hover {
+    color: #374151;
+}
+
+@keyframes toastIn {
+    from {
+        opacity: 0;
+        transform: translateX(60px) scale(.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+@keyframes toastOut {
+    from {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(60px) scale(.9);
+    }
+}
+
+/* ============================================================
+   SAVE BAR
+   ============================================================ */
+.sp-save-bar {
+    /* position: sticky;
+    top: 0; */
+    z-index: 20;
+    /* margin: 0 0 0.5rem; */
+    margin: 1.5rem 0 0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.sp-save-btn {
+    /* background: linear-gradient(135deg, #6a4bff, #5533cc); */
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-cyan));
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    border-radius: 28px;
+    padding: 11px 28px;
+    font-size: 13.5px;
+    /* box-shadow: 0 4px 14px rgba(85, 51, 204, 0.32); */
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.sp-save-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(85, 51, 204, 0.42);
+}
+
+/* ============================================================
+   TABBED CARD
+   ============================================================ */
+.sp-card {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    margin-top: 1.5rem;
+    overflow: hidden;
+}
+
+.sp-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 20px 24px 18px;
+    border-bottom: 1px solid var(--border);
+}
+
+.sp-tab {
+    border: 1px solid var(--border);
+    background: #fff;
+    border-radius: 9px;
+    padding: 9px 18px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all .15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sp-tab i {
+    font-size: 12px;
+}
+
+.sp-tab:hover {
+    border-color: var(--neon-cyan);
+    color: #1a1a1a;
+}
+
+.sp-tab.active {
+    /* background: linear-gradient(135deg, #6a4bff, #5533cc); */
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-cyan));
+    border-color: transparent;
+    color: #fff;
+    /* box-shadow: 0 4px 12px rgba(85, 51, 204, 0.3); */
+}
+
+.sp-tab-panel {
+    padding: 24px;
+}
+
+.sp-panel-header {
+    margin-bottom: 18px;
+}
+
+.sp-panel-header h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0 0 3px;
+    color: #1a1a1a;
+}
+
+.sp-panel-header p {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin: 0;
+}
+
+/* ============================================================
+   FORM GRID / FIELDS
+   ============================================================ */
+.sp-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .sp-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.sp-field label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    display: block;
+}
+
+input.form-control {
+    font-size: 14px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+textarea.form-control {
+    font-size: 14px;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+    transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.form-control:focus {
+    border-color: var(--neon-cyan, #5533cc);
+    box-shadow: 0 0 0 3px rgba(85, 51, 204, 0.12);
+}
+
+.sp-subsection-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1a1a1a;
+    display: block;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+/* ============================================================
+   STRAND / VIDEO CARD GRID
+   ============================================================ */
+.sp-card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+@media (max-width: 992px) {
+    .sp-card-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.sp-strand-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: border-color .15s ease, background .15s ease;
+}
+
+.sp-strand-card:hover {
+    border-color: #d8d3ff;
+    background: #faf9ff;
+}
+
+.sp-strand-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.sp-strand-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1a1a;
+    line-height: 1.35;
+}
+
+.sp-video-title-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sp-video-number {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #f0ebff;
+    color: #5533cc;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* ============================================================
+   BADGES
+   ============================================================ */
+.sp-badge {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.sp-badge-academic {
+    background: #e6f0ff;
+    color: #2563eb;
+}
+
+.sp-badge-tvl {
+    background: #fff4e0;
+    color: #b7791f;
+}
+
+/* ============================================================
+   TOGGLE SWITCH
+   ============================================================ */
+.sp-toggle {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.sp-toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.sp-toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #d1d5db;
+    transition: .2s;
+    border-radius: 24px;
+}
+
+.sp-toggle-slider::before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #fff;
+    transition: .2s;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.sp-toggle input:checked+.sp-toggle-slider {
+    background-color: #00C950;
+}
+
+.sp-toggle input:checked+.sp-toggle-slider::before {
+    transform: translateX(20px);
 }

@@ -481,6 +481,51 @@ switch ($url) {
         $super_controller->saveSchoolProfile();
         break;
 
+    case 'roles_permissions':
+        requireAuth('superadmin');
+        $super_controller->rolesPermissions();
+        break;
+
+    case 'save_admin_permissions':
+        requireAuth('superadmin');
+        $super_controller->saveAdminPermissions();
+        break;
+
+    case 'toggle_role_permission':
+        requireAuth('superadmin');
+        $super_controller->toggleRolePermission();
+        break;
+
+    case 'backup_restore':
+        requireAuth('superadmin');
+        $super_controller->backupRestore();
+        break;
+
+    case 'create_backup':
+        requireAuth('superadmin');
+        $super_controller->createBackup();
+        break;
+
+    case 'download_backup':
+        requireAuth('superadmin');
+        $super_controller->downloadBackup();
+        break;
+
+    case 'delete_backup':
+        requireAuth('superadmin');
+        $super_controller->deleteBackup();
+        break;
+
+    case 'restore_backup':
+        requireAuth('superadmin');
+        $super_controller->restoreBackup();
+        break;
+
+    case 'audit_logs':
+        requireAuth('superadmin');
+        $super_controller->auditLogs();
+        break;
+
         // ── Admin Page-Permission Gate ──────────────────────────────
 // Only restricts the 'admin' role. superadmin/teacher/student
 // are unaffected — requireAuth() already scopes those.

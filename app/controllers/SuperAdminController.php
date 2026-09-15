@@ -756,19 +756,46 @@ class SuperAdminController
             exit;
         }
 
-        $admins = $this->superAdminModel->getAllAdminsForPermissions();
-        $permissionPages = SuperAdmin::PERMISSION_PAGES;
-
-        // Pre-load each admin's current permissions so the view can render
-        // checkboxes without a per-row AJAX call.
-        $adminPermissions = [];
-        foreach ($admins as $adminRow) {
-            $adminPermissions[$adminRow['id']] = $this->superAdminModel->getPermissionsForAdmin((int) $adminRow['id']);
+        $roleDefinitions = SuperAdmin::ROLE_PERMISSIONS;
+        $rolePermissions = [];
+        foreach (array_keys($roleDefinitions) as $role) {
+            $rolePermissions[$role] = $this->superAdminModel->getRolePermissions($role);
         }
 
-        extract(compact('admins', 'permissionPages', 'adminPermissions'));
+        extract(compact('roleDefinitions', 'rolePermissions'));
 
         require "../super_admin_folder/roles_permissions.php";
+    }
+
+    public function toggleRolePermission()
+    {
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            http_response_code(403);
+            echo json_encode(['success' => false, 'message' => 'Unauthorized.']);
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
+            exit;
+        }
+
+        $role = trim($_POST['role'] ?? '');
+        $permissionKey = trim($_POST['permission_key'] ?? '');
+        $allowed = filter_var($_POST['allowed'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+        $ok = $this->superAdminModel->setRolePermission($role, $permissionKey, $allowed);
+
+        if ($ok) {
+            echo json_encode(['success' => true, 'message' => 'Permission updated.']);
+        } else {
+            http_response_code(422);
+            echo json_encode(['success' => false, 'message' => 'Invalid role or permission key.']);
+        }
+        exit;
     }
 
     public function saveAdminPermissions()
@@ -794,5 +821,220 @@ class SuperAdminController
 
         header("Location: /learning_management/public/?url=roles_permissions");
         exit;
+    }
+
+    // ============================================================
+// ADD THIS BLOCK TO SuperAdminController.php
+// ============================================================
+
+    public function backupRestore()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        $backups = $this->superAdminModel->getAllBackups(50);
+        $stats = $this->superAdminModel->getBackupStats();
+        $lastBackup = $this->superAdminModel->getLastBackup();
+
+        extract(compact('backups', 'stats', 'lastBackup'));
+
+        require "../super_admin_folder/backup_restore.php";
+    }
+
+    public function createBackup()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        $backupDir = dirname(__DIR__, 2) . '/uploads/backups/';
+        $result = $this->superAdminModel->createFullBackup($backupDir);
+
+        if ($result['success']) {
+            $this->superAdminModel->recordBackup(
+                $result['filename'],
+                $result['file_path'],
+                'manual',
+                'success',
+                $result['size_mb'],
+                (int) $_SESSION['user_id']
+            );
+            $_SESSION['flash'] = [
+                'type' => 'success',
+                'message' => 'Backup created successfully (' . $result['size_mb'] . ' MB).',
+                'page' => 'backup_restore'
+            ];
+        } else {
+            $this->superAdminModel->recordBackup(
+                'failed_backup_' . date('Ymd_His') . '.sql',
+                '',
+                'manual',
+                'failed',
+                0,
+                (int) $_SESSION['user_id']
+            );
+            $_SESSION['flash'] = [
+                'type' => 'error',
+                'message' => 'Backup failed: ' . ($result['error'] ?? 'Unknown error.'),
+                'page' => 'backup_restore'
+            ];
+        }
+
+        header("Location: /learning_management/public/?url=backup_restore");
+        exit;
+    }
+
+    public function downloadBackup()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        $id = (int) ($_GET['id'] ?? 0);
+        $backup = $this->superAdminModel->getBackupById($id);
+
+        if (!$backup || !file_exists($backup['file_path'])) {
+            $_SESSION['flash'] = [
+                'type' => 'error',
+                'message' => 'Backup file not found.',
+                'page' => 'backup_restore'
+            ];
+            header("Location: /learning_management/public/?url=backup_restore");
+            exit;
+        }
+
+        header('Content-Type: application/sql');
+        header('Content-Disposition: attachment; filename="' . basename($backup['filename']) . '"');
+        header('Content-Length: ' . filesize($backup['file_path']));
+        readfile($backup['file_path']);
+        exit;
+    }
+
+    public function deleteBackup()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = (int) ($_POST['id'] ?? 0);
+            $backup = $this->superAdminModel->deleteBackupRecord($id);
+
+            if ($backup) {
+                if (!empty($backup['file_path']) && file_exists($backup['file_path'])) {
+                    unlink($backup['file_path']);
+                }
+                $_SESSION['flash'] = [
+                    'type' => 'success',
+                    'message' => 'Backup deleted.',
+                    'page' => 'backup_restore'
+                ];
+            } else {
+                $_SESSION['flash'] = [
+                    'type' => 'error',
+                    'message' => 'Backup not found.',
+                    'page' => 'backup_restore'
+                ];
+            }
+        }
+
+        header("Location: /learning_management/public/?url=backup_restore");
+        exit;
+    }
+
+    public function restoreBackup()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header("Location: /learning_management/public/?url=backup_restore");
+            exit;
+        }
+
+        $sqlContent = null;
+
+        // Option A: restore from an existing backup in history
+        $existingId = (int) ($_POST['backup_id'] ?? 0);
+        if ($existingId > 0) {
+            $backup = $this->superAdminModel->getBackupById($existingId);
+            if ($backup && file_exists($backup['file_path'])) {
+                $sqlContent = file_get_contents($backup['file_path']);
+            }
+        }
+
+        // Option B: restore from a freshly uploaded .sql file
+        if ($sqlContent === null && !empty($_FILES['restore_file']['tmp_name']) && $_FILES['restore_file']['error'] === UPLOAD_ERR_OK) {
+            $ext = strtolower(pathinfo($_FILES['restore_file']['name'], PATHINFO_EXTENSION));
+            if ($ext === 'sql') {
+                $sqlContent = file_get_contents($_FILES['restore_file']['tmp_name']);
+            }
+        }
+
+        if ($sqlContent === null) {
+            $_SESSION['flash'] = [
+                'type' => 'error',
+                'message' => 'No valid .sql file or backup selected to restore.',
+                'page' => 'backup_restore'
+            ];
+            header("Location: /learning_management/public/?url=backup_restore");
+            exit;
+        }
+
+        $result = $this->superAdminModel->restoreFromSql($sqlContent);
+
+        if ($result['success']) {
+            $_SESSION['flash'] = [
+                'type' => 'success',
+                'message' => 'Database restored successfully (' . $result['executed'] . ' statements executed).',
+                'page' => 'backup_restore'
+            ];
+        } else {
+            $_SESSION['flash'] = [
+                'type' => 'error',
+                'message' => 'Restore completed with errors: ' . implode('; ', array_slice($result['errors'], 0, 3)),
+                'page' => 'backup_restore'
+            ];
+        }
+
+        header("Location: /learning_management/public/?url=backup_restore");
+        exit;
+    }
+
+    // ============================================================
+// ADD THIS METHOD TO SuperAdminController.php
+// ============================================================
+
+    public function auditLogs()
+    {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'superadmin') {
+            header("Location: ?url=login");
+            exit;
+        }
+
+        $search = trim($_GET['search'] ?? '');
+        $role = trim($_GET['role'] ?? '');
+        $status = trim($_GET['status'] ?? '');
+        $page = max(1, (int) ($_GET['page'] ?? 1));
+        $limit = 15;
+        $offset = ($page - 1) * $limit;
+
+        $result = $this->superAdminModel->getFilteredActivityLogs($search, $role, $status, $limit, $offset);
+        $logs = $result['logs'];
+        $totalLogs = $result['total'];
+        $totalPages = max(1, (int) ceil($totalLogs / $limit));
+
+        $stats = $this->superAdminModel->getActivityLogStats();
+
+        extract(compact('logs', 'totalLogs', 'totalPages', 'page', 'limit', 'search', 'role', 'status', 'stats'));
+
+        require "../super_admin_folder/audit_logs.php";
     }
 }
