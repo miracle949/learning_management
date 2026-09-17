@@ -213,7 +213,8 @@
 
 .sp-tab:hover {
     border-color: var(--neon-cyan);
-    color: #1a1a1a;
+    /* color: #1a1a1a; */
+    color: var(--neon-cyan);
 }
 
 .sp-tab.active {

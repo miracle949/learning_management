@@ -36,7 +36,7 @@
                             <div>
                                 <div class="al-stat-label">Total logged events</div>
                                 <div class="al-stat-value"><?= (int) $stats['total'] ?></div>
-                                
+                                <div class="al-stat-desc">All recorded system activity</div>
                             </div>
                             <div class="al-stat-icon al-stat-icon-blue"><i class="fa fa-list-check"></i></div>
                         </div>
@@ -45,7 +45,7 @@
                             <div>
                                 <div class="al-stat-label">Successful</div>
                                 <div class="al-stat-value"><?= (int) $stats['success'] ?></div>
-                                
+                                <div class="al-stat-desc">Events completed without errors</div>
                             </div>
                             <div class="al-stat-icon al-stat-icon-green"><i class="fa fa-circle-check"></i></div>
                         </div>
@@ -54,7 +54,7 @@
                             <div>
                                 <div class="al-stat-label">Needs review</div>
                                 <div class="al-stat-value"><?= (int) $stats['flagged'] ?></div>
-                                
+                                <div class="al-stat-desc">Events flagged for attention</div>
                             </div>
                             <div
                                 class="al-stat-icon <?= $stats['flagged'] > 0 ? 'al-stat-icon-red' : 'al-stat-icon-gray' ?>">
@@ -66,7 +66,7 @@
                             <div>
                                 <div class="al-stat-label">Events today</div>
                                 <div class="al-stat-value"><?= (int) $stats['today'] ?></div>
-                                
+                                <div class="al-stat-desc">Activity logged in the last 24 hours</div>
                             </div>
                             <div class="al-stat-icon al-stat-icon-purple"><i class="fa fa-calendar-day"></i></div>
                         </div>
