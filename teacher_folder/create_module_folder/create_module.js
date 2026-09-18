@@ -30,7 +30,8 @@ const BLOCK_META = {
   activity: { label: 'Activity', cls: 'tag-activity' },
   flashcard: { label: 'Flashcard', cls: 'tag-flashcard' },
   drag_drop: { label: 'Drag & Drop', cls: 'tag-dragdrop' },
-  arrange_steps: { label: 'Arrange the Steps', cls: 'tag-arrange' }   // NEW
+  arrange_steps: { label: 'Arrange the Steps', cls: 'tag-arrange' },
+  connect_pairs: { label: 'Connect the Dots', cls: 'tag-connect' }   // NEW
 };
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // 5MB
@@ -243,6 +244,7 @@ function addLesson(btn) {
           <button type="button" onclick="addBlockToLesson(this, 'flashcard')"><i class="fa fa-clone"></i> Add Flashcard</button>
           <button type="button" onclick="addBlockToLesson(this, 'drag_drop')"><i class="fa fa-arrows-alt"></i> Add Drag & Drop</button>
           <button type="button" onclick="addBlockToLesson(this, 'arrange_steps')"><i class="fa fa-random"></i> Add Arrange Steps</button>
+          <button type="button" onclick="addBlockToLesson(this, 'connect_pairs')"><i class="fa fa-timeline"></i> Add Connect the Dots</button>
         </div>
       </div>
     </div>`;
@@ -463,6 +465,22 @@ function blockFieldsMarkup(type) {
     <div class="items-wrap"></div>
     <button type="button" class="btn-add-question" onclick="addDragDropItem(this)">
       <i class="fa fa-plus"></i> Add item
+    </button>`;
+  }
+
+  if (type === 'connect_pairs') {
+    return `
+    <input type="text" data-field="connect_title" placeholder="Game title — e.g. Tools and What They Do">
+    <div class="choice-grid">
+      <input type="text" data-field="connect_left_label" placeholder="Left column label (optional) — e.g. Tools">
+      <input type="text" data-field="connect_right_label" placeholder="Right column label (optional) — e.g. What They Do">
+    </div>
+    <textarea data-field="connect_instructions" placeholder="Instructions (optional) — e.g. Draw a line to match each item to its correct pair"></textarea>
+
+    <div class="content-label" style="margin-top:0.75rem;">Pairs (left item matched to its correct right item)</div>
+    <div class="pairs-wrap"></div>
+    <button type="button" class="btn-add-question" onclick="addConnectPair(this)">
+      <i class="fa fa-plus"></i> Add pair
     </button>`;
   }
 
@@ -744,6 +762,24 @@ function addArrangeStep(btn) {
   renumberAll();
 }
 
+/* ---------- connect the dots (pair matching) ---------- */
+function addConnectPair(btn) {
+  const wrap = btn.previousElementSibling; // .pairs-wrap
+  const row = document.createElement('div');
+  row.className = 'pair-row';
+  row.innerHTML = `
+    <div class="question-row-head">
+      <span class="pair-order-label">Pair</span>
+      <button type="button" class="danger" onclick="this.closest('.pair-row').remove(); renumberAll();"><i class="fa fa-trash"></i></button>
+    </div>
+    <div class="choice-grid">
+      <input type="text" data-pairfield="left_text" placeholder="Left item — e.g. Thermal paste">
+      <input type="text" data-pairfield="right_text" placeholder="Matching right item — e.g. Fills tiny gaps between the CPU and heatsink for better heat transfer">
+    </div>`;
+  wrap.appendChild(row);
+  renumberAll();
+}
+
 function wireDragDropItemImageUpload(row) {
   const uploadBox = row.querySelector('.item-image-upload-box');
   const fileInput = row.querySelector('.item-image-file-input');
@@ -958,6 +994,16 @@ function renumberAll() {
           if (itemImageInput) {
             itemImageInput.name = `dragdrop_item_image[${modIdx}][${lesIdx}][${blockIdx}][${itemIdx}]`;
           }
+        });
+
+        // nested connect-the-dots pairs — DOM order = display order
+        const pairRows = blockEl.querySelectorAll(':scope .pair-row');
+        pairRows.forEach((pairRow, pairIdx) => {
+          const label = pairRow.querySelector('.pair-order-label');
+          if (label) label.textContent = 'Pair ' + (pairIdx + 1);
+          pairRow.querySelectorAll('[data-pairfield]').forEach(input => {
+            input.name = `${prefix}[pairs][${pairIdx}][${input.dataset.pairfield}]`;
+          });
         });
       });
     });

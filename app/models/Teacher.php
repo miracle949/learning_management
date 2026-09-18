@@ -966,7 +966,7 @@ class Teacher extends Model
         return [];
     }
 
-        public function getInteractiveModulesWithCount($subjectId, $teacherId = 0)
+    public function getInteractiveModulesWithCount($subjectId, $teacherId = 0)
     {
         $sql = "
     SELECT 
@@ -976,7 +976,8 @@ class Teacher extends Model
         COUNT(DISTINCT CASE WHEN ic.type = 'image' THEN ic.id END) AS image_count,
         COUNT(DISTINCT CASE WHEN ic.type = 'activity' THEN CONCAT(ic.lesson_id, '-', ic.title) END) AS activity_count,
         COUNT(DISTINCT CASE WHEN ic.type = 'quiz' THEN CONCAT(ic.lesson_id, '-', ic.title) END) AS quiz_count,
-        COUNT(DISTINCT CASE WHEN ic.type = 'arrange_steps' THEN CONCAT(ic.lesson_id, '-', ic.title) END) AS arrange_steps_count
+        COUNT(DISTINCT CASE WHEN ic.type = 'arrange_steps' THEN CONCAT(ic.lesson_id, '-', ic.title) END) AS arrange_steps_count,
+        COUNT(DISTINCT CASE WHEN ic.type = 'connect_pairs' THEN CONCAT(ic.lesson_id, '-', ic.title) END) AS connect_pairs_count
     FROM tbl_interactive_modules im
     LEFT JOIN tbl_lessons l ON l.interactive_module_id = im.id
     LEFT JOIN tbl_interactive_contents ic ON ic.lesson_id = l.id
@@ -997,6 +998,48 @@ class Teacher extends Model
         $stmt->bind_param($types, ...$params);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getLessonConnectPairsData($lessonId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT title, instructions, connect_left_label, connect_right_label,
+               connect_left_text, connect_right_text, step_order
+        FROM tbl_interactive_contents
+        WHERE lesson_id = ? AND type = 'connect_pairs'
+        ORDER BY id ASC
+    ");
+        $stmt->bind_param("i", $lessonId);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $grouped = [];
+        foreach ($rows as $row) {
+            $key = $row['title'];
+            if (!isset($grouped[$key])) {
+                $grouped[$key] = [
+                    'game' => [
+                        'title' => $row['title'],
+                        'instructions' => $row['instructions'],
+                        'left_label' => $row['connect_left_label'] ?: 'Column A',
+                        'right_label' => $row['connect_right_label'] ?: 'Column B',
+                    ],
+                    'pairs' => [],
+                ];
+            }
+            $grouped[$key]['pairs'][] = [
+                'left' => $row['connect_left_text'],
+                'right' => $row['connect_right_text'],
+                'order' => $row['step_order'],
+            ];
+        }
+
+        foreach ($grouped as &$game) {
+            usort($game['pairs'], fn($a, $b) => ($a['order'] ?? 0) <=> ($b['order'] ?? 0));
+        }
+        unset($game);
+
+        return $grouped;
     }
 
     public function getLessonArrangeStepsData($lessonId)
@@ -1371,6 +1414,10 @@ class Teacher extends Model
         $dragdropItemLabel = $data['dragdrop_item_label'] ?? null;
         $dragdropItemSubtitle = $data['dragdrop_item_subtitle'] ?? null;
         $dragdropItemImage = $data['dragdrop_item_image'] ?? null;
+        $connectLeftLabel = $data['connect_left_label'] ?? null;      // NEW
+        $connectRightLabel = $data['connect_right_label'] ?? null;    // NEW
+        $connectLeftText = $data['connect_left_text'] ?? null;        // NEW
+        $connectRightText = $data['connect_right_text'] ?? null;      // NEW
         $stepOrder = $data['step_order'] ?? null;
 
         $stmt = $this->db->prepare("
@@ -1384,6 +1431,7 @@ class Teacher extends Model
         file_path, file_name, file_type,
         dragdrop_category, dragdrop_category_description,
         dragdrop_item_label, dragdrop_item_subtitle, dragdrop_item_image,
+        connect_left_label, connect_right_label, connect_left_text, connect_right_text,
         step_order,
         created_at
     ) VALUES (
@@ -1396,6 +1444,7 @@ class Teacher extends Model
         ?, ?, ?,
         ?, ?,
         ?, ?, ?,
+        ?, ?, ?, ?,
         ?,
         NOW()
     )
@@ -1409,7 +1458,7 @@ class Teacher extends Model
             $lessonId,
             $type,
             $title,
-            $arrangeCategory,   // NEW — position 3
+            $arrangeCategory,
             $body,
             $keyIdea,
             $instructions,
@@ -1434,11 +1483,15 @@ class Teacher extends Model
             $dragdropItemLabel,
             $dragdropItemSubtitle,
             $dragdropItemImage,
-            $stepOrder,
+            $connectLeftLabel,   // NEW — index 28
+            $connectRightLabel,  // NEW — index 29
+            $connectLeftText,    // NEW — index 30
+            $connectRightText,   // NEW — index 31
+            $stepOrder,          // shifted — index 32
         ];
 
-        // lessonId, passingScore, totalPoints, stepOrder — positions shifted by +1
-        $intPositions = [0, 15, 16, 28];
+        // lessonId, passingScore, totalPoints, stepOrder — updated positions
+        $intPositions = [0, 15, 16, 32];
 
         $types = '';
         foreach ($orderedValues as $i => $val) {

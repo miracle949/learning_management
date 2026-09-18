@@ -294,6 +294,13 @@
                                                         <?= $ddCount ?> Drag and Drop<?= $ddCount !== 1 ? ' Games' : ' Game' ?>
                                                     </span>
                                                 <?php endif; ?>
+
+                                                <?php $asCount = $arrangeStepsCounts[$mod['id']] ?? 0; if ($asCount > 0): ?>
+                                                    <span class="content-badge badge--arrangesteps">
+                                                        <i class="fa fa-arrows-up-down"></i>
+                                                        <?= $asCount ?> Arrange the Step<?= $asCount !== 1 ? 's' : '' ?>
+                                                    </span>
+                                                <?php endif; ?>
                                             </div>
 
 

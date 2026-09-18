@@ -457,6 +457,8 @@ body {
     font-size: 24px;
     color: var(--text-bright);
     font-weight: 600;
+    /* font-family: Georgia, "Iowan Old Style", "Times New Roman", serif; */
+    font-family: 'Poppins', sans-serif;
 }
 
 .container-fluid .rightbar .welcome-nav .welcome-nav-text p {
@@ -1599,7 +1601,7 @@ body {
     /* white-space: nowrap; */
 }
 
-.divider{
+.divider {
     font-size: 10.5px;
     color: var(--text-dim);
 }

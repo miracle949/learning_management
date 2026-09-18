@@ -189,6 +189,7 @@ class StudentsController
         $activityCounts = [];
         $quizCounts = [];
         $dragDropCounts = [];
+        $arrangeStepsCounts = [];
 
         foreach ($modules as $mod) {
             $lessonCounts[$mod['id']] = $studentModel->countIMlessons($mod['id']);
@@ -197,6 +198,7 @@ class StudentsController
             $activityCounts[$mod['id']] = $studentModel->countIMactivities($mod['id']);
             $quizCounts[$mod['id']] = $studentModel->countIMquizzes($mod['id']);
             $dragDropCounts[$mod['id']] = $studentModel->countIMdragdrops($mod['id']);
+            $arrangeStepsCounts[$mod['id']] = $studentModel->countIMarrangesteps($mod['id']);
         }
 
         $totalModulesAll = $studentId ? $studentModel->countTotalModulesForStudent($studentId) : 0;
@@ -356,6 +358,16 @@ class StudentsController
                 'game' => $game['game'],
                 'steps' => $game['steps'],
                 'submission' => $studentId ? $studentModel->getArrangeStepsSubmission($lessonId, $title, $studentId) : null,
+            ];
+        }
+
+        $connectGames = $lessonId ? $studentModel->getLessonConnectPairsData($lessonId) : [];
+        $connectPairsData = [];
+        foreach ($connectGames as $title => $game) {
+            $connectPairsData[$title] = [
+                'game' => $game['game'],
+                'pairs' => $game['pairs'],
+                'submission' => $studentId ? $studentModel->getConnectPairsSubmission($lessonId, $title, $studentId) : null,
             ];
         }
 
@@ -1507,6 +1519,73 @@ class StudentsController
 
         } catch (\Throwable $e) {
             error_log('[submit_arrange_steps] EXCEPTION: ' . $e->getMessage());
+            echo json_encode(['ok' => false, 'msg' => 'server error: ' . $e->getMessage()]);
+            exit;
+        }
+    }
+
+    public function submit_connect_pairs()
+    {
+        header('Content-Type: application/json');
+
+        try {
+            $studentId = $_SESSION['student_id'] ?? 0;
+            if (!$studentId && !empty($_SESSION['user_id'])) {
+                $subjectModel = new subjects();
+                $studentRow = $subjectModel->getStudentByUserId($_SESSION['user_id']);
+                if ($studentRow) {
+                    $studentId = (int) $studentRow['id'];
+                    $_SESSION['student_id'] = $studentId;
+                }
+            }
+            if (!$studentId) {
+                echo json_encode(['ok' => false, 'msg' => 'not logged in']);
+                exit;
+            }
+
+            $lessonId = (int) ($_POST['lesson_id'] ?? 0);
+            $gameTitle = trim($_POST['game_title'] ?? '');
+            $answers = $_POST['answers'] ?? [];
+
+            if (!$lessonId || !$gameTitle || empty($answers)) {
+                echo json_encode(['ok' => false, 'msg' => 'missing data']);
+                exit;
+            }
+
+            $studentModel = new Students();
+            $existing = $studentModel->getConnectPairsSubmission($lessonId, $gameTitle, $studentId);
+
+            if (!$existing) {
+                $saved = $studentModel->saveConnectPairsSubmission($lessonId, $gameTitle, $studentId, $answers);
+                if (!$saved) {
+                    echo json_encode(['ok' => false, 'msg' => 'db insert failed']);
+                    exit;
+                }
+                $studentModel->logActivity($studentId, 'connect_pairs_completed', $gameTitle);
+                $studentModel->markLessonVisited($lessonId, $studentId);
+                $lessonRow = $studentModel->getIMLessonById($lessonId);
+                if ($lessonRow) {
+                    $studentModel->updateModuleProgress((int) $lessonRow['module_id'], $studentId);
+                }
+            }
+
+            $allGames = $studentModel->getLessonConnectPairsData($lessonId);
+            $pairs = $allGames[$gameTitle]['pairs'] ?? [];
+            $finalAnswers = $existing['answers'] ?? $answers;
+
+            $correct = 0;
+            foreach ($pairs as $p) {
+                $given = $finalAnswers[$p['left']] ?? null;
+                if ($given !== null && strcasecmp($given, $p['right']) === 0) {
+                    $correct++;
+                }
+            }
+
+            echo json_encode(['ok' => true, 'score' => $correct, 'total' => count($pairs)]);
+            exit;
+
+        } catch (\Throwable $e) {
+            error_log('[submit_connect_pairs] EXCEPTION: ' . $e->getMessage());
             echo json_encode(['ok' => false, 'msg' => 'server error: ' . $e->getMessage()]);
             exit;
         }

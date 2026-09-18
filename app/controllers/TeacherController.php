@@ -1262,6 +1262,34 @@ class TeacherController
                                 ]);
                             }
                             break;
+
+                        // ── CONNECT THE DOTS (one block = one pair-matching game) ──
+                        case 'connect_pairs':
+                            $gameTitle = trim($block['connect_title'] ?? '');
+                            if ($gameTitle === '')
+                                break;
+                            $leftLabel = trim($block['connect_left_label'] ?? '');
+                            $rightLabel = trim($block['connect_right_label'] ?? '');
+                            $gameInstructions = trim($block['connect_instructions'] ?? '');
+
+                            foreach (($block['pairs'] ?? []) as $pairIdx => $pair) {
+                                $leftText = trim($pair['left_text'] ?? '');
+                                $rightText = trim($pair['right_text'] ?? '');
+                                if ($leftText === '' || $rightText === '')
+                                    continue;
+
+                                $teacherModel->insertInteractiveContent($lessonId, 'connect_pairs', [
+                                    'title' => $gameTitle,
+                                    'instructions' => $gameInstructions !== '' ? $gameInstructions : null,
+                                    'connect_left_label' => $leftLabel !== '' ? $leftLabel : null,
+                                    'connect_right_label' => $rightLabel !== '' ? $rightLabel : null,
+                                    'connect_left_text' => $leftText,
+                                    'connect_right_text' => $rightText,
+                                    'step_order' => (int) $pairIdx,
+                                    'sort_order' => $sortOrder,
+                                ]);
+                            }
+                            break;
                     }
                 }
             }

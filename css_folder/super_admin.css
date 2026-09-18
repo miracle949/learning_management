@@ -896,7 +896,7 @@
 }
 
 .dash-header h2 {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
     color: #1a1a1a;
     margin: 0 0 5px;
@@ -931,7 +931,7 @@
 }
 
 .dash-stat-card .dash-stat-value {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
     color: #1a1a1a;
     margin-top: 10px;

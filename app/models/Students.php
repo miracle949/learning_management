@@ -464,6 +464,142 @@ class Students extends Model
         return $grouped;
     }
 
+    // ── CONNECT THE DOTS ────────────────────────────────────────
+    public function getLessonConnectPairsData($lessonId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT title, instructions, connect_left_label, connect_right_label,
+               connect_left_text, connect_right_text, step_order
+        FROM tbl_interactive_contents
+        WHERE lesson_id = ? AND type = 'connect_pairs'
+        ORDER BY id ASC
+    ");
+        $stmt->bind_param("i", $lessonId);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $grouped = [];
+        foreach ($rows as $row) {
+            $key = $row['title'];
+            if (!isset($grouped[$key])) {
+                $grouped[$key] = [
+                    'game' => [
+                        'title' => $row['title'],
+                        'instructions' => $row['instructions'],
+                        'left_label' => $row['connect_left_label'] ?: 'Column A',
+                        'right_label' => $row['connect_right_label'] ?: 'Column B',
+                    ],
+                    'pairs' => [],
+                ];
+            }
+            $grouped[$key]['pairs'][] = [
+                'left' => $row['connect_left_text'],
+                'right' => $row['connect_right_text'],
+                'order' => $row['step_order'],
+            ];
+        }
+
+        foreach ($grouped as &$game) {
+            usort($game['pairs'], fn($a, $b) => ($a['order'] ?? 0) <=> ($b['order'] ?? 0));
+        }
+        unset($game);
+
+        return $grouped;
+    }
+
+    public function getConnectPairsSubmission($lessonId, $gameTitle, $studentId)
+    {
+        if (!$studentId)
+            return null;
+
+        $stmt = $this->db->prepare("
+        SELECT left_text, student_answer, correct_answer, is_correct, completed_at
+        FROM tbl_connectpairs_results
+        WHERE lesson_id = ? AND game_title = ? AND student_id = ?
+        ORDER BY id ASC
+    ");
+        $stmt->bind_param("isi", $lessonId, $gameTitle, $studentId);
+        $stmt->execute();
+        $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        if (!$rows)
+            return null;
+
+        $answers = [];
+        $correctness = [];
+        foreach ($rows as $r) {
+            $answers[$r['left_text']] = $r['student_answer'];
+            $correctness[$r['left_text']] = (int) $r['is_correct'];
+        }
+        return [
+            'answers' => $answers,
+            'correctness' => $correctness,
+            'completed_at' => $rows[0]['completed_at'],
+        ];
+    }
+
+    public function saveConnectPairsSubmission($lessonId, $gameTitle, $studentId, array $answers)
+    {
+        $allGames = $this->getLessonConnectPairsData($lessonId);
+        $correctMap = [];
+        if (isset($allGames[$gameTitle])) {
+            foreach ($allGames[$gameTitle]['pairs'] as $p) {
+                $correctMap[$p['left']] = $p['right'];
+            }
+        }
+
+        $stmt = $this->db->prepare("
+        INSERT INTO tbl_connectpairs_results
+            (lesson_id, game_title, student_id, left_text, student_answer, correct_answer, is_correct, completed_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+        ON DUPLICATE KEY UPDATE
+            student_answer = VALUES(student_answer),
+            correct_answer = VALUES(correct_answer),
+            is_correct     = VALUES(is_correct),
+            completed_at   = VALUES(completed_at)
+    ");
+        if (!$stmt) {
+            error_log('[saveConnectPairsSubmission] prepare failed: ' . $this->db->error);
+            return false;
+        }
+
+        $ok = true;
+        foreach ($answers as $leftText => $chosenRight) {
+            $correctRight = $correctMap[$leftText] ?? null;
+            $isCorrect = ($correctRight !== null && strcasecmp($chosenRight, $correctRight) === 0) ? 1 : 0;
+
+            $stmt->bind_param(
+                "isisssi",
+                $lessonId,
+                $gameTitle,
+                $studentId,
+                $leftText,
+                $chosenRight,
+                $correctRight,
+                $isCorrect
+            );
+            if (!$stmt->execute()) {
+                error_log('[saveConnectPairsSubmission] execute failed for "' . $leftText . '": ' . $stmt->error);
+                $ok = false;
+            }
+        }
+        return $ok;
+    }
+
+    public function countIMconnectpairs($interactiveModuleId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(DISTINCT ic.title) AS total
+        FROM tbl_interactive_contents ic
+        INNER JOIN tbl_lessons l ON l.id = ic.lesson_id
+        WHERE l.interactive_module_id = ?
+        AND ic.type = 'connect_pairs'
+    ");
+        $stmt->bind_param("i", $interactiveModuleId);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        return (int) $row['total'];
+    }
+
     // ── ARRANGE THE STEPS ──────────────────────────────────────
 
     // ── ARRANGE THE STEPS ──────────────────────────────────────
@@ -597,7 +733,7 @@ class Students extends Model
 
         return $grouped;
     }
-    
+
 
     public function getDragDropSubmission($lessonId, $gameTitle, $studentId)
     {
@@ -758,6 +894,18 @@ class Students extends Model
             }
         }
 
+        $connectPairsGames = $this->getLessonConnectPairsData($lessonId);
+
+        if (empty($quizGroups) && $acount === 0 && empty($dragDropGames) && empty($arrangeGames) && empty($connectPairsGames)) {
+            return $this->isLessonVisitedViaProgress($lessonId, $studentId);
+        }
+
+        foreach ($connectPairsGames as $cpTitle => $cpData) {
+            if (!$this->getConnectPairsSubmission($lessonId, $cpTitle, $studentId)) {
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -769,6 +917,21 @@ class Students extends Model
         INNER JOIN tbl_lessons l ON l.id = ic.lesson_id
         WHERE l.interactive_module_id = ?
         AND ic.type = 'drag_drop'
+    ");
+        $stmt->bind_param("i", $interactiveModuleId);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        return (int) $row['total'];
+    }
+
+    public function countIMarrangesteps($interactiveModuleId)
+    {
+        $stmt = $this->db->prepare("
+        SELECT COUNT(DISTINCT ic.title) AS total
+        FROM tbl_interactive_contents ic
+        INNER JOIN tbl_lessons l ON l.id = ic.lesson_id
+        WHERE l.interactive_module_id = ?
+        AND ic.type = 'arrange_steps'
     ");
         $stmt->bind_param("i", $interactiveModuleId);
         $stmt->execute();

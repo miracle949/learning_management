@@ -1250,6 +1250,578 @@ function arrShowResults(gameTitle, correct, total) {
 }
 
 /* =========================================================
+   CONNECT THE DOTS — drag a line from a left dot to a right dot
+========================================================= */
+var CP_STAGE = {}; // gameTitle => { pairs, rightOrder, answers, colors, locked }
+var CP_COLORS = ['#33e6ff'];
+var _cpDrag = null; // { gameTitle, leftText, tempLine }
+
+function cpFindSection(gameTitle) {
+    return document.querySelector('.cp-stage-section[data-game-title="' + CSS.escape(gameTitle) + '"]');
+}
+
+function cpInitState(gameTitle, pairs, rightShuffled) {
+    if (!CP_STAGE[gameTitle]) {
+        CP_STAGE[gameTitle] = {
+            pairs: pairs || [],
+            rightOrder: rightShuffled || [],
+            answers: {},
+            colors: {},
+            locked: false
+        };
+    }
+    return CP_STAGE[gameTitle];
+}
+
+function cpSetBubble(text) {
+    var overlayMsg = document.getElementById('cpOverlayMessage');
+    if (overlayMsg) overlayMsg.textContent = text;
+    adjustBonBonPosition('#cpOverlay');
+}
+
+function cpRenderBoard(gameTitle) {
+    var section = cpFindSection(gameTitle);
+    var state = CP_STAGE[gameTitle];
+    if (!section || !state) return;
+
+    var leftCol = section.querySelector('.cp-column[data-role="left"]');
+    var rightCol = section.querySelector('.cp-column[data-role="right"]');
+    if (!leftCol || !rightCol) return;
+
+    leftCol.querySelectorAll('.cp-item').forEach(function (el) { el.remove(); });
+    rightCol.querySelectorAll('.cp-item').forEach(function (el) { el.remove(); });
+
+    state.pairs.forEach(function (p) {
+        var el = document.createElement('div');
+        el.className = 'cp-item';
+        el.dataset.text = p.left;
+        el.dataset.side = 'left';
+        el.innerHTML = '<span>' + escHtml(p.left) + '</span><span class="cp-dot"></span>';
+        leftCol.appendChild(el);
+    });
+
+    state.rightOrder.forEach(function (text) {
+        var el = document.createElement('div');
+        el.className = 'cp-item';
+        el.dataset.text = text;
+        el.dataset.side = 'right';
+        el.innerHTML = '<span class="cp-dot"></span><span>' + escHtml(text) + '</span>';
+        rightCol.appendChild(el);
+    });
+}
+
+function cpDotCenter(itemEl, svg) {
+    var dot = itemEl.querySelector('.cp-dot');
+    var rect = dot.getBoundingClientRect();
+    var svgRect = svg.getBoundingClientRect();
+    return {
+        x: rect.left + rect.width / 2 - svgRect.left,
+        y: rect.top + rect.height / 2 - svgRect.top
+    };
+}
+
+function cpRedrawLines(gameTitle) {
+    var section = cpFindSection(gameTitle);
+    var state = CP_STAGE[gameTitle];
+    if (!section || !state) return;
+
+    var board = section.querySelector('.cp-board');
+    var svg = board.querySelector('.cp-lines-svg');
+    if (!svg) return;
+    svg.innerHTML = '';
+
+    Object.keys(state.answers).forEach(function (leftText) {
+        var rightText = state.answers[leftText];
+        var color = state.colors[leftText] || CP_COLORS[0];
+
+        var leftEl = board.querySelector('.cp-item[data-side="left"][data-text="' + CSS.escape(leftText) + '"]');
+        var rightEl = board.querySelector('.cp-item[data-side="right"][data-text="' + CSS.escape(rightText) + '"]');
+        if (!leftEl || !rightEl) return;
+
+        var p1 = cpDotCenter(leftEl, svg);
+        var p2 = cpDotCenter(rightEl, svg);
+
+        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('x1', p1.x);
+        line.setAttribute('y1', p1.y);
+        line.setAttribute('x2', p2.x);
+        line.setAttribute('y2', p2.y);
+        line.setAttribute('stroke', color);
+        line.setAttribute('stroke-width', '3');
+        line.setAttribute('stroke-linecap', 'round');
+        svg.appendChild(line);
+
+        [[p1, leftEl], [p2, rightEl]].forEach(function (pair) {
+            var c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            c.setAttribute('cx', pair[0].x);
+            c.setAttribute('cy', pair[0].y);
+            c.setAttribute('r', 8);
+            c.setAttribute('fill', color);
+            svg.appendChild(c);
+            pair[1].querySelector('.cp-dot').style.background = color;
+            pair[1].querySelector('.cp-dot').style.borderColor = color;
+            pair[1].classList.add('cp-linked');
+        });
+    });
+
+    // reset dots for items with no connection
+    board.querySelectorAll('.cp-item').forEach(function (el) {
+        var text = el.dataset.text;
+        var isLinked = (el.dataset.side === 'left')
+            ? !!state.answers[text]
+            : Object.values(state.answers).indexOf(text) !== -1;
+        if (!isLinked) {
+            el.classList.remove('cp-linked');
+            var dot = el.querySelector('.cp-dot');
+            dot.style.background = '';
+            dot.style.borderColor = '';
+        }
+    });
+}
+
+function cpNextColor(state) {
+    return CP_COLORS[0];
+}
+
+function cpMakeConnection(gameTitle, leftText, rightText) {
+    var state = CP_STAGE[gameTitle];
+    if (!state || state.locked) return;
+
+    // If the right item is already used by another left item, free it up first
+    Object.keys(state.answers).forEach(function (l) {
+        if (state.answers[l] === rightText) {
+            delete state.answers[l];
+            delete state.colors[l];
+        }
+    });
+
+    // Reuse the same color if this left item already had a connection
+    var color = state.colors[leftText] || cpNextColor(state);
+    state.answers[leftText] = rightText;
+    state.colors[leftText] = color;
+
+    cpRedrawLines(gameTitle);
+    cpSetBubble('"' + leftText + '" connected to "' + rightText + '".');
+    cpUpdateNav(gameTitle);
+}
+
+function cpRemoveConnection(gameTitle, leftText) {
+    var state = CP_STAGE[gameTitle];
+    if (!state || state.locked) return;
+    delete state.answers[leftText];
+    delete state.colors[leftText];
+    cpRedrawLines(gameTitle);
+    cpUpdateNav(gameTitle);
+}
+
+function cpWireBoard(section) {
+    if (section.dataset.wired) return;
+    section.dataset.wired = '1';
+
+    var gameTitle = section.dataset.gameTitle;
+    var board = section.querySelector('.cp-board');
+    var svg = board.querySelector('.cp-lines-svg');
+
+    function startDrag(e, leftEl) {
+        var state = CP_STAGE[gameTitle];
+        if (!state || state.locked) return;
+        e.preventDefault();
+
+        leftEl.classList.add('cp-dragging-from');
+
+        var tempLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        tempLine.setAttribute('stroke', '#8fa3c8');
+        tempLine.setAttribute('stroke-width', '3');
+        tempLine.setAttribute('stroke-dasharray', '6 5');
+        tempLine.setAttribute('stroke-linecap', 'round');
+        svg.appendChild(tempLine);
+
+        _cpDrag = { gameTitle: gameTitle, leftText: leftEl.dataset.text, tempLine: tempLine, leftEl: leftEl };
+
+        var start = cpDotCenter(leftEl, svg);
+        tempLine.setAttribute('x1', start.x);
+        tempLine.setAttribute('y1', start.y);
+        tempLine.setAttribute('x2', start.x);
+        tempLine.setAttribute('y2', start.y);
+    }
+
+    function onPointerMove(e) {
+        if (!_cpDrag) return;
+        var svgRect = svg.getBoundingClientRect();
+        var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        var clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        _cpDrag.tempLine.setAttribute('x2', clientX - svgRect.left);
+        _cpDrag.tempLine.setAttribute('y2', clientY - svgRect.top);
+    }
+
+    function onPointerUp(e) {
+        if (!_cpDrag) return;
+        var clientX = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+        var clientY = e.changedTouches ? e.changedTouches[0].clientY : e.clientY;
+        var dropEl = document.elementFromPoint(clientX, clientY);
+        var rightItem = dropEl ? dropEl.closest('.cp-item[data-side="right"]') : null;
+
+        _cpDrag.leftEl.classList.remove('cp-dragging-from');
+        if (_cpDrag.tempLine.parentNode) _cpDrag.tempLine.parentNode.removeChild(_cpDrag.tempLine);
+
+        if (rightItem) {
+            cpMakeConnection(gameTitle, _cpDrag.leftText, rightItem.dataset.text);
+        }
+
+        _cpDrag = null;
+    }
+
+    board.addEventListener('mousedown', function (e) {
+        var leftEl = e.target.closest('.cp-item[data-side="left"]');
+        if (leftEl && e.target.closest('.cp-dot')) startDrag(e, leftEl);
+    });
+    board.addEventListener('touchstart', function (e) {
+        var leftEl = e.target.closest('.cp-item[data-side="left"]');
+        if (leftEl && e.target.closest('.cp-dot')) startDrag(e, leftEl);
+    }, { passive: false });
+
+    document.addEventListener('mousemove', onPointerMove);
+    document.addEventListener('touchmove', onPointerMove, { passive: false });
+    document.addEventListener('mouseup', onPointerUp);
+    document.addEventListener('touchend', onPointerUp);
+
+    // Tap a connected item (either side) to remove its line
+    board.addEventListener('click', function (e) {
+        var leftEl = e.target.closest('.cp-item[data-side="left"]');
+        var rightEl = e.target.closest('.cp-item[data-side="right"]');
+        var state = CP_STAGE[gameTitle];
+        if (!state || state.locked) return;
+
+        if (leftEl && state.answers[leftEl.dataset.text]) {
+            cpRemoveConnection(gameTitle, leftEl.dataset.text);
+            cpSetBubble('"' + leftEl.dataset.text + '" unlinked. Drag a new line to match it.');
+            return;
+        }
+
+        if (rightEl) {
+            var linkedLeft = null;
+            Object.keys(state.answers).forEach(function (l) {
+                if (state.answers[l] === rightEl.dataset.text) linkedLeft = l;
+            });
+            if (linkedLeft) {
+                cpRemoveConnection(gameTitle, linkedLeft);
+                cpSetBubble('"' + linkedLeft + '" unlinked. Drag a new line to match it.');
+            }
+        }
+    });
+}
+
+function cpUpdateNav(gameTitle) {
+    var state = CP_STAGE[gameTitle];
+    var section = cpFindSection(gameTitle);
+    if (!state || !section) return;
+
+    var total = state.pairs.length;
+    var matched = Object.keys(state.answers).length;
+
+    var counter = section.querySelector('.cp-counter');
+    if (counter) counter.textContent = matched + ' of ' + total + ' matched';
+
+    var fill = section.querySelector('.cp-progress-fill');
+    if (fill) fill.style.width = (total > 0 ? Math.round((matched / total) * 100) : 0) + '%';
+
+    var readyBtn = section.querySelector('.cp-ready-btn');
+    if (readyBtn && !state.locked) {
+        var allMatched = (matched >= total);
+        readyBtn.disabled = !allMatched;
+        readyBtn.style.display = allMatched ? 'flex' : 'none';
+        if (allMatched) cpSetBubble("You've connected every item! Tap Ready when you want to review before submitting.");
+    }
+}
+
+function cpApplyLockState(gameTitle) {
+    var section = cpFindSection(gameTitle);
+    var state = CP_STAGE[gameTitle];
+    if (!section || !state) return;
+
+    var board = section.querySelector('.cp-board');
+    board.classList.toggle('cp-locked', !!state.locked);
+
+    var editBtn = section.querySelector('.cp-edit-btn');
+    var readyBtn = section.querySelector('.cp-ready-btn');
+    var finishBtn = section.querySelector('.cp-finish-btn');
+
+    if (editBtn) editBtn.style.visibility = state.locked ? 'visible' : 'hidden';
+    if (readyBtn) readyBtn.style.display = state.locked ? 'none' : (Object.keys(state.answers).length >= state.pairs.length ? 'flex' : 'none');
+    if (finishBtn) { finishBtn.style.display = state.locked ? 'flex' : 'none'; finishBtn.disabled = false; }
+}
+
+function cpReady(gameTitle) {
+    var state = CP_STAGE[gameTitle];
+    var section = cpFindSection(gameTitle);
+    if (!state || !section) return;
+    state.locked = true;
+    cpApplyLockState(gameTitle);
+
+    // Highlight every connected item on both sides
+    var board = section.querySelector('.cp-board');
+    Object.keys(state.answers).forEach(function (leftText) {
+        var rightText = state.answers[leftText];
+        var leftEl = board.querySelector('.cp-item[data-side="left"][data-text="' + CSS.escape(leftText) + '"]');
+        var rightEl = board.querySelector('.cp-item[data-side="right"][data-text="' + CSS.escape(rightText) + '"]');
+        if (leftEl) leftEl.classList.add('cp-confirmed');
+        if (rightEl) rightEl.classList.add('cp-confirmed');
+    });
+
+    cpSetBubble('Take a look at your matches. Tap "Finish" to submit, or "Edit" if you\'d like to change something.');
+}
+
+function cpEdit(gameTitle) {
+    var state = CP_STAGE[gameTitle];
+    var section = cpFindSection(gameTitle);
+    if (!state || !section) return;
+    state.locked = false;
+    cpApplyLockState(gameTitle);
+
+    // Remove the confirmed highlight from every item
+    section.querySelectorAll('.cp-item.cp-confirmed').forEach(function (el) {
+        el.classList.remove('cp-confirmed');
+    });
+
+    cpSetBubble('Drag from a dot on the left to its matching dot on the right.');
+}
+
+function openConnectPairsStage(gameTitle) {
+    var section = cpFindSection(gameTitle);
+    var overlay = document.getElementById('cpOverlay');
+    if (!section || !overlay) return;
+
+    if (overlay.parentElement !== document.body) document.body.appendChild(overlay);
+
+    if (!section.dataset.homeMarked) {
+        var marker = document.createElement('div');
+        marker.className = 'cp-home-marker';
+        marker.style.display = 'none';
+        marker.dataset.gameTitle = gameTitle;
+        section.parentNode.insertBefore(marker, section);
+        section.dataset.homeMarked = '1';
+    }
+
+    overlay.appendChild(section);
+    section.style.display = 'block';
+    overlay.classList.remove('qz-closing');
+    overlay.classList.add('open');
+    overlay.scrollTop = 0;
+
+    document.body.dataset.prevOverflow = document.body.style.overflow || '';
+    document.body.style.overflow = 'hidden';
+
+    var board = section.querySelector('.cp-board');
+    var pairs = [];
+    var rightShuffled = [];
+    try { pairs = JSON.parse(board.dataset.pairs || '[]'); } catch (e) { pairs = []; }
+    try { rightShuffled = JSON.parse(board.dataset.rightShuffled || '[]'); } catch (e) { rightShuffled = []; }
+
+    var state = cpInitState(gameTitle, pairs, rightShuffled);
+    cpRenderBoard(gameTitle);
+    cpWireBoard(section);
+    cpApplyLockState(gameTitle);
+    cpUpdateNav(gameTitle);
+
+    setTimeout(function () { cpRedrawLines(gameTitle); }, 60);
+
+    cpSetBubble(state.locked
+        ? 'Take a look at your matches. Tap "Finish" to submit, or "Edit" if you\'d like to change something.'
+        : 'Drag from a dot on the left to its matching dot on the right.');
+    adjustBonBonPosition('#cpOverlay', 450);
+
+    if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+        sessionStorage.setItem('connectpairs_open_lesson_' + LESSON_DATA.lessonId, gameTitle);
+    }
+    if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.moduleId) {
+        sessionStorage.setItem('lessons_view_module_' + LESSON_DATA.moduleId, 'lesson');
+    }
+
+    window.addEventListener('resize', function () {
+        if (overlay.classList.contains('open')) cpRedrawLines(gameTitle);
+    });
+}
+
+function closeConnectPairsStage(gameTitle) {
+    var section = cpFindSection(gameTitle);
+    var overlay = document.getElementById('cpOverlay');
+    var marker = document.querySelector('.cp-home-marker[data-game-title="' + CSS.escape(gameTitle) + '"]');
+    if (!section || !overlay) return;
+
+    var state = CP_STAGE[gameTitle];
+    if (state && state.justCompleted) {
+        if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+            sessionStorage.removeItem('connectpairs_open_lesson_' + LESSON_DATA.lessonId);
+        }
+        window.location.reload();
+        return;
+    }
+
+    overlay.classList.add('qz-closing');
+    setTimeout(function () {
+        if (marker && marker.parentNode) marker.parentNode.insertBefore(section, marker);
+        section.style.display = 'none';
+        overlay.classList.remove('open', 'qz-closing');
+        document.body.style.overflow = document.body.dataset.prevOverflow || '';
+        if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+            sessionStorage.removeItem('connectpairs_open_lesson_' + LESSON_DATA.lessonId);
+        }
+    }, 280);
+}
+
+function cpReviewFindSection(gameTitle) {
+    return document.querySelector('.cp-review-section[data-game-title="' + CSS.escape(gameTitle) + '"]');
+}
+
+function openConnectPairsReviewStage(gameTitle) {
+    var section = cpReviewFindSection(gameTitle);
+    var overlay = document.getElementById('cpOverlay');
+    if (!section || !overlay) return;
+
+    if (overlay.parentElement !== document.body) document.body.appendChild(overlay);
+
+    if (!section.dataset.homeMarked) {
+        var marker = document.createElement('div');
+        marker.className = 'cp-review-home-marker';
+        marker.style.display = 'none';
+        marker.dataset.gameTitle = gameTitle;
+        section.parentNode.insertBefore(marker, section);
+        section.dataset.homeMarked = '1';
+    }
+
+    overlay.appendChild(section);
+    section.style.display = 'block';
+    overlay.classList.remove('qz-closing');
+    overlay.classList.add('open');
+    overlay.scrollTop = 0;
+
+    document.body.dataset.prevOverflow = document.body.style.overflow || '';
+    document.body.style.overflow = 'hidden';
+
+    cpSetBubble('Here\'s how you did on "' + gameTitle + '"!');
+    adjustBonBonPosition('#cpOverlay', 450);
+
+    if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+        sessionStorage.setItem('connectpairs_review_open_lesson_' + LESSON_DATA.lessonId, gameTitle);
+    }
+}
+
+function closeConnectPairsReviewStage(gameTitle) {
+    var section = cpReviewFindSection(gameTitle);
+    var overlay = document.getElementById('cpOverlay');
+    var marker = document.querySelector('.cp-review-home-marker[data-game-title="' + CSS.escape(gameTitle) + '"]');
+    if (!section || !overlay) return;
+
+    overlay.classList.add('qz-closing');
+    setTimeout(function () {
+        if (marker && marker.parentNode) marker.parentNode.insertBefore(section, marker);
+        section.style.display = 'none';
+        overlay.classList.remove('open', 'qz-closing');
+        document.body.style.overflow = document.body.dataset.prevOverflow || '';
+        if (typeof LESSON_DATA !== 'undefined' && LESSON_DATA.lessonId) {
+            sessionStorage.removeItem('connectpairs_review_open_lesson_' + LESSON_DATA.lessonId);
+        }
+    }, 280);
+}
+
+function cpSubmit(gameTitle) {
+    var state = CP_STAGE[gameTitle];
+    if (!state) return;
+    var section = cpFindSection(gameTitle);
+    var finishBtn = section && section.querySelector('.cp-finish-btn');
+    if (finishBtn) finishBtn.disabled = true;
+
+    var lessonId = LESSON_DATA ? LESSON_DATA.lessonId : 0;
+
+    var fd = new FormData();
+    fd.append('lesson_id', lessonId);
+    fd.append('game_title', gameTitle);
+    Object.keys(state.answers).forEach(function (leftText) {
+        fd.append('answers[' + leftText + ']', state.answers[leftText]);
+    });
+
+    fetch('/learning_management/public/?url=submit_connect_pairs', { method: 'POST', body: fd })
+        .then(function (r) {
+            return r.text().then(function (text) {
+                var json; try { json = JSON.parse(text); } catch (e) { json = null; }
+                return json;
+            });
+        })
+        .then(function (resp) {
+            if (!resp || resp.ok !== true) {
+                if (finishBtn) finishBtn.disabled = false;
+                alert('There was a problem saving your answers: ' + (resp && resp.msg ? resp.msg : 'unknown error') + '. Please try again.');
+                return;
+            }
+            var correct = (typeof resp.score === 'number') ? resp.score : state.pairs.length;
+            var total = (typeof resp.total === 'number') ? resp.total : state.pairs.length;
+
+            state.justCompleted = true;
+
+            if (LESSON_DATA && LESSON_DATA.connectpairs) {
+                LESSON_DATA.connectpairs.forEach(function (cp) { if (cp.title === gameTitle) cp.done = true; });
+            }
+            checkLessonComplete();
+            cpShowResults(gameTitle, correct, total);
+        })
+        .catch(function () {
+            if (finishBtn) finishBtn.disabled = false;
+            alert('Could not reach the server to save your answers. Please check your connection and try again.');
+        });
+}
+
+function cpShowResults(gameTitle, correct, total) {
+    var state = CP_STAGE[gameTitle];
+    var section = cpFindSection(gameTitle);
+    if (!state || !section) { closeConnectPairsStage(gameTitle); return; }
+
+    var board = section.querySelector('.cp-board');
+    var results = section.querySelector('.dd-results');
+    var counter = section.querySelector('.cp-counter');
+    var progressTrack = section.querySelector('.qz-progress-track');
+    var questionCard = section.querySelector('.dd-question-card');
+
+    if (board) board.style.display = 'none';
+    if (counter) counter.style.display = 'none';
+    if (progressTrack) progressTrack.style.display = 'none';
+    if (questionCard) questionCard.style.display = 'none';
+
+    var pct = total > 0 ? Math.round((correct / total) * 100) : 0;
+    cpSetBubble('You matched ' + correct + ' out of ' + total + ' correctly (' + pct + '%)! ' +
+        (pct === 100 ? 'Perfect score!' : pct >= 70 ? 'Great job!' : 'Nice try — review your matches below.'));
+
+    if (results) {
+        results.style.display = 'block';
+        var fill = results.querySelector('.qz-accuracy-fill');
+        var pctLabel = results.querySelector('.qz-accuracy-pct');
+        if (fill) requestAnimationFrame(function () { fill.style.width = pct + '%'; });
+        if (pctLabel) pctLabel.textContent = pct + '%';
+
+        var list = results.querySelector('.dd-review-list');
+        if (list) {
+            list.innerHTML = '';
+            state.pairs.forEach(function (p) {
+                var given = state.answers[p.left];
+                var isCorrect = given === p.right;
+                var row = document.createElement('div');
+                row.className = 'question-card';
+                row.innerHTML =
+                    '<div class="q-num-label">Item</div>' +
+                    '<div class="q-text">' + escHtml(p.left) + '</div>' +
+                    '<div class="review-choice" style="' + (isCorrect
+                        ? 'border-color:var(--neon-green);background: rgba(57, 255, 158, .10); color: var(--neon-green)'
+                        : 'border-color:#ff4d6d; background: rgba(255, 77, 109, .10); color: #ff4d6d;') + '">' +
+                    '<span style="font-weight:700;margin-right:8px;">' + (isCorrect ? '✓ Correct' : '✗ Incorrect') + '</span>' +
+                    'Your match: ' + escHtml(given || '—') +
+                    (!isCorrect ? '<span style="margin-left:auto;color:#ff4d6d;">Correct: ' + escHtml(p.right) + '</span>' : '') +
+                    '</div>';
+                list.appendChild(row);
+            });
+        }
+    }
+}
+
+/* =========================================================
    FIXED: BonBon overlay repositioning
    -----------------------------------------------------------
    Old behavior only nudged the box up with a transform, which
@@ -1453,6 +2025,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var arrFlag = sessionStorage.getItem('arrange_open_lesson_' + LESSON_DATA.lessonId);
     if (arrFlag) openArrangeStage(arrFlag);
+
+    var cpFlag = sessionStorage.getItem('connectpairs_open_lesson_' + LESSON_DATA.lessonId);
+    if (cpFlag) openConnectPairsStage(cpFlag);
+
+    var cpReviewFlag = sessionStorage.getItem('connectpairs_review_open_lesson_' + LESSON_DATA.lessonId);
+    if (cpReviewFlag) openConnectPairsReviewStage(cpReviewFlag);
 
     var arrReviewFlag = sessionStorage.getItem('arrange_review_open_lesson_' + LESSON_DATA.lessonId);
     if (arrReviewFlag) openArrangeReviewStage(arrReviewFlag);
@@ -2124,6 +2702,9 @@ function checkLessonComplete() {
         (LESSON_DATA.arrangesteps || []).forEach(function (a) {
             if (!a.done) allDone = false;
         });
+
+        (LESSON_DATA.connectpairs || []).forEach(function (cp) { if (!cp.done) hasPending = true; });
+        (LESSON_DATA.connectpairs || []).forEach(function (cp) { if (!cp.done) allDone = false; });
 
         if (allDone) {
             _unlock(nextBtn, lockNotice);

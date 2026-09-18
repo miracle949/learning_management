@@ -178,6 +178,11 @@ switch ($url) {
         $student->submit_quiz();
         break;
 
+    case 'submit_connect_pairs':
+        requireAuth('student');
+        $student->submit_connect_pairs();
+        break;
+
     // ── Teacher routes ────────────────────────────────────────
     case 'teacher':
         requireAuth('teacher');

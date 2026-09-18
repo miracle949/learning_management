@@ -131,6 +131,7 @@
                                         $quizCount = (int) ($mod['quiz_count'] ?? 0);
                                         $arrangeStepsCount = (int) ($mod['arrange_steps_count'] ?? 0);
                                         $color = $iconColors[$i % count($iconColors)];
+                                        $connectPairsCount = (int) ($mod['connect_pairs_count'] ?? 0);
 
                                         $firstLesson = $teacherModel->getLessonsByModule($mod['id']);
                                         $firstLessonId = !empty($firstLesson) ? (int) $firstLesson[0]['id'] : 0;
@@ -165,6 +166,8 @@
                                                         Quiz<?= $quizCount !== 1 ? 'zes' : '' ?></span>
                                                     <span class="stat-pill"><i class="fa fa-random"></i> <?= $arrangeStepsCount ?>
                                                         Arrange<?= $arrangeStepsCount !== 1 ? ' Games' : ' Game' ?></span>
+                                                    <span class="stat-pill"><i class="fa fa-timeline"></i> <?= $connectPairsCount ?>
+                                                        Connect Game<?= $connectPairsCount !== 1 ? 's' : '' ?></span>
                                                 </div>
                                             </div>
                                             <div class="card-actions">

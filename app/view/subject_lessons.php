@@ -4153,6 +4153,11 @@ function ddIconForLabel($label)
             max-width: 800px;
         }
 
+        #cp-section {
+            width: 100%;
+            max-width: 800px;
+        }
+
         .arr-counter {
             /* text-align: center;
             margin-bottom: 18px; */
@@ -4179,7 +4184,7 @@ function ddIconForLabel($label)
             /* display: inline-flex;
             align-items: center;
             gap: 6px;
-            font-size: 11.5px;
+            font-size: 11.5px;  
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: .05em;
@@ -4195,6 +4200,11 @@ function ddIconForLabel($label)
         }
 
         #arr-review-section {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        #cp-review{
             width: 100%;
             max-width: 800px;
         }
@@ -4234,6 +4244,108 @@ function ddIconForLabel($label)
             100% {
                 box-shadow: 0 0 0 14px rgba(51, 230, 255, 0);
             }
+        }
+
+        .cp-board {
+            position: relative;
+        }
+
+        .cp-columns {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            gap: 90px;
+            max-width: 800px;
+            margin: 30px auto 0;
+        }
+
+        .cp-lines-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: visible;
+        }
+
+        .cp-column {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .cp-column h5 {
+            font-size: 16px;
+            color: #ffffff;
+            font-weight: 600;
+            margin: 0 0 6px;
+        }
+
+        .cp-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 16px 18px;
+            border-radius: 14px;
+            background: var(--panel);
+            width: 100%;
+            max-width: 300px;
+            border: 1.5px solid var(--panel-edge);
+            color: var(--text-light);
+            font-size: 14.5px;
+            font-weight: 600;
+            transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+            user-select: none;
+        }
+
+        .cp-column[data-role="right"] .cp-item {
+            margin-left: auto;
+        }
+
+        .cp-item .cp-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid var(--panel-edge);
+            background: var(--panel);
+            flex-shrink: 0;
+            cursor: grab;
+            transition: background .15s ease, border-color .15s ease, transform .15s ease;
+        }
+
+        .cp-item .cp-dot:active {
+            cursor: grabbing;
+        }
+
+        .cp-item.cp-dragging-from .cp-dot,
+        .cp-item.cp-linked .cp-dot {
+            transform: scale(1.15);
+        }
+
+        .cp-item.cp-review-correct {
+            border-color: var(--neon-green);
+            background: rgba(57, 255, 158, .08);
+        }
+
+        .cp-item.cp-review-wrong {
+            border-color: #ff4d6d;
+            background: rgba(255, 77, 109, .08);
+        }
+
+        .cp-list.cp-locked .cp-dot {
+            cursor: default;
+            opacity: .6;
+        }
+
+        .cp-item.cp-confirmed {
+            border-color: var(--arcade-cyan);
+            color: var(--arcade-cyan);
         }
     </style>
 </head>
@@ -5313,6 +5425,242 @@ function ddIconForLabel($label)
                                 </div>
                             <?php endif; ?>
 
+                            <?php
+                            $pendingConnectPairs = [];
+                            foreach ($connectPairsData as $cpTitle => $cpInfo) {
+                                if ($cpInfo['submission'] === null)
+                                    $pendingConnectPairs[$cpTitle] = $cpInfo;
+                            }
+                            ?>
+
+                            <?php if (!empty($connectPairsData)): ?>
+                                <div class="ls-section" id="section-connectpairs">
+
+                                    <?php foreach ($connectPairsData as $cpTitle => $cpInfo):
+                                        if ($cpInfo['submission'] === null)
+                                            continue;
+                                        $cpAnswers = $cpInfo['submission']['answers'] ?? [];
+                                        $cpCorrectness = $cpInfo['submission']['correctness'] ?? [];
+                                        $cpTotal = count($cpInfo['pairs']);
+                                        $cpCorrectCount = 0;
+                                        foreach ($cpCorrectness as $v) {
+                                            if ($v)
+                                                $cpCorrectCount++;
+                                        }
+                                        $cpAccuracy = $cpTotal > 0 ? round(($cpCorrectCount / $cpTotal) * 100) : 0;
+                                        $cpIncorrect = $cpTotal - $cpCorrectCount;
+                                        ?>
+                                        <div class="content-quiz-cta">
+                                            <img src="../images/robot-ai5.png" alt="">
+                                            <div class="speech-bubble bubble-quiz">
+                                                <strong>BonBon</strong>
+                                                <p>Nice work — you've already completed "
+                                                    <?= htmlspecialchars($cpTitle) ?>"! Want to see how you did?
+                                                </p>
+                                                <button type="button" class="btn-take-quiz btn-visible"
+                                                    onclick="openConnectPairsReviewStage('<?= htmlspecialchars(addslashes($cpTitle), ENT_QUOTES) ?>')">
+                                                    <i class="fa fa-link"></i> Review the Activity
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="ls-section cp-review-section"
+                                            data-game-title="<?= htmlspecialchars($cpTitle) ?>" id="cp-review" style="display:none;">
+                                            <button type="button" class="btn-exit-quiz"
+                                                onclick="closeConnectPairsReviewStage('<?= htmlspecialchars(addslashes($cpTitle), ENT_QUOTES) ?>')">
+                                                <i class="fa fa-arrow-left"></i>
+                                            </button>
+                                            <div class="dd-results" style="display:block;">
+                                                <h2>Matching Results</h2>
+                                                <div class="qz-result-card">
+                                                    <div class="qz-result-label">Accuracy</div>
+                                                    <div class="qz-accuracy-row">
+                                                        <div class="qz-accuracy-track">
+                                                            <div class="qz-accuracy-fill" style="width:<?= $cpAccuracy ?>%"></div>
+                                                        </div>
+                                                        <span class="qz-accuracy-pct">
+                                                            <?= $cpAccuracy ?>%
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="qz-result-card">
+                                                    <div class="qz-result-row">
+                                                        <div class="qz-result-label">Performance Stats</div>
+                                                        <span class="qz-result-count">
+                                                            <?= $cpTotal ?> pairs
+                                                        </span>
+                                                    </div>
+                                                    <div class="qz-stat-pills">
+                                                        <span class="qz-stat-pill pill-correct"><i class="fa fa-check"></i>
+                                                            <?= $cpCorrectCount ?> Correct
+                                                        </span>
+                                                        <span class="qz-stat-pill pill-incorrect"><i class="fa fa-times"></i>
+                                                            <?= $cpIncorrect ?> Incorrect
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="dd-review-list">
+                                                    <?php foreach ($cpInfo['pairs'] as $p):
+                                                        $given = $cpAnswers[$p['left']] ?? null;
+                                                        $isCorrect = !empty($cpCorrectness[$p['left']]);
+                                                        ?>
+                                                        <div class="question-card">
+                                                            <div class="q-num-label">
+                                                                <?= htmlspecialchars($cpInfo['game']['left_label']) ?>
+                                                            </div>
+                                                            <div class="q-text">
+                                                                <?= htmlspecialchars($p['left']) ?>
+                                                            </div>
+                                                            <div class="review-choice"
+                                                                style="<?= $isCorrect
+                                                                    ? 'border-color:var(--neon-green); background: rgba(57, 255, 158, .10); color: var(--neon-green)'
+                                                                    : 'border-color:#ff4d6d; background: rgba(255, 77, 109, .10); color: #ff4d6d;' ?>">
+                                                                <span style="font-weight:700; font-size: 13.5px;">
+                                                                    <?= $isCorrect ? '✓ Correct' : '✗ Incorrect' ?> — Your match:
+                                                                    <?= htmlspecialchars($given ?? '—') ?>
+                                                                    <?php if (!$isCorrect): ?>
+                                                                        (Correct:
+                                                                        <?= htmlspecialchars($p['right']) ?>)
+                                                                    <?php endif; ?>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    <?php endforeach; ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+
+                                    <?php foreach ($pendingConnectPairs as $cpTitle => $cpInfo): ?>
+                                        <div class="activity-hero-card">
+                                            <div class="act-hero-tag">Connect the Dots</div>
+                                            <div class="act-hero-title">
+                                                <?= htmlspecialchars($cpTitle) ?>
+                                            </div>
+                                            <?php if (!empty($cpInfo['game']['instructions'])): ?>
+                                                <div class="act-hero-desc">
+                                                    <?= nl2br(htmlspecialchars($cpInfo['game']['instructions'])) ?>
+                                                </div>
+                                            <?php else: ?>
+                                                <div class="act-hero-desc">
+                                                    <?= count($cpInfo['pairs']) ?> pairs to match correctly.
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <div class="content-quiz-cta">
+                                            <img src="../images/robot-ai5.png" alt="">
+                                            <div class="speech-bubble bubble-quiz">
+                                                <strong>BonBon</strong>
+                                                <div class="bonbon-cp-greeting-stage">
+                                                    <p class="bonbon-cp-greeting-text"
+                                                        data-msg="<?= htmlspecialchars("Hi{$bonbonGreetName}! I'm BonBon, your matching buddy. Let's see if you can connect each item to its correct pair!") ?>">
+                                                    </p>
+                                                    <span class="bb-skip-typing skip-cp-greeting">Skip »</span>
+                                                    <button type="button"
+                                                        class="btn-quiz-continue btn-cp-continue">Continue</button>
+                                                </div>
+                                                <div class="bonbon-cp-message-stage" style="display:none;">
+                                                    <p class="bonbon-cp-message-text"
+                                                        data-msg="<?= htmlspecialchars('Tap an item on the left, then tap its matching item on the right to connect them. Tap "Take the Activity" below when you\'re ready.') ?>">
+                                                    </p>
+                                                    <span class="bb-skip-typing skip-cp-msg">Skip »</span>
+                                                    <button type="button" class="btn-take-quiz"
+                                                        onclick="openConnectPairsStage('<?= htmlspecialchars(addslashes($cpTitle), ENT_QUOTES) ?>')">
+                                                        <i class="fa fa-link"></i> Take the Activity
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <?php
+                                        $cpPairsForJs = array_map(fn($p) => ['left' => $p['left'], 'right' => $p['right']], $cpInfo['pairs']);
+                                        $cpRightShuffled = array_column($cpPairsForJs, 'right');
+                                        shuffle($cpRightShuffled);
+                                        ?>
+                                        <div class="ls-section cp-stage-section" id="cp-section"
+                                            data-game-title="<?= htmlspecialchars($cpTitle) ?>" style="display:none;">
+                                            <div class="dd-nav-back">
+                                                <button type="button" class="btn-exit-quiz"
+                                                    onclick="closeConnectPairsStage('<?= htmlspecialchars(addslashes($cpTitle), ENT_QUOTES) ?>')">
+                                                    <i class="fa fa-arrow-left"></i>
+                                                </button>
+                                            </div>
+
+                                            <div class="qz-counter cp-counter">0 of
+                                                <?= count($cpInfo['pairs']) ?> matched
+                                            </div>
+                                            <div class="qz-progress-track">
+                                                <div class="qz-progress-fill cp-progress-fill" style="width:0%"></div>
+                                            </div>
+
+                                            <div class="dd-question-card">
+                                                <div class="dd-question-text">Tap an item on the left, then tap its matching item on
+                                                    the right.</div>
+                                            </div>
+
+                                            <div class="cp-board" data-game-title="<?= htmlspecialchars($cpTitle) ?>"
+                                                data-pairs='<?= htmlspecialchars(json_encode($cpPairsForJs), ENT_QUOTES) ?>'
+                                                data-right-shuffled='<?= htmlspecialchars(json_encode($cpRightShuffled), ENT_QUOTES) ?>'>
+
+                                                <div class="cp-columns">
+                                                    <div class="cp-column" data-role="left">
+                                                        <h5><?= htmlspecialchars($cpInfo['game']['left_label']) ?></h5>
+                                                    </div>
+                                                    <svg class="cp-lines-svg"></svg>
+                                                    <div class="cp-column" data-role="right">
+                                                        <h5><?= htmlspecialchars($cpInfo['game']['right_label']) ?></h5>
+                                                    </div>
+                                                </div>
+
+                                                <div class="qz-nav-row">
+                                                    <button type="button" class="btn-qnav-prev cp-edit-btn"
+                                                        style="visibility:hidden;"
+                                                        onclick="cpEdit('<?= htmlspecialchars(addslashes($cpTitle), ENT_QUOTES) ?>')">
+                                                        <i class="fa fa-pen"></i> Edit
+                                                    </button>
+                                                    <button type="button" class="btn-qnav-next cp-ready-btn" disabled
+                                                        style="display:none;"
+                                                        onclick="cpReady('<?= htmlspecialchars(addslashes($cpTitle), ENT_QUOTES) ?>')">
+                                                        Ready <i class="fa fa-check"></i>
+                                                    </button>
+                                                    <button type="button" class="btn-qnav-next cp-finish-btn" style="display:none;"
+                                                        onclick="cpSubmit('<?= htmlspecialchars(addslashes($cpTitle), ENT_QUOTES) ?>')">
+                                                        Finish <i class="fa fa-check"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="dd-results" style="display:none;">
+                                                <h2>Matching Results</h2>
+                                                <div class="qz-result-card">
+                                                    <div class="qz-result-label">Accuracy</div>
+                                                    <div class="qz-accuracy-row">
+                                                        <div class="qz-accuracy-track">
+                                                            <div class="qz-accuracy-fill" style="width:0%"></div>
+                                                        </div>
+                                                        <span class="qz-accuracy-pct">0%</span>
+                                                    </div>
+                                                </div>
+                                                <div class="qz-result-card">
+                                                    <div class="qz-result-row">
+                                                        <div class="qz-result-label">Performance Stats</div>
+                                                        <span class="qz-result-count">0 pairs</span>
+                                                    </div>
+                                                    <div class="qz-stat-pills">
+                                                        <span class="qz-stat-pill pill-correct"><i class="fa fa-check"></i> 0
+                                                            Correct</span>
+                                                        <span class="qz-stat-pill pill-incorrect"><i class="fa fa-times"></i> 0
+                                                            Incorrect</span>
+                                                    </div>
+                                                </div>
+                                                <div class="dd-review-list"></div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+
                         </div><!-- /lesson-body -->
 
                         <?php
@@ -5953,6 +6301,19 @@ function ddIconForLabel($label)
                 <div class="speech-bubble drop-drag">
                     <strong>BonBon</strong>
                     <p id="arrOverlayMessage">Let's put these in order!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="qz-overlay" id="cpOverlay">
+            <div class="BonBon-parent">
+                <img src="../images/robot-ai10.png" alt="">
+                <div class="bonbon-pole-wrap">
+                    <div class="bonbon-pole"></div>
+                </div>
+                <div class="speech-bubble drop-drag">
+                    <strong>BonBon</strong>
+                    <p id="cpOverlayMessage">Let's connect these!</p>
                 </div>
             </div>
         </div>
@@ -6683,6 +7044,64 @@ function ddIconForLabel($label)
                 var continueBtn = wrap.querySelector('.btn-arr-continue');
                 var skipGreet = wrap.querySelector('.skip-arr-greeting');
                 var skipMsg = wrap.querySelector('.skip-arr-msg');
+
+                function typeInto(el, text, onDone, skipEl) {
+                    if (el.dataset.typed) return;
+                    el.dataset.typed = '1';
+                    var i = 0, done = false;
+                    var cursor = document.createElement('span');
+                    cursor.className = 'typing-cursor';
+                    el.appendChild(cursor);
+                    if (skipEl) skipEl.style.display = 'flex';
+
+                    function finish() {
+                        if (done) return;
+                        done = true;
+                        cursor.remove();
+                        el.textContent = text;
+                        if (skipEl) skipEl.style.display = 'none';
+                        if (onDone) onDone();
+                    }
+                    if (skipEl) skipEl.onclick = finish;
+
+                    (function type() {
+                        if (done) return;
+                        if (i < text.length) { cursor.insertAdjacentText('beforebegin', text.charAt(i)); i++; setTimeout(type, 28); }
+                        else setTimeout(finish, 200);
+                    })();
+                }
+
+                typeInto(greetEl, greetEl.dataset.msg || greetEl.textContent, function () {
+                    if (continueBtn) continueBtn.classList.add('btn-visible');
+                }, skipGreet);
+
+                if (continueBtn) {
+                    continueBtn.addEventListener('click', function () {
+                        greetStage.style.display = 'none';
+                        msgStage.style.display = 'block';
+                        typeInto(msgEl, msgEl.dataset.msg || msgEl.textContent, function () {
+                            var takeBtn = wrap.querySelector('.btn-take-quiz');
+                            if (takeBtn) takeBtn.classList.add('btn-visible');
+                        }, skipMsg);
+                    });
+                }
+            });
+        </script>
+
+
+
+        <script>
+            document.querySelectorAll('.cp-stage-section').forEach(function (section) {
+                var wrap = section.previousElementSibling;
+                if (!wrap || !wrap.classList.contains('content-quiz-cta')) return;
+
+                var greetEl = wrap.querySelector('.bonbon-cp-greeting-text');
+                var msgEl = wrap.querySelector('.bonbon-cp-message-text');
+                var greetStage = wrap.querySelector('.bonbon-cp-greeting-stage');
+                var msgStage = wrap.querySelector('.bonbon-cp-message-stage');
+                var continueBtn = wrap.querySelector('.btn-cp-continue');
+                var skipGreet = wrap.querySelector('.skip-cp-greeting');
+                var skipMsg = wrap.querySelector('.skip-cp-msg');
 
                 function typeInto(el, text, onDone, skipEl) {
                     if (el.dataset.typed) return;
