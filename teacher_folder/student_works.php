@@ -143,7 +143,8 @@
                                         <i class="fa fa-file-pdf" style="font-size:2rem;color:#e53e3e;"></i>
                                     </div>
                                     <p style="font-weight: 500;"><?= htmlspecialchars($cleanName) ?></p>
-                                    <p style="color: var(--green); font-weight: 600; margin: 5px 0 0;">Submitted</p>
+                                    <p style="background-color: var(--green-light);
+    color: var(--green);color: var(--green); font-weight: 600; margin: 5px 0 0;">Submitted</p>
                                 </div>
                             </div>
                         <?php endforeach; ?>

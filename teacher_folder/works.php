@@ -58,7 +58,7 @@
 
         <div class="rightbar">
 
-            <main>
+        <main>
                 <div class="name-student">
                     <div class="student-sub-header">
                         <div class="student-header">

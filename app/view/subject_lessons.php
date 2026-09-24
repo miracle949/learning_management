@@ -3351,7 +3351,8 @@ function ddIconForLabel($label)
         }
 
         .qz-overlay.open .btn-exit-quiz {
-            color: var(--arcade-cyan);
+            /* color: var(--arcade-cyan); */
+            color: #3B2A1A;
             position: relative;
             z-index: 1;
         }
@@ -3597,9 +3598,12 @@ function ddIconForLabel($label)
 
         .dd-card-label {
             text-align: left;
-            font-size: 14.5px;
+            font-size: 15.5px;
             font-weight: 700;
-            color: var(--text-light);
+            /* color: var(--text-light); */
+            /* color: #3B2A1A; */
+            /* color: #75603F; */
+            color: #3B2A1A;
             padding: 0;
             border-bottom: none;
             white-space: nowrap;
@@ -3609,10 +3613,11 @@ function ddIconForLabel($label)
 
         .dd-socket {
             min-height: 64px;
-            border: 1.5px dashed var(--panel-edge);
+            /* border: 1.5px dashed var(--panel-edge); */
             /* border-radius: 0 0 14px 14px; */
             border-radius: 14px;
-            background: rgba(255, 255, 255, 0.015);
+            /* background: rgba(255, 255, 255, 0.015); */
+            background-color: #ffe8c2;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -3621,8 +3626,8 @@ function ddIconForLabel($label)
         }
 
         .dd-target-card.drag-over .dd-socket {
-            border-color: var(--arcade-cyan);
-            background: rgba(51, 230, 255, 0.08);
+            border-color: #6b4423;
+            background: rgba(219, 160, 95, 0.22);
         }
 
         .dd-socket-slot {
@@ -3631,6 +3636,7 @@ function ddIconForLabel($label)
             /* flex-wrap: wrap; */
             gap: 6px;
             justify-content: center;
+            border: 2px dashed #8a5a33;
         }
 
         .dd-socket-slot:empty::before {
@@ -3676,18 +3682,20 @@ function ddIconForLabel($label)
 
         .dd-card {
             width: 100%;
-            /* max-width: 320px; */
-            max-width: 250px;
+            /* max-width: 250px; */
+            max-width: 253px;
+            /* max-width: calc(100% / 3); */
             height: 64px;
             display: flex;
             align-items: center;
             gap: 12px;
             padding: 10px 14px;
-            border: 1.5px solid var(--panel-edge);
+            background: #dba05f;
+            border: 2.5px solid #3B2A1A;
             border-radius: 14px;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
             cursor: grab;
-            background: var(--panel);
-            transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease, opacity .18s ease;
+            transition: transform .15s ease, box-shadow .15s ease;
             user-select: none;
         }
 
@@ -3698,15 +3706,16 @@ function ddIconForLabel($label)
             max-width: 250px;
             /* height: 130px; */
             height: 82px;
-            border: 2px dashed var(--panel-edge);
+            border: 2.5px dashed #dba05f;
+            background: rgba(219, 160, 95, 0.12);
+            box-shadow: inset 0 3px 10px rgba(0, 0, 0, .35);
             border-radius: 14px;
-            background: rgba(255, 255, 255, 0.02);
             flex-shrink: 0;
         }
 
         .dd-card.selected {
-            border-color: var(--arcade-cyan);
-            box-shadow: 0 0 0 2px rgba(51, 230, 255, .45), 0 6px 16px rgba(51, 230, 255, .3);
+            border-color: #3B2A1A;
+            box-shadow: 0 0 0 3px rgba(138, 90, 51, .45), 0 6px 0 #a06b31, 0 8px 16px rgba(0, 0, 0, .25);
             transform: translateY(-2px);
         }
 
@@ -3719,8 +3728,8 @@ function ddIconForLabel($label)
         }
 
         .dd-card:hover {
-            border-color: var(--arcade-cyan);
-            box-shadow: 0 6px 16px rgba(51, 230, 255, .2);
+            border-color: #3B2A1A;
+            box-shadow: 0 6px 0 #a06b31, 0 8px 16px rgba(0, 0, 0, .25);
             transform: translateY(-2px);
         }
 
@@ -3776,8 +3785,8 @@ function ddIconForLabel($label)
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0.03);
-            overflow: hidden;
+            border: 2px dashed #3B2A1A;
+            background: rgba(255, 255, 255, .18);
         }
 
         .dd-card-visual img {
@@ -3788,7 +3797,8 @@ function ddIconForLabel($label)
 
         .dd-card-visual i {
             font-size: 20px;
-            color: var(--arcade-cyan);
+            /* color: var(--arcade-cyan); */
+            color: #3B2A1A;
         }
 
         .dd-card-subtitle {
@@ -3806,9 +3816,11 @@ function ddIconForLabel($label)
             min-width: 0;
         }
 
+        .dd-card.locked,
         .dd-card.locked .dd-card-visual i,
         .dd-card.locked .dd-card-label {
-            color: var(--arcade-cyan);
+            border-color: #3B2A1A;
+            color: #3B2A1A;
         }
 
         .dd-card.dd-wrong {
@@ -3872,9 +3884,7 @@ function ddIconForLabel($label)
         }
 
         .dd-card.placed {
-            cursor: grab;
-            border-color: var(--arcade-cyan);
-            /* width: 100px; */
+            border-color: #3B2A1A;
             width: 100%;
         }
 
@@ -3914,11 +3924,15 @@ function ddIconForLabel($label)
         }
 
         .dd-target-card.has-items .dd-socket {
-            border-style: solid;
+            /* border-style: solid; */
             border-width: 2px;
-            border-color: var(--arcade-cyan);
-            background: rgba(51, 230, 255, 0.14);
-            box-shadow: 0 0 14px rgba(51, 230, 255, 0.25);
+            /* border-color: var(--arcade-cyan); */
+            /* border-color: #8a5a33; */
+            border-style: dashed;
+            border-color: #6b4423;
+            ;
+            /* background: rgba(51, 230, 255, 0.14); */
+            /* box-shadow: 0 0 14px rgba(51, 230, 255, 0.25); */
             transition: background .18s ease, border-color .18s ease, box-shadow .18s ease;
             display: flex;
             align-items: center;
@@ -3934,7 +3948,9 @@ function ddIconForLabel($label)
             width: 50%;
             font-size: 14.5px;
             margin-left: 10px;
-            color: #ffffff;
+            color: #3B2A1A;
+            /* color: #ffffff; */
+            /* color: #3B2A1A; */
             font-weight: 600;
         }
 
@@ -4204,20 +4220,15 @@ function ddIconForLabel($label)
             max-width: 800px;
         }
 
-        #cp-review{
+        #cp-review {
             width: 100%;
             max-width: 800px;
         }
 
         .dd-ghost {
-            width: 100px;
-            height: 70px;
-            border: 2px dashed var(--arcade-cyan);
-            border-radius: 10px;
-            background: rgba(51, 230, 255, 0.08);
-            animation: ddGhostPulse 1s ease-in-out infinite;
-            flex-shrink: 0;
-            pointer-events: none;
+            border: 2px dashed #8a5a33;
+            background: rgba(219, 160, 95, 0.28);
+            border-radius: 14px;
         }
 
         @keyframes ddGhostPulse {
@@ -4238,16 +4249,17 @@ function ddIconForLabel($label)
 
         @keyframes ddFillPulse {
             0% {
-                box-shadow: 0 0 0 0 rgba(51, 230, 255, .7);
+                box-shadow: 0 0 0 0 rgba(138, 90, 51, .55);
             }
 
             100% {
-                box-shadow: 0 0 0 14px rgba(51, 230, 255, 0);
+                box-shadow: 0 0 0 14px rgba(138, 90, 51, 0);
             }
         }
 
         .cp-board {
             position: relative;
+            margin: 22px 0 0;
         }
 
         .cp-columns {
@@ -4346,6 +4358,1361 @@ function ddIconForLabel($label)
         .cp-item.cp-confirmed {
             border-color: var(--arcade-cyan);
             color: var(--arcade-cyan);
+        }
+
+        /* ============ DRAG & DROP — CARDS ON TOP, BOX BELOW ============ */
+        .dd-puzzle-board {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            max-width: 800px;
+            margin: 10px auto 0;
+        }
+
+        /* Top row: the 3 cards side by side */
+        .dd-item-row[data-role="bank"] {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 18px;
+            min-height: 80px;
+        }
+
+        .dd-item-row[data-role="bank"] .dd-card,
+        .dd-item-row[data-role="bank"] .dd-card-placeholder {
+            /* flex: 0 0 220px; */
+            /* width: 220px; */
+            /* max-width: 220px; */
+            width: 100%;
+            /* height: 64px; */
+            height: 80px;
+        }
+
+        /* The big box */
+        .dd-drop-box {
+            /* background: linear-gradient(160deg, var(--panel), #0a1230); */
+            /* border: 1px solid var(--panel-edge); */
+            border-radius: 20px;
+            /* padding: 70px 22px 26px; */
+            /* padding: 90px 22px 90px; */
+            padding: 0 22px;
+            height: 311px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* box-shadow: 0 10px 30px rgba(0, 0, 0, .25); */
+            /* background: var(--note-bg, #fff6e5); */
+            background: #f7f0dc;
+            /* border: 10px solid #8a5a33; */
+            border: none;
+            box-shadow: 0 14px 34px rgba(0, 0, 0, .35), inset 0 0 0 1px rgba(59, 42, 26, .08);
+            /* color: #3b2a1a; */
+            /* box-shadow: 0 6px 12px rgba(0, 0, 0, .22); */
+            margin: 20px 0 0;
+        }
+
+        /* Drop slots side by side inside the box */
+        .dd-drop-box .dd-target-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .dd-target-card .dd-socket,
+        .dd-target-card.has-items .dd-socket {
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
+            gap: 10px;
+            /* min-height: 130px; */
+            min-height: 160px;
+            padding: 12px;
+            border-radius: 14px;
+        }
+
+        .dd-target-card .dd-socket {
+            background: transparent;
+            border: 2.5px dashed #8a6d4a;
+            border-radius: 6px;
+            min-height: 160px;
+            box-shadow: none;
+        }
+
+        .dd-target-card .dd-socket .dd-target-label {
+            width: 100%;
+            margin: 0;
+            text-align: center;
+            font-size: 13.5px;
+            font-weight: 700;
+            /* color: #d8e6f5; */
+            color: #3B2A1A;
+            white-space: normal;
+        }
+
+        .dd-socket-slot {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* A card that's been dropped fills its slot */
+        .dd-socket-slot .dd-card {
+            width: 100%;
+            max-width: 90%;
+            height: 70px;
+        }
+
+        .dd-socket-slot .dd-ghost {
+            width: 100%;
+            height: 70px;
+        }
+
+        .dd-nav-row {
+            max-width: 800px;
+            margin: 30px auto 0;
+        }
+
+        @media (max-width: 760px) {
+            .dd-drop-box .dd-target-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dd-drop-box .dd-target-row {
+                grid-template-columns: 1fr;
+            }
+
+            .dd-item-row[data-role="bank"] .dd-card,
+            .dd-item-row[data-role="bank"] .dd-card-placeholder {
+                flex: 1 1 100%;
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+
+        .dd-page-indicator {
+            color: #ffffff;
+            font-size: 14.5px;
+            font-weight: 600;
+            display: none;
+        }
+
+        /* ============ CONNECT THE DOTS — CORKBOARD STYLE ============ */
+        .cp-board {
+            background:
+                radial-gradient(rgba(0, 0, 0, .10) 1px, transparent 1.6px) 0 0 / 14px 14px,
+                #c48c56;
+            border: 10px solid #8a5a33;
+            /* background: linear-gradient(160deg, var(--panel), #0a1230); */
+            /* border: 1px solid var(--panel-edge); */
+            border-radius: 18px;
+            padding: 24px 26px 26px;
+            box-shadow: inset 0 0 40px rgba(0, 0, 0, .25), 0 12px 30px rgba(0, 0, 0, .35);
+            /* box-shadow: 0 10px 30px rgba(0, 0, 0, .25); */
+        }
+
+        .cp-board-title {
+            max-width: 560px;
+            margin: 0 auto 10px;
+            padding: 10px 20px;
+            text-align: center;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .35);
+            color: #3b2414;
+            font-family: "Caveat", "Comic Sans MS", cursive;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .cp-columns {
+            gap: 90px;
+            margin: 30px auto 0;
+        }
+
+        .cp-column {
+            gap: 26px;
+        }
+
+        /* The sticky notes */
+        .cp-item {
+            position: relative;
+            max-width: none;
+            min-height: 70px;
+            padding: 22px 20px 18px;
+            border: none;
+            border-radius: 6px;
+            background: var(--note-bg, #fff6e5);
+            color: #3b2a1a;
+            /* color: #ffffff; */
+            /* border: 1.5px solid var(--panel-edge); */
+            font-size: 16px;
+            font-weight: 700;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, .22);
+            transform: rotate(var(--note-tilt, 0deg));
+            user-select: none;
+        }
+
+        .cp-column[data-role="right"] .cp-item {
+            margin-left: 0;
+            justify-content: flex-start;
+            gap: 14px;
+        }
+
+        /* Tape strip on top of each note */
+        .cp-item .cp-tape {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            width: 72px;
+            height: 22px;
+            transform: translateX(-50%) rotate(-2deg);
+            background: rgba(255, 255, 255, .5);
+            border: 1px solid rgba(255, 255, 255, .7);
+            pointer-events: none;
+        }
+
+        /* White push-pins */
+        .cp-item .cp-dot {
+            width: 26px;
+            height: 26px;
+            border: none;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #ffffff, #d9d9d9 55%, #9a9a9a);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, .35);
+            cursor: grab;
+        }
+
+        .cp-item.cp-linked .cp-dot,
+        .cp-item.cp-dragging-from .cp-dot {
+            transform: scale(1.15);
+        }
+
+        /* After "Ready" */
+        .cp-item.cp-confirmed {
+            outline: 3px solid var(--arcade-cyan);
+            outline-offset: 2px;
+            color: #3b2a1a;
+        }
+
+        /* Buttons sit on the corkboard */
+        .cp-board .qz-nav-row {
+            margin-top: 28px;
+        }
+
+        .cp-board .btn-qnav-prev {
+            color: #d8e6f5;
+            font-family: "Orbitron", sans-serif;
+            text-transform: uppercase;
+        }
+
+        /* No scaling on hover, so the drop box doesn't jitter under the cursor */
+        .dd-target-card.drag-over {
+            transform: none;
+        }
+
+        /* Original card stays visible as a "slot" while its copy is dragged */
+        .dd-card.dragging {
+            opacity: .35;
+        }
+
+        /* ============ DRAG & DROP — WOODEN GAME BUTTONS ============ */
+
+        /* Back arrow */
+        .dd-stage-section .btn-exit-quiz,
+        .dd-review-section .btn-exit-quiz {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: #dba05f;
+            border: 2.5px solid #3B2A1A;
+            color: #3B2A1A;
+            font-size: 16px;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+            transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+        }
+
+        .dd-stage-section .btn-exit-quiz:hover,
+        .dd-review-section .btn-exit-quiz:hover {
+            background: #e8b073;
+            color: #3B2A1A;
+            border-color: #3B2A1A;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #a06b31, 0 8px 16px rgba(0, 0, 0, .25);
+        }
+
+        .dd-stage-section .btn-exit-quiz:active,
+        .dd-review-section .btn-exit-quiz:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #a06b31, 0 2px 4px rgba(0, 0, 0, .25);
+        }
+
+        /* Prev / Next / Finish (shared base) */
+        .dd-nav-row .btn-qnav-prev,
+        .dd-nav-row .btn-qnav-next {
+            padding: 11px 26px;
+            border-radius: 14px;
+            border: 2.5px solid #3B2A1A;
+            color: #3B2A1A;
+            font-family: "Orbitron", sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+        }
+
+        /* Prev + Next = wood */
+        .dd-nav-row .btn-qnav-prev,
+        .dd-nav-row .dd-next-btn {
+            background: #dba05f;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+        }
+
+        .dd-nav-row .btn-qnav-prev:hover,
+        .dd-nav-row .dd-next-btn:hover {
+            background: #e8b073;
+            color: #3B2A1A;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #a06b31, 0 8px 16px rgba(0, 0, 0, .25);
+        }
+
+        /* Finish = green so it stands out as the final action */
+        .dd-nav-row .dd-finish-btn {
+            background: #7be495;
+            box-shadow: 0 4px 0 #3f9e5a, 0 6px 12px rgba(0, 0, 0, .25);
+        }
+
+        .dd-nav-row .dd-finish-btn:hover {
+            background: #93f0aa;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #3f9e5a, 0 8px 16px rgba(0, 0, 0, .25);
+        }
+
+        /* Pressed */
+        .dd-nav-row .btn-qnav-prev:active,
+        .dd-nav-row .btn-qnav-next:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, .35);
+        }
+
+        /* Disabled / locked (Next before the page is filled, Finish before all done) */
+        .dd-nav-row .btn-qnav-next:disabled,
+        .dd-nav-row .btn-qnav-next.is-locked {
+            background: #b9a58a;
+            border-color: #6b5a44;
+            color: #6b5a44;
+            opacity: .7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 2px 0 #8c7a62;
+        }
+
+        .dd-nav-row .btn-qnav-next i,
+        .dd-nav-row .btn-qnav-prev i {
+            font-size: 13px;
+        }
+
+        /* ============ BONBON WOODEN PODIUM ============ */
+
+        /* Robot stands ON the podium (feet overlap the top surface) */
+        .BonBon-parent img {
+            position: relative;
+            z-index: 3;
+            filter: drop-shadow(0 10px 8px rgba(0, 0, 0, .35));
+        }
+
+        .bonbon-pole-wrap {
+            position: relative;
+            width: 100%;
+            height: 96px;
+            margin: -26px 0 0;
+            /* pulls the podium up under the robot's feet, also removes the old 20px offset */
+            z-index: 1;
+        }
+
+        /* Soft floor shadow under the podium */
+        .bonbon-pole-wrap::after {
+            content: "";
+            position: absolute;
+            left: 6%;
+            right: 6%;
+            bottom: -16px;
+            height: 20px;
+            background: radial-gradient(ellipse at center, rgba(0, 0, 0, .5), transparent 70%);
+            pointer-events: none;
+        }
+
+        /* Reset the old cyan pill */
+        .bonbon-pole {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: none;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        /* Podium top (the ellipse the robot stands on) */
+        .bonbon-pole::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at 50% 35%, #f3c58c, #dba05f 70%);
+            border: 2.5px solid #3B2A1A;
+            z-index: 2;
+        }
+
+        /* Podium body */
+        .bonbon-pole::after {
+            content: "";
+            position: absolute;
+            top: 25px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, #a06b31 0%, #dba05f 45%, #b57a3a 100%);
+            border: 2.5px solid #3B2A1A;
+            border-top: none;
+            border-radius: 0 0 50% 50% / 0 0 24px 24px;
+            box-shadow: 0 12px 22px rgba(0, 0, 0, .45);
+            z-index: 1;
+        }
+
+        /* ============ FIX: PREV BUTTON STAYS NAVY ============ */
+        .qz-overlay.open .dd-nav-row .btn-qnav-prev {
+            background: #dba05f;
+            color: #3B2A1A;
+            border: 2.5px solid #3B2A1A;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+        }
+
+        .qz-overlay.open .dd-nav-row .btn-qnav-prev:hover {
+            background: #e8b073;
+            color: #3B2A1A;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #a06b31, 0 8px 16px rgba(0, 0, 0, .25);
+        }
+
+        .qz-overlay.open .dd-nav-row .btn-qnav-prev:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, .35);
+        }
+
+        /* ============ CONNECT THE DOTS — SAME LOOK AS DRAG & DROP ============ */
+
+        /* Back arrow (wood) */
+        .cp-stage-section .btn-exit-quiz,
+        .cp-review-section .btn-exit-quiz {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: #dba05f;
+            border: 2.5px solid #3B2A1A;
+            color: #3B2A1A;
+            font-size: 16px;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+            transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+        }
+
+        .cp-stage-section .btn-exit-quiz:hover,
+        .cp-review-section .btn-exit-quiz:hover {
+            background: #e8b073;
+            color: #3B2A1A;
+            border-color: #3B2A1A;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #a06b31, 0 8px 16px rgba(0, 0, 0, .25);
+        }
+
+        .cp-stage-section .btn-exit-quiz:active,
+        .cp-review-section .btn-exit-quiz:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #a06b31, 0 2px 4px rgba(0, 0, 0, .25);
+        }
+
+        /* Title → wooden plaque */
+        .cp-stage-section .cp-board-title {
+            max-width: none;
+            margin: 10px 0 22px;
+            padding: 14px 20px;
+            background: #dba05f;
+            border: 2.5px solid #3B2A1A;
+            border-radius: 14px;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+            color: #3B2A1A;
+            font-family: "Orbitron", sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+        }
+
+        /* Board → cream paper (same as the drag & drop box) */
+        .cp-stage-section .cp-board {
+            background: #f7f0dc;
+            border: none;
+            border-radius: 20px;
+            padding: 30px 28px;
+            box-shadow: 0 14px 34px rgba(0, 0, 0, .35), inset 0 0 0 1px rgba(59, 42, 26, .08);
+        }
+
+        /* Cards → wooden buttons (same as drag & drop cards) */
+        .cp-stage-section .cp-item {
+            min-height: 70px;
+            padding: 16px 18px;
+            background: #dba05f;
+            border: 2.5px solid #3B2A1A;
+            border-radius: 14px;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+            color: #3B2A1A;
+            font-size: 15.5px;
+            font-weight: 700;
+            transform: none;
+        }
+
+        .cp-stage-section .cp-item:hover {
+            box-shadow: 0 6px 0 #a06b31, 0 8px 16px rgba(0, 0, 0, .25);
+        }
+
+        .cp-stage-section .cp-item .cp-tape {
+            display: none;
+        }
+
+        /* Dots → cream circle with dashed border (like the card icon box) */
+        .cp-stage-section .cp-item .cp-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #f7f0dc;
+            border: 2.5px dashed #3B2A1A;
+            box-shadow: none;
+        }
+
+        .cp-stage-section .cp-item.cp-linked .cp-dot {
+            border-style: solid;
+        }
+
+        /* After "Ready" */
+        .cp-stage-section .cp-item.cp-confirmed {
+            outline: none;
+            color: #3B2A1A;
+            box-shadow: 0 0 0 3px rgba(138, 90, 51, .45), 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+        }
+
+        /* Edit / Ready / Finish → wooden game buttons */
+        .cp-stage-section .qz-nav-row {
+            margin-top: 26px;
+        }
+
+        .qz-overlay.open .cp-stage-section .qz-nav-row .btn-qnav-prev,
+        .cp-stage-section .qz-nav-row .btn-qnav-next {
+            padding: 11px 26px;
+            border-radius: 14px;
+            border: 2.5px solid #3B2A1A;
+            color: #3B2A1A;
+            font-family: "Orbitron", sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+        }
+
+        /* Edit + Ready = wood */
+        .qz-overlay.open .cp-stage-section .qz-nav-row .btn-qnav-prev,
+        .cp-stage-section .qz-nav-row .cp-ready-btn {
+            background: #dba05f;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+        }
+
+        .qz-overlay.open .cp-stage-section .qz-nav-row .btn-qnav-prev:hover,
+        .cp-stage-section .qz-nav-row .cp-ready-btn:hover {
+            background: #e8b073;
+            color: #3B2A1A;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #a06b31, 0 8px 16px rgba(0, 0, 0, .25);
+        }
+
+        /* Finish = green */
+        .cp-stage-section .qz-nav-row .cp-finish-btn {
+            background: #7be495;
+            box-shadow: 0 4px 0 #3f9e5a, 0 6px 12px rgba(0, 0, 0, .25);
+        }
+
+        .cp-stage-section .qz-nav-row .cp-finish-btn:hover {
+            background: #93f0aa;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #3f9e5a, 0 8px 16px rgba(0, 0, 0, .25);
+        }
+
+        /* Pressed */
+        .qz-overlay.open .cp-stage-section .qz-nav-row .btn-qnav-prev:active,
+        .cp-stage-section .qz-nav-row .btn-qnav-next:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, .35);
+        }
+
+        /* Disabled */
+        .cp-stage-section .qz-nav-row .btn-qnav-next:disabled {
+            background: #b9a58a;
+            border-color: #6b5a44;
+            color: #6b5a44;
+            opacity: .7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 2px 0 #8c7a62;
+        }
+
+        /* ============ ARRANGE THE STEPS — SAME LOOK AS DRAG & DROP ============ */
+
+        /* Back arrow (wood) */
+        .arr-stage-section .btn-exit-quiz,
+        .arr-review-section .btn-exit-quiz {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: #dba05f;
+            border: 2.5px solid #3B2A1A;
+            color: #3B2A1A;
+            font-size: 16px;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+            transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+        }
+
+        .arr-stage-section .btn-exit-quiz:hover,
+        .arr-review-section .btn-exit-quiz:hover {
+            background: #e8b073;
+            color: #3B2A1A;
+            border-color: #3B2A1A;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #a06b31, 0 8px 16px rgba(0, 0, 0, .25);
+        }
+
+        .arr-stage-section .btn-exit-quiz:active,
+        .arr-review-section .btn-exit-quiz:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #a06b31, 0 2px 4px rgba(0, 0, 0, .25);
+        }
+
+        /* Category header → wooden plaque */
+        .qz-overlay.open .arr-stage-section .arr-counter {
+            min-height: auto;
+            padding: 20px 24px;
+            /* margin-bottom: 22px; */
+            margin: 10px 0 22px;
+            flex-direction: column;
+            gap: 6px;
+            background: #dba05f;
+            border: 2.5px solid #3B2A1A;
+            border-radius: 14px;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+            color: #3B2A1A;
+        }
+
+        .arr-stage-section .arr-counter h5 {
+            position: static;
+            margin: 0;
+            color: #6b4423;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: .12em;
+        }
+
+        .arr-stage-section .arrange-category-text {
+            color: #3B2A1A;
+            font-family: "Orbitron", sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        /* Step list → cream paper (same as the drag & drop box) */
+        .arr-stage-section .arr-list {
+            background: #f7f0dc;
+            border-radius: 20px;
+            padding: 26px 24px 12px;
+            box-shadow: 0 14px 34px rgba(0, 0, 0, .35), inset 0 0 0 1px rgba(59, 42, 26, .08);
+        }
+
+        /* Step cards → wooden buttons */
+        .arr-stage-section .arr-item {
+            background: #dba05f;
+            border: 2.5px solid #3B2A1A;
+            border-radius: 14px;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+            margin-bottom: 16px;
+        }
+
+        .arr-stage-section .arr-row:hover .arr-item {
+            border-color: #3B2A1A;
+            box-shadow: 0 6px 0 #a06b31, 0 8px 16px rgba(0, 0, 0, .25);
+        }
+
+        .arr-stage-section .arr-item-text {
+            color: #3B2A1A;
+            font-weight: 700;
+        }
+
+        .arr-stage-section .arr-item-grip {
+            color: #3B2A1A;
+            opacity: .6;
+        }
+
+        /* Up / down arrows */
+        .arr-stage-section .arr-item-btn {
+            width: 28px;
+            height: 24px;
+            background: #f7f0dc;
+            border: 2px solid #3B2A1A;
+            color: #3B2A1A;
+        }
+
+        .arr-stage-section .arr-item-btn:hover {
+            background: #3B2A1A;
+            color: #f7f0dc;
+        }
+
+        .arr-stage-section .arr-item-btn:disabled {
+            opacity: .35;
+        }
+
+        .arr-stage-section .arr-item-btn:disabled:hover {
+            background: #f7f0dc;
+            color: #3B2A1A;
+        }
+
+        /* Number circles + timeline line */
+        .arr-stage-section .arr-circle-num {
+            background: #f7f0dc;
+            border: 2.5px solid #3B2A1A;
+            color: #3B2A1A;
+            font-weight: 800;
+        }
+
+        .arr-stage-section .arr-connector-line {
+            width: 3px;
+            height: calc(50% + 16px);
+            background: #8a6d4a;
+        }
+
+        /* Drop line while dragging */
+        .arr-stage-section .arr-row.arr-drop-target::before {
+            background: #6b4423;
+            box-shadow: none;
+        }
+
+        /* Little bounce after a drop (brown instead of cyan) */
+        .arr-stage-section .arr-row.arr-drop-pulse .arr-item {
+            animation: arrDropPulseWood .45s ease;
+        }
+
+        @keyframes arrDropPulseWood {
+            0% {
+                transform: scale(1.03);
+                box-shadow: 0 0 0 0 rgba(138, 90, 51, .6), 0 4px 0 #a06b31;
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 12px rgba(138, 90, 51, 0), 0 4px 0 #a06b31;
+            }
+        }
+
+        /* After "Ready" (locked) */
+        .arr-stage-section .arr-list.arr-locked .arr-item {
+            opacity: 1;
+            background: #e8b073;
+            border-color: #3B2A1A;
+            box-shadow: 0 0 0 3px rgba(138, 90, 51, .45), 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+        }
+
+        .arr-stage-section .arr-list.arr-locked .arr-item-text {
+            color: #3B2A1A;
+        }
+
+        .arr-stage-section .arr-list.arr-locked .arr-item-grip {
+            color: #3B2A1A;
+            opacity: .25;
+        }
+
+        .arr-stage-section .arr-list.arr-locked .arr-circle-num {
+            background: #7be495;
+            border-color: #3B2A1A;
+            color: #3B2A1A;
+            box-shadow: none;
+        }
+
+        .arr-stage-section .arr-list.arr-locked .arr-connector-line {
+            background: #3f9e5a;
+            box-shadow: none;
+        }
+
+        /* Edit / Ready / Finish → wooden game buttons */
+        .arr-stage-section .qz-nav-row {
+            margin-top: 26px;
+        }
+
+        .qz-overlay.open .arr-stage-section .qz-nav-row .btn-qnav-prev,
+        .arr-stage-section .qz-nav-row .btn-qnav-next {
+            padding: 11px 26px;
+            border-radius: 14px;
+            border: 2.5px solid #3B2A1A;
+            color: #3B2A1A;
+            font-family: "Orbitron", sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+        }
+
+        /* Edit + Ready = wood */
+        .qz-overlay.open .arr-stage-section .qz-nav-row .btn-qnav-prev,
+        .arr-stage-section .qz-nav-row .arr-ready-btn {
+            background: #dba05f;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+        }
+
+        .qz-overlay.open .arr-stage-section .qz-nav-row .btn-qnav-prev:hover,
+        .arr-stage-section .qz-nav-row .arr-ready-btn:hover {
+            background: #e8b073;
+            color: #3B2A1A;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #a06b31, 0 8px 16px rgba(0, 0, 0, .25);
+        }
+
+        /* Finish = green */
+        .arr-stage-section .qz-nav-row .arr-finish-btn {
+            background: #7be495;
+            box-shadow: 0 4px 0 #3f9e5a, 0 6px 12px rgba(0, 0, 0, .25);
+        }
+
+        .arr-stage-section .qz-nav-row .arr-finish-btn:hover {
+            background: #93f0aa;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #3f9e5a, 0 8px 16px rgba(0, 0, 0, .25);
+        }
+
+        /* Pressed */
+        .qz-overlay.open .arr-stage-section .qz-nav-row .btn-qnav-prev:active,
+        .arr-stage-section .qz-nav-row .btn-qnav-next:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, .35);
+        }
+
+        /* Disabled */
+        .arr-stage-section .qz-nav-row .btn-qnav-next:disabled {
+            background: #b9a58a;
+            border-color: #6b5a44;
+            color: #6b5a44;
+            opacity: .7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 2px 0 #8c7a62;
+        }
+
+        /* ============ ARRANGE THE STEPS — RESULTS PAGE (WOOD STYLE) ============ */
+
+        /* Title → wooden plaque */
+        .arr-stage-section .dd-results h2,
+        .arr-review-section .dd-results h2 {
+            margin: 10px 0 0;
+            padding: 16px 20px;
+            background: #dba05f;
+            border: 2.5px solid #3B2A1A;
+            border-radius: 14px;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+            color: #3B2A1A;
+            font-family: "Orbitron", sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+        }
+
+        /* Accuracy / Stats cards → cream paper */
+        .qz-overlay.open .arr-stage-section .qz-result-card,
+        .qz-overlay.open .arr-review-section .qz-result-card {
+            margin: 22px 0 16px;
+            background: #f7f0dc;
+            border: 2.5px solid #3B2A1A;
+            border-radius: 16px;
+            box-shadow: 0 4px 0 #a06b31, 0 10px 24px rgba(0, 0, 0, .3);
+        }
+
+        .qz-overlay.open .arr-stage-section .qz-result-label,
+        .qz-overlay.open .arr-review-section .qz-result-label {
+            color: #3B2A1A;
+            font-weight: 800;
+        }
+
+        .qz-overlay.open .arr-stage-section .qz-result-count,
+        .qz-overlay.open .arr-review-section .qz-result-count {
+            color: #6b4423;
+            font-weight: 700;
+        }
+
+        .arr-stage-section .qz-accuracy-track,
+        .arr-review-section .qz-accuracy-track {
+            height: 24px;
+            background: #e8d9b8;
+            border: 2px solid #3B2A1A;
+        }
+
+        .arr-stage-section .qz-accuracy-fill,
+        .arr-review-section .qz-accuracy-fill {
+            background: #7be495;
+        }
+
+        .qz-overlay.open .arr-stage-section .qz-accuracy-pct,
+        .qz-overlay.open .arr-review-section .qz-accuracy-pct {
+            background: #dba05f;
+            border: 2px solid #3B2A1A;
+            color: #3B2A1A;
+            font-weight: 800;
+        }
+
+        /* Correct / Incorrect pills */
+        .arr-stage-section .qz-stat-pill.pill-correct,
+        .arr-review-section .qz-stat-pill.pill-correct {
+            background: #7be495;
+            border: 2px solid #3B2A1A;
+            color: #1f4d2c;
+        }
+
+        .arr-stage-section .qz-stat-pill.pill-incorrect,
+        .arr-review-section .qz-stat-pill.pill-incorrect {
+            background: #ff9b8f;
+            border: 2px solid #3B2A1A;
+            color: #5a1111;
+        }
+
+        /* Step list → cream paper panel */
+        .arr-stage-section .dd-results .dd-review-list,
+        .arr-review-section .dd-results .dd-review-list {
+            margin-top: 18px;
+            padding: 24px 24px 12px;
+            background: #f7f0dc;
+            border-radius: 20px;
+            box-shadow: 0 14px 34px rgba(0, 0, 0, .35), inset 0 0 0 1px rgba(59, 42, 26, .08);
+        }
+
+        /* Step rows (base) */
+        .arr-stage-section .dd-review-list .arr-item,
+        .arr-review-section .dd-review-list .arr-item {
+            height: auto;
+            min-height: 64px;
+            margin-bottom: 12px;
+            background: #fffaf0;
+            border-width: 2.5px;
+            border-style: solid;
+            border-radius: 14px;
+            cursor: default;
+        }
+
+        /* ✓ Correct step */
+        .arr-stage-section .dd-review-list .arr-item[style*="neon-green"],
+        .arr-review-section .dd-review-list .arr-item[style*="neon-green"] {
+            background: #dcf7e3;
+            border-color: #3f9e5a !important;
+            box-shadow: 0 4px 0 #3f9e5a;
+        }
+
+        .arr-stage-section .dd-review-list .arr-item[style*="neon-green"]::after,
+        .arr-review-section .dd-review-list .arr-item[style*="neon-green"]::after {
+            content: "✓";
+            margin-left: auto;
+            color: #3f9e5a;
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .arr-stage-section .dd-review-list .arr-item-text[style*="neon-green"],
+        .arr-review-section .dd-review-list .arr-item-text[style*="neon-green"] {
+            color: #1f5c33 !important;
+            font-weight: 700;
+        }
+
+        /* ✗ Wrong step */
+        .arr-stage-section .dd-review-list .arr-item[style*="ff4d6d"],
+        .arr-review-section .dd-review-list .arr-item[style*="ff4d6d"] {
+            background: #ffe1dd;
+            border-color: #c0392b !important;
+            box-shadow: 0 4px 0 #c0392b;
+        }
+
+        .arr-stage-section .dd-review-list .arr-item[style*="ff4d6d"]::after,
+        .arr-review-section .dd-review-list .arr-item[style*="ff4d6d"]::after {
+            content: "✗";
+            margin-left: auto;
+            color: #c0392b;
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .arr-stage-section .dd-review-list .arr-item-text[style*="ff4d6d"],
+        .arr-review-section .dd-review-list .arr-item-text[style*="ff4d6d"] {
+            color: #8e1b12 !important;
+            font-weight: 700;
+        }
+
+        /* Number circles */
+        .arr-stage-section .dd-review-list .arr-circle-num,
+        .arr-review-section .dd-review-list .arr-circle-num {
+            border-width: 2.5px;
+            font-weight: 800;
+        }
+
+        .arr-stage-section .dd-review-list .arr-circle-num[style*="neon-green"],
+        .arr-review-section .dd-review-list .arr-circle-num[style*="neon-green"] {
+            background: #7be495;
+            border-color: #3B2A1A !important;
+            color: #1f4d2c !important;
+        }
+
+        .arr-stage-section .dd-review-list .arr-circle-num[style*="ff4d6d"],
+        .arr-review-section .dd-review-list .arr-circle-num[style*="ff4d6d"] {
+            background: #ff9b8f;
+            border-color: #3B2A1A !important;
+            color: #5a1111 !important;
+        }
+
+        /* Timeline line */
+        .arr-stage-section .dd-review-list .arr-connector-line,
+        .arr-review-section .dd-review-list .arr-connector-line {
+            width: 3px;
+            background: #8a6d4a;
+        }
+
+        /* "Belongs at position X, not Y." → small red tag */
+        .arr-stage-section .dd-review-list>div:not(.arr-row),
+        .arr-review-section .dd-review-list>div:not(.arr-row) {
+            display: inline-block;
+            margin: -2px 0 16px 48px !important;
+            padding: 5px 12px;
+            background: #ffe1dd;
+            border: 2px dashed #c0392b;
+            border-radius: 10px;
+            color: #8e1b12 !important;
+            font-size: 12.5px !important;
+            font-weight: 700 !important;
+        }
+
+        /* ---------- Back arrow (wood) ---------- */
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .btn-exit-quiz {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: #dba05f;
+            border: 2.5px solid #3B2A1A;
+            color: #3B2A1A;
+            font-size: 16px;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+            transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+        }
+
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .btn-exit-quiz:hover {
+            background: #e8b073;
+            color: #3B2A1A;
+            border-color: #3B2A1A;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #a06b31, 0 8px 16px rgba(0, 0, 0, .25);
+        }
+
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .btn-exit-quiz:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #a06b31, 0 2px 4px rgba(0, 0, 0, .25);
+        }
+
+        /* ---------- "Question 1 of 5" → wooden plaque ---------- */
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-counter {
+            margin: 10px 0 18px;
+            padding: 14px 20px;
+            background: #dba05f;
+            border: 2.5px solid #3B2A1A;
+            border-radius: 14px;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+            color: #3B2A1A;
+            font-family: "Orbitron", sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+        }
+
+        /* ---------- Progress bar ---------- */
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-progress-track {
+            height: 24px;
+            margin-bottom: 24px;
+            background: #e8d9b8;
+            border: 2.5px solid #3B2A1A;
+            border-radius: 99px;
+            box-shadow: inset 0 3px 6px rgba(0, 0, 0, .18);
+        }
+
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-progress-fill {
+            background: #7be495;
+            border-radius: 99px;
+            box-shadow: inset 0 -4px 0 rgba(0, 0, 0, .12);
+        }
+
+        /* ---------- Question card → cream paper ---------- */
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-card {
+            background: #f7f0dc;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 14px 34px rgba(0, 0, 0, .35), inset 0 0 0 1px rgba(59, 42, 26, .08);
+        }
+
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-card::before {
+            display: none;
+        }
+
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-question-text {
+            color: #3B2A1A;
+            font-weight: 800;
+        }
+
+        /* ---------- Choices → wooden buttons ---------- */
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-choices {
+            gap: 18px;
+        }
+
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-choice-btn {
+            background: #dba05f;
+            border: 2.5px solid #3B2A1A;
+            border-radius: 14px;
+            color: #3B2A1A;
+            font-weight: 700;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+            filter: none;
+            transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+        }
+
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-choice-btn:hover {
+            background: #e8b073;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #a06b31, 0 8px 16px rgba(0, 0, 0, .25);
+        }
+
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-choice-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #a06b31, 0 2px 4px rgba(0, 0, 0, .25);
+        }
+
+        /* Letter badge (same dashed box as the drag & drop card icon) */
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-choice-letter {
+            background: rgba(255, 255, 255, .18);
+            border: 2px dashed #3B2A1A;
+            color: #3B2A1A;
+            font-weight: 800;
+        }
+
+        /* Selected */
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-choice-btn.selected {
+            background: #e8b073;
+            color: #3B2A1A;
+            border-color: #3B2A1A;
+            box-shadow: 0 0 0 3px rgba(138, 90, 51, .45), 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+        }
+
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-choice-btn.selected .qz-choice-letter {
+            background: #3B2A1A;
+            border: 2px solid #3B2A1A;
+            color: #f7f0dc;
+        }
+
+        /* Correct */
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-choice-btn.qz-correct {
+            background: #7be495;
+            border: 2.5px solid #3B2A1A;
+            color: #1f4d2c;
+            box-shadow: 0 4px 0 #3f9e5a, 0 6px 12px rgba(0, 0, 0, .25);
+        }
+
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-choice-btn.qz-correct .qz-choice-letter {
+            background: rgba(255, 255, 255, .45);
+            border: 2px solid #3B2A1A;
+            color: #1f4d2c;
+        }
+
+        /* Wrong */
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-choice-btn.qz-wrong {
+            background: #ff9b8f;
+            border: 2.5px solid #3B2A1A;
+            color: #5a1111;
+            box-shadow: 0 4px 0 #c0392b, 0 6px 12px rgba(0, 0, 0, .25);
+        }
+
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-choice-btn.qz-wrong .qz-choice-letter {
+            background: rgba(255, 255, 255, .45);
+            border: 2px solid #3B2A1A;
+            color: #5a1111;
+        }
+
+        /* ✓ / ✗ icons */
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .qz-choice-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 3;
+        }
+
+        /* Review: dim the choices that were neither correct nor picked */
+        .qz-overlay #section-quizzes .qz-review-choice:not(.qz-correct):not(.qz-wrong) {
+            opacity: .6;
+            box-shadow: 0 2px 0 #a06b31;
+        }
+
+        /* ---------- Prev / Next / Back buttons → wooden game buttons ---------- */
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .btn-qnav-prev,
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .btn-qnav-next {
+            padding: 11px 26px;
+            background: #dba05f;
+            border: 2.5px solid #3B2A1A;
+            border-radius: 14px;
+            color: #3B2A1A;
+            font-family: "Orbitron", sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+            transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+        }
+
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .btn-qnav-prev:hover,
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .btn-qnav-next:hover {
+            background: #e8b073;
+            color: #3B2A1A;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #a06b31, 0 8px 16px rgba(0, 0, 0, .25);
+        }
+
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .btn-qnav-prev:active,
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .btn-qnav-next:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 rgba(0, 0, 0, .35);
+        }
+
+        /* Optional: add class "is-finish" to the Next button on the last question for a green Finish */
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .btn-qnav-next.is-finish {
+            background: #7be495;
+            box-shadow: 0 4px 0 #3f9e5a, 0 6px 12px rgba(0, 0, 0, .25);
+        }
+
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .btn-qnav-next.is-finish:hover {
+            background: #93f0aa;
+            box-shadow: 0 6px 0 #3f9e5a, 0 8px 16px rgba(0, 0, 0, .25);
+        }
+
+        /* Disabled (Next before an answer is picked) */
+        .qz-overlay :is(#section-quizzes, #section-activity-stage) .btn-qnav-next:disabled {
+            background: #b9a58a;
+            border-color: #6b5a44;
+            color: #6b5a44;
+            opacity: .7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 2px 0 #8c7a62;
+        }
+
+        /* ---------- RESULTS PAGE (quiz results + review results) ---------- */
+        .qz-overlay #section-quizzes .qz-results {
+            margin: 10px 0 0;
+        }
+
+        /* Title → wooden plaque */
+        .qz-overlay #section-quizzes .qz-results h2 {
+            margin: 10px 0 0;
+            padding: 16px 20px;
+            background: #dba05f;
+            border: 2.5px solid #3B2A1A;
+            border-radius: 14px;
+            box-shadow: 0 4px 0 #a06b31, 0 6px 12px rgba(0, 0, 0, .25);
+            color: #3B2A1A;
+            font-family: "Orbitron", sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: .04em;
+            text-transform: uppercase;
+        }
+
+        /* Accuracy / stats cards → cream paper */
+        .qz-overlay #section-quizzes .qz-result-card {
+            margin: 22px 0 16px;
+            background: #f7f0dc;
+            border: 2.5px solid #3B2A1A;
+            border-radius: 16px;
+            box-shadow: 0 4px 0 #a06b31, 0 10px 24px rgba(0, 0, 0, .3);
+        }
+
+        .qz-overlay #section-quizzes .qz-result-label {
+            color: #3B2A1A;
+            font-weight: 800;
+        }
+
+        .qz-overlay #section-quizzes .qz-result-count {
+            color: #6b4423;
+            font-weight: 700;
+        }
+
+        .qz-overlay #section-quizzes .qz-accuracy-track {
+            height: 24px;
+            background: #e8d9b8;
+            border: 2px solid #3B2A1A;
+        }
+
+        .qz-overlay #section-quizzes .qz-accuracy-fill {
+            background: #7be495;
+        }
+
+        .qz-overlay #section-quizzes .qz-accuracy-pct {
+            background: #dba05f;
+            border: 2px solid #3B2A1A;
+            color: #3B2A1A;
+            font-weight: 800;
+        }
+
+        /* Correct / Incorrect pills */
+        .qz-overlay #section-quizzes .qz-stat-pill.pill-correct {
+            background: #7be495;
+            border: 2px solid #3B2A1A;
+            color: #1f4d2c;
+        }
+
+        .qz-overlay #section-quizzes .qz-stat-pill.pill-incorrect {
+            background: #ff9b8f;
+            border: 2px solid #3B2A1A;
+            color: #5a1111;
+        }
+
+        /* ---------- Activity written answer (textarea) → cream paper ---------- */
+        .qz-overlay #section-activity-stage .qz-activity-textarea {
+            background: #f7f0dc;
+            border: 2.5px solid #3B2A1A;
+            border-radius: 14px;
+            color: #3B2A1A;
+            font-weight: 600;
+            box-shadow: inset 0 3px 8px rgba(0, 0, 0, .12), 0 4px 0 #a06b31;
+        }
+
+        .qz-overlay #section-activity-stage .qz-activity-textarea::placeholder {
+            color: #8a6d4a;
+            font-style: italic;
+        }
+
+        .qz-overlay #section-activity-stage .qz-activity-textarea:focus {
+            border-color: #3B2A1A;
+            box-shadow: 0 0 0 3px rgba(138, 90, 51, .45), inset 0 3px 8px rgba(0, 0, 0, .12), 0 4px 0 #a06b31;
         }
     </style>
 </head>
@@ -5465,7 +6832,8 @@ function ddIconForLabel($label)
                                         </div>
 
                                         <div class="ls-section cp-review-section"
-                                            data-game-title="<?= htmlspecialchars($cpTitle) ?>" id="cp-review" style="display:none;">
+                                            data-game-title="<?= htmlspecialchars($cpTitle) ?>" id="cp-review"
+                                            style="display:none;">
                                             <button type="button" class="btn-exit-quiz"
                                                 onclick="closeConnectPairsReviewStage('<?= htmlspecialchars(addslashes($cpTitle), ENT_QUOTES) ?>')">
                                                 <i class="fa fa-arrow-left"></i>
@@ -5587,48 +6955,33 @@ function ddIconForLabel($label)
                                                 </button>
                                             </div>
 
-                                            <div class="qz-counter cp-counter">0 of
-                                                <?= count($cpInfo['pairs']) ?> matched
-                                            </div>
-                                            <div class="qz-progress-track">
-                                                <div class="qz-progress-fill cp-progress-fill" style="width:0%"></div>
-                                            </div>
-
-                                            <div class="dd-question-card">
-                                                <div class="dd-question-text">Tap an item on the left, then tap its matching item on
-                                                    the right.</div>
-                                            </div>
+                                            <div class="cp-board-title">Drag a pin to the pin on its matching note!</div>
 
                                             <div class="cp-board" data-game-title="<?= htmlspecialchars($cpTitle) ?>"
                                                 data-pairs='<?= htmlspecialchars(json_encode($cpPairsForJs), ENT_QUOTES) ?>'
                                                 data-right-shuffled='<?= htmlspecialchars(json_encode($cpRightShuffled), ENT_QUOTES) ?>'>
 
                                                 <div class="cp-columns">
-                                                    <div class="cp-column" data-role="left">
-                                                        <h5><?= htmlspecialchars($cpInfo['game']['left_label']) ?></h5>
-                                                    </div>
+                                                    <div class="cp-column" data-role="left"></div>
                                                     <svg class="cp-lines-svg"></svg>
-                                                    <div class="cp-column" data-role="right">
-                                                        <h5><?= htmlspecialchars($cpInfo['game']['right_label']) ?></h5>
-                                                    </div>
+                                                    <div class="cp-column" data-role="right"></div>
                                                 </div>
+                                            </div>
 
-                                                <div class="qz-nav-row">
-                                                    <button type="button" class="btn-qnav-prev cp-edit-btn"
-                                                        style="visibility:hidden;"
-                                                        onclick="cpEdit('<?= htmlspecialchars(addslashes($cpTitle), ENT_QUOTES) ?>')">
-                                                        <i class="fa fa-pen"></i> Edit
-                                                    </button>
-                                                    <button type="button" class="btn-qnav-next cp-ready-btn" disabled
-                                                        style="display:none;"
-                                                        onclick="cpReady('<?= htmlspecialchars(addslashes($cpTitle), ENT_QUOTES) ?>')">
-                                                        Ready <i class="fa fa-check"></i>
-                                                    </button>
-                                                    <button type="button" class="btn-qnav-next cp-finish-btn" style="display:none;"
-                                                        onclick="cpSubmit('<?= htmlspecialchars(addslashes($cpTitle), ENT_QUOTES) ?>')">
-                                                        Finish <i class="fa fa-check"></i>
-                                                    </button>
-                                                </div>
+                                            <div class="qz-nav-row">
+                                                <button type="button" class="btn-qnav-prev cp-edit-btn" style="visibility:hidden;"
+                                                    onclick="cpEdit('<?= htmlspecialchars(addslashes($cpTitle), ENT_QUOTES) ?>')">
+                                                    <i class="fa fa-pen"></i> Edit
+                                                </button>
+                                                <button type="button" class="btn-qnav-next cp-ready-btn" disabled
+                                                    style="display:none;"
+                                                    onclick="cpReady('<?= htmlspecialchars(addslashes($cpTitle), ENT_QUOTES) ?>')">
+                                                    Ready <i class="fa fa-check"></i>
+                                                </button>
+                                                <button type="button" class="btn-qnav-next cp-finish-btn" style="display:none;"
+                                                    onclick="cpSubmit('<?= htmlspecialchars(addslashes($cpTitle), ENT_QUOTES) ?>')">
+                                                    Finish <i class="fa fa-check"></i>
+                                                </button>
                                             </div>
 
                                             <div class="dd-results" style="display:none;">
@@ -5830,38 +7183,16 @@ function ddIconForLabel($label)
                                             </button>
                                         </div>
 
-                                        <div class="qz-counter dd-counter">0 of
-                                            <?= count($ddInfo['items']) ?> placed
-                                        </div>
-                                        <div class="qz-progress-track">
-                                            <div class="qz-progress-fill dd-progress-fill" style="width:0%"></div>
-                                        </div>
-
-                                        <div class="dd-question-card">
-                                            <div class="dd-question-text">Drag each card into the category it belongs to — or tap a
-                                                card, then tap its category.</div>
-                                        </div>
-
                                         <div class="dd-board" data-game-title="<?= htmlspecialchars($ddTitle) ?>"
                                             data-items='<?= htmlspecialchars(json_encode($ddShuffledItems), ENT_QUOTES) ?>'
                                             data-category-hints='<?= htmlspecialchars(json_encode($ddCategoryHints), ENT_QUOTES) ?>'>
 
+                                            <!-- <div class="cp-board-title">Drag each note into the box it belongs to!</div> -->
+
                                             <div class="dd-puzzle-board">
-                                                <div class="dd-target-row">
-                                                    <h5>Categories - Drop here</h5>
-                                                    <?php foreach ($ddInfo['categories'] as $cat): ?>
-                                                        <div class="dd-target-card">
 
-                                                            <div class="dd-socket" data-category="<?= htmlspecialchars($cat) ?>">
-                                                                <div class="dd-target-label"><?= htmlspecialchars($cat) ?></div>
-                                                                <div class="dd-socket-slot" data-placeholder="Drop here"></div>
-                                                            </div>
-                                                        </div>
-                                                    <?php endforeach; ?>
-                                                </div>
-
+                                                <!-- TOP: the 3 cards for the current page -->
                                                 <div class="dd-item-row" data-role="bank">
-                                                    <h5>Items - Drag from here</h5>
                                                     <?php foreach ($ddShuffledItems as $item): ?>
                                                         <div class="dd-card" draggable="true"
                                                             data-item="<?= htmlspecialchars($item['label']) ?>">
@@ -5882,12 +7213,39 @@ function ddIconForLabel($label)
                                                         </div>
                                                     <?php endforeach; ?>
                                                 </div>
+
+                                                <!-- BOTTOM: the big box with the drop slots -->
+                                                <div class="dd-drop-box">
+                                                    <div class="dd-target-row">
+                                                        <?php foreach ($ddInfo['categories'] as $cat): ?>
+                                                            <div class="dd-target-card">
+                                                                <div class="dd-socket" data-category="<?= htmlspecialchars($cat) ?>">
+                                                                    <div class="dd-target-label"><?= htmlspecialchars($cat) ?></div>
+                                                                    <div class="dd-socket-slot" data-placeholder="Drop here"></div>
+                                                                </div>
+                                                            </div>
+                                                        <?php endforeach; ?>
+                                                    </div>
+                                                </div>
                                             </div>
 
-                                            <div class="qz-nav-row">
-                                                <div></div>
-                                                <button class="btn-qnav-next dd-finish-btn" disabled style="display:none;"
-                                                    onclick="ddSubmit('<?= htmlspecialchars(addslashes($ddTitle), ENT_QUOTES) ?>')">
+                                            <?php $ddJsTitle = htmlspecialchars(addslashes($ddTitle), ENT_QUOTES); ?>
+                                            <div class="qz-nav-row dd-nav-row">
+                                                <button type="button" class="btn-qnav-prev dd-prev-btn" style="visibility:hidden;"
+                                                    onclick="ddPageNav('<?= $ddJsTitle ?>', -1)">
+                                                    <i class="fa fa-chevron-left"></i> Prev
+                                                </button>
+
+                                                <span class="dd-page-indicator">Page 1 of
+                                                    <?= max(1, (int) ceil(count($ddInfo['items']) / 3)) ?></span>
+
+                                                <button type="button" class="btn-qnav-next dd-next-btn is-locked"
+                                                    onclick="ddPageNav('<?= $ddJsTitle ?>', 1)">
+                                                    Next <i class="fa fa-chevron-right"></i>
+                                                </button>
+
+                                                <button type="button" class="btn-qnav-next dd-finish-btn" disabled
+                                                    style="display:none;" onclick="ddSubmit('<?= $ddJsTitle ?>')">
                                                     Finish <i class="fa fa-check"></i>
                                                 </button>
                                             </div>
@@ -5907,19 +7265,13 @@ function ddIconForLabel($label)
                                             <div class="qz-result-card">
                                                 <div class="qz-result-row">
                                                     <div class="qz-result-label">Performance Stats</div>
-                                                    <span class="qz-result-count">
-                                                        0 questions
-                                                    </span>
+                                                    <span class="qz-result-count">0 items</span>
                                                 </div>
                                                 <div class="qz-stat-pills">
-                                                    <span class="qz-stat-pill pill-correct">
-                                                        <i class="fa fa-check"></i>
-                                                        0 Correct
-                                                    </span>
-                                                    <span class="qz-stat-pill pill-incorrect">
-                                                        <i class="fa fa-times"></i>
-                                                        0 Incorrect
-                                                    </span>
+                                                    <span class="qz-stat-pill pill-correct"><i class="fa fa-check"></i> 0
+                                                        Correct</span>
+                                                    <span class="qz-stat-pill pill-incorrect"><i class="fa fa-times"></i> 0
+                                                        Incorrect</span>
                                                 </div>
                                             </div>
                                             <div class="dd-review-list"></div>

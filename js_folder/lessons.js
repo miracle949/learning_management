@@ -58,23 +58,194 @@ function ddCategoryDescriptions(cat, hint) {
     return 'Sort the cards that belong under "' + cat + '".';
 }
 
+var DD_PER_PAGE = 3;
+
+var DD_NOTE_COLORS = ['#fff6e5', '#ffe8c2', '#e3f2e8', '#efe3f5', '#e6f0ff'];
+
 function ddInitState(gameTitle, itemsFromDom, categoryHints) {
     if (!DD_STAGE[gameTitle]) {
+        var items = itemsFromDom || [];
         var categoryCounts = {};
-        (itemsFromDom || []).forEach(function (it) {
+        items.forEach(function (it) {
             categoryCounts[it.category] = (categoryCounts[it.category] || 0) + 1;
         });
         DD_STAGE[gameTitle] = {
-            items: itemsFromDom || [],
+            items: items,
             categoryCounts: categoryCounts,
-            categoryHints: categoryHints || {},   // NEW — admin-authored per-category hint text
+            categoryHints: categoryHints || {},
             solvedCounts: {},
             answers: {},
             currentCategory: null,
-            selectedItemEl: null
+            selectedItemEl: null,
+            page: 0,
+            totalPages: Math.max(1, Math.ceil(items.length / DD_PER_PAGE))
         };
     }
     return DD_STAGE[gameTitle];
+}
+
+// Items that belong to a given page (same order as the shuffled bank)
+function ddPageItems(state, page) {
+    return state.items.slice(page * DD_PER_PAGE, page * DD_PER_PAGE + DD_PER_PAGE);
+}
+
+function ddPageComplete(state, page) {
+    return ddPageItems(state, page).every(function (it) {
+        return !!state.answers[it.label];
+    });
+}
+
+// Tags every card with the page it belongs to (done once)
+// Tags every card with its page, note color and a slight tilt (done once)
+function ddAssignPages(section, state) {
+    section.querySelectorAll('.dd-card').forEach(function (card) {
+        if (card.dataset.page !== undefined) return;
+
+        var idx = -1;
+        state.items.some(function (it, i) {
+            if (it.label === card.dataset.item) { idx = i; return true; }
+            return false;
+        });
+        idx = Math.max(idx, 0);
+
+        card.dataset.page = Math.floor(idx / DD_PER_PAGE);
+        card.style.setProperty('--note-bg', DD_NOTE_COLORS[idx % DD_NOTE_COLORS.length]);
+        card.style.setProperty('--note-tilt', (Math.random() * 2 - 1).toFixed(2) + 'deg');
+    });
+}
+
+// Recomputes "has-items" / "Drop here" per category based on VISIBLE cards only
+function ddRefreshZones(section) {
+    section.querySelectorAll('.dd-target-card').forEach(function (card) {
+        var slot = card.querySelector('.dd-socket-slot');
+        if (!slot) return;
+        var visible = Array.prototype.filter.call(
+            slot.querySelectorAll('.dd-card'),
+            function (c) { return c.style.display !== 'none'; }
+        ).length;
+        card.classList.toggle('has-items', visible > 0);
+        slot.classList.toggle('is-empty', visible === 0);
+    });
+}
+
+// Shows only the current page's cards (in the bank AND in the categories)
+function ddRenderPage(gameTitle) {
+    var state = DD_STAGE[gameTitle];
+    var section = ddFindSection(gameTitle);
+    if (!state || !section) return;
+
+    section.querySelectorAll('.dd-card, .dd-card-placeholder').forEach(function (el) {
+        var onPage = parseInt(el.dataset.page, 10) === state.page;
+        el.style.display = onPage ? '' : 'none';
+    });
+
+    if (state.selectedItemEl && parseInt(state.selectedItemEl.dataset.page, 10) !== state.page) {
+        state.selectedItemEl.classList.remove('selected');
+        state.selectedItemEl = null;
+    }
+
+    ddRefreshZones(section);
+}
+
+var DD_CATS_PER_PAGE = 3;
+
+function ddShuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+}
+
+// The 3 categories for a page: the correct categories of that page's
+// cards, topped up with random other categories, then shuffled.
+// Saved per page so Prev/Next shows the same boxes again.
+function ddGetPageCategories(section, state, page) {
+    state.pageCategories = state.pageCategories || {};
+    if (state.pageCategories[page]) return state.pageCategories[page];
+
+    if (!state.allCategories) {
+        state.allCategories = Array.prototype.map.call(
+            section.querySelectorAll('.dd-target-card .dd-socket'),
+            function (s) { return s.dataset.category; }
+        );
+    }
+
+    var cats = [];
+    ddPageItems(state, page).forEach(function (it) {
+        if (cats.indexOf(it.category) === -1) cats.push(it.category);
+    });
+
+    var others = ddShuffle(state.allCategories.filter(function (c) {
+        return cats.indexOf(c) === -1;
+    }));
+    while (cats.length < DD_CATS_PER_PAGE && others.length) {
+        cats.push(others.shift());
+    }
+
+    state.pageCategories[page] = ddShuffle(cats);
+    return state.pageCategories[page];
+}
+
+// Hides every category box, then shows ONLY this page's 3 (in shuffled order)
+function ddShowPageCategories(gameTitle) {
+    var state = DD_STAGE[gameTitle];
+    var section = ddFindSection(gameTitle);
+    if (!state || !section) return;
+
+    var row = section.querySelector('.dd-target-row');
+    if (!row) return;
+
+    var cards = Array.prototype.slice.call(row.querySelectorAll('.dd-target-card'));
+    var pageCats = ddGetPageCategories(section, state, state.page);
+
+    cards.forEach(function (c) { c.style.setProperty('display', 'none', 'important'); });
+
+    pageCats.forEach(function (cat) {
+        var card = cards.filter(function (c) {
+            return c.querySelector('.dd-socket').dataset.category === cat;
+        })[0];
+        if (card) {
+            card.style.removeProperty('display');
+            row.appendChild(card);
+        }
+    });
+
+    ddRefreshZones(section);
+}
+
+function ddPageNav(gameTitle, dir) {
+    var state = DD_STAGE[gameTitle];
+    var section = ddFindSection(gameTitle);
+    if (!state || !section) return;
+
+    var newPage = state.page + dir;
+    if (newPage < 0 || newPage >= state.totalPages) return;
+
+    if (dir > 0 && !ddPageComplete(state, state.page)) {
+        var left = ddPageItems(state, state.page).filter(function (it) {
+            return !state.answers[it.label];
+        }).length;
+
+        ddSetBubble(gameTitle, 'Place the ' + left + ' remaining card' + (left === 1 ? '' : 's') +
+            ' on this page into their categories before going to the next page!');
+
+        section.querySelectorAll('.dd-item-row[data-role="bank"] .dd-card').forEach(function (card) {
+            if (card.style.display === 'none') return;
+            card.classList.remove('shake-wrong');
+            void card.offsetWidth;
+            card.classList.add('shake-wrong');
+            setTimeout(function () { card.classList.remove('shake-wrong'); }, 450);
+        });
+        return;
+    }
+
+    state.page = newPage;
+    ddRenderPage(gameTitle);
+    ddShowPageCategories(gameTitle);   // only 3 boxes
+    ddUpdateBoardNav(gameTitle);
+    ddPickNextCategoryHint(gameTitle);
 }
 
 // function ddSetBubble(gameTitle, text) {
@@ -105,18 +276,115 @@ function ddPickNextCategoryHint(gameTitle) {
         return;
     }
 
-    var categories = Object.keys(state.categoryCounts);
+    if (state.totalPages > 1 && state.page < state.totalPages - 1 && ddPageComplete(state, state.page)) {
+        ddSetBubble(gameTitle, 'Nice! Every card on this page is placed. Tap "Next" to go to page ' +
+            (state.page + 2) + ' of ' + state.totalPages + '.');
+        state.currentCategory = null;
+        return;
+    }
 
-    // Exclude whichever category is currently shown so the bubble always
-    // shuffles to something new — otherwise Math.random() can (and often
-    // does) land back on the same category, making it look like nothing
-    // changed when a card is dropped in or dragged back out to the bank.
+    var categories = (state.pageCategories && state.pageCategories[state.page])
+        ? state.pageCategories[state.page]
+        : Object.keys(state.categoryCounts);
     var candidates = categories.filter(function (c) { return c !== state.currentCategory; });
-    if (!candidates.length) candidates = categories; // only one category total — nothing else to pick
+    if (!candidates.length) candidates = categories;
 
     var next = candidates[Math.floor(Math.random() * candidates.length)];
     state.currentCategory = next;
     ddSetBubble(gameTitle, ddCategoryDescriptions(next, state.categoryHints[next]));
+}
+
+/* ===== Pointer-based drag & drop (replaces native HTML5 drag) ===== */
+var _ddPtr = null;            // active drag info
+var _ddSuppressClick = false; // swallow the click that follows a drag
+var _ddDocBound = false;
+
+function ddMakeGhost(card, rect) {
+    var g = card.cloneNode(true);
+    g.classList.remove('dragging', 'selected', 'placed');
+    g.removeAttribute('draggable');
+    var rm = g.querySelector('.dd-card-remove');
+    if (rm) rm.remove();
+    g.style.cssText =
+        'position:fixed;left:' + rect.left + 'px;top:' + rect.top + 'px;' +
+        'width:' + rect.width + 'px;height:' + rect.height + 'px;max-width:none;margin:0;' +
+        'z-index:100000;pointer-events:none;opacity:1;transition:none;' +
+        'transform:rotate(2deg) scale(1.04);cursor:grabbing;' +
+        'box-shadow:0 8px 0 #a06b31, 0 18px 30px rgba(0,0,0,.45);';
+    document.body.appendChild(g);
+    return g;
+}
+
+function ddZoneFromPoint(x, y, section) {
+    var el = document.elementFromPoint(x, y);
+    if (!el) return null;
+    var zone = el.closest('.dd-target-card');
+    return (zone && section.contains(zone)) ? zone : null;
+}
+
+function ddClearHover(section) {
+    section.querySelectorAll('.dd-target-card.drag-over').forEach(function (c) {
+        c.classList.remove('drag-over');
+    });
+}
+
+function ddBindDocPointer() {
+    if (_ddDocBound) return;
+    _ddDocBound = true;
+
+    document.addEventListener('pointermove', function (e) {
+        var p = _ddPtr;
+        if (!p) return;
+
+        if (!p.moved) {
+            if (Math.abs(e.clientX - p.startX) < 5 && Math.abs(e.clientY - p.startY) < 5) return;
+            p.moved = true;
+            p.ghost = ddMakeGhost(p.card, p.rect);
+            p.card.classList.add('dragging');
+            document.body.style.userSelect = 'none';
+        }
+
+        e.preventDefault();
+        p.ghost.style.left = (e.clientX - p.offX) + 'px';
+        p.ghost.style.top = (e.clientY - p.offY) + 'px';
+
+        var zone = ddZoneFromPoint(e.clientX, e.clientY, p.section);
+        if (zone !== p.zone) {
+            if (p.zone) p.zone.classList.remove('drag-over');
+            if (zone) zone.classList.add('drag-over');
+            p.zone = zone;
+        }
+    }, { passive: false });
+
+    function finish(e, cancelled) {
+        var p = _ddPtr;
+        if (!p) return;
+        _ddPtr = null;
+        if (!p.moved) return;                       // it was just a click
+
+        document.body.style.userSelect = '';
+        _ddSuppressClick = true;
+        setTimeout(function () { _ddSuppressClick = false; }, 0);
+
+        var zone = cancelled ? null : ddZoneFromPoint(e.clientX, e.clientY, p.section);
+        var el = cancelled ? null : document.elementFromPoint(e.clientX, e.clientY);
+        var overBank = !!(el && el.closest('.dd-item-row[data-role="bank"]'));
+
+        if (p.ghost) p.ghost.remove();
+        p.card.classList.remove('dragging');
+        ddClearHover(p.section);
+
+        _ddDraggedEl = p.card;
+        if (zone) {
+            ddDropInto(p.gameTitle, zone.querySelector('.dd-socket'));
+        } else if (overBank && p.card.classList.contains('placed')) {
+            ddReturnToBank(p.gameTitle, p.card);
+        }
+        _ddDraggedEl = null;
+    }
+
+    document.addEventListener('pointerup', function (e) { finish(e, false); });
+    document.addEventListener('pointercancel', function (e) { finish(e, true); });
 }
 
 function ddWireBoard(section) {
@@ -125,94 +393,55 @@ function ddWireBoard(section) {
 
     var gameTitle = section.dataset.gameTitle;
     var board = section.querySelector('.dd-puzzle-board');
-    var bank = section.querySelector('.dd-item-row[data-role="bank"]');
 
-    // Delegate dragstart/dragend so it also works for cards moved
-    // between zones later (event delegation avoids re-binding).
-    board.addEventListener('dragstart', function (e) {
-        var item = e.target.closest('.dd-card');
-        if (!item) return;
-        _ddDraggedEl = item;
-        item.classList.add('dragging');
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', item.dataset.item);
+    ddBindDocPointer();
+
+    // Turn off native drag completely; we handle it with pointer events
+    section.querySelectorAll('.dd-card').forEach(function (c) {
+        c.setAttribute('draggable', 'false');
+        c.style.touchAction = 'none';
     });
-    board.addEventListener('dragend', function (e) {
-        var item = e.target.closest('.dd-card');
-        if (!item) return;
-        item.classList.remove('dragging');
-        _ddDraggedEl = null;
+    board.addEventListener('dragstart', function (e) { e.preventDefault(); });
 
-        section.querySelectorAll('.dd-target-card.drag-over').forEach(function (c) {
-            c.classList.remove('drag-over');
-        });
+    board.addEventListener('pointerdown', function (e) {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        if (e.target.closest('.dd-card-remove')) return;
+        var card = e.target.closest('.dd-card');
+        if (!card) return;
 
-        // NEW — clear any leftover ghost placeholder
-        section.querySelectorAll('.dd-ghost').forEach(function (g) { g.remove(); });
-    });
-
-    board.querySelectorAll('.dd-target-card').forEach(function (card) {
-        card.addEventListener('dragover', function (e) {
-            e.preventDefault();
-            card.classList.add('drag-over');
-
-            var slot = card.querySelector('.dd-socket-slot');
-            if (slot && !slot.querySelector('.dd-ghost')) {
-                var ghost = document.createElement('div');
-                ghost.className = 'dd-ghost';
-                slot.appendChild(ghost);
-            }
-        });
-
-        card.addEventListener('dragleave', function () {
-            card.classList.remove('drag-over');
-            var ghost = card.querySelector('.dd-ghost');
-            if (ghost) ghost.remove();
-        });
-
-        card.addEventListener('drop', function (e) {
-            e.preventDefault();
-            card.classList.remove('drag-over');
-            var ghost = card.querySelector('.dd-ghost');
-            if (ghost) ghost.remove();
-            ddDropInto(gameTitle, card.querySelector('.dd-socket'));
-        });
+        var rect = card.getBoundingClientRect();
+        _ddPtr = {
+            card: card, section: section, gameTitle: gameTitle,
+            startX: e.clientX, startY: e.clientY,
+            offX: e.clientX - rect.left, offY: e.clientY - rect.top,
+            rect: rect, ghost: null, moved: false, zone: null
+        };
     });
 
-    // Dropping a placed card back onto the bank removes its answer.
-    if (bank) {
-        bank.addEventListener('dragover', function (e) {
-            e.preventDefault();
-        });
-        bank.addEventListener('drop', function (e) {
-            e.preventDefault();
-            if (_ddDraggedEl && _ddDraggedEl.classList.contains('placed')) {
-                ddReturnToBank(gameTitle, _ddDraggedEl);
-            }
-        });
-    }
-
+    // Ignore the click that the browser fires right after a real drag
     board.addEventListener('click', function (e) {
-        if (e.target.closest('.dd-card-remove')) return; // let the × button handle itself
+        if (_ddSuppressClick) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+    }, true);
+
+    // Tap-to-select / tap-to-place still works
+    board.addEventListener('click', function (e) {
+        if (e.target.closest('.dd-card-remove')) return;
 
         var clickedItem = e.target.closest('.dd-card');
         var clickedTarget = e.target.closest('.dd-target-card');
         var clickedBank = e.target.closest('.dd-item-row[data-role="bank"]');
 
-        // Tapping ANY card — placed or unplaced — selects/deselects it.
         if (clickedItem) {
             ddSelectItem(gameTitle, clickedItem);
             return;
         }
-
-        // Tapping a category places (or MOVES) the currently selected item there.
         if (clickedTarget) {
-            var socket = clickedTarget.querySelector('.dd-socket');
-            ddPlaceSelected(gameTitle, socket);
+            ddPlaceSelected(gameTitle, clickedTarget.querySelector('.dd-socket'));
             return;
         }
-
-        // Tapping empty space in the bank row removes a selected PLACED item.
         if (clickedBank) {
             ddReturnSelectedToBank(gameTitle);
         }
@@ -231,40 +460,27 @@ function ddDropInto(gameTitle, socket) {
     var item = _ddDraggedEl;
     var chosenCategory = socket.dataset.category;
 
-    // NEW — remember the item's PREVIOUS zone before we move it, so we
-    // can clear its "has-items" highlight if it's left empty behind.
-    var prevTargetCard = item.closest('.dd-target-card');
-
-    // If this card came from the bank, leave a placeholder behind
-    // in its exact spot so the bank layout doesn't reflow.
     var bank = section.querySelector('.dd-item-row[data-role="bank"]');
     if (bank && bank.contains(item)) {
         var placeholder = document.createElement('div');
         placeholder.className = 'dd-card-placeholder';
         placeholder.dataset.forItem = item.dataset.item;
+        placeholder.dataset.page = item.dataset.page;   // keeps it on the right page
         bank.insertBefore(placeholder, item);
     }
 
     slot.appendChild(item);
     item.classList.remove('dragging');
     item.classList.add('placed');
-    item.setAttribute('draggable', 'true');
+    item.setAttribute('draggable', 'false');
 
     ddAddRemoveBtn(item, gameTitle);
 
     state.answers[item.dataset.item] = chosenCategory;
-    targetCard.classList.add('has-items', 'dd-just-filled');
-    setTimeout(function () { targetCard.classList.remove('dd-just-filled'); }, 500);
 
-    // NEW — if the card moved from a different category zone (not the
-    // bank, and not the same zone it's now in), clear that old zone's
-    // highlight if it's now empty of cards.
-    if (prevTargetCard && prevTargetCard !== targetCard) {
-        var prevSlot = prevTargetCard.querySelector('.dd-socket-slot');
-        if (prevSlot && !prevSlot.children.length) {
-            prevTargetCard.classList.remove('has-items');
-        }
-    }
+    ddRefreshZones(section);
+    targetCard.classList.add('dd-just-filled');
+    setTimeout(function () { targetCard.classList.remove('dd-just-filled'); }, 500);
 
     ddSetFeedback(section, '"' + item.dataset.item + '" placed in "' + chosenCategory + '".');
     ddUpdateBoardNav(gameTitle);
@@ -367,10 +583,7 @@ function ddReturnToBank(gameTitle, item) {
         bank.appendChild(item);
     }
 
-    section.querySelectorAll('.dd-target-card').forEach(function (card) {
-        var slot = card.querySelector('.dd-socket-slot');
-        if (slot && !slot.children.length) card.classList.remove('has-items');
-    });
+    ddRefreshZones(section);
 
     var section2 = ddFindSection(gameTitle);
     ddSetFeedback(section2, '"' + item.dataset.item + '" moved back to the item bank.');
@@ -414,18 +627,32 @@ function ddUpdateBoardNav(gameTitle) {
     var counter = section.querySelector('.dd-counter');
     if (counter) counter.textContent = placed + ' of ' + total + ' placed';
 
-    // NEW — actually fill the bar
     var fill = section.querySelector('.dd-progress-fill');
-    if (fill) {
-        var pct = total > 0 ? Math.round((placed / total) * 100) : 0;
-        fill.style.width = pct + '%';
+    if (fill) fill.style.width = (total > 0 ? Math.round((placed / total) * 100) : 0) + '%';
+
+    var multiPage = state.totalPages > 1;
+    var isLastPage = state.page >= state.totalPages - 1;
+
+    var indicator = section.querySelector('.dd-page-indicator');
+    if (indicator) {
+        indicator.textContent = 'Page ' + (state.page + 1) + ' of ' + state.totalPages;
+        indicator.style.display = multiPage ? '' : 'none';
+    }
+
+    var prevBtn = section.querySelector('.dd-prev-btn');
+    if (prevBtn) prevBtn.style.visibility = (multiPage && state.page > 0) ? 'visible' : 'hidden';
+
+    var nextBtn = section.querySelector('.dd-next-btn');
+    if (nextBtn) {
+        nextBtn.style.display = (multiPage && !isLastPage) ? 'flex' : 'none';
+        nextBtn.classList.toggle('is-locked', !ddPageComplete(state, state.page));
     }
 
     var finishBtn = section.querySelector('.dd-finish-btn');
     if (finishBtn) {
-        var allPlaced = (placed >= total);
-        finishBtn.disabled = !allPlaced;
-        finishBtn.style.display = allPlaced ? 'flex' : 'none';
+        var canFinish = (placed >= total) && isLastPage;
+        finishBtn.disabled = !canFinish;
+        finishBtn.style.display = canFinish ? 'flex' : 'none';
     }
 }
 
@@ -460,9 +687,13 @@ function openDragDropStage(gameTitle) {
     try { items = JSON.parse(board.dataset.items || '[]'); } catch (e) { items = []; }
     try { categoryHints = JSON.parse(board.dataset.categoryHints || '{}'); } catch (e) { categoryHints = {}; }
 
-    ddInitState(gameTitle, items, categoryHints);
+    var ddState = ddInitState(gameTitle, items, categoryHints);
+    ddAssignPages(section, ddState);
     ddWireBoard(section);
+    ddRenderPage(gameTitle);
+    ddShowPageCategories(gameTitle);   // only 3 boxes
     ddUpdateBoardNav(gameTitle);
+    ddPickNextCategoryHint(gameTitle);
     ddPickNextCategoryHint(gameTitle);
     adjustBonBonPosition('#ddOverlay', 450);
 
@@ -1253,7 +1484,9 @@ function arrShowResults(gameTitle, correct, total) {
    CONNECT THE DOTS — drag a line from a left dot to a right dot
 ========================================================= */
 var CP_STAGE = {}; // gameTitle => { pairs, rightOrder, answers, colors, locked }
-var CP_COLORS = ['#33e6ff'];
+// var CP_COLORS = ['#d64541'];   
+var CP_COLORS = ['#6b4423'];
+var CP_NOTE_COLORS = ['#fff6e5', '#ffe8c2', '#e3f2e8', '#efe3f5', '#e6f0ff'];
 var _cpDrag = null; // { gameTitle, leftText, tempLine }
 
 function cpFindSection(gameTitle) {
@@ -1291,22 +1524,35 @@ function cpRenderBoard(gameTitle) {
     leftCol.querySelectorAll('.cp-item').forEach(function (el) { el.remove(); });
     rightCol.querySelectorAll('.cp-item').forEach(function (el) { el.remove(); });
 
-    state.pairs.forEach(function (p) {
-        var el = document.createElement('div');
-        el.className = 'cp-item';
-        el.dataset.text = p.left;
-        el.dataset.side = 'left';
-        el.innerHTML = '<span>' + escHtml(p.left) + '</span><span class="cp-dot"></span>';
-        leftCol.appendChild(el);
-    });
+    // Keep each note's tilt the same every time the board is re-rendered
+    state.tilts = state.tilts || {};
+    function tiltFor(key) {
+        if (state.tilts[key] === undefined) {
+            state.tilts[key] = (Math.random() * 1.6 - 0.8).toFixed(2) + 'deg';
+        }
+        return state.tilts[key];
+    }
 
-    state.rightOrder.forEach(function (text) {
+    function makeNote(text, side, idx) {
         var el = document.createElement('div');
         el.className = 'cp-item';
         el.dataset.text = text;
-        el.dataset.side = 'right';
-        el.innerHTML = '<span class="cp-dot"></span><span>' + escHtml(text) + '</span>';
-        rightCol.appendChild(el);
+        el.dataset.side = side;
+        el.style.setProperty('--note-bg', CP_NOTE_COLORS[idx % CP_NOTE_COLORS.length]);
+        el.style.setProperty('--note-tilt', tiltFor(side + ':' + text));
+
+        el.innerHTML = side === 'left'
+            ? '<span class="cp-tape"></span><span class="cp-text">' + escHtml(text) + '</span><span class="cp-dot"></span>'
+            : '<span class="cp-tape"></span><span class="cp-dot"></span><span class="cp-text">' + escHtml(text) + '</span>';
+        return el;
+    }
+
+    state.pairs.forEach(function (p, i) {
+        leftCol.appendChild(makeNote(p.left, 'left', i));
+    });
+
+    state.rightOrder.forEach(function (text, i) {
+        rightCol.appendChild(makeNote(text, 'right', i));
     });
 }
 
@@ -1347,7 +1593,7 @@ function cpRedrawLines(gameTitle) {
         line.setAttribute('x2', p2.x);
         line.setAttribute('y2', p2.y);
         line.setAttribute('stroke', color);
-        line.setAttribute('stroke-width', '3');
+        line.setAttribute('stroke-width', '4');
         line.setAttribute('stroke-linecap', 'round');
         svg.appendChild(line);
 
@@ -1359,7 +1605,6 @@ function cpRedrawLines(gameTitle) {
             c.setAttribute('fill', color);
             svg.appendChild(c);
             pair[1].querySelector('.cp-dot').style.background = color;
-            pair[1].querySelector('.cp-dot').style.borderColor = color;
             pair[1].classList.add('cp-linked');
         });
     });
@@ -1430,7 +1675,7 @@ function cpWireBoard(section) {
         leftEl.classList.add('cp-dragging-from');
 
         var tempLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        tempLine.setAttribute('stroke', '#8fa3c8');
+        tempLine.setAttribute('stroke', '#6b4423');
         tempLine.setAttribute('stroke-width', '3');
         tempLine.setAttribute('stroke-dasharray', '6 5');
         tempLine.setAttribute('stroke-linecap', 'round');

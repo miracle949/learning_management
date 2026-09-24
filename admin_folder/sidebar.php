@@ -60,12 +60,12 @@ $current_url = isset($_GET['url']) ? $_GET['url'] : 'admin';
                 </a>
             </li>
 
-            <li class="<?= $current_url === 'content_management' ? 'active' : '' ?>">
+            <!-- <li class="<?= $current_url === 'content_management' ? 'active' : '' ?>">
                 <a href="/learning_management/public/?url=content_management" class="text-decoration-none">
                     <i class="fa fa-list"></i>
                     <span>Contents</span>
                 </a>
-            </li>
+            </li> -->
 
             <div class="sidebar-category">
                 <h5>Reports</h5>
